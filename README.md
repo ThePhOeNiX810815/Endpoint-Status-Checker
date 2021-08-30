@@ -28,3 +28,12 @@ on App main window and send your Feature Request or Improvement.
 # Compiling from source code
 
 Just open the solution in Visual Studio and click the (re)build button.
+
+# Public Keys Used
+
+Application is using following public APIs:
+- Google Maps (https://developers.google.com/maps/documentation/javascript/overview)
+- VirusTotal (https://developers.virustotal.com/reference)
+
+All keys are FREE to use, but mind that all these free APIs works with limits.
+For each of these services you can set your own key (edit config file by 'CONFIG' button in application).
