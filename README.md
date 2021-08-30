@@ -1,4 +1,4 @@
-# Endpoint Status Checker - Release Version 1.407
+# Endpoint Status Checker
 
 ![image](https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/EndpointStatusCheckerImage.jpg)
 
