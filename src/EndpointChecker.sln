@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2008
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EndpointChecker", "EndpointChecker.csproj", "{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}.Debug|x86.ActiveCfg = Debug|x86
+		{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}.Debug|x86.Build.0 = Debug|x86
+		{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}.Release|Any CPU.ActiveCfg = Release|x86
+		{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}.Release|Mixed Platforms.Build.0 = Release|x86
+		{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}.Release|x86.ActiveCfg = Release|x86
+		{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F665E560-D64C-427A-B02E-B7F6882EB74A}
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = EndpointChecker.vsmdi
+	EndGlobalSection
+EndGlobal
