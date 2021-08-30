@@ -23,7 +23,7 @@ This piece of software is safe to use on your host, ignore any false positives.
 # To-do list
 
 Nothing by now, if you have something to suggest you can use 'Feature Request' button
-on App main window and send your Feature Request or Improvement.
+on application main window and send your Feature Request or Improvement.
 
 # Compiling from source code
 
@@ -36,4 +36,4 @@ Application is using following public APIs:
 - VirusTotal (https://developers.virustotal.com/reference)
 
 All keys are FREE to use, but mind that all these free APIs works with limits.
-For each of these services you can set your own key (edit config file by 'CONFIG' button in application).
+For each of these services you can set your own key (edit config file by 'CONFIG' button on main application window).
