@@ -1,6 +1,6 @@
 # Endpoint Status Checker - Release Version 1.407
 
-![image](https://raw.githubusercontent.com/ThePhOeNiX810815/Projects/main/EndpointStatusChecker/EndpointStatusCheckerImage.jpg)
+![image](https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/EndpointStatusCheckerImage.jpg)
 
 Checks pre-defined list of network EndPoints on various conditions:
 
