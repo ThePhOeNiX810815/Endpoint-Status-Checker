@@ -141,6 +141,7 @@
             this.link_AuthorMail = new System.Windows.Forms.LinkLabel();
             this.pb_FeatureRequest = new System.Windows.Forms.PictureBox();
             this.TIMER_ListAndLogsFilesWatcher = new System.Windows.Forms.Timer(this.components);
+            this.pb_GitHub = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
@@ -157,6 +158,7 @@
             this.groupBox_HTTPOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ITNetwork)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_FeatureRequest)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_GitHub)).BeginInit();
             this.SuspendLayout();
             // 
             // lv_Endpoints
@@ -1456,7 +1458,7 @@
             this.pb_ITNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_ITNetwork.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_ITNetwork.Image = global::EndpointChecker.Properties.Resources.itnetwork_logo_text;
-            this.pb_ITNetwork.Location = new System.Drawing.Point(979, 472);
+            this.pb_ITNetwork.Location = new System.Drawing.Point(979, 470);
             this.pb_ITNetwork.Name = "pb_ITNetwork";
             this.pb_ITNetwork.Size = new System.Drawing.Size(123, 30);
             this.pb_ITNetwork.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1483,7 +1485,7 @@
             this.pb_FeatureRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_FeatureRequest.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_FeatureRequest.Image = ((System.Drawing.Image)(resources.GetObject("pb_FeatureRequest.Image")));
-            this.pb_FeatureRequest.Location = new System.Drawing.Point(946, 469);
+            this.pb_FeatureRequest.Location = new System.Drawing.Point(912, 466);
             this.pb_FeatureRequest.Name = "pb_FeatureRequest";
             this.pb_FeatureRequest.Size = new System.Drawing.Size(30, 30);
             this.pb_FeatureRequest.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1497,19 +1499,33 @@
             this.TIMER_ListAndLogsFilesWatcher.Interval = 1000;
             this.TIMER_ListAndLogsFilesWatcher.Tick += new System.EventHandler(this.TIMER_ListAndLogsFilesWatcher_Tick);
             // 
+            // pb_GitHub
+            // 
+            this.pb_GitHub.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pb_GitHub.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pb_GitHub.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitHub.Image")));
+            this.pb_GitHub.Location = new System.Drawing.Point(934, 469);
+            this.pb_GitHub.Name = "pb_GitHub";
+            this.pb_GitHub.Size = new System.Drawing.Size(53, 30);
+            this.pb_GitHub.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_GitHub.TabIndex = 63;
+            this.pb_GitHub.TabStop = false;
+            this.pb_GitHub.Click += new System.EventHandler(this.pb_GitHub_Click);
+            // 
             // CheckerMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1108, 522);
+            this.Controls.Add(this.pb_FeatureRequest);
+            this.Controls.Add(this.pb_ITNetwork);
+            this.Controls.Add(this.pb_GitHub);
             this.Controls.Add(this.lbl_ConfigFile);
             this.Controls.Add(this.btn_EndpointsList);
             this.Controls.Add(this.lbl_EndpointsList);
             this.Controls.Add(this.btn_ConfigFile);
-            this.Controls.Add(this.pb_FeatureRequest);
             this.Controls.Add(this.link_AuthorMail);
-            this.Controls.Add(this.pb_ITNetwork);
             this.Controls.Add(this.groupBox_HTTPOptions);
             this.Controls.Add(this.groupBox_CommonOptions);
             this.Controls.Add(this.groupBox_Export);
@@ -1573,6 +1589,7 @@
             this.groupBox_HTTPOptions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pb_ITNetwork)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_FeatureRequest)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_GitHub)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1690,6 +1707,7 @@
         public System.Windows.Forms.Button btn_ConfigFile;
         public System.Windows.Forms.Label lbl_EndpointsList;
         public System.Windows.Forms.Timer TIMER_ListAndLogsFilesWatcher;
+        private System.Windows.Forms.PictureBox pb_GitHub;
     }
 }
 

@@ -250,6 +250,13 @@ namespace EndpointChecker
             toolTip_ITNetwork.ToolTipTitle = "IT Network CZ";
             toolTip_ITNetwork.SetToolTip(pb_ITNetwork, "Ajťácká sociální síť a materiálová základna pro C#, Java, PHP, HTML, CSS, JavaScript a další.");
 
+            // SET TOOLTIP FOR GITHUB LINK LABEL
+            ToolTip toolTip_GitHub = new ToolTip();
+            toolTip_GitHub.ToolTipIcon = ToolTipIcon.Info;
+            toolTip_GitHub.IsBalloon = true;
+            toolTip_GitHub.ToolTipTitle = "GitHub";
+            toolTip_GitHub.SetToolTip(pb_GitHub, "Open project repository on GitHub. Whole source code and releases are open for public.");
+
             // SET TOOLTIP FOR FEATURE REQUEST BUTTON
             ToolTip toolTip_FeatureRequest = new ToolTip();
             toolTip_FeatureRequest.ToolTipIcon = ToolTipIcon.Info;
@@ -5009,6 +5016,15 @@ namespace EndpointChecker
                 null,
                 null);
             }
+        }
+
+        private void pb_GitHub_Click(object sender, EventArgs e)
+        {
+            BrowseEndpoint(
+                "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/",
+                null,
+                null,
+                null);
         }
     }
 
