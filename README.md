@@ -18,7 +18,8 @@ This piece of software is safe to use on your host, ignore any false positives.
 - Application needs to be run As Administrator
 
 # Known issues
-- App may hang or stop responding, all unhandled exceptions got to be automatically reported back to author.
+App may hang or stop responding, possibly throw unhandled exception from code.
+All unhandled exceptions got to be automatically reported back to author. 
 
 # To-do list
 
