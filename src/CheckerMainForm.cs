@@ -44,8 +44,8 @@ namespace EndpointChecker
         [DllImport("dnsapi.dll", EntryPoint = "DnsFlushResolverCache")]
         private static extern uint DnsFlushResolverCache();
 
-        // COMMON HTTP USER AGENT STRING [MICROSOFT EDGE BROWSER X64 v.92.0]
-        public static string httpUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.40 Safari/537.36 Edg/92.0.902.9";
+        // COMMON HTTP USER AGENT STRING [MOZILLA FIREFOX BROWSER X64 v.92]
+        public static string httpUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0";
 
         // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES
         public static string exceptionReport_senderEMailAddress = "ExceptionReport@EndpointStatusChecker";
@@ -58,9 +58,6 @@ namespace EndpointChecker
 
         // VIRUSTOTAL API KEY
         public static string apiKey_VirusTotal = "a4260f0ef8eeddcc025d12f700e08c35c118c049ec96bfb5abce842b86447b99";
-
-        // DOMAIN CATEGORY API KEY
-        public static string apiKey_DomainCategory = "at_AueRfR6FbbxfGBonvZltUO46laMFR";
 
         // FOR MAC ADDRESS RESOLVER FEATURE PURPOSE
         [DllImport("iphlpapi.dll", ExactSpelling = true)]
@@ -203,9 +200,8 @@ namespace EndpointChecker
         {
             InitializeComponent();
 
-            // COMMON EXCEPTION HANDLER
-            AppDomain currentAppDomain = AppDomain.CurrentDomain;
-            currentAppDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            // COMMON EXCEPTION HANDLERS
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
             Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
 
             // SET DOUBLE BUFFER
@@ -236,6 +232,7 @@ namespace EndpointChecker
 
             // SET VERSION / BUILD LABELS
             Text = Program.assembly_ApplicationName + " v" + Program.assembly_Version;
+
             lbl_Copyright.Text = Program.assembly_Copyright;
             lbl_Version.Text += "Version: " + Program.assembly_Version +
                                 ", Built: " + Program.assembly_BuiltDate;
@@ -243,19 +240,30 @@ namespace EndpointChecker
             // SET TEMPORARY FOLDER FOR INSTANCE WATCHER
             instanceWatcher.Path = Path.GetTempPath();
 
+            // SET CONTROLS TOOLTIPS
+            SetControlsTooltips();
+
+            // CHECK .NET FRAMEWORK INSTALLED VERSION [FOR EXPORT INFORMATION PURPOSE]
+            CheckDotNetFWKInstalledVersion();
+
+            TIMER_StartupRefresh.Start();
+        }
+
+        public void SetControlsTooltips()
+        {
             // SET TOOLTIP FOR ITNETWORK LINK LABEL
             ToolTip toolTip_ITNetwork = new ToolTip();
             toolTip_ITNetwork.ToolTipIcon = ToolTipIcon.Info;
             toolTip_ITNetwork.IsBalloon = true;
             toolTip_ITNetwork.ToolTipTitle = "IT Network CZ";
-            toolTip_ITNetwork.SetToolTip(pb_ITNetwork, "Ajťácká sociální síť a materiálová základna pro C#, Java, PHP, HTML, CSS, JavaScript a další.");
+            toolTip_ITNetwork.SetToolTip(pb_ITNetwork, "Open project page on IT Network CZ portal.");
 
             // SET TOOLTIP FOR GITHUB LINK LABEL
             ToolTip toolTip_GitHub = new ToolTip();
             toolTip_GitHub.ToolTipIcon = ToolTipIcon.Info;
             toolTip_GitHub.IsBalloon = true;
             toolTip_GitHub.ToolTipTitle = "GitHub";
-            toolTip_GitHub.SetToolTip(pb_GitHub, "Open project repository on GitHub. Whole source code and releases are open for public.");
+            toolTip_GitHub.SetToolTip(pb_GitHub, "Open project repository on GitHub portal. Entire source code and releases are open for public.");
 
             // SET TOOLTIP FOR FEATURE REQUEST BUTTON
             ToolTip toolTip_FeatureRequest = new ToolTip();
@@ -327,11 +335,6 @@ namespace EndpointChecker
             toolTip_OpenAppConfigFile.IsBalloon = true;
             toolTip_OpenAppConfigFile.ToolTipTitle = "Open App config file";
             toolTip_OpenAppConfigFile.SetToolTip(btn_ConfigFile, "Open App configuration file (" + Path.GetFileName(appConfigFile) + ") in default editor");
-
-            // CHECK .NET FRAMEWORK INSTALLED VERSION [FOR EXPORT INFORMATION PURPOSE]
-            CheckDotNetFWKInstalledVersion();
-
-            TIMER_StartupRefresh.Start();
         }
 
         public void CheckDotNetFWKInstalledVersion()
@@ -428,11 +431,6 @@ namespace EndpointChecker
                     {
                         apiKey_VirusTotal = Settings.Default.Config_VirusTotal_API_Key;
                     }
-
-                    if (!string.IsNullOrEmpty(Settings.Default.Config_DomainCategory_API_Key))
-                    {
-                        apiKey_DomainCategory = Settings.Default.Config_DomainCategory_API_Key;
-                    }
                 }
                 catch
                 {
@@ -472,7 +470,6 @@ namespace EndpointChecker
                 Settings.Default.Config_SaveResponse = cb_SaveResponse.Checked;
                 Settings.Default.Config_GoogleMaps_API_Key = apiKey_GoogleMaps;
                 Settings.Default.Config_VirusTotal_API_Key = apiKey_VirusTotal;
-                Settings.Default.Config_DomainCategory_API_Key = apiKey_DomainCategory;
                 Settings.Default.HasSavedConfiguration = true;
                 Settings.Default.Save();
             }
@@ -4478,7 +4475,8 @@ namespace EndpointChecker
         {
             EndpointDetailsDialog endpointDetailsDialog = new EndpointDetailsDialog(
                 (int)num_PingTimeout.Value * 1000,
-                    imageList_Icons_32pix
+                lv_Endpoints_SelectedEndpoint,
+                imageList_Icons_32pix
                         .Images[GetStatusImageIndex(
                             lv_Endpoints_SelectedEndpoint.ResponseCode,
                             lv_Endpoints_SelectedEndpoint.PingRoundtripTime,
@@ -4918,7 +4916,7 @@ namespace EndpointChecker
         public void pb_ITNetwork_Click(object sender, EventArgs e)
         {
             BrowseEndpoint(
-                "https://www.itnetwork.cz/",
+                "https://www.itnetwork.cz/csharp/winforms/csharp-windows-forms-zdrojove-kody/endpoint-status-checker",
                 null,
                 null,
                 null);
@@ -4964,12 +4962,12 @@ namespace EndpointChecker
                 null);
         }
 
-        void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
+        public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
             ExceptionNotifier((Exception)args.ExceptionObject);
         }
 
-        void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs args)
+        public static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs args)
         {
             ExceptionNotifier(args.Exception);
         }

@@ -31,7 +31,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F665E560-D64C-427A-B02E-B7F6882EB74A}
-	EndGlobalSection
+	EndGlobalSection	
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = EndpointChecker.vsmdi
 	EndGlobalSection

@@ -30,7 +30,7 @@ namespace EndpointChecker
         public static string _machineInfo_DiskSpace;
         public static List<string> _machineInfo_IPList = new List<string>();
         public static List<string> _machineInfo_MACList = new List<string>();
-        public static MemoryStream _screenshotStream = new MemoryStream();
+        public static MemoryStream _screenshotStream;
 
         public ExceptionDialog(Exception exception, string callingMethod, string senderAddress, List<string> recipientsAddressesList, List<string> attachmentsList)
         {
@@ -142,7 +142,8 @@ namespace EndpointChecker
                     }
 
                     // ADD SCREENSHOT (OPTIONAL)
-                    if (attachScreenshot)
+                    if (attachScreenshot &&
+                        _screenshotStream != null)
                     {
                         mailMessage.Attachments.Add(new Attachment(_screenshotStream, "ScreenShot.png"));
                     }
@@ -207,16 +208,23 @@ namespace EndpointChecker
         public void CreateScreenshot()
         {
             // GET SCREENSHOT STREAM
-            Rectangle screenBounds = Screen.GetBounds(Point.Empty);
-            using (Bitmap screenshotBitmap = new Bitmap(screenBounds.Width, screenBounds.Height, PixelFormat.Format32bppRgb))
+            try
             {
-                using (Graphics graphicsSurface = Graphics.FromImage(screenshotBitmap))
-                {
-                    graphicsSurface.CopyFromScreen(Point.Empty, Point.Empty, screenBounds.Size);
-                }
+                Rectangle screenBounds = Screen.GetBounds(Point.Empty);
 
-                screenshotBitmap.Save(_screenshotStream, ImageFormat.Png);
-                _screenshotStream.Position = 0;
+                using (Bitmap screenshotBitmap = new Bitmap(screenBounds.Width, screenBounds.Height, PixelFormat.Format32bppRgb))
+                {
+                    using (Graphics graphicsSurface = Graphics.FromImage(screenshotBitmap))
+                    {
+                        graphicsSurface.CopyFromScreen(Point.Empty, Point.Empty, screenBounds.Size);
+                    }
+
+                    screenshotBitmap.Save(_screenshotStream, ImageFormat.Png);
+                    _screenshotStream.Position = 0;
+                }
+            }
+            catch
+            {
             }
 
             // SHOW DIALOG

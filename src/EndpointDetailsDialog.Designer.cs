@@ -55,6 +55,44 @@
             this.lbl_HTTPInfo_ContentType = new System.Windows.Forms.Label();
             this.lbl_HTTPInfo_ServerName = new System.Windows.Forms.Label();
             this.tabControl = new System.Windows.Forms.TabControl();
+            this.tabPage_MainInfo = new System.Windows.Forms.TabPage();
+            this.pb_ShowPassword = new System.Windows.Forms.PictureBox();
+            this.pb_Vendor = new System.Windows.Forms.PictureBox();
+            this.cb_IPAddress = new System.Windows.Forms.ComboBox();
+            this.pb_MACVendorProgress = new System.Windows.Forms.PictureBox();
+            this.tb_MACVendor = new System.Windows.Forms.TextBox();
+            this.lbl_MACVendor = new System.Windows.Forms.Label();
+            this.pb_PingRefresh = new System.Windows.Forms.PictureBox();
+            this.tb_MACAddress = new System.Windows.Forms.TextBox();
+            this.lbl_MACAddress = new System.Windows.Forms.Label();
+            this.tb_UserPassword = new System.Windows.Forms.TextBox();
+            this.tb_PingTime = new System.Windows.Forms.TextBox();
+            this.tb_Port = new System.Windows.Forms.TextBox();
+            this.tb_StatusCode = new System.Windows.Forms.TextBox();
+            this.tb_ResponseTime = new System.Windows.Forms.TextBox();
+            this.tb_UserName = new System.Windows.Forms.TextBox();
+            this.tb_Protocol = new System.Windows.Forms.TextBox();
+            this.tb_DNSName = new System.Windows.Forms.TextBox();
+            this.tb_EndpointURL = new System.Windows.Forms.TextBox();
+            this.tb_ResponseURL = new System.Windows.Forms.TextBox();
+            this.tb_StatusMessage = new System.Windows.Forms.TextBox();
+            this.tb_EndpointName = new System.Windows.Forms.TextBox();
+            this.pb_Favicon = new System.Windows.Forms.PictureBox();
+            this.pb_StatusIcon = new System.Windows.Forms.PictureBox();
+            this.lbl_StatusMessage = new System.Windows.Forms.Label();
+            this.lbl_StatusCode = new System.Windows.Forms.Label();
+            this.lbl_PingTime = new System.Windows.Forms.Label();
+            this.lbl_ResponseTime = new System.Windows.Forms.Label();
+            this.lbl_UserPassword = new System.Windows.Forms.Label();
+            this.lbl_UserName = new System.Windows.Forms.Label();
+            this.lbl_DNSName = new System.Windows.Forms.Label();
+            this.lbl_IPAddress = new System.Windows.Forms.Label();
+            this.lbl_ResponseURL = new System.Windows.Forms.Label();
+            this.lbl_EndpointURL = new System.Windows.Forms.Label();
+            this.lbl_Port = new System.Windows.Forms.Label();
+            this.lbl_Protocol = new System.Windows.Forms.Label();
+            this.lbl_EndpointName = new System.Windows.Forms.Label();
+            this.imageList_Tabs = new System.Windows.Forms.ImageList(this.components);
             this.tabPage_TraceRoute = new System.Windows.Forms.TabPage();
             this.pb_TraceRouteProgress = new System.Windows.Forms.PictureBox();
             this.btn_TraceRoute_Refresh = new System.Windows.Forms.Button();
@@ -170,44 +208,6 @@
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tabPage_MainInfo = new System.Windows.Forms.TabPage();
-            this.pb_ShowPassword = new System.Windows.Forms.PictureBox();
-            this.pb_Vendor = new System.Windows.Forms.PictureBox();
-            this.cb_IPAddress = new System.Windows.Forms.ComboBox();
-            this.pb_MACVendorProgress = new System.Windows.Forms.PictureBox();
-            this.tb_MACVendor = new System.Windows.Forms.TextBox();
-            this.lbl_MACVendor = new System.Windows.Forms.Label();
-            this.pb_PingRefresh = new System.Windows.Forms.PictureBox();
-            this.tb_MACAddress = new System.Windows.Forms.TextBox();
-            this.lbl_MACAddress = new System.Windows.Forms.Label();
-            this.tb_UserPassword = new System.Windows.Forms.TextBox();
-            this.tb_PingTime = new System.Windows.Forms.TextBox();
-            this.tb_Port = new System.Windows.Forms.TextBox();
-            this.tb_StatusCode = new System.Windows.Forms.TextBox();
-            this.tb_ResponseTime = new System.Windows.Forms.TextBox();
-            this.tb_UserName = new System.Windows.Forms.TextBox();
-            this.tb_Protocol = new System.Windows.Forms.TextBox();
-            this.tb_DNSName = new System.Windows.Forms.TextBox();
-            this.tb_EndpointURL = new System.Windows.Forms.TextBox();
-            this.tb_ResponseURL = new System.Windows.Forms.TextBox();
-            this.tb_StatusMessage = new System.Windows.Forms.TextBox();
-            this.tb_EndpointName = new System.Windows.Forms.TextBox();
-            this.pb_Favicon = new System.Windows.Forms.PictureBox();
-            this.pb_StatusIcon = new System.Windows.Forms.PictureBox();
-            this.lbl_StatusMessage = new System.Windows.Forms.Label();
-            this.lbl_StatusCode = new System.Windows.Forms.Label();
-            this.lbl_PingTime = new System.Windows.Forms.Label();
-            this.lbl_ResponseTime = new System.Windows.Forms.Label();
-            this.lbl_UserPassword = new System.Windows.Forms.Label();
-            this.lbl_UserName = new System.Windows.Forms.Label();
-            this.lbl_DNSName = new System.Windows.Forms.Label();
-            this.lbl_IPAddress = new System.Windows.Forms.Label();
-            this.lbl_ResponseURL = new System.Windows.Forms.Label();
-            this.lbl_EndpointURL = new System.Windows.Forms.Label();
-            this.lbl_Port = new System.Windows.Forms.Label();
-            this.lbl_Protocol = new System.Windows.Forms.Label();
-            this.lbl_EndpointName = new System.Windows.Forms.Label();
-            this.imageList_Tabs = new System.Windows.Forms.ImageList(this.components);
             this.lbl_HTTP = new System.Windows.Forms.Label();
             this.lbl_FTP = new System.Windows.Forms.Label();
             this.lbl_VNC = new System.Windows.Forms.Label();
@@ -220,7 +220,7 @@
             this.pb_VNC = new System.Windows.Forms.PictureBox();
             this.pb_RDP = new System.Windows.Forms.PictureBox();
             this.pb_Browse_WindowsExplorer = new System.Windows.Forms.PictureBox();
-            this.bw_PortCheck = new System.ComponentModel.BackgroundWorker();
+            this.BW_PortCheck = new System.ComponentModel.BackgroundWorker();
             this.TIMER_LoadProperties = new System.Windows.Forms.Timer(this.components);
             this.pb_AdminBrowse_WindowsExplorer = new System.Windows.Forms.PictureBox();
             this.lbl_AdminBrowse_WindowsExplorer = new System.Windows.Forms.Label();
@@ -229,6 +229,13 @@
             this.tabPage_HTMLInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_PageInfo_ThemeColor)).BeginInit();
             this.tabControl.SuspendLayout();
+            this.tabPage_MainInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_ShowPassword)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_Vendor)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_MACVendorProgress)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_PingRefresh)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_Favicon)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_StatusIcon)).BeginInit();
             this.tabPage_TraceRoute.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_TraceRouteProgress)).BeginInit();
             this.tabPage_NetworkShares.SuspendLayout();
@@ -255,13 +262,6 @@
             this.tabPage_PageLinks.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_PageLinks_CommonLinksStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_PageLinks_ValidatingProgress)).BeginInit();
-            this.tabPage_MainInfo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_ShowPassword)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_Vendor)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_MACVendorProgress)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_PingRefresh)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_Favicon)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_StatusIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_HTTP)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_FTP)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_VNC)).BeginInit();
@@ -590,22 +590,23 @@
             // 
             // tabControl
             // 
-            this.tabControl.Controls.Add(this.tabPage_TraceRoute);
-            this.tabControl.Controls.Add(this.tabPage_NetworkShares);
-            this.tabControl.Controls.Add(this.tabPage_WMI_ComputerInfo);
-            this.tabControl.Controls.Add(this.tabPage_Ports);
-            this.tabControl.Controls.Add(this.tabPage_WhoIs);
-            this.tabControl.Controls.Add(this.tabPage_GeoLocation);
-            this.tabControl.Controls.Add(this.tabPage_FTPInfo);
-            this.tabControl.Controls.Add(this.tabPage_HTTPInfo);
-            this.tabControl.Controls.Add(this.tabPage_HTTPRequestHeaders);
-            this.tabControl.Controls.Add(this.tabPage_HTTPResponseHeaders);
-            this.tabControl.Controls.Add(this.tabPage_HTMLInfo);
-            this.tabControl.Controls.Add(this.tabPage_SSLCertificate);
-            this.tabControl.Controls.Add(this.tabPage_VirusTotal);
-            this.tabControl.Controls.Add(this.tabPage_PageCategory);
-            this.tabControl.Controls.Add(this.tabPage_PageLinks);
             this.tabControl.Controls.Add(this.tabPage_MainInfo);
+            //this.tabControl.Controls.Add(this.tabPage_FTPInfo);
+            //this.tabControl.Controls.Add(this.tabPage_GeoLocation);
+            //this.tabControl.Controls.Add(this.tabPage_HTMLInfo);
+            //this.tabControl.Controls.Add(this.tabPage_HTTPInfo);
+            //this.tabControl.Controls.Add(this.tabPage_HTTPRequestHeaders);
+            //this.tabControl.Controls.Add(this.tabPage_HTTPResponseHeaders);
+            //this.tabControl.Controls.Add(this.tabPage_NetworkShares);
+            //this.tabControl.Controls.Add(this.tabPage_PageCategory);
+            //this.tabControl.Controls.Add(this.tabPage_PageLinks);
+            //this.tabControl.Controls.Add(this.tabPage_Ports);
+            //this.tabControl.Controls.Add(this.tabPage_SSLCertificate);
+            //this.tabControl.Controls.Add(this.tabPage_TraceRoute);
+            //this.tabControl.Controls.Add(this.tabPage_VirusTotal);
+            //this.tabControl.Controls.Add(this.tabPage_WhoIs);
+            //this.tabControl.Controls.Add(this.tabPage_WMI_ComputerInfo);
+
             this.tabControl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabControl.HotTrack = true;
             this.tabControl.ImageList = this.imageList_Tabs;
@@ -615,6 +616,485 @@
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(791, 424);
             this.tabControl.TabIndex = 30;
+            // 
+            // tabPage_MainInfo
+            // 
+            this.tabPage_MainInfo.BackColor = System.Drawing.Color.Silver;
+            this.tabPage_MainInfo.Controls.Add(this.pb_ShowPassword);
+            this.tabPage_MainInfo.Controls.Add(this.pb_Vendor);
+            this.tabPage_MainInfo.Controls.Add(this.cb_IPAddress);
+            this.tabPage_MainInfo.Controls.Add(this.pb_MACVendorProgress);
+            this.tabPage_MainInfo.Controls.Add(this.tb_MACVendor);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_MACVendor);
+            this.tabPage_MainInfo.Controls.Add(this.pb_PingRefresh);
+            this.tabPage_MainInfo.Controls.Add(this.tb_MACAddress);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_MACAddress);
+            this.tabPage_MainInfo.Controls.Add(this.tb_UserPassword);
+            this.tabPage_MainInfo.Controls.Add(this.tb_PingTime);
+            this.tabPage_MainInfo.Controls.Add(this.tb_Port);
+            this.tabPage_MainInfo.Controls.Add(this.tb_StatusCode);
+            this.tabPage_MainInfo.Controls.Add(this.tb_ResponseTime);
+            this.tabPage_MainInfo.Controls.Add(this.tb_UserName);
+            this.tabPage_MainInfo.Controls.Add(this.tb_Protocol);
+            this.tabPage_MainInfo.Controls.Add(this.tb_DNSName);
+            this.tabPage_MainInfo.Controls.Add(this.tb_EndpointURL);
+            this.tabPage_MainInfo.Controls.Add(this.tb_ResponseURL);
+            this.tabPage_MainInfo.Controls.Add(this.tb_StatusMessage);
+            this.tabPage_MainInfo.Controls.Add(this.tb_EndpointName);
+            this.tabPage_MainInfo.Controls.Add(this.pb_Favicon);
+            this.tabPage_MainInfo.Controls.Add(this.pb_StatusIcon);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_StatusMessage);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_StatusCode);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_PingTime);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_ResponseTime);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_UserPassword);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_UserName);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_DNSName);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_IPAddress);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_ResponseURL);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_EndpointURL);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_Port);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_Protocol);
+            this.tabPage_MainInfo.Controls.Add(this.lbl_EndpointName);
+            this.tabPage_MainInfo.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tabPage_MainInfo.Location = new System.Drawing.Point(4, 23);
+            this.tabPage_MainInfo.Name = "tabPage_MainInfo";
+            this.tabPage_MainInfo.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_MainInfo.Size = new System.Drawing.Size(783, 397);
+            this.tabPage_MainInfo.TabIndex = 15;
+            this.tabPage_MainInfo.Text = "Main Info";
+            // 
+            // pb_ShowPassword
+            // 
+            this.pb_ShowPassword.BackColor = System.Drawing.SystemColors.Info;
+            this.pb_ShowPassword.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pb_ShowPassword.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pb_ShowPassword.Image = global::EndpointChecker.Properties.Resources.password;
+            this.pb_ShowPassword.Location = new System.Drawing.Point(752, 238);
+            this.pb_ShowPassword.Name = "pb_ShowPassword";
+            this.pb_ShowPassword.Size = new System.Drawing.Size(21, 21);
+            this.pb_ShowPassword.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_ShowPassword.TabIndex = 89;
+            this.pb_ShowPassword.TabStop = false;
+            this.pb_ShowPassword.Visible = false;
+            this.pb_ShowPassword.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pb_ShowPassword_MouseDown);
+            this.pb_ShowPassword.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pb_ShowPassword_MouseUp);
+            // 
+            // pb_Vendor
+            // 
+            this.pb_Vendor.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pb_Vendor.Image = ((System.Drawing.Image)(resources.GetObject("pb_Vendor.Image")));
+            this.pb_Vendor.Location = new System.Drawing.Point(148, 181);
+            this.pb_Vendor.Name = "pb_Vendor";
+            this.pb_Vendor.Size = new System.Drawing.Size(23, 23);
+            this.pb_Vendor.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_Vendor.TabIndex = 88;
+            this.pb_Vendor.TabStop = false;
+            this.pb_Vendor.Click += new System.EventHandler(this.pb_Vendor_Click);
+            // 
+            // cb_IPAddress
+            // 
+            this.cb_IPAddress.BackColor = System.Drawing.SystemColors.Info;
+            this.cb_IPAddress.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cb_IPAddress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_IPAddress.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.cb_IPAddress.FormattingEnabled = true;
+            this.cb_IPAddress.Location = new System.Drawing.Point(148, 123);
+            this.cb_IPAddress.Name = "cb_IPAddress";
+            this.cb_IPAddress.Size = new System.Drawing.Size(626, 26);
+            this.cb_IPAddress.TabIndex = 87;
+            this.cb_IPAddress.SelectedIndexChanged += new System.EventHandler(this.cb_IPAddress_SelectedIndexChanged);
+            // 
+            // pb_MACVendorProgress
+            // 
+            this.pb_MACVendorProgress.BackColor = System.Drawing.SystemColors.Info;
+            this.pb_MACVendorProgress.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pb_MACVendorProgress.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pb_MACVendorProgress.Image = ((System.Drawing.Image)(resources.GetObject("pb_MACVendorProgress.Image")));
+            this.pb_MACVendorProgress.Location = new System.Drawing.Point(752, 182);
+            this.pb_MACVendorProgress.Name = "pb_MACVendorProgress";
+            this.pb_MACVendorProgress.Size = new System.Drawing.Size(21, 21);
+            this.pb_MACVendorProgress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_MACVendorProgress.TabIndex = 86;
+            this.pb_MACVendorProgress.TabStop = false;
+            this.pb_MACVendorProgress.Visible = false;
+            // 
+            // tb_MACVendor
+            // 
+            this.tb_MACVendor.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_MACVendor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_MACVendor.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_MACVendor.Location = new System.Drawing.Point(177, 181);
+            this.tb_MACVendor.Multiline = true;
+            this.tb_MACVendor.Name = "tb_MACVendor";
+            this.tb_MACVendor.ReadOnly = true;
+            this.tb_MACVendor.Size = new System.Drawing.Size(597, 23);
+            this.tb_MACVendor.TabIndex = 85;
+            // 
+            // lbl_MACVendor
+            // 
+            this.lbl_MACVendor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_MACVendor.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_MACVendor.Location = new System.Drawing.Point(8, 181);
+            this.lbl_MACVendor.Name = "lbl_MACVendor";
+            this.lbl_MACVendor.Size = new System.Drawing.Size(134, 23);
+            this.lbl_MACVendor.TabIndex = 84;
+            this.lbl_MACVendor.Text = "MAC Vendor";
+            this.lbl_MACVendor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // pb_PingRefresh
+            // 
+            this.pb_PingRefresh.BackColor = System.Drawing.Color.Transparent;
+            this.pb_PingRefresh.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pb_PingRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pb_PingRefresh.Image = ((System.Drawing.Image)(resources.GetObject("pb_PingRefresh.Image")));
+            this.pb_PingRefresh.Location = new System.Drawing.Point(521, 265);
+            this.pb_PingRefresh.Name = "pb_PingRefresh";
+            this.pb_PingRefresh.Size = new System.Drawing.Size(23, 23);
+            this.pb_PingRefresh.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_PingRefresh.TabIndex = 83;
+            this.pb_PingRefresh.TabStop = false;
+            this.pb_PingRefresh.Click += new System.EventHandler(this.pb_PingRefresh_Click);
+            // 
+            // tb_MACAddress
+            // 
+            this.tb_MACAddress.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_MACAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_MACAddress.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_MACAddress.Location = new System.Drawing.Point(148, 153);
+            this.tb_MACAddress.Multiline = true;
+            this.tb_MACAddress.Name = "tb_MACAddress";
+            this.tb_MACAddress.ReadOnly = true;
+            this.tb_MACAddress.Size = new System.Drawing.Size(626, 23);
+            this.tb_MACAddress.TabIndex = 82;
+            // 
+            // lbl_MACAddress
+            // 
+            this.lbl_MACAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_MACAddress.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_MACAddress.Location = new System.Drawing.Point(8, 153);
+            this.lbl_MACAddress.Name = "lbl_MACAddress";
+            this.lbl_MACAddress.Size = new System.Drawing.Size(134, 23);
+            this.lbl_MACAddress.TabIndex = 81;
+            this.lbl_MACAddress.Text = "MAC Address";
+            this.lbl_MACAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_UserPassword
+            // 
+            this.tb_UserPassword.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_UserPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_UserPassword.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_UserPassword.Location = new System.Drawing.Point(550, 237);
+            this.tb_UserPassword.Multiline = true;
+            this.tb_UserPassword.Name = "tb_UserPassword";
+            this.tb_UserPassword.PasswordChar = '*';
+            this.tb_UserPassword.ReadOnly = true;
+            this.tb_UserPassword.Size = new System.Drawing.Size(224, 23);
+            this.tb_UserPassword.TabIndex = 80;
+            this.tb_UserPassword.UseSystemPasswordChar = true;
+            this.tb_UserPassword.TextChanged += new System.EventHandler(this.tb_UserPassword_TextChanged);
+            // 
+            // tb_PingTime
+            // 
+            this.tb_PingTime.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_PingTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_PingTime.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_PingTime.Location = new System.Drawing.Point(550, 265);
+            this.tb_PingTime.Multiline = true;
+            this.tb_PingTime.Name = "tb_PingTime";
+            this.tb_PingTime.ReadOnly = true;
+            this.tb_PingTime.Size = new System.Drawing.Size(224, 23);
+            this.tb_PingTime.TabIndex = 79;
+            // 
+            // tb_Port
+            // 
+            this.tb_Port.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_Port.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_Port.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_Port.Location = new System.Drawing.Point(550, 42);
+            this.tb_Port.Multiline = true;
+            this.tb_Port.Name = "tb_Port";
+            this.tb_Port.ReadOnly = true;
+            this.tb_Port.Size = new System.Drawing.Size(224, 23);
+            this.tb_Port.TabIndex = 78;
+            // 
+            // tb_StatusCode
+            // 
+            this.tb_StatusCode.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_StatusCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_StatusCode.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_StatusCode.Location = new System.Drawing.Point(177, 294);
+            this.tb_StatusCode.Multiline = true;
+            this.tb_StatusCode.Name = "tb_StatusCode";
+            this.tb_StatusCode.ReadOnly = true;
+            this.tb_StatusCode.Size = new System.Drawing.Size(193, 23);
+            this.tb_StatusCode.TabIndex = 77;
+            // 
+            // tb_ResponseTime
+            // 
+            this.tb_ResponseTime.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_ResponseTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_ResponseTime.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_ResponseTime.Location = new System.Drawing.Point(148, 265);
+            this.tb_ResponseTime.Multiline = true;
+            this.tb_ResponseTime.Name = "tb_ResponseTime";
+            this.tb_ResponseTime.ReadOnly = true;
+            this.tb_ResponseTime.Size = new System.Drawing.Size(222, 23);
+            this.tb_ResponseTime.TabIndex = 76;
+            // 
+            // tb_UserName
+            // 
+            this.tb_UserName.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_UserName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_UserName.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_UserName.Location = new System.Drawing.Point(148, 237);
+            this.tb_UserName.Multiline = true;
+            this.tb_UserName.Name = "tb_UserName";
+            this.tb_UserName.ReadOnly = true;
+            this.tb_UserName.Size = new System.Drawing.Size(222, 23);
+            this.tb_UserName.TabIndex = 75;
+            // 
+            // tb_Protocol
+            // 
+            this.tb_Protocol.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_Protocol.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_Protocol.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_Protocol.Location = new System.Drawing.Point(148, 41);
+            this.tb_Protocol.Multiline = true;
+            this.tb_Protocol.Name = "tb_Protocol";
+            this.tb_Protocol.ReadOnly = true;
+            this.tb_Protocol.Size = new System.Drawing.Size(222, 23);
+            this.tb_Protocol.TabIndex = 74;
+            // 
+            // tb_DNSName
+            // 
+            this.tb_DNSName.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_DNSName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_DNSName.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_DNSName.Location = new System.Drawing.Point(148, 209);
+            this.tb_DNSName.Multiline = true;
+            this.tb_DNSName.Name = "tb_DNSName";
+            this.tb_DNSName.ReadOnly = true;
+            this.tb_DNSName.Size = new System.Drawing.Size(626, 23);
+            this.tb_DNSName.TabIndex = 71;
+            // 
+            // tb_EndpointURL
+            // 
+            this.tb_EndpointURL.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_EndpointURL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_EndpointURL.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_EndpointURL.Location = new System.Drawing.Point(148, 69);
+            this.tb_EndpointURL.Multiline = true;
+            this.tb_EndpointURL.Name = "tb_EndpointURL";
+            this.tb_EndpointURL.ReadOnly = true;
+            this.tb_EndpointURL.Size = new System.Drawing.Size(626, 23);
+            this.tb_EndpointURL.TabIndex = 73;
+            // 
+            // tb_ResponseURL
+            // 
+            this.tb_ResponseURL.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_ResponseURL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_ResponseURL.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_ResponseURL.Location = new System.Drawing.Point(148, 97);
+            this.tb_ResponseURL.Multiline = true;
+            this.tb_ResponseURL.Name = "tb_ResponseURL";
+            this.tb_ResponseURL.ReadOnly = true;
+            this.tb_ResponseURL.Size = new System.Drawing.Size(626, 23);
+            this.tb_ResponseURL.TabIndex = 72;
+            // 
+            // tb_StatusMessage
+            // 
+            this.tb_StatusMessage.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_StatusMessage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_StatusMessage.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_StatusMessage.Location = new System.Drawing.Point(148, 323);
+            this.tb_StatusMessage.Multiline = true;
+            this.tb_StatusMessage.Name = "tb_StatusMessage";
+            this.tb_StatusMessage.ReadOnly = true;
+            this.tb_StatusMessage.Size = new System.Drawing.Size(626, 23);
+            this.tb_StatusMessage.TabIndex = 70;
+            // 
+            // tb_EndpointName
+            // 
+            this.tb_EndpointName.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_EndpointName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_EndpointName.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_EndpointName.Location = new System.Drawing.Point(177, 13);
+            this.tb_EndpointName.Multiline = true;
+            this.tb_EndpointName.Name = "tb_EndpointName";
+            this.tb_EndpointName.ReadOnly = true;
+            this.tb_EndpointName.Size = new System.Drawing.Size(597, 23);
+            this.tb_EndpointName.TabIndex = 69;
+            // 
+            // pb_Favicon
+            // 
+            this.pb_Favicon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pb_Favicon.Image = ((System.Drawing.Image)(resources.GetObject("pb_Favicon.Image")));
+            this.pb_Favicon.Location = new System.Drawing.Point(148, 13);
+            this.pb_Favicon.Name = "pb_Favicon";
+            this.pb_Favicon.Size = new System.Drawing.Size(23, 23);
+            this.pb_Favicon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_Favicon.TabIndex = 68;
+            this.pb_Favicon.TabStop = false;
+            // 
+            // pb_StatusIcon
+            // 
+            this.pb_StatusIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pb_StatusIcon.Location = new System.Drawing.Point(148, 294);
+            this.pb_StatusIcon.Name = "pb_StatusIcon";
+            this.pb_StatusIcon.Size = new System.Drawing.Size(23, 23);
+            this.pb_StatusIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_StatusIcon.TabIndex = 67;
+            this.pb_StatusIcon.TabStop = false;
+            // 
+            // lbl_StatusMessage
+            // 
+            this.lbl_StatusMessage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_StatusMessage.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_StatusMessage.Location = new System.Drawing.Point(8, 323);
+            this.lbl_StatusMessage.Name = "lbl_StatusMessage";
+            this.lbl_StatusMessage.Size = new System.Drawing.Size(134, 23);
+            this.lbl_StatusMessage.TabIndex = 66;
+            this.lbl_StatusMessage.Text = "Status Message";
+            this.lbl_StatusMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_StatusCode
+            // 
+            this.lbl_StatusCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_StatusCode.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_StatusCode.Location = new System.Drawing.Point(8, 294);
+            this.lbl_StatusCode.Name = "lbl_StatusCode";
+            this.lbl_StatusCode.Size = new System.Drawing.Size(134, 23);
+            this.lbl_StatusCode.TabIndex = 65;
+            this.lbl_StatusCode.Text = "Status Code";
+            this.lbl_StatusCode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_PingTime
+            // 
+            this.lbl_PingTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_PingTime.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_PingTime.Location = new System.Drawing.Point(410, 265);
+            this.lbl_PingTime.Name = "lbl_PingTime";
+            this.lbl_PingTime.Size = new System.Drawing.Size(105, 23);
+            this.lbl_PingTime.TabIndex = 64;
+            this.lbl_PingTime.Text = "Ping Time";
+            this.lbl_PingTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_ResponseTime
+            // 
+            this.lbl_ResponseTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_ResponseTime.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ResponseTime.Location = new System.Drawing.Point(8, 265);
+            this.lbl_ResponseTime.Name = "lbl_ResponseTime";
+            this.lbl_ResponseTime.Size = new System.Drawing.Size(134, 23);
+            this.lbl_ResponseTime.TabIndex = 63;
+            this.lbl_ResponseTime.Text = "Response Time";
+            this.lbl_ResponseTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_UserPassword
+            // 
+            this.lbl_UserPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_UserPassword.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_UserPassword.Location = new System.Drawing.Point(410, 237);
+            this.lbl_UserPassword.Name = "lbl_UserPassword";
+            this.lbl_UserPassword.Size = new System.Drawing.Size(134, 23);
+            this.lbl_UserPassword.TabIndex = 62;
+            this.lbl_UserPassword.Text = "User Password";
+            this.lbl_UserPassword.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_UserName
+            // 
+            this.lbl_UserName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_UserName.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_UserName.Location = new System.Drawing.Point(8, 237);
+            this.lbl_UserName.Name = "lbl_UserName";
+            this.lbl_UserName.Size = new System.Drawing.Size(134, 23);
+            this.lbl_UserName.TabIndex = 61;
+            this.lbl_UserName.Text = "User Name";
+            this.lbl_UserName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_DNSName
+            // 
+            this.lbl_DNSName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_DNSName.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_DNSName.Location = new System.Drawing.Point(8, 209);
+            this.lbl_DNSName.Name = "lbl_DNSName";
+            this.lbl_DNSName.Size = new System.Drawing.Size(134, 23);
+            this.lbl_DNSName.TabIndex = 60;
+            this.lbl_DNSName.Text = "DNS Name";
+            this.lbl_DNSName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_IPAddress
+            // 
+            this.lbl_IPAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_IPAddress.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_IPAddress.Location = new System.Drawing.Point(8, 125);
+            this.lbl_IPAddress.Name = "lbl_IPAddress";
+            this.lbl_IPAddress.Size = new System.Drawing.Size(134, 23);
+            this.lbl_IPAddress.TabIndex = 59;
+            this.lbl_IPAddress.Text = "IP Address(es)";
+            this.lbl_IPAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_ResponseURL
+            // 
+            this.lbl_ResponseURL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_ResponseURL.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ResponseURL.Location = new System.Drawing.Point(8, 97);
+            this.lbl_ResponseURL.Name = "lbl_ResponseURL";
+            this.lbl_ResponseURL.Size = new System.Drawing.Size(134, 23);
+            this.lbl_ResponseURL.TabIndex = 58;
+            this.lbl_ResponseURL.Text = "Response URL";
+            this.lbl_ResponseURL.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_EndpointURL
+            // 
+            this.lbl_EndpointURL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_EndpointURL.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_EndpointURL.Location = new System.Drawing.Point(8, 69);
+            this.lbl_EndpointURL.Name = "lbl_EndpointURL";
+            this.lbl_EndpointURL.Size = new System.Drawing.Size(134, 23);
+            this.lbl_EndpointURL.TabIndex = 57;
+            this.lbl_EndpointURL.Text = "Endpoint URL";
+            this.lbl_EndpointURL.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_Port
+            // 
+            this.lbl_Port.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_Port.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Port.Location = new System.Drawing.Point(410, 42);
+            this.lbl_Port.Name = "lbl_Port";
+            this.lbl_Port.Size = new System.Drawing.Size(134, 23);
+            this.lbl_Port.TabIndex = 56;
+            this.lbl_Port.Text = "Port";
+            this.lbl_Port.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_Protocol
+            // 
+            this.lbl_Protocol.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_Protocol.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Protocol.Location = new System.Drawing.Point(8, 41);
+            this.lbl_Protocol.Name = "lbl_Protocol";
+            this.lbl_Protocol.Size = new System.Drawing.Size(134, 23);
+            this.lbl_Protocol.TabIndex = 55;
+            this.lbl_Protocol.Text = "Protocol";
+            this.lbl_Protocol.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_EndpointName
+            // 
+            this.lbl_EndpointName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_EndpointName.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_EndpointName.Location = new System.Drawing.Point(8, 13);
+            this.lbl_EndpointName.Name = "lbl_EndpointName";
+            this.lbl_EndpointName.Size = new System.Drawing.Size(134, 23);
+            this.lbl_EndpointName.TabIndex = 54;
+            this.lbl_EndpointName.Text = "Endpoint Name";
+            this.lbl_EndpointName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // imageList_Tabs
+            // 
+            this.imageList_Tabs.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.imageList_Tabs.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList_Tabs.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // tabPage_TraceRoute
             // 
@@ -825,6 +1305,7 @@
             this.treeView_ComputerInfo.ImageIndex = 6;
             this.treeView_ComputerInfo.ImageList = this.imageList_ListViewIcons_20pix;
             this.treeView_ComputerInfo.Indent = 25;
+            this.treeView_ComputerInfo.LineColor = System.Drawing.Color.Empty;
             this.treeView_ComputerInfo.Location = new System.Drawing.Point(11, 9);
             this.treeView_ComputerInfo.Name = "treeView_ComputerInfo";
             this.treeView_ComputerInfo.SelectedImageIndex = 6;
@@ -2072,485 +2553,6 @@
             this.columnHeader18.Text = "Link Address";
             this.columnHeader18.Width = 548;
             // 
-            // tabPage_MainInfo
-            // 
-            this.tabPage_MainInfo.BackColor = System.Drawing.Color.Silver;
-            this.tabPage_MainInfo.Controls.Add(this.pb_ShowPassword);
-            this.tabPage_MainInfo.Controls.Add(this.pb_Vendor);
-            this.tabPage_MainInfo.Controls.Add(this.cb_IPAddress);
-            this.tabPage_MainInfo.Controls.Add(this.pb_MACVendorProgress);
-            this.tabPage_MainInfo.Controls.Add(this.tb_MACVendor);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_MACVendor);
-            this.tabPage_MainInfo.Controls.Add(this.pb_PingRefresh);
-            this.tabPage_MainInfo.Controls.Add(this.tb_MACAddress);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_MACAddress);
-            this.tabPage_MainInfo.Controls.Add(this.tb_UserPassword);
-            this.tabPage_MainInfo.Controls.Add(this.tb_PingTime);
-            this.tabPage_MainInfo.Controls.Add(this.tb_Port);
-            this.tabPage_MainInfo.Controls.Add(this.tb_StatusCode);
-            this.tabPage_MainInfo.Controls.Add(this.tb_ResponseTime);
-            this.tabPage_MainInfo.Controls.Add(this.tb_UserName);
-            this.tabPage_MainInfo.Controls.Add(this.tb_Protocol);
-            this.tabPage_MainInfo.Controls.Add(this.tb_DNSName);
-            this.tabPage_MainInfo.Controls.Add(this.tb_EndpointURL);
-            this.tabPage_MainInfo.Controls.Add(this.tb_ResponseURL);
-            this.tabPage_MainInfo.Controls.Add(this.tb_StatusMessage);
-            this.tabPage_MainInfo.Controls.Add(this.tb_EndpointName);
-            this.tabPage_MainInfo.Controls.Add(this.pb_Favicon);
-            this.tabPage_MainInfo.Controls.Add(this.pb_StatusIcon);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_StatusMessage);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_StatusCode);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_PingTime);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_ResponseTime);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_UserPassword);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_UserName);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_DNSName);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_IPAddress);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_ResponseURL);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_EndpointURL);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_Port);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_Protocol);
-            this.tabPage_MainInfo.Controls.Add(this.lbl_EndpointName);
-            this.tabPage_MainInfo.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tabPage_MainInfo.Location = new System.Drawing.Point(4, 42);
-            this.tabPage_MainInfo.Name = "tabPage_MainInfo";
-            this.tabPage_MainInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_MainInfo.Size = new System.Drawing.Size(783, 378);
-            this.tabPage_MainInfo.TabIndex = 15;
-            this.tabPage_MainInfo.Text = "Main Info";
-            // 
-            // pb_ShowPassword
-            // 
-            this.pb_ShowPassword.BackColor = System.Drawing.SystemColors.Info;
-            this.pb_ShowPassword.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pb_ShowPassword.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_ShowPassword.Image = global::EndpointChecker.Properties.Resources.password;
-            this.pb_ShowPassword.Location = new System.Drawing.Point(752, 238);
-            this.pb_ShowPassword.Name = "pb_ShowPassword";
-            this.pb_ShowPassword.Size = new System.Drawing.Size(21, 21);
-            this.pb_ShowPassword.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_ShowPassword.TabIndex = 89;
-            this.pb_ShowPassword.TabStop = false;
-            this.pb_ShowPassword.Visible = false;
-            this.pb_ShowPassword.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pb_ShowPassword_MouseDown);
-            this.pb_ShowPassword.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pb_ShowPassword_MouseUp);
-            // 
-            // pb_Vendor
-            // 
-            this.pb_Vendor.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pb_Vendor.Image = ((System.Drawing.Image)(resources.GetObject("pb_Vendor.Image")));
-            this.pb_Vendor.Location = new System.Drawing.Point(148, 181);
-            this.pb_Vendor.Name = "pb_Vendor";
-            this.pb_Vendor.Size = new System.Drawing.Size(23, 23);
-            this.pb_Vendor.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_Vendor.TabIndex = 88;
-            this.pb_Vendor.TabStop = false;
-            this.pb_Vendor.Click += new System.EventHandler(this.pb_Vendor_Click);
-            // 
-            // cb_IPAddress
-            // 
-            this.cb_IPAddress.BackColor = System.Drawing.SystemColors.Info;
-            this.cb_IPAddress.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cb_IPAddress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cb_IPAddress.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.cb_IPAddress.FormattingEnabled = true;
-            this.cb_IPAddress.Location = new System.Drawing.Point(148, 123);
-            this.cb_IPAddress.Name = "cb_IPAddress";
-            this.cb_IPAddress.Size = new System.Drawing.Size(626, 26);
-            this.cb_IPAddress.TabIndex = 87;
-            this.cb_IPAddress.SelectedIndexChanged += new System.EventHandler(this.cb_IPAddress_SelectedIndexChanged);
-            // 
-            // pb_MACVendorProgress
-            // 
-            this.pb_MACVendorProgress.BackColor = System.Drawing.SystemColors.Info;
-            this.pb_MACVendorProgress.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pb_MACVendorProgress.Cursor = System.Windows.Forms.Cursors.Default;
-            this.pb_MACVendorProgress.Image = ((System.Drawing.Image)(resources.GetObject("pb_MACVendorProgress.Image")));
-            this.pb_MACVendorProgress.Location = new System.Drawing.Point(752, 182);
-            this.pb_MACVendorProgress.Name = "pb_MACVendorProgress";
-            this.pb_MACVendorProgress.Size = new System.Drawing.Size(21, 21);
-            this.pb_MACVendorProgress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_MACVendorProgress.TabIndex = 86;
-            this.pb_MACVendorProgress.TabStop = false;
-            this.pb_MACVendorProgress.Visible = false;
-            // 
-            // tb_MACVendor
-            // 
-            this.tb_MACVendor.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_MACVendor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_MACVendor.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_MACVendor.Location = new System.Drawing.Point(177, 181);
-            this.tb_MACVendor.Multiline = true;
-            this.tb_MACVendor.Name = "tb_MACVendor";
-            this.tb_MACVendor.ReadOnly = true;
-            this.tb_MACVendor.Size = new System.Drawing.Size(597, 23);
-            this.tb_MACVendor.TabIndex = 85;
-            // 
-            // lbl_MACVendor
-            // 
-            this.lbl_MACVendor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_MACVendor.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_MACVendor.Location = new System.Drawing.Point(8, 181);
-            this.lbl_MACVendor.Name = "lbl_MACVendor";
-            this.lbl_MACVendor.Size = new System.Drawing.Size(134, 23);
-            this.lbl_MACVendor.TabIndex = 84;
-            this.lbl_MACVendor.Text = "MAC Vendor";
-            this.lbl_MACVendor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // pb_PingRefresh
-            // 
-            this.pb_PingRefresh.BackColor = System.Drawing.Color.Transparent;
-            this.pb_PingRefresh.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pb_PingRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_PingRefresh.Image = ((System.Drawing.Image)(resources.GetObject("pb_PingRefresh.Image")));
-            this.pb_PingRefresh.Location = new System.Drawing.Point(521, 265);
-            this.pb_PingRefresh.Name = "pb_PingRefresh";
-            this.pb_PingRefresh.Size = new System.Drawing.Size(23, 23);
-            this.pb_PingRefresh.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_PingRefresh.TabIndex = 83;
-            this.pb_PingRefresh.TabStop = false;
-            this.pb_PingRefresh.Click += new System.EventHandler(this.pb_PingRefresh_Click);
-            // 
-            // tb_MACAddress
-            // 
-            this.tb_MACAddress.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_MACAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_MACAddress.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_MACAddress.Location = new System.Drawing.Point(148, 153);
-            this.tb_MACAddress.Multiline = true;
-            this.tb_MACAddress.Name = "tb_MACAddress";
-            this.tb_MACAddress.ReadOnly = true;
-            this.tb_MACAddress.Size = new System.Drawing.Size(626, 23);
-            this.tb_MACAddress.TabIndex = 82;
-            // 
-            // lbl_MACAddress
-            // 
-            this.lbl_MACAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_MACAddress.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_MACAddress.Location = new System.Drawing.Point(8, 153);
-            this.lbl_MACAddress.Name = "lbl_MACAddress";
-            this.lbl_MACAddress.Size = new System.Drawing.Size(134, 23);
-            this.lbl_MACAddress.TabIndex = 81;
-            this.lbl_MACAddress.Text = "MAC Address";
-            this.lbl_MACAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_UserPassword
-            // 
-            this.tb_UserPassword.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_UserPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_UserPassword.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_UserPassword.Location = new System.Drawing.Point(550, 237);
-            this.tb_UserPassword.Multiline = true;
-            this.tb_UserPassword.Name = "tb_UserPassword";
-            this.tb_UserPassword.PasswordChar = '*';
-            this.tb_UserPassword.ReadOnly = true;
-            this.tb_UserPassword.Size = new System.Drawing.Size(224, 23);
-            this.tb_UserPassword.TabIndex = 80;
-            this.tb_UserPassword.UseSystemPasswordChar = true;
-            this.tb_UserPassword.TextChanged += new System.EventHandler(this.tb_UserPassword_TextChanged);
-            // 
-            // tb_PingTime
-            // 
-            this.tb_PingTime.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_PingTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_PingTime.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_PingTime.Location = new System.Drawing.Point(550, 265);
-            this.tb_PingTime.Multiline = true;
-            this.tb_PingTime.Name = "tb_PingTime";
-            this.tb_PingTime.ReadOnly = true;
-            this.tb_PingTime.Size = new System.Drawing.Size(224, 23);
-            this.tb_PingTime.TabIndex = 79;
-            // 
-            // tb_Port
-            // 
-            this.tb_Port.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_Port.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_Port.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_Port.Location = new System.Drawing.Point(550, 42);
-            this.tb_Port.Multiline = true;
-            this.tb_Port.Name = "tb_Port";
-            this.tb_Port.ReadOnly = true;
-            this.tb_Port.Size = new System.Drawing.Size(224, 23);
-            this.tb_Port.TabIndex = 78;
-            // 
-            // tb_StatusCode
-            // 
-            this.tb_StatusCode.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_StatusCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_StatusCode.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_StatusCode.Location = new System.Drawing.Point(177, 294);
-            this.tb_StatusCode.Multiline = true;
-            this.tb_StatusCode.Name = "tb_StatusCode";
-            this.tb_StatusCode.ReadOnly = true;
-            this.tb_StatusCode.Size = new System.Drawing.Size(193, 23);
-            this.tb_StatusCode.TabIndex = 77;
-            // 
-            // tb_ResponseTime
-            // 
-            this.tb_ResponseTime.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_ResponseTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_ResponseTime.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_ResponseTime.Location = new System.Drawing.Point(148, 265);
-            this.tb_ResponseTime.Multiline = true;
-            this.tb_ResponseTime.Name = "tb_ResponseTime";
-            this.tb_ResponseTime.ReadOnly = true;
-            this.tb_ResponseTime.Size = new System.Drawing.Size(222, 23);
-            this.tb_ResponseTime.TabIndex = 76;
-            // 
-            // tb_UserName
-            // 
-            this.tb_UserName.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_UserName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_UserName.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_UserName.Location = new System.Drawing.Point(148, 237);
-            this.tb_UserName.Multiline = true;
-            this.tb_UserName.Name = "tb_UserName";
-            this.tb_UserName.ReadOnly = true;
-            this.tb_UserName.Size = new System.Drawing.Size(222, 23);
-            this.tb_UserName.TabIndex = 75;
-            // 
-            // tb_Protocol
-            // 
-            this.tb_Protocol.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_Protocol.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_Protocol.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_Protocol.Location = new System.Drawing.Point(148, 41);
-            this.tb_Protocol.Multiline = true;
-            this.tb_Protocol.Name = "tb_Protocol";
-            this.tb_Protocol.ReadOnly = true;
-            this.tb_Protocol.Size = new System.Drawing.Size(222, 23);
-            this.tb_Protocol.TabIndex = 74;
-            // 
-            // tb_DNSName
-            // 
-            this.tb_DNSName.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_DNSName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_DNSName.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_DNSName.Location = new System.Drawing.Point(148, 209);
-            this.tb_DNSName.Multiline = true;
-            this.tb_DNSName.Name = "tb_DNSName";
-            this.tb_DNSName.ReadOnly = true;
-            this.tb_DNSName.Size = new System.Drawing.Size(626, 23);
-            this.tb_DNSName.TabIndex = 71;
-            // 
-            // tb_EndpointURL
-            // 
-            this.tb_EndpointURL.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_EndpointURL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_EndpointURL.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_EndpointURL.Location = new System.Drawing.Point(148, 69);
-            this.tb_EndpointURL.Multiline = true;
-            this.tb_EndpointURL.Name = "tb_EndpointURL";
-            this.tb_EndpointURL.ReadOnly = true;
-            this.tb_EndpointURL.Size = new System.Drawing.Size(626, 23);
-            this.tb_EndpointURL.TabIndex = 73;
-            // 
-            // tb_ResponseURL
-            // 
-            this.tb_ResponseURL.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_ResponseURL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_ResponseURL.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_ResponseURL.Location = new System.Drawing.Point(148, 97);
-            this.tb_ResponseURL.Multiline = true;
-            this.tb_ResponseURL.Name = "tb_ResponseURL";
-            this.tb_ResponseURL.ReadOnly = true;
-            this.tb_ResponseURL.Size = new System.Drawing.Size(626, 23);
-            this.tb_ResponseURL.TabIndex = 72;
-            // 
-            // tb_StatusMessage
-            // 
-            this.tb_StatusMessage.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_StatusMessage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_StatusMessage.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_StatusMessage.Location = new System.Drawing.Point(148, 323);
-            this.tb_StatusMessage.Multiline = true;
-            this.tb_StatusMessage.Name = "tb_StatusMessage";
-            this.tb_StatusMessage.ReadOnly = true;
-            this.tb_StatusMessage.Size = new System.Drawing.Size(626, 23);
-            this.tb_StatusMessage.TabIndex = 70;
-            // 
-            // tb_EndpointName
-            // 
-            this.tb_EndpointName.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_EndpointName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_EndpointName.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_EndpointName.Location = new System.Drawing.Point(177, 13);
-            this.tb_EndpointName.Multiline = true;
-            this.tb_EndpointName.Name = "tb_EndpointName";
-            this.tb_EndpointName.ReadOnly = true;
-            this.tb_EndpointName.Size = new System.Drawing.Size(597, 23);
-            this.tb_EndpointName.TabIndex = 69;
-            // 
-            // pb_Favicon
-            // 
-            this.pb_Favicon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pb_Favicon.Image = ((System.Drawing.Image)(resources.GetObject("pb_Favicon.Image")));
-            this.pb_Favicon.Location = new System.Drawing.Point(148, 13);
-            this.pb_Favicon.Name = "pb_Favicon";
-            this.pb_Favicon.Size = new System.Drawing.Size(23, 23);
-            this.pb_Favicon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_Favicon.TabIndex = 68;
-            this.pb_Favicon.TabStop = false;
-            // 
-            // pb_StatusIcon
-            // 
-            this.pb_StatusIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pb_StatusIcon.Location = new System.Drawing.Point(148, 294);
-            this.pb_StatusIcon.Name = "pb_StatusIcon";
-            this.pb_StatusIcon.Size = new System.Drawing.Size(23, 23);
-            this.pb_StatusIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_StatusIcon.TabIndex = 67;
-            this.pb_StatusIcon.TabStop = false;
-            // 
-            // lbl_StatusMessage
-            // 
-            this.lbl_StatusMessage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_StatusMessage.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_StatusMessage.Location = new System.Drawing.Point(8, 323);
-            this.lbl_StatusMessage.Name = "lbl_StatusMessage";
-            this.lbl_StatusMessage.Size = new System.Drawing.Size(134, 23);
-            this.lbl_StatusMessage.TabIndex = 66;
-            this.lbl_StatusMessage.Text = "Status Message";
-            this.lbl_StatusMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_StatusCode
-            // 
-            this.lbl_StatusCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_StatusCode.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_StatusCode.Location = new System.Drawing.Point(8, 294);
-            this.lbl_StatusCode.Name = "lbl_StatusCode";
-            this.lbl_StatusCode.Size = new System.Drawing.Size(134, 23);
-            this.lbl_StatusCode.TabIndex = 65;
-            this.lbl_StatusCode.Text = "Status Code";
-            this.lbl_StatusCode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_PingTime
-            // 
-            this.lbl_PingTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_PingTime.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_PingTime.Location = new System.Drawing.Point(410, 265);
-            this.lbl_PingTime.Name = "lbl_PingTime";
-            this.lbl_PingTime.Size = new System.Drawing.Size(105, 23);
-            this.lbl_PingTime.TabIndex = 64;
-            this.lbl_PingTime.Text = "Ping Time";
-            this.lbl_PingTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_ResponseTime
-            // 
-            this.lbl_ResponseTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_ResponseTime.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ResponseTime.Location = new System.Drawing.Point(8, 265);
-            this.lbl_ResponseTime.Name = "lbl_ResponseTime";
-            this.lbl_ResponseTime.Size = new System.Drawing.Size(134, 23);
-            this.lbl_ResponseTime.TabIndex = 63;
-            this.lbl_ResponseTime.Text = "Response Time";
-            this.lbl_ResponseTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_UserPassword
-            // 
-            this.lbl_UserPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_UserPassword.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UserPassword.Location = new System.Drawing.Point(410, 237);
-            this.lbl_UserPassword.Name = "lbl_UserPassword";
-            this.lbl_UserPassword.Size = new System.Drawing.Size(134, 23);
-            this.lbl_UserPassword.TabIndex = 62;
-            this.lbl_UserPassword.Text = "User Password";
-            this.lbl_UserPassword.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_UserName
-            // 
-            this.lbl_UserName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_UserName.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UserName.Location = new System.Drawing.Point(8, 237);
-            this.lbl_UserName.Name = "lbl_UserName";
-            this.lbl_UserName.Size = new System.Drawing.Size(134, 23);
-            this.lbl_UserName.TabIndex = 61;
-            this.lbl_UserName.Text = "User Name";
-            this.lbl_UserName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_DNSName
-            // 
-            this.lbl_DNSName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_DNSName.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_DNSName.Location = new System.Drawing.Point(8, 209);
-            this.lbl_DNSName.Name = "lbl_DNSName";
-            this.lbl_DNSName.Size = new System.Drawing.Size(134, 23);
-            this.lbl_DNSName.TabIndex = 60;
-            this.lbl_DNSName.Text = "DNS Name";
-            this.lbl_DNSName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_IPAddress
-            // 
-            this.lbl_IPAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_IPAddress.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_IPAddress.Location = new System.Drawing.Point(8, 125);
-            this.lbl_IPAddress.Name = "lbl_IPAddress";
-            this.lbl_IPAddress.Size = new System.Drawing.Size(134, 23);
-            this.lbl_IPAddress.TabIndex = 59;
-            this.lbl_IPAddress.Text = "IP Address(es)";
-            this.lbl_IPAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_ResponseURL
-            // 
-            this.lbl_ResponseURL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_ResponseURL.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ResponseURL.Location = new System.Drawing.Point(8, 97);
-            this.lbl_ResponseURL.Name = "lbl_ResponseURL";
-            this.lbl_ResponseURL.Size = new System.Drawing.Size(134, 23);
-            this.lbl_ResponseURL.TabIndex = 58;
-            this.lbl_ResponseURL.Text = "Response URL";
-            this.lbl_ResponseURL.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_EndpointURL
-            // 
-            this.lbl_EndpointURL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_EndpointURL.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_EndpointURL.Location = new System.Drawing.Point(8, 69);
-            this.lbl_EndpointURL.Name = "lbl_EndpointURL";
-            this.lbl_EndpointURL.Size = new System.Drawing.Size(134, 23);
-            this.lbl_EndpointURL.TabIndex = 57;
-            this.lbl_EndpointURL.Text = "Endpoint URL";
-            this.lbl_EndpointURL.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_Port
-            // 
-            this.lbl_Port.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_Port.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Port.Location = new System.Drawing.Point(410, 42);
-            this.lbl_Port.Name = "lbl_Port";
-            this.lbl_Port.Size = new System.Drawing.Size(134, 23);
-            this.lbl_Port.TabIndex = 56;
-            this.lbl_Port.Text = "Port";
-            this.lbl_Port.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_Protocol
-            // 
-            this.lbl_Protocol.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_Protocol.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Protocol.Location = new System.Drawing.Point(8, 41);
-            this.lbl_Protocol.Name = "lbl_Protocol";
-            this.lbl_Protocol.Size = new System.Drawing.Size(134, 23);
-            this.lbl_Protocol.TabIndex = 55;
-            this.lbl_Protocol.Text = "Protocol";
-            this.lbl_Protocol.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_EndpointName
-            // 
-            this.lbl_EndpointName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_EndpointName.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_EndpointName.Location = new System.Drawing.Point(8, 13);
-            this.lbl_EndpointName.Name = "lbl_EndpointName";
-            this.lbl_EndpointName.Size = new System.Drawing.Size(134, 23);
-            this.lbl_EndpointName.TabIndex = 54;
-            this.lbl_EndpointName.Text = "Endpoint Name";
-            this.lbl_EndpointName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // imageList_Tabs
-            // 
-            this.imageList_Tabs.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.imageList_Tabs.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList_Tabs.TransparentColor = System.Drawing.Color.Transparent;
-            // 
             // lbl_HTTP
             // 
             this.lbl_HTTP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -2669,10 +2671,10 @@
             this.pb_Browse_WindowsExplorer.TabStop = false;
             this.pb_Browse_WindowsExplorer.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pb_Browse_WindowsExplorer_MouseClick);
             // 
-            // bw_PortCheck
+            // BW_PortCheck
             // 
-            this.bw_PortCheck.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bw_PortCheck_DoWork);
-            this.bw_PortCheck.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bw_PortCheck_RunWorkerCompleted);
+            this.BW_PortCheck.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BW_PortCheck_DoWork);
+            this.BW_PortCheck.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BW_PortCheck_RunWorkerCompleted);
             // 
             // TIMER_LoadProperties
             // 
@@ -2740,11 +2742,18 @@
             this.Name = "EndpointDetailsDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Endpoint Status Details";
-            this.Shown += new System.EventHandler(this.EndpointDetailsDialog_Shown);
             this.tabPage_HTMLInfo.ResumeLayout(false);
             this.tabPage_HTMLInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_PageInfo_ThemeColor)).EndInit();
             this.tabControl.ResumeLayout(false);
+            this.tabPage_MainInfo.ResumeLayout(false);
+            this.tabPage_MainInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_ShowPassword)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_Vendor)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_MACVendorProgress)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_PingRefresh)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_Favicon)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_StatusIcon)).EndInit();
             this.tabPage_TraceRoute.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pb_TraceRouteProgress)).EndInit();
             this.tabPage_NetworkShares.ResumeLayout(false);
@@ -2776,14 +2785,6 @@
             this.tabPage_PageLinks.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pb_PageLinks_CommonLinksStatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_PageLinks_ValidatingProgress)).EndInit();
-            this.tabPage_MainInfo.ResumeLayout(false);
-            this.tabPage_MainInfo.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_ShowPassword)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_Vendor)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_MACVendorProgress)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_PingRefresh)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_Favicon)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_StatusIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_HTTP)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_FTP)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_VNC)).EndInit();
@@ -2801,7 +2802,7 @@
         public System.Windows.Forms.ColumnHeader serviceHeader;
         public System.Windows.Forms.ColumnHeader statusHeader;
         public System.Windows.Forms.ColumnHeader portHeader;
-        public System.ComponentModel.BackgroundWorker bw_PortCheck;
+        public System.ComponentModel.BackgroundWorker BW_PortCheck;
         public System.Windows.Forms.Timer TIMER_LoadProperties;
         public System.Windows.Forms.ColumnHeader columnHeader10;
         public System.Windows.Forms.TabPage tabPage_VirusTotal;
@@ -2947,7 +2948,6 @@
         public System.Windows.Forms.ColumnHeader columnHeader17;
         public System.Windows.Forms.ColumnHeader columnHeader18;
         public System.Windows.Forms.Label lbl_LinksCountMessage;
-        private System.Windows.Forms.Button btn_PageLinks_Validate;
         public System.Windows.Forms.PictureBox pb_PageLinks_ValidatingProgress;
         public System.Windows.Forms.Label lbl_PageLinks_Information;
         public System.Windows.Forms.TabPage tabPage_MainInfo;
@@ -2991,5 +2991,6 @@
         public System.Windows.Forms.Label lbl_HTTPInfo_ETag;
         public System.Windows.Forms.PictureBox pb_ShowPassword;
         public System.Windows.Forms.PictureBox pb_HTTPInfo_WeakETag;
+        public System.Windows.Forms.Button btn_PageLinks_Validate;
     }
 }

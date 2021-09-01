@@ -8,6 +8,7 @@ using System.Linq;
 using System.Management;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -158,26 +159,14 @@ namespace EndpointChecker
             { 10000, "Webmin" }
         };
 
-        public EndpointDetailsDialog(int pingTimeout, Image selectedEndpointIcon)
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
+        public EndpointDetailsDialog(int pingTimeout, EndpointDefinition selectedEndpoint, Image selectedEndpointImage)
         {
             InitializeComponent();
 
-            // REMOVE OPTIONAL TAB PAGES [WILL BE ADDED LATER]
-            tabControl.TabPages.Remove(tabPage_TraceRoute);
-            tabControl.TabPages.Remove(tabPage_WMI_ComputerInfo);
-            tabControl.TabPages.Remove(tabPage_Ports);
-            tabControl.TabPages.Remove(tabPage_HTTPInfo);
-            tabControl.TabPages.Remove(tabPage_HTTPRequestHeaders);
-            tabControl.TabPages.Remove(tabPage_HTTPResponseHeaders);
-            tabControl.TabPages.Remove(tabPage_HTMLInfo);
-            tabControl.TabPages.Remove(tabPage_FTPInfo);
-            tabControl.TabPages.Remove(tabPage_NetworkShares);
-            tabControl.TabPages.Remove(tabPage_WhoIs);
-            tabControl.TabPages.Remove(tabPage_GeoLocation);
-            tabControl.TabPages.Remove(tabPage_SSLCertificate);
-            tabControl.TabPages.Remove(tabPage_VirusTotal);
-            tabControl.TabPages.Remove(tabPage_PageCategory);
-            tabControl.TabPages.Remove(tabPage_PageLinks);
+            // COMMON EXCEPTION HANDLERS
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CheckerMainForm.UnhandledExceptionHandler);
+            Application.ThreadException += new ThreadExceptionEventHandler(CheckerMainForm.ThreadExceptionHandler);
 
             // HIDE PROTOCOL SPECIFIC FIELDS FROM 'MAIN INFO' TAB, IF VALIDATION METHOD IS 'PING ONLY'
             if (CheckerMainForm.validationMethod == CheckerMainForm.ValidationMethod.Ping)
@@ -233,9 +222,9 @@ namespace EndpointChecker
             pb_RDP.Image = CheckerMainForm.ResizeImage(Properties.Resources.connect_RDP, pb_RDP.Width, pb_RDP.Height);
             pb_VNC.Image = CheckerMainForm.ResizeImage(Properties.Resources.connect_VNC, pb_VNC.Width, pb_VNC.Height);
 
-            _selectedEndpoint = CheckerMainForm.lv_Endpoints_SelectedEndpoint;
+            _selectedEndpoint = selectedEndpoint;
+            _selectedEndpointIcon = selectedEndpointImage;
             _pingTimeout = pingTimeout;
-            _selectedEndpointIcon = selectedEndpointIcon;
 
             ipAddress_ComboboxTooltip.SetToolTip(cb_IPAddress, "Click to select desired IP Address");
             livePingIconTooltip.SetToolTip(pb_PingRefresh, "Click for Live 1 second Ping Refresh");
@@ -248,6 +237,8 @@ namespace EndpointChecker
                 "Weak eTags are easy to generate," +
                 Environment.NewLine +
                 "but are far less useful for comparisons");
+
+            TIMER_LoadProperties.Start();
         }
 
         public void LoadProperties()
@@ -290,12 +281,18 @@ namespace EndpointChecker
                 CheckerMainForm.validationMethod != CheckerMainForm.ValidationMethod.Ping)
             {
                 // ADD FTP TAB PAGE
-                tabControl.TabPages.Add(tabPage_FTPInfo);
+                if (_selectedEndpoint.FTPBannerMessage != CheckerMainForm.status_NotAvailable ||
+                    _selectedEndpoint.FTPExitMessage != CheckerMainForm.status_NotAvailable ||
+                    _selectedEndpoint.FTPStatusDescription != CheckerMainForm.status_NotAvailable ||
+                    _selectedEndpoint.FTPWelcomeMessage != CheckerMainForm.status_NotAvailable)
+                {
+                    tb_FTPInfo_WelcomeMessage.Text = _selectedEndpoint.FTPWelcomeMessage;
+                    tb_FTPInfo_BannerMessage.Text = _selectedEndpoint.FTPBannerMessage;
+                    tb_FTPInfo_ExitMessage.Text = _selectedEndpoint.FTPExitMessage;
+                    tb_FTPInfo_StatusDescription.Text = _selectedEndpoint.FTPStatusDescription;
 
-                tb_FTPInfo_WelcomeMessage.Text = _selectedEndpoint.FTPWelcomeMessage;
-                tb_FTPInfo_BannerMessage.Text = _selectedEndpoint.FTPBannerMessage;
-                tb_FTPInfo_ExitMessage.Text = _selectedEndpoint.FTPExitMessage;
-                tb_FTPInfo_StatusDescription.Text = _selectedEndpoint.FTPStatusDescription;
+                    tabControl.TabPages.Add(tabPage_FTPInfo);
+                }
             }
             else if (_selectedEndpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
                      _selectedEndpoint.Protocol.ToLower() == Uri.UriSchemeHttps)
@@ -585,7 +582,6 @@ namespace EndpointChecker
             GetWhoIsInfo();
 
             // GET PAGE CATEGORY LIST
-            // GetPageCategoryList();
             GetPageCategoryListFromHTMLMeta();
         }
 
@@ -670,11 +666,6 @@ namespace EndpointChecker
                 btn_TraceRoute_Refresh.Enabled = true;
                 pb_TraceRouteProgress.Visible = false;
             }));
-        }
-
-        public void EndpointDetailsDialog_Shown(object sender, EventArgs e)
-        {
-            TIMER_LoadProperties.Start();
         }
 
         public void lv_RouteList_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -991,10 +982,10 @@ namespace EndpointChecker
             pb_PortsProgress.Visible = true;
             lv_Ports.Items.Clear();
 
-            bw_PortCheck.RunWorkerAsync();
+            BW_PortCheck.RunWorkerAsync();
         }
 
-        public void bw_PortCheck_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        public void BW_PortCheck_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             string ipAddress = string.Empty;
 
@@ -1065,7 +1056,7 @@ namespace EndpointChecker
             return portItem;
         }
 
-        public void bw_PortCheck_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        public void BW_PortCheck_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             btn_Ports_Refresh.Enabled = true;
             pb_PortsProgress.Visible = false;
@@ -1827,7 +1818,22 @@ namespace EndpointChecker
                         ThreadSafeInvoke((Action)(() =>
                         {
                             lbl_VirusTotal_Status.ForeColor = Color.Firebrick;
-                            lbl_VirusTotal_Status.Text = vtException.InnerException.Message;
+
+                            if (vtException.InnerException != null)
+                            {
+                                if (vtException.InnerException.Message != null)
+                                {
+                                    lbl_VirusTotal_Status.Text = vtException.InnerException.Message;
+                                }
+                                else
+                                {
+                                    lbl_VirusTotal_Status.Text = vtException.InnerException.ToString();
+                                }
+                            }
+                            else
+                            {
+                                lbl_VirusTotal_Status.Text = vtException.ToString();
+                            }
 
                             if (retry > 0)
                             {

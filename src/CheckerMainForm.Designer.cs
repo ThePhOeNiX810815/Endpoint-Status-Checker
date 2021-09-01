@@ -1697,8 +1697,6 @@
         public System.Windows.Forms.CheckBox cb_ExportEndpointsStatus_XML;
         public System.Windows.Forms.CheckBox cb_ExportEndpointsStatus_JSON;
         public System.Windows.Forms.CheckBox cb_ResolvePageLinks;
-        private System.Windows.Forms.GroupBox groupBox_HTTPOptions;
-        private System.Windows.Forms.PictureBox pb_ITNetwork;
         public System.Windows.Forms.ColumnHeader ch_HTTPETag;
         public System.Windows.Forms.LinkLabel link_AuthorMail;
         public System.Windows.Forms.PictureBox pb_FeatureRequest;
@@ -1707,7 +1705,9 @@
         public System.Windows.Forms.Button btn_ConfigFile;
         public System.Windows.Forms.Label lbl_EndpointsList;
         public System.Windows.Forms.Timer TIMER_ListAndLogsFilesWatcher;
-        private System.Windows.Forms.PictureBox pb_GitHub;
+        public System.Windows.Forms.GroupBox groupBox_HTTPOptions;
+        public System.Windows.Forms.PictureBox pb_ITNetwork;
+        public System.Windows.Forms.PictureBox pb_GitHub;
     }
 }
 

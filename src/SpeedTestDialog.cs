@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -34,8 +35,13 @@ namespace EndpointChecker
             SpeedTest();
         }
 
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public void SpeedTest()
         {
+            // COMMON EXCEPTION HANDLERS
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CheckerMainForm.UnhandledExceptionHandler);
+            Application.ThreadException += new ThreadExceptionEventHandler(CheckerMainForm.ThreadExceptionHandler);
+
             rb_AllServers.Enabled = false;
             rb_AllServersExceptCurrCountry.Enabled = false;
             rb_CurrentCountryServersOnly.Enabled = false;
