@@ -4570,7 +4570,7 @@ namespace EndpointChecker
 
             try
             {
-                StartProcess(
+                StartBackgroundProcess(
                              link,
                              string.Empty,
                              userName,
@@ -4586,7 +4586,7 @@ namespace EndpointChecker
         {
             try
             {
-                StartProcess(
+                StartBackgroundProcess(
                              "mstsc.exe",
                              "/v:" + endpointAddress + " /admin",
                              null,
@@ -4610,7 +4610,7 @@ namespace EndpointChecker
                 {
                     try
                     {
-                        StartProcess(
+                        StartBackgroundProcess(
                                      vncKey.GetValue(null).ToString().Split('"')[1],
                                      endpointAddress,
                                      null,
@@ -4640,7 +4640,7 @@ namespace EndpointChecker
         {
             try
             {
-                StartProcess(
+                StartBackgroundProcess(
                              endpointAddress,
                              arguments,
                              userName,
@@ -4667,35 +4667,63 @@ namespace EndpointChecker
             }
         }
 
-        public static void StartProcess(
+        public static void StartBackgroundProcess(
                                         string fileName,
                                         string arguments,
                                         string userName,
                                         string userPassword)
         {
-            ProcessStartInfo psInfo = new ProcessStartInfo();
-            psInfo.FileName = fileName;
-            psInfo.UseShellExecute = true;
-            psInfo.ErrorDialog = true;
-
-            if (!string.IsNullOrEmpty(arguments))
+            try
             {
-                psInfo.Arguments = arguments;
-            }
+                ProcessStartInfo psInfo = new ProcessStartInfo();
+                psInfo.FileName = fileName;
+                psInfo.UseShellExecute = true;
+                psInfo.ErrorDialog = true;
 
-            if (!string.IsNullOrEmpty(userName) &&
-                !string.IsNullOrEmpty(userPassword) &&
-                userName != status_NotAvailable &&
-                userPassword != status_NotAvailable)
-            {
-                using (new NetworkConnection(fileName, new NetworkCredential(userName, userPassword)))
+                if (!string.IsNullOrEmpty(arguments))
+                {
+                    psInfo.Arguments = arguments;
+                }
+
+                if (!string.IsNullOrEmpty(userName) &&
+                    !string.IsNullOrEmpty(userPassword) &&
+                    userName != status_NotAvailable &&
+                    userPassword != status_NotAvailable)
+                {
+                    NetworkConnection netConnection = null;
+
+                    try
+                    {
+                        netConnection = new NetworkConnection(fileName, new NetworkCredential(userName, userPassword));
+
+                        using (netConnection)
+                        {
+                            Process.Start(psInfo);
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        if (netConnection != null)
+                        {
+                            netConnection.Dispose();
+                        }
+                    }
+                }
+                else
                 {
                     Process.Start(psInfo);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Process.Start(psInfo);
+                MessageBox.Show(
+                    ex.Message,
+                    "Open Network Connection",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -5113,8 +5141,7 @@ namespace EndpointChecker
     {
         string _networkName;
 
-        public NetworkConnection(string networkName,
-            NetworkCredential credentials)
+        public NetworkConnection(string networkName, NetworkCredential credentials)
         {
             _networkName = networkName;
 
@@ -5138,7 +5165,7 @@ namespace EndpointChecker
 
             if (result != 0)
             {
-                throw new Win32Exception(result, "Error connecting to remote share");
+                throw new IOException("Error connecting to remote share", result);
             }
         }
 

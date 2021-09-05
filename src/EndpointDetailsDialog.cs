@@ -676,7 +676,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    CheckerMainForm.StartProcess(
+                    CheckerMainForm.StartBackgroundProcess(
                                                  address,
                                                  null,
                                                  null,
@@ -697,7 +697,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    CheckerMainForm.StartProcess(
+                    CheckerMainForm.StartBackgroundProcess(
                                                  share,
                                                  null,
                                                  _selectedEndpoint.LoginName,
@@ -1594,7 +1594,7 @@ namespace EndpointChecker
         {
             try
             {
-                CheckerMainForm.StartProcess(
+                CheckerMainForm.StartBackgroundProcess(
                     "https://www.google.com/maps/@?api=1&map_action=map&center=" +
                     tb_GeoLocation_Latitude.Text +
                     "," +
@@ -1742,7 +1742,7 @@ namespace EndpointChecker
             {
                 try
                 {
-                    CheckerMainForm.StartProcess(
+                    CheckerMainForm.StartBackgroundProcess(
                                                  macVendorWebPage,
                                                  null,
                                                  null,
@@ -1968,7 +1968,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    CheckerMainForm.StartProcess(
+                    CheckerMainForm.StartBackgroundProcess(
                                                  address,
                                                  null,
                                                  null,

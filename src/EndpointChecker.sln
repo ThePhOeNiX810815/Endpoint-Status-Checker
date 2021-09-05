@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2008
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EndpointChecker", "EndpointChecker.csproj", "{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}"
 EndProject
@@ -31,7 +31,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F665E560-D64C-427A-B02E-B7F6882EB74A}
-	EndGlobalSection	
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = EndpointChecker.vsmdi
 	EndGlobalSection

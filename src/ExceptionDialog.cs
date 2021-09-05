@@ -30,7 +30,7 @@ namespace EndpointChecker
         public static string _machineInfo_DiskSpace;
         public static List<string> _machineInfo_IPList = new List<string>();
         public static List<string> _machineInfo_MACList = new List<string>();
-        public static MemoryStream _screenshotStream;
+        public static MemoryStream _screenshotStream = new MemoryStream();
 
         public ExceptionDialog(Exception exception, string callingMethod, string senderAddress, List<string> recipientsAddressesList, List<string> attachmentsList)
         {
@@ -70,8 +70,9 @@ namespace EndpointChecker
                 reportItems.Add(new Property { ItemName = "System Drive (C)", ItemValue = _machineInfo_DiskSpace });
             }
 
-            reportItems.Add(new Property { ItemName = "Exception Message", ItemValue = _exception.Message });
             reportItems.Add(new Property { ItemName = "Calling Method", ItemValue = _callingMethod });
+            reportItems.Add(new Property { ItemName = "Exception HResult", ItemValue = _exception.HResult.ToString() });
+            reportItems.Add(new Property { ItemName = "Exception Message", ItemValue = _exception.Message });
             reportItems.Add(new Property { ItemName = "Stacktrace", ItemValue = _exception.StackTrace });
 
             // OPTIONAL [USER E-MAIL]
@@ -223,8 +224,9 @@ namespace EndpointChecker
                     _screenshotStream.Position = 0;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                string abc = ex.Message;
             }
 
             // SHOW DIALOG
