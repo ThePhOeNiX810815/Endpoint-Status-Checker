@@ -221,6 +221,7 @@ namespace EndpointChecker
             pb_HTTP.Image = CheckerMainForm.ResizeImage(Properties.Resources.browse_HTTP, pb_HTTP.Width, pb_HTTP.Height);
             pb_RDP.Image = CheckerMainForm.ResizeImage(Properties.Resources.connect_RDP, pb_RDP.Width, pb_RDP.Height);
             pb_VNC.Image = CheckerMainForm.ResizeImage(Properties.Resources.connect_VNC, pb_VNC.Width, pb_VNC.Height);
+            pb_SSH.Image = CheckerMainForm.ResizeImage(Properties.Resources.ssh_2, pb_SSH.Width, pb_SSH.Height);
 
             _selectedEndpoint = selectedEndpoint;
             _selectedEndpointIcon = selectedEndpointImage;
@@ -2154,6 +2155,12 @@ namespace EndpointChecker
 
             pb_ShowPassword.Visible =
                 !(tb_UserPassword.Text == CheckerMainForm.status_NotAvailable);
+        }
+
+        public void pb_SSH_MouseClick(object sender, MouseEventArgs e)
+        {
+            CheckerMainForm.ConnectEndpoint_Putty(
+                new Uri(_selectedEndpoint.ResponseAddress).Host);
         }
     }
 

@@ -94,9 +94,17 @@ namespace EndpointChecker
         // ENDPOINTS 'LAST SEEN ONLINE' LIST FILE NAME
         public static string lastSeenOnlineJSONFile = "EndpointChecker_LastSeenOnline.json";
 
+        // ERRORS [ENDPOINT DUPLICITIES] LIST FILE NAME
         public static string endpointsList_Duplicities = "_ERRORS - Invalid Endpoint Definitions - Duplicities.txt";
 
+        // ERRORS [INVALID ENDPOINT DEFINITIONS] LIST FILE NAME
         public static string endpointsList_InvalidDefs = "_ERRORS - Invalid Endpoint Definitions - Invalid URL format.txt";
+
+        // VNC VIEWER EXECUTABLE [FOR 'FTP' CONNECTION PURPOSE]
+        public static string appExecutable_VNC = string.Empty;
+
+        // PUTTY EXECUTABLE [FOR 'SSH' CONNECTION PURPOSE]
+        public static string appExecutable_Putty = string.Empty;
 
         // DEFAULT STATUS EXPORT DIRECTORY AND FILENAMES
         string statusExport_Directory = Program.assembly_CurrentWorkingDir;
@@ -225,6 +233,7 @@ namespace EndpointChecker
             toolStripMenuItem_HTTP.Image = ResizeImage(Resources.browse_HTTP, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Width, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Height);
             toolStripMenuItem_RDP.Image = ResizeImage(Resources.connect_RDP, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Width, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Height);
             toolStripMenuItem_VNC.Image = ResizeImage(Resources.connect_VNC, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Width, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Height);
+            toolStripMenuItem_SSH.Image = ResizeImage(Resources.ssh_2, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Width, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Height);
 
             // ASSIGN RESIZED IMAGES TO TRAY CONTEXT MENU STRIP ITEMS
             tray_Exit.Image = ResizeImage(Resources.error, trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
@@ -431,6 +440,16 @@ namespace EndpointChecker
                     {
                         apiKey_VirusTotal = Settings.Default.Config_VirusTotal_API_Key;
                     }
+
+                    if (!string.IsNullOrEmpty(Settings.Default.Config_Executable_VNCViewer))
+                    {
+                        appExecutable_VNC = Settings.Default.Config_Executable_VNCViewer;
+                    }
+
+                    if (!string.IsNullOrEmpty(Settings.Default.Config_Executable_Putty))
+                    {
+                        appExecutable_Putty = Settings.Default.Config_Executable_Putty;
+                    }
                 }
                 catch
                 {
@@ -470,6 +489,8 @@ namespace EndpointChecker
                 Settings.Default.Config_SaveResponse = cb_SaveResponse.Checked;
                 Settings.Default.Config_GoogleMaps_API_Key = apiKey_GoogleMaps;
                 Settings.Default.Config_VirusTotal_API_Key = apiKey_VirusTotal;
+                Settings.Default.Config_Executable_VNCViewer = appExecutable_VNC;
+                Settings.Default.Config_Executable_Putty = appExecutable_Putty;
                 Settings.Default.HasSavedConfiguration = true;
                 Settings.Default.Save();
             }
@@ -3294,6 +3315,9 @@ namespace EndpointChecker
             SaveListViewColumnsWidthAndOrder();
             SaveWindowSizeAndPosition();
             SaveDisabledItemsList();
+
+            // SAVE CONFIGURATION
+            SaveConfiguration();
         }
 
         public void trayIcon_BalloonTipClosed(object sender, EventArgs e)
@@ -4600,35 +4624,73 @@ namespace EndpointChecker
 
         public static void ConnectEndpoint_VNC(string endpointAddress)
         {
-            using (RegistryKey vncKey = RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView.Default).OpenSubKey("VncViewer.Config\\shell\\open\\command\\"))
+            if (!string.IsNullOrEmpty(appExecutable_VNC) &&
+                File.Exists(appExecutable_VNC))
             {
-                if (vncKey != null &&
-                    vncKey.GetValue(null) != null &&
-                    !string.IsNullOrEmpty(vncKey.GetValue(null).ToString()) &&
-                    vncKey.GetValue(null).ToString().Split('"').Length > 1 &&
-                    File.Exists(vncKey.GetValue(null).ToString().Split('"')[1]))
+                try
                 {
-                    try
-                    {
-                        StartBackgroundProcess(
-                                     vncKey.GetValue(null).ToString().Split('"')[1],
-                                     endpointAddress,
-                                     null,
-                                     null);
-                    }
-                    catch (Exception exception)
-                    {
-                        ExceptionNotifier(exception);
-                    }
+                    StartBackgroundProcess(
+                                 appExecutable_VNC,
+                                 endpointAddress,
+                                 null,
+                                 null);
                 }
-                else
+                catch (Exception exception)
                 {
-                    MessageBox.Show(
-                                "VNC Viewer installation not found",
-                                "VNC connect to \"" + endpointAddress + "\"",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
+                    ExceptionNotifier(exception);
                 }
+            }
+            else
+            {
+                CheckerMainForm mainFormInstance = new CheckerMainForm();
+
+                DialogResult questionDialogResult = MessageBox.Show("Do you want to browse your computer for VNC Viewer executable ?", "VNC Viewer Executable", MessageBoxButtons.YesNo);
+                if (questionDialogResult == DialogResult.Yes &&
+                    mainFormInstance.openFileDialog_VNCExe.ShowDialog() == DialogResult.OK &&
+                    File.Exists(mainFormInstance.openFileDialog_VNCExe.FileName))
+                {
+                    appExecutable_VNC = mainFormInstance.openFileDialog_VNCExe.FileName;
+
+                    ConnectEndpoint_VNC(endpointAddress);
+                }
+
+                mainFormInstance.Close();
+            }
+        }
+
+        public static void ConnectEndpoint_Putty(string endpointAddress)
+        {
+            if (!string.IsNullOrEmpty(appExecutable_Putty) &&
+                File.Exists(appExecutable_Putty))
+            {
+                try
+                {
+                    StartBackgroundProcess(
+                                 appExecutable_Putty,
+                                 "-ssh " + endpointAddress + " 22",
+                                 null,
+                                 null);
+                }
+                catch (Exception exception)
+                {
+                    ExceptionNotifier(exception);
+                }
+            }
+            else
+            {
+                CheckerMainForm mainFormInstance = new CheckerMainForm();
+
+                DialogResult questionDialogResult = MessageBox.Show("Do you want to browse your computer for Putty executable ?", "Putty Executable", MessageBoxButtons.YesNo);
+                if (questionDialogResult == DialogResult.Yes &&
+                    mainFormInstance.openFileDialog_PuttyExe.ShowDialog() == DialogResult.OK &&
+                    File.Exists(mainFormInstance.openFileDialog_PuttyExe.FileName))
+                {
+                    appExecutable_Putty = mainFormInstance.openFileDialog_PuttyExe.FileName;
+
+                    ConnectEndpoint_Putty(endpointAddress);
+                }
+
+                mainFormInstance.Close();
             }
         }
 
@@ -5051,6 +5113,11 @@ namespace EndpointChecker
                 null,
                 null,
                 null);
+        }
+
+        public void toolStripMenuItem_SSH_Click(object sender, EventArgs e)
+        {
+            ConnectEndpoint_Putty(new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress).Host);
         }
     }
 

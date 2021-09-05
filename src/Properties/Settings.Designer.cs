@@ -12,7 +12,7 @@ namespace EndpointChecker.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -841,18 +841,6 @@ namespace EndpointChecker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Config_DomainCategory_API_Key {
-            get {
-                return ((string)(this["Config_DomainCategory_API_Key"]));
-            }
-            set {
-                this["Config_DomainCategory_API_Key"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Config_RemoveURLParameters {
             get {
@@ -896,6 +884,30 @@ namespace EndpointChecker.Properties {
             }
             set {
                 this["ListView_ColWidth_ETag"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Config_Executable_VNCViewer {
+            get {
+                return ((string)(this["Config_Executable_VNCViewer"]));
+            }
+            set {
+                this["Config_Executable_VNCViewer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Config_Executable_Putty {
+            get {
+                return ((string)(this["Config_Executable_Putty"]));
+            }
+            set {
+                this["Config_Executable_Putty"] = value;
             }
         }
     }

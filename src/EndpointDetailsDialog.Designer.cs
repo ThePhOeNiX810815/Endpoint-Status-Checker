@@ -226,6 +226,8 @@
             this.lbl_AdminBrowse_WindowsExplorer = new System.Windows.Forms.Label();
             this.TIMER_VirusTotalResult = new System.Windows.Forms.Timer(this.components);
             this.BW_VirusTotal_Report = new System.ComponentModel.BackgroundWorker();
+            this.pb_SSH = new System.Windows.Forms.PictureBox();
+            this.lbl_SSH = new System.Windows.Forms.Label();
             this.tabPage_HTMLInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_PageInfo_ThemeColor)).BeginInit();
             this.tabControl.SuspendLayout();
@@ -268,6 +270,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_RDP)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Browse_WindowsExplorer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_AdminBrowse_WindowsExplorer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_SSH)).BeginInit();
             this.SuspendLayout();
             // 
             // tabPage_HTMLInfo
@@ -591,22 +594,6 @@
             // tabControl
             // 
             this.tabControl.Controls.Add(this.tabPage_MainInfo);
-            //this.tabControl.Controls.Add(this.tabPage_FTPInfo);
-            //this.tabControl.Controls.Add(this.tabPage_GeoLocation);
-            //this.tabControl.Controls.Add(this.tabPage_HTMLInfo);
-            //this.tabControl.Controls.Add(this.tabPage_HTTPInfo);
-            //this.tabControl.Controls.Add(this.tabPage_HTTPRequestHeaders);
-            //this.tabControl.Controls.Add(this.tabPage_HTTPResponseHeaders);
-            //this.tabControl.Controls.Add(this.tabPage_NetworkShares);
-            //this.tabControl.Controls.Add(this.tabPage_PageCategory);
-            //this.tabControl.Controls.Add(this.tabPage_PageLinks);
-            //this.tabControl.Controls.Add(this.tabPage_Ports);
-            //this.tabControl.Controls.Add(this.tabPage_SSLCertificate);
-            //this.tabControl.Controls.Add(this.tabPage_TraceRoute);
-            //this.tabControl.Controls.Add(this.tabPage_VirusTotal);
-            //this.tabControl.Controls.Add(this.tabPage_WhoIs);
-            //this.tabControl.Controls.Add(this.tabPage_WMI_ComputerInfo);
-
             this.tabControl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabControl.HotTrack = true;
             this.tabControl.ImageList = this.imageList_Tabs;
@@ -2555,8 +2542,8 @@
             // 
             // lbl_HTTP
             // 
-            this.lbl_HTTP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lbl_HTTP.Location = new System.Drawing.Point(537, 58);
+            this.lbl_HTTP.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbl_HTTP.Location = new System.Drawing.Point(587, 61);
             this.lbl_HTTP.Name = "lbl_HTTP";
             this.lbl_HTTP.Size = new System.Drawing.Size(73, 23);
             this.lbl_HTTP.TabIndex = 11;
@@ -2565,8 +2552,8 @@
             // 
             // lbl_FTP
             // 
-            this.lbl_FTP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lbl_FTP.Location = new System.Drawing.Point(654, 58);
+            this.lbl_FTP.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbl_FTP.Location = new System.Drawing.Point(701, 61);
             this.lbl_FTP.Name = "lbl_FTP";
             this.lbl_FTP.Size = new System.Drawing.Size(73, 23);
             this.lbl_FTP.TabIndex = 9;
@@ -2575,8 +2562,8 @@
             // 
             // lbl_VNC
             // 
-            this.lbl_VNC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lbl_VNC.Location = new System.Drawing.Point(420, 58);
+            this.lbl_VNC.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbl_VNC.Location = new System.Drawing.Point(358, 61);
             this.lbl_VNC.Name = "lbl_VNC";
             this.lbl_VNC.Size = new System.Drawing.Size(73, 23);
             this.lbl_VNC.TabIndex = 5;
@@ -2585,8 +2572,8 @@
             // 
             // lbl_RDP
             // 
-            this.lbl_RDP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lbl_RDP.Location = new System.Drawing.Point(301, 58);
+            this.lbl_RDP.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbl_RDP.Location = new System.Drawing.Point(244, 61);
             this.lbl_RDP.Name = "lbl_RDP";
             this.lbl_RDP.Size = new System.Drawing.Size(73, 23);
             this.lbl_RDP.TabIndex = 3;
@@ -2595,8 +2582,8 @@
             // 
             // lbl_Browse_WindowsExplorer
             // 
-            this.lbl_Browse_WindowsExplorer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lbl_Browse_WindowsExplorer.Location = new System.Drawing.Point(69, 58);
+            this.lbl_Browse_WindowsExplorer.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbl_Browse_WindowsExplorer.Location = new System.Drawing.Point(21, 61);
             this.lbl_Browse_WindowsExplorer.Name = "lbl_Browse_WindowsExplorer";
             this.lbl_Browse_WindowsExplorer.Size = new System.Drawing.Size(73, 23);
             this.lbl_Browse_WindowsExplorer.TabIndex = 1;
@@ -2619,7 +2606,7 @@
             // pb_HTTP
             // 
             this.pb_HTTP.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_HTTP.Location = new System.Drawing.Point(548, 11);
+            this.pb_HTTP.Location = new System.Drawing.Point(598, 14);
             this.pb_HTTP.Name = "pb_HTTP";
             this.pb_HTTP.Size = new System.Drawing.Size(48, 48);
             this.pb_HTTP.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2630,7 +2617,7 @@
             // pb_FTP
             // 
             this.pb_FTP.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_FTP.Location = new System.Drawing.Point(665, 11);
+            this.pb_FTP.Location = new System.Drawing.Point(712, 14);
             this.pb_FTP.Name = "pb_FTP";
             this.pb_FTP.Size = new System.Drawing.Size(48, 48);
             this.pb_FTP.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2641,7 +2628,7 @@
             // pb_VNC
             // 
             this.pb_VNC.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_VNC.Location = new System.Drawing.Point(431, 11);
+            this.pb_VNC.Location = new System.Drawing.Point(369, 14);
             this.pb_VNC.Name = "pb_VNC";
             this.pb_VNC.Size = new System.Drawing.Size(48, 48);
             this.pb_VNC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2652,7 +2639,7 @@
             // pb_RDP
             // 
             this.pb_RDP.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_RDP.Location = new System.Drawing.Point(313, 11);
+            this.pb_RDP.Location = new System.Drawing.Point(256, 14);
             this.pb_RDP.Name = "pb_RDP";
             this.pb_RDP.Size = new System.Drawing.Size(48, 48);
             this.pb_RDP.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2663,7 +2650,7 @@
             // pb_Browse_WindowsExplorer
             // 
             this.pb_Browse_WindowsExplorer.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_Browse_WindowsExplorer.Location = new System.Drawing.Point(81, 11);
+            this.pb_Browse_WindowsExplorer.Location = new System.Drawing.Point(33, 14);
             this.pb_Browse_WindowsExplorer.Name = "pb_Browse_WindowsExplorer";
             this.pb_Browse_WindowsExplorer.Size = new System.Drawing.Size(48, 48);
             this.pb_Browse_WindowsExplorer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2684,7 +2671,7 @@
             // pb_AdminBrowse_WindowsExplorer
             // 
             this.pb_AdminBrowse_WindowsExplorer.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_AdminBrowse_WindowsExplorer.Location = new System.Drawing.Point(197, 11);
+            this.pb_AdminBrowse_WindowsExplorer.Location = new System.Drawing.Point(144, 14);
             this.pb_AdminBrowse_WindowsExplorer.Name = "pb_AdminBrowse_WindowsExplorer";
             this.pb_AdminBrowse_WindowsExplorer.Size = new System.Drawing.Size(48, 48);
             this.pb_AdminBrowse_WindowsExplorer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2694,8 +2681,8 @@
             // 
             // lbl_AdminBrowse_WindowsExplorer
             // 
-            this.lbl_AdminBrowse_WindowsExplorer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lbl_AdminBrowse_WindowsExplorer.Location = new System.Drawing.Point(173, 58);
+            this.lbl_AdminBrowse_WindowsExplorer.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbl_AdminBrowse_WindowsExplorer.Location = new System.Drawing.Point(120, 61);
             this.lbl_AdminBrowse_WindowsExplorer.Name = "lbl_AdminBrowse_WindowsExplorer";
             this.lbl_AdminBrowse_WindowsExplorer.Size = new System.Drawing.Size(95, 23);
             this.lbl_AdminBrowse_WindowsExplorer.TabIndex = 55;
@@ -2712,12 +2699,35 @@
             // 
             this.BW_VirusTotal_Report.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BW_VirusTotal_Report_DoWork);
             // 
+            // pb_SSH
+            // 
+            this.pb_SSH.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pb_SSH.Location = new System.Drawing.Point(482, 14);
+            this.pb_SSH.Name = "pb_SSH";
+            this.pb_SSH.Size = new System.Drawing.Size(48, 48);
+            this.pb_SSH.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_SSH.TabIndex = 56;
+            this.pb_SSH.TabStop = false;
+            this.pb_SSH.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pb_SSH_MouseClick);
+            // 
+            // lbl_SSH
+            // 
+            this.lbl_SSH.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbl_SSH.Location = new System.Drawing.Point(471, 61);
+            this.lbl_SSH.Name = "lbl_SSH";
+            this.lbl_SSH.Size = new System.Drawing.Size(73, 23);
+            this.lbl_SSH.TabIndex = 57;
+            this.lbl_SSH.Text = "SSH";
+            this.lbl_SSH.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // EndpointDetailsDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(790, 532);
+            this.Controls.Add(this.pb_SSH);
+            this.Controls.Add(this.lbl_SSH);
             this.Controls.Add(this.pb_AdminBrowse_WindowsExplorer);
             this.Controls.Add(this.lbl_AdminBrowse_WindowsExplorer);
             this.Controls.Add(this.pb_HTTP);
@@ -2791,6 +2801,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_RDP)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Browse_WindowsExplorer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_AdminBrowse_WindowsExplorer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_SSH)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2992,5 +3003,7 @@
         public System.Windows.Forms.PictureBox pb_ShowPassword;
         public System.Windows.Forms.PictureBox pb_HTTPInfo_WeakETag;
         public System.Windows.Forms.Button btn_PageLinks_Validate;
+        public System.Windows.Forms.PictureBox pb_SSH;
+        public System.Windows.Forms.Label lbl_SSH;
     }
 }

@@ -142,6 +142,9 @@
             this.pb_FeatureRequest = new System.Windows.Forms.PictureBox();
             this.TIMER_ListAndLogsFilesWatcher = new System.Windows.Forms.Timer(this.components);
             this.pb_GitHub = new System.Windows.Forms.PictureBox();
+            this.openFileDialog_VNCExe = new System.Windows.Forms.OpenFileDialog();
+            this.openFileDialog_PuttyExe = new System.Windows.Forms.OpenFileDialog();
+            this.toolStripMenuItem_SSH = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
@@ -812,7 +815,7 @@
             this.lbl_CheckAllErrors.AutoSize = true;
             this.lbl_CheckAllErrors.Enabled = false;
             this.lbl_CheckAllErrors.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(134, 81);
+            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(133, 81);
             this.lbl_CheckAllErrors.Name = "lbl_CheckAllErrors";
             this.lbl_CheckAllErrors.Size = new System.Drawing.Size(50, 16);
             this.lbl_CheckAllErrors.TabIndex = 22;
@@ -854,7 +857,7 @@
             this.lbl_CheckAll.AutoSize = true;
             this.lbl_CheckAll.Enabled = false;
             this.lbl_CheckAll.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAll.Location = new System.Drawing.Point(47, 38);
+            this.lbl_CheckAll.Location = new System.Drawing.Point(46, 38);
             this.lbl_CheckAll.Name = "lbl_CheckAll";
             this.lbl_CheckAll.Size = new System.Drawing.Size(28, 16);
             this.lbl_CheckAll.TabIndex = 21;
@@ -881,7 +884,7 @@
             this.lbl_UncheckAll.AutoSize = true;
             this.lbl_UncheckAll.Enabled = false;
             this.lbl_UncheckAll.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UncheckAll.Location = new System.Drawing.Point(47, 79);
+            this.lbl_UncheckAll.Location = new System.Drawing.Point(46, 79);
             this.lbl_UncheckAll.Name = "lbl_UncheckAll";
             this.lbl_UncheckAll.Size = new System.Drawing.Size(42, 16);
             this.lbl_UncheckAll.TabIndex = 20;
@@ -908,7 +911,7 @@
             this.lbl_CheckAllAvailable.AutoSize = true;
             this.lbl_CheckAllAvailable.Enabled = false;
             this.lbl_CheckAllAvailable.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(134, 38);
+            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(133, 38);
             this.lbl_CheckAllAvailable.Name = "lbl_CheckAllAvailable";
             this.lbl_CheckAllAvailable.Size = new System.Drawing.Size(53, 16);
             this.lbl_CheckAllAvailable.TabIndex = 19;
@@ -920,7 +923,7 @@
             this.lbl_ConfigFile.AutoSize = true;
             this.lbl_ConfigFile.Enabled = false;
             this.lbl_ConfigFile.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ConfigFile.Location = new System.Drawing.Point(900, 431);
+            this.lbl_ConfigFile.Location = new System.Drawing.Point(899, 431);
             this.lbl_ConfigFile.Name = "lbl_ConfigFile";
             this.lbl_ConfigFile.Size = new System.Drawing.Size(53, 16);
             this.lbl_ConfigFile.TabIndex = 26;
@@ -962,7 +965,7 @@
             this.lbl_EndpointsList.AutoSize = true;
             this.lbl_EndpointsList.Enabled = false;
             this.lbl_EndpointsList.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_EndpointsList.Location = new System.Drawing.Point(813, 431);
+            this.lbl_EndpointsList.Location = new System.Drawing.Point(812, 431);
             this.lbl_EndpointsList.Name = "lbl_EndpointsList";
             this.lbl_EndpointsList.Size = new System.Drawing.Size(36, 16);
             this.lbl_EndpointsList.TabIndex = 25;
@@ -974,7 +977,7 @@
             this.lbl_Refresh.AutoSize = true;
             this.lbl_Refresh.Enabled = false;
             this.lbl_Refresh.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Refresh.Location = new System.Drawing.Point(1018, 310);
+            this.lbl_Refresh.Location = new System.Drawing.Point(1017, 310);
             this.lbl_Refresh.Name = "lbl_Refresh";
             this.lbl_Refresh.Size = new System.Drawing.Size(59, 16);
             this.lbl_Refresh.TabIndex = 39;
@@ -986,7 +989,7 @@
             this.lbl_Terminate.AutoSize = true;
             this.lbl_Terminate.Enabled = false;
             this.lbl_Terminate.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Terminate.Location = new System.Drawing.Point(1018, 370);
+            this.lbl_Terminate.Location = new System.Drawing.Point(1017, 370);
             this.lbl_Terminate.Name = "lbl_Terminate";
             this.lbl_Terminate.Size = new System.Drawing.Size(79, 16);
             this.lbl_Terminate.TabIndex = 40;
@@ -1010,7 +1013,7 @@
             this.lbl_SpeedTest.AutoSize = true;
             this.lbl_SpeedTest.Enabled = false;
             this.lbl_SpeedTest.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest.Location = new System.Drawing.Point(1018, 430);
+            this.lbl_SpeedTest.Location = new System.Drawing.Point(1017, 430);
             this.lbl_SpeedTest.Name = "lbl_SpeedTest";
             this.lbl_SpeedTest.Size = new System.Drawing.Size(75, 16);
             this.lbl_SpeedTest.TabIndex = 44;
@@ -1136,29 +1139,30 @@
             this.toolStripMenuItem_FTP,
             this.toolStripSeparator_1,
             this.toolStripMenuItem_RDP,
-            this.toolStripMenuItem_VNC});
+            this.toolStripMenuItem_VNC,
+            this.toolStripMenuItem_SSH});
             this.lv_Endpoints_ContextMenuStrip.Name = "lv_Endpoints_ContextMenuStrip";
             this.lv_Endpoints_ContextMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.lv_Endpoints_ContextMenuStrip.Size = new System.Drawing.Size(161, 170);
+            this.lv_Endpoints_ContextMenuStrip.Size = new System.Drawing.Size(181, 214);
             // 
             // toolStripMenuItem_Details
             // 
             this.toolStripMenuItem_Details.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_Details.Name = "toolStripMenuItem_Details";
-            this.toolStripMenuItem_Details.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_Details.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_Details.Text = "Details";
             this.toolStripMenuItem_Details.Click += new System.EventHandler(this.toolStripMenuItem_Details_Click);
             // 
             // toolStripSeparator_2
             // 
             this.toolStripSeparator_2.Name = "toolStripSeparator_2";
-            this.toolStripSeparator_2.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator_2.Size = new System.Drawing.Size(177, 6);
             // 
             // toolStripMenuItem_Browse
             // 
             this.toolStripMenuItem_Browse.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_Browse.Name = "toolStripMenuItem_Browse";
-            this.toolStripMenuItem_Browse.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_Browse.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_Browse.Text = "Browse";
             this.toolStripMenuItem_Browse.Click += new System.EventHandler(this.toolStripMenuItem_Browse_Click);
             // 
@@ -1166,7 +1170,7 @@
             // 
             this.toolStripMenuItem_AdminBrowse.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_AdminBrowse.Name = "toolStripMenuItem_AdminBrowse";
-            this.toolStripMenuItem_AdminBrowse.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_AdminBrowse.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_AdminBrowse.Text = "Admin Browse";
             this.toolStripMenuItem_AdminBrowse.Click += new System.EventHandler(this.toolStripMenuItem_AdminBrowse_Click);
             // 
@@ -1174,7 +1178,7 @@
             // 
             this.toolStripMenuItem_HTTP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_HTTP.Name = "toolStripMenuItem_HTTP";
-            this.toolStripMenuItem_HTTP.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_HTTP.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_HTTP.Text = "Open as HTTP";
             this.toolStripMenuItem_HTTP.Click += new System.EventHandler(this.toolStripMenuItem_HTTP_Click);
             // 
@@ -1182,20 +1186,20 @@
             // 
             this.toolStripMenuItem_FTP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_FTP.Name = "toolStripMenuItem_FTP";
-            this.toolStripMenuItem_FTP.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_FTP.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_FTP.Text = "Open as FTP";
             this.toolStripMenuItem_FTP.Click += new System.EventHandler(this.toolStripMenuItem_FTP_Click);
             // 
             // toolStripSeparator_1
             // 
             this.toolStripSeparator_1.Name = "toolStripSeparator_1";
-            this.toolStripSeparator_1.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator_1.Size = new System.Drawing.Size(177, 6);
             // 
             // toolStripMenuItem_RDP
             // 
             this.toolStripMenuItem_RDP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_RDP.Name = "toolStripMenuItem_RDP";
-            this.toolStripMenuItem_RDP.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_RDP.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_RDP.Text = "RDP Connect";
             this.toolStripMenuItem_RDP.Click += new System.EventHandler(this.toolStripMenuItem_RDP_Click);
             // 
@@ -1203,7 +1207,7 @@
             // 
             this.toolStripMenuItem_VNC.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_VNC.Name = "toolStripMenuItem_VNC";
-            this.toolStripMenuItem_VNC.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_VNC.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_VNC.Text = "VNC Connect";
             this.toolStripMenuItem_VNC.Click += new System.EventHandler(this.toolStripMenuItem_VNC_Click);
             // 
@@ -1512,6 +1516,24 @@
             this.pb_GitHub.TabStop = false;
             this.pb_GitHub.Click += new System.EventHandler(this.pb_GitHub_Click);
             // 
+            // openFileDialog_VNCExe
+            // 
+            this.openFileDialog_VNCExe.Filter = "VNC Viewer executable|vncviewer.exe";
+            this.openFileDialog_VNCExe.Title = "Browse VNC Viewer executable ...";
+            // 
+            // openFileDialog_PuttyExe
+            // 
+            this.openFileDialog_PuttyExe.Filter = "Putty executable|putty.exe";
+            this.openFileDialog_PuttyExe.Title = "Browse Putty executable ...";
+            // 
+            // toolStripMenuItem_SSH
+            // 
+            this.toolStripMenuItem_SSH.Font = new System.Drawing.Font("Arial", 9.75F);
+            this.toolStripMenuItem_SSH.Name = "toolStripMenuItem_SSH";
+            this.toolStripMenuItem_SSH.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_SSH.Text = "SSH Connect";
+            this.toolStripMenuItem_SSH.Click += new System.EventHandler(this.toolStripMenuItem_SSH_Click);
+            // 
             // CheckerMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1708,6 +1730,9 @@
         public System.Windows.Forms.GroupBox groupBox_HTTPOptions;
         public System.Windows.Forms.PictureBox pb_ITNetwork;
         public System.Windows.Forms.PictureBox pb_GitHub;
+        public System.Windows.Forms.OpenFileDialog openFileDialog_VNCExe;
+        public System.Windows.Forms.OpenFileDialog openFileDialog_PuttyExe;
+        public System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_SSH;
     }
 }
 
