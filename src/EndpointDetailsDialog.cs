@@ -741,52 +741,12 @@ namespace EndpointChecker
 
         public void pb_HTTP_MouseClick(object sender, MouseEventArgs e)
         {
-            Uri endpointURI = new Uri(_selectedEndpoint.ResponseAddress);
-
-            string connectionString =
-                Uri.UriSchemeHttp +
-                Uri.SchemeDelimiter +
-                endpointURI.Authority +
-                endpointURI.AbsolutePath;
-
-            CheckerMainForm.BrowseEndpoint(
-                connectionString,
-                null,
-                _selectedEndpoint.LoginName,
-                _selectedEndpoint.LoginPass);
+            CheckerMainForm.OpenEndpoint_HTTP(_selectedEndpoint);
         }
 
         public void pb_FTP_MouseClick(object sender, MouseEventArgs e)
         {
-            Uri endpointURI = new Uri(_selectedEndpoint.ResponseAddress);
-
-            string connectionString =
-                Uri.UriSchemeFtp +
-                Uri.SchemeDelimiter +
-                endpointURI.Authority +
-                endpointURI.AbsolutePath;
-
-            if (!string.IsNullOrEmpty(_selectedEndpoint.LoginName) &&
-                !string.IsNullOrEmpty(_selectedEndpoint.LoginPass) &&
-                _selectedEndpoint.LoginName != CheckerMainForm.status_NotAvailable &&
-                _selectedEndpoint.LoginPass != CheckerMainForm.status_NotAvailable)
-            {
-                connectionString =
-                    Uri.UriSchemeFtp +
-                    Uri.SchemeDelimiter +
-                    _selectedEndpoint.LoginName +
-                    ":" +
-                    _selectedEndpoint.LoginPass +
-                    "@" +
-                    endpointURI.Authority +
-                    endpointURI.AbsolutePath;
-            }
-
-            CheckerMainForm.BrowseEndpoint(
-                connectionString,
-                null,
-                null,
-                null);
+            CheckerMainForm.OpenEndpoint_FTP(_selectedEndpoint);
         }
 
         public void pb_PingRefresh_Click(object sender, EventArgs e)

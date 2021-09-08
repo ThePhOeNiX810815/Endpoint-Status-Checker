@@ -4527,52 +4527,12 @@ namespace EndpointChecker
 
         public void toolStripMenuItem_HTTP_Click(object sender, EventArgs e)
         {
-            Uri endpointURI = new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress);
-
-            string connectionString =
-                Uri.UriSchemeHttp +
-                Uri.SchemeDelimiter +
-                endpointURI.Authority +
-                endpointURI.AbsolutePath;
-
-            BrowseEndpoint(
-                connectionString,
-                null,
-                lv_Endpoints_SelectedEndpoint.LoginName,
-                lv_Endpoints_SelectedEndpoint.LoginPass);
+            OpenEndpoint_HTTP(lv_Endpoints_SelectedEndpoint);
         }
 
         public void toolStripMenuItem_FTP_Click(object sender, EventArgs e)
         {
-            Uri endpointURI = new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress);
-
-            string connectionString =
-                Uri.UriSchemeFtp +
-                Uri.SchemeDelimiter +
-                endpointURI.Authority +
-                endpointURI.AbsolutePath;
-
-            if (!string.IsNullOrEmpty(lv_Endpoints_SelectedEndpoint.LoginName) &&
-                !string.IsNullOrEmpty(lv_Endpoints_SelectedEndpoint.LoginPass) &&
-                lv_Endpoints_SelectedEndpoint.LoginName != status_NotAvailable &&
-                lv_Endpoints_SelectedEndpoint.LoginPass != status_NotAvailable)
-            {
-                connectionString =
-                    Uri.UriSchemeFtp +
-                    Uri.SchemeDelimiter +
-                    lv_Endpoints_SelectedEndpoint.LoginName +
-                    ":" +
-                    lv_Endpoints_SelectedEndpoint.LoginPass +
-                    "@" +
-                    endpointURI.Authority +
-                    endpointURI.AbsolutePath;
-            }
-
-            BrowseEndpoint(
-                connectionString,
-                null,
-                null,
-                null);
+            OpenEndpoint_FTP(lv_Endpoints_SelectedEndpoint);
         }
 
         public void toolStripMenuItem_RDP_Click(object sender, EventArgs e)
@@ -4712,6 +4672,63 @@ namespace EndpointChecker
             {
                 ExceptionNotifier(exception);
             }
+        }
+
+        public static void OpenEndpoint_HTTP(EndpointDefinition endpoint)
+        {
+            string[] httpProtocols = new string[] { Uri.UriSchemeHttp, Uri.UriSchemeHttps };
+
+            Uri endpointURI = new Uri(endpoint.ResponseAddress);
+
+            string connectionString =
+                httpProtocols[0] +
+                Uri.SchemeDelimiter +
+                endpointURI.Authority +
+                endpointURI.AbsolutePath;
+
+            NetworkCredential credentials = new NetworkCredential();
+
+            if (httpProtocols.Contains(endpointURI.Scheme))
+            {
+                credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
+            }
+
+            BrowseEndpoint(
+                connectionString,
+                null,
+                credentials.UserName,
+                credentials.Password);
+        }
+
+        public static void OpenEndpoint_FTP(EndpointDefinition endpoint)
+        {
+            Uri endpointURI = new Uri(endpoint.ResponseAddress);
+
+            string connectionString =
+                Uri.UriSchemeFtp +
+                Uri.SchemeDelimiter +
+                endpointURI.Authority +
+                endpointURI.AbsolutePath;
+
+            if (!string.IsNullOrEmpty(endpoint.LoginName) &&
+                endpoint.LoginName != status_NotAvailable)
+            {
+                connectionString =
+                    Uri.UriSchemeFtp +
+                    Uri.SchemeDelimiter +
+                    endpoint.LoginName +
+                    ":" +
+                    endpoint.LoginPass +
+                    "@" +
+                    endpointURI.Authority +
+                    endpointURI.AbsolutePath;
+            }
+
+            BrowseEndpoint(
+                connectionString,
+                null,
+                null,
+                null);
         }
 
         public void lv_Endpoints_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
