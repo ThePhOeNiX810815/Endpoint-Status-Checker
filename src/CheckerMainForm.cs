@@ -44,6 +44,9 @@ namespace EndpointChecker
         [DllImport("dnsapi.dll", EntryPoint = "DnsFlushResolverCache")]
         private static extern uint DnsFlushResolverCache();
 
+        // LATEST APPLICATION VERSION
+        public static string appLatestVersion = Program.assembly_Version;
+
         // COMMON HTTP USER AGENT STRING [MOZILLA FIREFOX BROWSER X64 v.92]
         public static string httpUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0";
 
@@ -254,6 +257,9 @@ namespace EndpointChecker
 
             // CHECK .NET FRAMEWORK INSTALLED VERSION [FOR EXPORT INFORMATION PURPOSE]
             CheckDotNetFWKInstalledVersion();
+
+            // CHECK FOR LATEST VERSION [GITHUB]
+            BW_UpdateCheck.RunWorkerAsync();
 
             TIMER_StartupRefresh.Start();
         }
@@ -5135,6 +5141,50 @@ namespace EndpointChecker
         public void toolStripMenuItem_SSH_Click(object sender, EventArgs e)
         {
             ConnectEndpoint_Putty(new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress).Host);
+        }
+
+        public void BW_UpdateCheck_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                using (WebClient updateWC = new WebClient())
+                {
+                    ServicePointManager.Expect100Continue = true;
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+                    appLatestVersion = updateWC.DownloadString("https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/version.txt");
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        public void BW_UpdateCheck_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (new Version(Program.assembly_Version) < new Version(appLatestVersion))
+            {
+                DialogResult updateDialogResult = MessageBox.Show(
+                    "There is new version " +
+                        appLatestVersion +
+                        " avaliable." +
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        "Do you want to download latest release from GitHub ?"
+                    , "New Version Avaliable",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (updateDialogResult == DialogResult.Yes)
+                {
+                    BrowseEndpoint(
+                        "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases",
+                        null,
+                        null,
+                        null);
+                }
+            }
         }
     }
 

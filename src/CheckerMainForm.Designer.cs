@@ -120,6 +120,7 @@
             this.toolStripSeparator_1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_RDP = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_VNC = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_SSH = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_Terminate = new System.Windows.Forms.Button();
             this.btn_Refresh = new System.Windows.Forms.Button();
             this.btn_SpeedTest = new System.Windows.Forms.Button();
@@ -144,7 +145,7 @@
             this.pb_GitHub = new System.Windows.Forms.PictureBox();
             this.openFileDialog_VNCExe = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog_PuttyExe = new System.Windows.Forms.OpenFileDialog();
-            this.toolStripMenuItem_SSH = new System.Windows.Forms.ToolStripMenuItem();
+            this.BW_UpdateCheck = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
@@ -1143,26 +1144,26 @@
             this.toolStripMenuItem_SSH});
             this.lv_Endpoints_ContextMenuStrip.Name = "lv_Endpoints_ContextMenuStrip";
             this.lv_Endpoints_ContextMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.lv_Endpoints_ContextMenuStrip.Size = new System.Drawing.Size(181, 214);
+            this.lv_Endpoints_ContextMenuStrip.Size = new System.Drawing.Size(161, 192);
             // 
             // toolStripMenuItem_Details
             // 
             this.toolStripMenuItem_Details.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_Details.Name = "toolStripMenuItem_Details";
-            this.toolStripMenuItem_Details.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_Details.Size = new System.Drawing.Size(160, 22);
             this.toolStripMenuItem_Details.Text = "Details";
             this.toolStripMenuItem_Details.Click += new System.EventHandler(this.toolStripMenuItem_Details_Click);
             // 
             // toolStripSeparator_2
             // 
             this.toolStripSeparator_2.Name = "toolStripSeparator_2";
-            this.toolStripSeparator_2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator_2.Size = new System.Drawing.Size(157, 6);
             // 
             // toolStripMenuItem_Browse
             // 
             this.toolStripMenuItem_Browse.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_Browse.Name = "toolStripMenuItem_Browse";
-            this.toolStripMenuItem_Browse.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_Browse.Size = new System.Drawing.Size(160, 22);
             this.toolStripMenuItem_Browse.Text = "Browse";
             this.toolStripMenuItem_Browse.Click += new System.EventHandler(this.toolStripMenuItem_Browse_Click);
             // 
@@ -1170,7 +1171,7 @@
             // 
             this.toolStripMenuItem_AdminBrowse.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_AdminBrowse.Name = "toolStripMenuItem_AdminBrowse";
-            this.toolStripMenuItem_AdminBrowse.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_AdminBrowse.Size = new System.Drawing.Size(160, 22);
             this.toolStripMenuItem_AdminBrowse.Text = "Admin Browse";
             this.toolStripMenuItem_AdminBrowse.Click += new System.EventHandler(this.toolStripMenuItem_AdminBrowse_Click);
             // 
@@ -1178,7 +1179,7 @@
             // 
             this.toolStripMenuItem_HTTP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_HTTP.Name = "toolStripMenuItem_HTTP";
-            this.toolStripMenuItem_HTTP.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_HTTP.Size = new System.Drawing.Size(160, 22);
             this.toolStripMenuItem_HTTP.Text = "Open as HTTP";
             this.toolStripMenuItem_HTTP.Click += new System.EventHandler(this.toolStripMenuItem_HTTP_Click);
             // 
@@ -1186,20 +1187,20 @@
             // 
             this.toolStripMenuItem_FTP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_FTP.Name = "toolStripMenuItem_FTP";
-            this.toolStripMenuItem_FTP.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_FTP.Size = new System.Drawing.Size(160, 22);
             this.toolStripMenuItem_FTP.Text = "Open as FTP";
             this.toolStripMenuItem_FTP.Click += new System.EventHandler(this.toolStripMenuItem_FTP_Click);
             // 
             // toolStripSeparator_1
             // 
             this.toolStripSeparator_1.Name = "toolStripSeparator_1";
-            this.toolStripSeparator_1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator_1.Size = new System.Drawing.Size(157, 6);
             // 
             // toolStripMenuItem_RDP
             // 
             this.toolStripMenuItem_RDP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_RDP.Name = "toolStripMenuItem_RDP";
-            this.toolStripMenuItem_RDP.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_RDP.Size = new System.Drawing.Size(160, 22);
             this.toolStripMenuItem_RDP.Text = "RDP Connect";
             this.toolStripMenuItem_RDP.Click += new System.EventHandler(this.toolStripMenuItem_RDP_Click);
             // 
@@ -1207,9 +1208,17 @@
             // 
             this.toolStripMenuItem_VNC.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_VNC.Name = "toolStripMenuItem_VNC";
-            this.toolStripMenuItem_VNC.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_VNC.Size = new System.Drawing.Size(160, 22);
             this.toolStripMenuItem_VNC.Text = "VNC Connect";
             this.toolStripMenuItem_VNC.Click += new System.EventHandler(this.toolStripMenuItem_VNC_Click);
+            // 
+            // toolStripMenuItem_SSH
+            // 
+            this.toolStripMenuItem_SSH.Font = new System.Drawing.Font("Arial", 9.75F);
+            this.toolStripMenuItem_SSH.Name = "toolStripMenuItem_SSH";
+            this.toolStripMenuItem_SSH.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_SSH.Text = "SSH Connect";
+            this.toolStripMenuItem_SSH.Click += new System.EventHandler(this.toolStripMenuItem_SSH_Click);
             // 
             // btn_Terminate
             // 
@@ -1526,13 +1535,12 @@
             this.openFileDialog_PuttyExe.Filter = "Putty executable|putty.exe";
             this.openFileDialog_PuttyExe.Title = "Browse Putty executable ...";
             // 
-            // toolStripMenuItem_SSH
+            // BW_UpdateCheck
             // 
-            this.toolStripMenuItem_SSH.Font = new System.Drawing.Font("Arial", 9.75F);
-            this.toolStripMenuItem_SSH.Name = "toolStripMenuItem_SSH";
-            this.toolStripMenuItem_SSH.Size = new System.Drawing.Size(180, 22);
-            this.toolStripMenuItem_SSH.Text = "SSH Connect";
-            this.toolStripMenuItem_SSH.Click += new System.EventHandler(this.toolStripMenuItem_SSH_Click);
+            this.BW_UpdateCheck.WorkerReportsProgress = true;
+            this.BW_UpdateCheck.WorkerSupportsCancellation = true;
+            this.BW_UpdateCheck.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BW_UpdateCheck_DoWork);
+            this.BW_UpdateCheck.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BW_UpdateCheck_RunWorkerCompleted);
             // 
             // CheckerMainForm
             // 
@@ -1733,6 +1741,7 @@
         public System.Windows.Forms.OpenFileDialog openFileDialog_VNCExe;
         public System.Windows.Forms.OpenFileDialog openFileDialog_PuttyExe;
         public System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_SSH;
+        public System.ComponentModel.BackgroundWorker BW_UpdateCheck;
     }
 }
 
