@@ -147,6 +147,7 @@
             this.openFileDialog_PuttyExe = new System.Windows.Forms.OpenFileDialog();
             this.BW_UpdateCheck = new System.ComponentModel.BackgroundWorker();
             this.pb_GitLab = new System.Windows.Forms.PictureBox();
+            this.pb_AppWebPage = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
@@ -165,6 +166,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_FeatureRequest)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GitHub)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GitLab)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_AppWebPage)).BeginInit();
             this.SuspendLayout();
             // 
             // lv_Endpoints
@@ -1473,7 +1475,7 @@
             this.pb_ITNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_ITNetwork.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_ITNetwork.Image = global::EndpointChecker.Properties.Resources.itnetwork_logo_text;
-            this.pb_ITNetwork.Location = new System.Drawing.Point(979, 470);
+            this.pb_ITNetwork.Location = new System.Drawing.Point(941, 470);
             this.pb_ITNetwork.Name = "pb_ITNetwork";
             this.pb_ITNetwork.Size = new System.Drawing.Size(123, 30);
             this.pb_ITNetwork.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1500,7 +1502,7 @@
             this.pb_FeatureRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_FeatureRequest.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_FeatureRequest.Image = ((System.Drawing.Image)(resources.GetObject("pb_FeatureRequest.Image")));
-            this.pb_FeatureRequest.Location = new System.Drawing.Point(873, 466);
+            this.pb_FeatureRequest.Location = new System.Drawing.Point(835, 466);
             this.pb_FeatureRequest.Name = "pb_FeatureRequest";
             this.pb_FeatureRequest.Size = new System.Drawing.Size(30, 30);
             this.pb_FeatureRequest.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1519,7 +1521,7 @@
             this.pb_GitHub.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_GitHub.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_GitHub.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitHub.Image")));
-            this.pb_GitHub.Location = new System.Drawing.Point(897, 468);
+            this.pb_GitHub.Location = new System.Drawing.Point(859, 468);
             this.pb_GitHub.Name = "pb_GitHub";
             this.pb_GitHub.Size = new System.Drawing.Size(53, 30);
             this.pb_GitHub.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1550,7 +1552,7 @@
             this.pb_GitLab.BackColor = System.Drawing.Color.Transparent;
             this.pb_GitLab.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_GitLab.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitLab.Image")));
-            this.pb_GitLab.Location = new System.Drawing.Point(941, 467);
+            this.pb_GitLab.Location = new System.Drawing.Point(903, 467);
             this.pb_GitLab.Name = "pb_GitLab";
             this.pb_GitLab.Size = new System.Drawing.Size(41, 35);
             this.pb_GitLab.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1558,12 +1560,27 @@
             this.pb_GitLab.TabStop = false;
             this.pb_GitLab.Click += new System.EventHandler(this.pb_GitLab_Click);
             // 
+            // pb_AppWebPage
+            // 
+            this.pb_AppWebPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pb_AppWebPage.BackColor = System.Drawing.Color.Transparent;
+            this.pb_AppWebPage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pb_AppWebPage.Image = ((System.Drawing.Image)(resources.GetObject("pb_AppWebPage.Image")));
+            this.pb_AppWebPage.Location = new System.Drawing.Point(1066, 469);
+            this.pb_AppWebPage.Name = "pb_AppWebPage";
+            this.pb_AppWebPage.Size = new System.Drawing.Size(32, 32);
+            this.pb_AppWebPage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_AppWebPage.TabIndex = 65;
+            this.pb_AppWebPage.TabStop = false;
+            this.pb_AppWebPage.Click += new System.EventHandler(this.pb_AppWebPage_Click);
+            // 
             // CheckerMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1108, 522);
+            this.Controls.Add(this.pb_AppWebPage);
             this.Controls.Add(this.pb_GitLab);
             this.Controls.Add(this.pb_FeatureRequest);
             this.Controls.Add(this.pb_GitHub);
@@ -1638,6 +1655,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_FeatureRequest)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GitHub)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GitLab)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_AppWebPage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1761,6 +1779,7 @@
         public System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_SSH;
         public System.ComponentModel.BackgroundWorker BW_UpdateCheck;
         public System.Windows.Forms.PictureBox pb_GitLab;
+        public System.Windows.Forms.PictureBox pb_AppWebPage;
     }
 }
 

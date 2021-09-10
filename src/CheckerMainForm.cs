@@ -266,6 +266,13 @@ namespace EndpointChecker
 
         public void SetControlsTooltips()
         {
+            // SET TOOLTIP FOR APPLICATION WEB PAGE [WEBNODE] LINK LABEL
+            ToolTip toolTip_AppWebPage = new ToolTip();
+            toolTip_AppWebPage.ToolTipIcon = ToolTipIcon.Info;
+            toolTip_AppWebPage.IsBalloon = true;
+            toolTip_AppWebPage.ToolTipTitle = "WebNode";
+            toolTip_AppWebPage.SetToolTip(pb_AppWebPage, "Open application web page.");
+
             // SET TOOLTIP FOR ITNETWORK LINK LABEL
             ToolTip toolTip_ITNetwork = new ToolTip();
             toolTip_ITNetwork.ToolTipIcon = ToolTipIcon.Info;
@@ -5216,6 +5223,15 @@ namespace EndpointChecker
         {
             BrowseEndpoint(
                 "https://gitlab.com/ThePhOeNiX810815/Endpoint-Status-Checker/",
+                null,
+                null,
+                null);
+        }
+
+        public void pb_AppWebPage_Click(object sender, EventArgs e)
+        {
+            BrowseEndpoint(
+                "https://endpoint-status-checker.webnode.com",
                 null,
                 null,
                 null);
