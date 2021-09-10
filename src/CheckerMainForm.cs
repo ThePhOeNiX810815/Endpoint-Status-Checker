@@ -5167,7 +5167,7 @@ namespace EndpointChecker
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-                    appLatestVersion = updateWC.DownloadString("https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/version.txt");
+                    appLatestVersion = updateWC.DownloadString("https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/version.txt").TrimEnd();
                 }
             }
             catch
@@ -5177,7 +5177,11 @@ namespace EndpointChecker
 
         public void BW_UpdateCheck_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (new Version(Program.assembly_Version) < new Version(appLatestVersion))
+            Version app_currentVersion = new Version(Program.assembly_Version);
+            Version app_LatestVersion = new Version(appLatestVersion);
+
+
+            if (app_LatestVersion > app_currentVersion)
             {
                 DialogResult updateDialogResult = MessageBox.Show(
                     "There is new version " +
@@ -5199,7 +5203,7 @@ namespace EndpointChecker
                         null);
                 }
             }
-            else
+            else if ((app_LatestVersion < app_currentVersion))
             {
                 MessageBox.Show(
                     "You are using unreleased application build." +
