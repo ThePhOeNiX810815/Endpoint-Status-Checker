@@ -5195,13 +5195,14 @@ namespace EndpointChecker
             else
             {
                 MessageBox.Show(
-                    "You are using unreleased build" +
+                    "You are using unreleased application build." +
                     Environment.NewLine +
                     Environment.NewLine +
                     "Version " +
                     Program.assembly_Version +
                     " from " +
                     Program.assembly_BuiltDate +
+                    "." +
                     Environment.NewLine +
                     Environment.NewLine +
                     "This build is intended for testing purposes only."
