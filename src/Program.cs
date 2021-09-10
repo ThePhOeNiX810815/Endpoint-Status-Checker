@@ -58,7 +58,8 @@ namespace EndpointChecker
         public static string assembly_BuiltDate = RetrieveLinkerTimestamp();
         public static string assembly_Copyright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).LegalCopyright;
         public static string assembly_Version = Assembly.GetExecutingAssembly().GetName().Version.Major.ToString() + "." +
-                                       Assembly.GetExecutingAssembly().GetName().Version.Minor.ToString();
+                                                Assembly.GetExecutingAssembly().GetName().Version.Minor.ToString() + "." +
+                                                Assembly.GetExecutingAssembly().GetName().Version.Build.ToString();
 
         /// <summary>
         /// The main entry point for the application.

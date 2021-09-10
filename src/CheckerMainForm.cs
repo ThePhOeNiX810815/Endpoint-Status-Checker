@@ -280,6 +280,13 @@ namespace EndpointChecker
             toolTip_GitHub.ToolTipTitle = "GitHub";
             toolTip_GitHub.SetToolTip(pb_GitHub, "Open project repository on GitHub portal. Entire source code and releases are open for public.");
 
+            // SET TOOLTIP FOR GITLAB LINK LABEL
+            ToolTip toolTip_GitLab = new ToolTip();
+            toolTip_GitLab.ToolTipIcon = ToolTipIcon.Info;
+            toolTip_GitLab.IsBalloon = true;
+            toolTip_GitLab.ToolTipTitle = "GitLab";
+            toolTip_GitLab.SetToolTip(pb_GitLab, "Open project repository on GitLab portal. Entire source code and releases are open for public.");
+
             // SET TOOLTIP FOR FEATURE REQUEST BUTTON
             ToolTip toolTip_FeatureRequest = new ToolTip();
             toolTip_FeatureRequest.ToolTipIcon = ToolTipIcon.Info;
@@ -5129,7 +5136,7 @@ namespace EndpointChecker
             }
         }
 
-        private void pb_GitHub_Click(object sender, EventArgs e)
+        public void pb_GitHub_Click(object sender, EventArgs e)
         {
             BrowseEndpoint(
                 "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/",
@@ -5185,6 +5192,32 @@ namespace EndpointChecker
                         null);
                 }
             }
+            else
+            {
+                MessageBox.Show(
+                    "You are using unreleased build" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Version " +
+                    Program.assembly_Version +
+                    " from " +
+                    Program.assembly_BuiltDate +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "This build is intended for testing purposes only."
+                    , "Unreleased Build",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+        }
+
+        public void pb_GitLab_Click(object sender, EventArgs e)
+        {
+            BrowseEndpoint(
+                "https://gitlab.com/ThePhOeNiX810815/Endpoint-Status-Checker/",
+                null,
+                null,
+                null);
         }
     }
 
