@@ -50,11 +50,6 @@ namespace EndpointChecker
         // COMMON HTTP USER AGENT STRING [MOZILLA FIREFOX BROWSER X64 v.92]
         public static string httpUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0";
 
-        // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES
-        public static string exceptionReport_senderEMailAddress = "ExceptionReport@EndpointStatusChecker";
-        public static string featureRequest_senderEMailAddress = "FeatureRequest@EndpointStatusChecker";
-        public static string authorEmailAddress = "phoenixvm@gmail.com";
-
         // GOOGLE MAPS API KEY
         public static string apiKey_GoogleMaps = "AIzaSyBerCYP2d7XxMWy9DMHlS09BZKFh5NKCas";
         public static int googleMapsZoomFactor = 14;
@@ -87,9 +82,6 @@ namespace EndpointChecker
 
         // APPLICATION CONFIGURATION FILE
         public static string appConfigFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
-
-        // ENDPOINTS DEFINITIONS FILE NAME
-        public static string endpointDefinitonsFile = "EndpointChecker_EndpointsList.txt";
 
         // TOP LEVEL DOMAINS CACHE FILE NAME
         public static string tldRulesCacheFile = "EndpointChecker_TLDRulesCache.dat";
@@ -356,7 +348,7 @@ namespace EndpointChecker
             toolTip_OpenEndpointsListFile.ToolTipIcon = ToolTipIcon.Info;
             toolTip_OpenEndpointsListFile.IsBalloon = true;
             toolTip_OpenEndpointsListFile.ToolTipTitle = "Open EndPoints list file";
-            toolTip_OpenEndpointsListFile.SetToolTip(btn_EndpointsList, "Open EndPoints list file (" + endpointDefinitonsFile + ") in default editor");
+            toolTip_OpenEndpointsListFile.SetToolTip(btn_EndpointsList, "Open EndPoints list file (" + Program.endpointDefinitonsFile + ") in default editor");
 
             // SET TOOLTIP FOR 'CONFIG' FILE OPEN BUTTON
             ToolTip toolTip_OpenAppConfigFile = new ToolTip();
@@ -1130,7 +1122,7 @@ namespace EndpointChecker
                                 {
                                     // GET DEFAULT CREDENTIALS FROM URI [USERNAME]
                                     endpoint.LoginName = ftpWebRequest.Credentials.GetCredential(endpointURI, string.Empty).UserName;
-                                    endpoint.LoginPass = authorEmailAddress;
+                                    endpoint.LoginPass = Program.authorEmailAddress;
                                 }
 
                                 // SET CREDENTIALS
@@ -1790,9 +1782,9 @@ namespace EndpointChecker
             ExceptionDialog exDialog = new ExceptionDialog(
                 exception,
                 callingMethod,
-                exceptionReport_senderEMailAddress,
-                new List<string> { authorEmailAddress },
-                new List<string> { endpointDefinitonsFile });
+                Program.exceptionReport_senderEMailAddress,
+                new List<string> { Program.authorEmailAddress },
+                new List<string> { Program.endpointDefinitonsFile });
 
             exDialog.ShowDialog();
         }
@@ -3874,7 +3866,7 @@ namespace EndpointChecker
             endpointsList.Clear();
 
             // CHECK DEFINITIONS FILE EXISTENCE
-            if (File.Exists(endpointDefinitonsFile))
+            if (File.Exists(Program.endpointDefinitonsFile))
             {
                 List<string> endpointDuplicityList = new List<string>();
                 List<string> invalidURLList = new List<string>();
@@ -3882,7 +3874,7 @@ namespace EndpointChecker
                 // READ DEFINITIONS FILE LINE BY LINE
                 int lineNumber = 1;
                 string line;
-                StreamReader file = new StreamReader(endpointDefinitonsFile, Encoding.Default, true);
+                StreamReader file = new StreamReader(Program.endpointDefinitonsFile, Encoding.Default, true);
                 while ((line = file.ReadLine()) != null)
                 {
                     // REMOVE SPACES FROM LINE
@@ -3895,7 +3887,7 @@ namespace EndpointChecker
                         if (lineNumber > Settings.Default.Config_MaximumEndpointReferencesCount)
                         {
                             MessageBox.Show(
-                              "Endpoints definitions file \"" + endpointDefinitonsFile +
+                              "Endpoints definitions file \"" + Program.endpointDefinitonsFile +
                               "\" contains more than " +
                               Settings.Default.Config_MaximumEndpointReferencesCount +
                               " items." +
@@ -4120,7 +4112,7 @@ namespace EndpointChecker
                 {
                     // CREATE AND SHOW MESSAGEBOX 
                     string duplicityMessage = "Endpoints definitions file \"" +
-                    endpointDefinitonsFile + "\" contains " +
+                    Program.endpointDefinitonsFile + "\" contains " +
                     endpointDuplicityList.Count + " items with duplicity names.";
                     duplicityMessage += Environment.NewLine;
                     duplicityMessage += Environment.NewLine;
@@ -4162,7 +4154,7 @@ namespace EndpointChecker
                 {
                     // CREATE AND SHOW MESSAGEBOX, LIST AFFECTED DEFINITIONS ITEMS
                     string invalidURLMessage = "Endpoints definitions file \"" +
-                    endpointDefinitonsFile + "\" contains " +
+                    Program.endpointDefinitonsFile + "\" contains " +
                     invalidURLList.Count + " items with URL in invalid format.";
                     invalidURLMessage += Environment.NewLine;
                     invalidURLMessage += Environment.NewLine;
@@ -4202,7 +4194,7 @@ namespace EndpointChecker
                 SetControls(false, true);
 
                 lbl_NoEndpoints.ForeColor = Color.Red;
-                lbl_NoEndpoints.Text = "Endpoints definitions file \"" + endpointDefinitonsFile + "\" doesn't exists in \"" + Directory.GetCurrentDirectory() + "\".";
+                lbl_NoEndpoints.Text = "Endpoints definitions file \"" + Program.endpointDefinitonsFile + "\" doesn't exists in \"" + Directory.GetCurrentDirectory() + "\".";
             }
         }
 
@@ -5083,7 +5075,7 @@ namespace EndpointChecker
         public void link_AuthorMail_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             BrowseEndpoint(
-                WebUtility.HtmlEncode("mailto:" + authorEmailAddress + "?subject=" + Text + " Feedback"),
+                WebUtility.HtmlEncode("mailto:" + Program.authorEmailAddress + "?subject=" + Text + " Feedback"),
                 null,
                 null,
                 null);
@@ -5102,18 +5094,18 @@ namespace EndpointChecker
         public void pb_FeatureRequest_Click(object sender, EventArgs e)
         {
             FeatureRequestDialog frDialog = new FeatureRequestDialog(
-                featureRequest_senderEMailAddress,
-                new List<string> { authorEmailAddress });
+                Program.featureRequest_senderEMailAddress,
+                new List<string> { Program.authorEmailAddress });
 
             frDialog.ShowDialog();
         }
 
         public void btn_EndpointsList_Click(object sender, EventArgs e)
         {
-            if (File.Exists(endpointDefinitonsFile))
+            if (File.Exists(Program.endpointDefinitonsFile))
             {
                 BrowseEndpoint(
-                endpointDefinitonsFile,
+                Program.endpointDefinitonsFile,
                 null,
                 null,
                 null);
@@ -5123,8 +5115,8 @@ namespace EndpointChecker
         public void TIMER_ListAndLogsFilesWatcher_Tick(object sender, EventArgs e)
         {
             // ENDPOINTS LIST FILE
-            btn_EndpointsList.Enabled = File.Exists(endpointDefinitonsFile);
-            lbl_EndpointsList.Enabled = File.Exists(endpointDefinitonsFile);
+            btn_EndpointsList.Enabled = File.Exists(Program.endpointDefinitonsFile);
+            lbl_EndpointsList.Enabled = File.Exists(Program.endpointDefinitonsFile);
 
             // ERROR(S) LOG(S) FILES
             btn_ConfigFile.Enabled = File.Exists(appConfigFile);

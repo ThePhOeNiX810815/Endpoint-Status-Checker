@@ -52,6 +52,7 @@ namespace EndpointChecker
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
 
+        // APPLICATION SPECIFICATION
         public static string systemMemorySize;
         public static string assembly_ApplicationName = "Endpoint Status Checker";
         public static string assembly_CurrentWorkingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -60,6 +61,14 @@ namespace EndpointChecker
         public static string assembly_Version = Assembly.GetExecutingAssembly().GetName().Version.Major.ToString() + "." +
                                                 Assembly.GetExecutingAssembly().GetName().Version.Minor.ToString() + "." +
                                                 Assembly.GetExecutingAssembly().GetName().Version.Build.ToString();
+
+        // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES
+        public static string exceptionReport_senderEMailAddress = "ExceptionReport@EndpointStatusChecker";
+        public static string featureRequest_senderEMailAddress = "FeatureRequest@EndpointStatusChecker";
+        public static string authorEmailAddress = "phoenixvm@gmail.com";
+
+        // ENDPOINTS DEFINITIONS FILE NAME
+        public static string endpointDefinitonsFile = "EndpointChecker_EndpointsList.txt";
 
         /// <summary>
         /// The main entry point for the application.
@@ -108,10 +117,14 @@ namespace EndpointChecker
                          RequiredLibraryExists("VirusTotal.NET.dll") &&
                          RequiredLibraryExists("NSpeedTest.dll"))
                 {
-                    // RUN NEW APPLICATION INSTANCE
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
                     Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
+                    // SHOW SPLASH SCREEN
+                    Application.Run(new SplashScreen());
+
+                    // RUN NEW APPLICATION INSTANCE
                     Application.Run(new CheckerMainForm());
                 }
             }

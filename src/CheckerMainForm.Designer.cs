@@ -542,7 +542,6 @@
             this.lbl_Copyright.Name = "lbl_Copyright";
             this.lbl_Copyright.Size = new System.Drawing.Size(143, 20);
             this.lbl_Copyright.TabIndex = 12;
-            this.lbl_Copyright.Text = "Copyright © 2014-2021";
             this.lbl_Copyright.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lbl_Version

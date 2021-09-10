@@ -166,6 +166,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SplashScreen.Designer.cs">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="CheckerMainForm.resx">
       <DependentUpon>CheckerMainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -186,6 +192,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SpeedTestDialog.resx">
       <DependentUpon>SpeedTestDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SplashScreen.resx">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="app.manifest" />
@@ -289,6 +298,9 @@
     <Content Include="Images\wmiProperty.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProjectDir)..\ExecutableSelfSign\SelfSignUtils\bin\Debug\signtool.exe" sign /f "$(ProjectDir)..\ExecutableSelfSign\Certificates [to 01-01-2022]\Peter Machaj.pfx" "$(TargetPath)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
