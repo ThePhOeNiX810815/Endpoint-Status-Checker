@@ -52,12 +52,12 @@ namespace EndpointChecker
             rtb_SpeedTest_LogConsole.Text = string.Empty;
             rtb_SpeedTest_LogConsole.Visible = true;
 
-            tb_SpeedTest_ExternalIP.Text = CheckerMainForm.status_NotAvailable;
-            tb_SpeedTest_CurrentCountry.Text = CheckerMainForm.status_NotAvailable;
-            tb_SpeedTest_TestServer.Text = CheckerMainForm.status_NotAvailable;
-            tb_SpeedTest_HostedBy.Text = CheckerMainForm.status_NotAvailable;
-            tb_SpeedTest_Distance.Text = CheckerMainForm.status_NotAvailable;
-            tb_SpeedTest_Latency.Text = CheckerMainForm.status_NotAvailable;
+            tb_SpeedTest_ExternalIP.Text = Program.status_NotAvailable;
+            tb_SpeedTest_CurrentCountry.Text = Program.status_NotAvailable;
+            tb_SpeedTest_TestServer.Text = Program.status_NotAvailable;
+            tb_SpeedTest_HostedBy.Text = Program.status_NotAvailable;
+            tb_SpeedTest_Distance.Text = Program.status_NotAvailable;
+            tb_SpeedTest_Latency.Text = Program.status_NotAvailable;
 
             tb_SpeedTest_ExternalIP.BackColor = Color.Silver;
             tb_SpeedTest_CurrentCountry.BackColor = Color.Silver;
@@ -78,7 +78,7 @@ namespace EndpointChecker
                 // GET PUBLIC IP
                 string ipAddress = SpeedTest_GetExternalPublicIPAddress();
 
-                if (ipAddress != CheckerMainForm.status_NotAvailable)
+                if (ipAddress != Program.status_NotAvailable)
                 {
                     RegionInfo currentCountry_RegionInfo = SpeedTest_GetUserCountry(ipAddress);
 
@@ -370,7 +370,7 @@ namespace EndpointChecker
 
         public string SpeedTest_GetExternalPublicIPAddress()
         {
-            string ipAddress = CheckerMainForm.status_NotAvailable;
+            string ipAddress = Program.status_NotAvailable;
 
             try
             {

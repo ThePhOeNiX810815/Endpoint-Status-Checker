@@ -24,6 +24,7 @@ namespace EndpointChecker
 
             lbl_Name.Text = Program.assembly_ApplicationName;
             lbl_Version.Text = "Version " + Program.assembly_Version;
+            lbl_Build.Text = "Build " + Program.assembly_BuiltDate;
             lbl_Copyright.Text = Program.assembly_Copyright;
         }
         protected override void WndProc(ref Message m)

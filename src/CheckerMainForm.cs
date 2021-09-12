@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -31,6 +30,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using static EndpointChecker.Program;
 
 namespace EndpointChecker
 {
@@ -44,98 +44,6 @@ namespace EndpointChecker
         [DllImport("dnsapi.dll", EntryPoint = "DnsFlushResolverCache")]
         private static extern uint DnsFlushResolverCache();
 
-        // LATEST APPLICATION VERSION
-        public static string appLatestVersion = Program.assembly_Version;
-
-        // COMMON HTTP USER AGENT STRING [MOZILLA FIREFOX BROWSER X64 v.92]
-        public static string httpUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0";
-
-        // GOOGLE MAPS API KEY
-        public static string apiKey_GoogleMaps = "AIzaSyBerCYP2d7XxMWy9DMHlS09BZKFh5NKCas";
-        public static int googleMapsZoomFactor = 14;
-
-        // VIRUSTOTAL API KEY
-        public static string apiKey_VirusTotal = "a4260f0ef8eeddcc025d12f700e08c35c118c049ec96bfb5abce842b86447b99";
-
-        // FOR MAC ADDRESS RESOLVER FEATURE PURPOSE
-        [DllImport("iphlpapi.dll", ExactSpelling = true)]
-        public static extern int SendARP(int destIp, int srcIP, byte[] macAddr, ref uint physicalAddrLen);
-
-        // THIS SWITCH INDICATES THAT TRAY ICON BALLOON TOOLTIP IS ACTUALLY DISPLAYED
-        bool balloonVisible = false;
-
-        // VARIABLES FOR TRAY ICON ANIMATION PURPOSES
-        int trayAnimation_Index = 0;
-        List<Icon> trayAnimation_Icons = new List<Icon>();
-
-        // THIS SWITCH INDICATES THAT ENDPOINTS LISTVIEW IS ACTUALLY UPDATING
-        bool listUpdating = false;
-
-        // THIS SWITCH INDICATES ATTEMPT TO CLOSE APPLICATION DURING PROGRESS
-        bool onClose = false;
-
-        // STRING FORMAT FOR 'NOT AVAILABLE' STATUS
-        public static string status_NotAvailable = "N/A";
-
-        // STRING FORMAT FOR 'ERROR' STATUS
-        public static string status_Error = "ERROR";
-
-        // APPLICATION CONFIGURATION FILE
-        public static string appConfigFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
-
-        // TOP LEVEL DOMAINS CACHE FILE NAME
-        public static string tldRulesCacheFile = "EndpointChecker_TLDRulesCache.dat";
-
-        // ENDPOINTS 'LAST SEEN ONLINE' LIST FILE NAME
-        public static string lastSeenOnlineJSONFile = "EndpointChecker_LastSeenOnline.json";
-
-        // ERRORS [ENDPOINT DUPLICITIES] LIST FILE NAME
-        public static string endpointsList_Duplicities = "_ERRORS - Invalid Endpoint Definitions - Duplicities.txt";
-
-        // ERRORS [INVALID ENDPOINT DEFINITIONS] LIST FILE NAME
-        public static string endpointsList_InvalidDefs = "_ERRORS - Invalid Endpoint Definitions - Invalid URL format.txt";
-
-        // VNC VIEWER EXECUTABLE [FOR 'FTP' CONNECTION PURPOSE]
-        public static string appExecutable_VNC = string.Empty;
-
-        // PUTTY EXECUTABLE [FOR 'SSH' CONNECTION PURPOSE]
-        public static string appExecutable_Putty = string.Empty;
-
-        // DEFAULT STATUS EXPORT DIRECTORY AND FILENAMES
-        string statusExport_Directory = Program.assembly_CurrentWorkingDir;
-        string statusExport_XLSFile = "EndpointsStatus.xlsx";
-        string statusExport_JSONFile = "EndpointsStatus.json";
-        string statusExport_XMLFile = "EndpointsStatus.xml";
-        string statusExport_HTMLFile_InfoPage = "EndpointsStatus_Info.html";
-        string statusExport_HTMLFile_HTTPPage = "EndpointsStatus_HTTP.html";
-        string statusExport_HTMLFile_FTPPage = "EndpointsStatus_FTP.html";
-
-        // ENDPOINTS STATUS EXPORT FILES STREAMS [FOR EXCLUSIVE LOCK PURPOSE]
-        FileStream definitonsStatusExport_JSON_FileStream = null;
-        FileStream definitonsStatusExport_XLSX_FileStream = null;
-        FileStream definitonsStatusExport_XML_FileStream = null;
-        FileStream definitonsStatusExport_HTML_Info_FileStream = null;
-        FileStream definitonsStatusExport_HTML_HTTP_FileStream = null;
-        FileStream definitonsStatusExport_HTML_FTP_FileStream = null;
-
-        // MAXIMUM LENGHT OF HTTP RESPONSE TO READ [5 MB]
-        long httpResponse_MaxLenght_Bytes = 5242880;
-
-        // WORKING LIST OF ENDPOINTS
-        List<EndpointDefinition> endpointsList = new List<EndpointDefinition>();
-
-        // WORKING LIST OF DISABLED ENDPOINTS
-        List<string> endpointsList_Disabled = new List<string>();
-
-        // WORKING LIST OF 'LAST SEEN ONLINE' VALUES OF ENDPOINTS
-        Dictionary<string, string> endpointsList_LastSeenOnline = new Dictionary<string, string>();
-
-        // ENDPOINTS LISTVIEW TOPITEM INDEX [FOR PRESERVING SCROLLED POSITION AFTER LIST UPDATE]
-        int lv_Endpoints_TopItemIndex = 0;
-
-        // ENDPOINTS LISTVIEW SELECTED ITEM
-        public static EndpointDefinition lv_Endpoints_SelectedEndpoint = null;
-
         // CUSTOM VALIDATION METHOD ENUM
         public enum ValidationMethod
         {
@@ -143,12 +51,8 @@ namespace EndpointChecker
             Ping = 1
         }
 
-        // GET LOCAL GATEWAY IP AND MAC ADDRESSES
-        public static List<string> localDNSAndGWIPAddresses;
-        public static List<string> localDNSAndGWMACAddresses;
-
         // CUSTOM .NET FRAMEWORK VERSION ENUM
-        enum DotNetFramework_Version
+        public enum DotNetFramework_Version
         {
             v4_5,
             v4_5_1,
@@ -163,7 +67,7 @@ namespace EndpointChecker
         };
 
         // CUSTOM SECURITY PROTOCOL DEFINITIONS ENUM
-        enum SecurityProtocol_Type
+        public enum SecurityProtocol_Type
         {
             SSL_30 = 48,
             TLS_10 = 192,
@@ -182,7 +86,7 @@ namespace EndpointChecker
         };
 
         // CUSTOM ENDPOINT STATUS DEFINITIONS ENUM
-        enum EndpointStatus
+        public enum EndpointStatus
         {
             [Description("Ping Check Only")]
             PINGCHECK = 1,
@@ -191,6 +95,59 @@ namespace EndpointChecker
             [Description("Not Checked (Terminated)")]
             TERMINATED = 3
         };
+
+        // LATEST APPLICATION VERSION
+        public static string appLatestVersion = Program.assembly_Version;
+
+        // FOR MAC ADDRESS RESOLVER FEATURE PURPOSE
+        [DllImport("iphlpapi.dll", ExactSpelling = true)]
+        public static extern int SendARP(int destIp, int srcIP, byte[] macAddr, ref uint physicalAddrLen);
+
+        // THIS SWITCH INDICATES THAT TRAY ICON BALLOON TOOLTIP IS ACTUALLY DISPLAYED
+        bool balloonVisible = false;
+
+        // VARIABLES FOR TRAY ICON ANIMATION PURPOSES
+        int trayAnimation_Index = 0;
+        List<Icon> trayAnimation_Icons = new List<Icon>();
+
+        // THIS SWITCH INDICATES THAT ENDPOINTS LISTVIEW IS ACTUALLY UPDATING
+        bool listUpdating = false;
+
+        // THIS SWITCH INDICATES ATTEMPT TO CLOSE APPLICATION DURING PROGRESS
+        bool onClose = false;
+
+        // VNC VIEWER EXECUTABLE [FOR 'FTP' CONNECTION PURPOSE]
+        public static string appExecutable_VNC = string.Empty;
+
+        // PUTTY EXECUTABLE [FOR 'SSH' CONNECTION PURPOSE]
+        public static string appExecutable_Putty = string.Empty;
+
+        // ENDPOINTS STATUS EXPORT FILES STREAMS [FOR EXCLUSIVE LOCK PURPOSE]
+        FileStream definitonsStatusExport_JSON_FileStream = null;
+        FileStream definitonsStatusExport_XLSX_FileStream = null;
+        FileStream definitonsStatusExport_XML_FileStream = null;
+        FileStream definitonsStatusExport_HTML_Info_FileStream = null;
+        FileStream definitonsStatusExport_HTML_HTTP_FileStream = null;
+        FileStream definitonsStatusExport_HTML_FTP_FileStream = null;
+
+        // WORKING LIST OF ENDPOINTS
+        List<EndpointDefinition> endpointsList = new List<EndpointDefinition>();
+
+        // WORKING LIST OF DISABLED ENDPOINTS
+        List<string> endpointsList_Disabled = new List<string>();
+
+        // WORKING LIST OF 'LAST SEEN ONLINE' VALUES OF ENDPOINTS
+        Dictionary<string, string> endpointsList_LastSeenOnline = new Dictionary<string, string>();
+
+        // ENDPOINTS LISTVIEW TOPITEM INDEX [FOR PRESERVING SCROLLED POSITION AFTER LIST UPDATE]
+        int lv_Endpoints_TopItemIndex = 0;
+
+        // ENDPOINTS LISTVIEW SELECTED ITEM
+        public static EndpointDefinition lv_Endpoints_SelectedEndpoint = null;
+
+        // GET LOCAL GATEWAY IP AND MAC ADDRESSES
+        public static List<string> localDNSAndGWIPAddresses;
+        public static List<string> localDNSAndGWMACAddresses;
 
         // SELECTED VALIDATION METHOD
         public static ValidationMethod validationMethod;
@@ -1122,7 +1079,7 @@ namespace EndpointChecker
                                 {
                                     // GET DEFAULT CREDENTIALS FROM URI [USERNAME]
                                     endpoint.LoginName = ftpWebRequest.Credentials.GetCredential(endpointURI, string.Empty).UserName;
-                                    endpoint.LoginPass = Program.authorEmailAddress;
+                                    endpoint.LoginPass = "FTPPassword@EndpointStatusChecker.NET";
                                 }
 
                                 // SET CREDENTIALS
@@ -3228,7 +3185,7 @@ namespace EndpointChecker
                 else if (statusMessage == GetEnumDescription(EndpointStatus.DISABLED))
                 {
                     // DISABLED
-                    return Color.LightGray;
+                    return Color.Gray;
                 }
             }
 
@@ -5070,15 +5027,6 @@ namespace EndpointChecker
             }
 
             return protocol + Uri.SchemeDelimiter + connectionString;
-        }
-
-        public void link_AuthorMail_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            BrowseEndpoint(
-                WebUtility.HtmlEncode("mailto:" + Program.authorEmailAddress + "?subject=" + Text + " Feedback"),
-                null,
-                null,
-                null);
         }
 
         public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)

@@ -36,8 +36,7 @@ namespace EndpointChecker
             this.lbl_Name = new System.Windows.Forms.Label();
             this.lbl_Copyright = new System.Windows.Forms.Label();
             this.lbl_Version = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.lbl_Build = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // TIMER_FadeOutAndClose
@@ -54,11 +53,11 @@ namespace EndpointChecker
             // lbl_Name
             // 
             this.lbl_Name.BackColor = System.Drawing.Color.Transparent;
-            this.lbl_Name.Font = new System.Drawing.Font("Arial Rounded MT Bold", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Name.ForeColor = System.Drawing.Color.DarkViolet;
-            this.lbl_Name.Location = new System.Drawing.Point(12, 3);
+            this.lbl_Name.Font = new System.Drawing.Font("Arial Rounded MT Bold", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Name.ForeColor = System.Drawing.Color.MidnightBlue;
+            this.lbl_Name.Location = new System.Drawing.Point(12, 44);
             this.lbl_Name.Name = "lbl_Name";
-            this.lbl_Name.Size = new System.Drawing.Size(631, 44);
+            this.lbl_Name.Size = new System.Drawing.Size(631, 41);
             this.lbl_Name.TabIndex = 0;
             this.lbl_Name.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -76,24 +75,24 @@ namespace EndpointChecker
             // lbl_Version
             // 
             this.lbl_Version.BackColor = System.Drawing.Color.Transparent;
-            this.lbl_Version.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Version.Font = new System.Drawing.Font("Century", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Version.ForeColor = System.Drawing.Color.Black;
-            this.lbl_Version.Location = new System.Drawing.Point(12, 49);
+            this.lbl_Version.Location = new System.Drawing.Point(12, 95);
             this.lbl_Version.Name = "lbl_Version";
             this.lbl_Version.Size = new System.Drawing.Size(631, 26);
             this.lbl_Version.TabIndex = 2;
             this.lbl_Version.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // pictureBox1
+            // lbl_Build
             // 
-            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(295, 100);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(64, 64);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 3;
-            this.pictureBox1.TabStop = false;
+            this.lbl_Build.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_Build.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Build.ForeColor = System.Drawing.Color.Black;
+            this.lbl_Build.Location = new System.Drawing.Point(12, 123);
+            this.lbl_Build.Name = "lbl_Build";
+            this.lbl_Build.Size = new System.Drawing.Size(631, 30);
+            this.lbl_Build.TabIndex = 4;
+            this.lbl_Build.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // SplashScreen
             // 
@@ -103,7 +102,7 @@ namespace EndpointChecker
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(655, 223);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.lbl_Build);
             this.Controls.Add(this.lbl_Version);
             this.Controls.Add(this.lbl_Copyright);
             this.Controls.Add(this.lbl_Name);
@@ -117,7 +116,6 @@ namespace EndpointChecker
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.TopMost = true;
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -129,6 +127,6 @@ namespace EndpointChecker
         public System.Windows.Forms.Label lbl_Name;
         public System.Windows.Forms.Label lbl_Copyright;
         public System.Windows.Forms.Label lbl_Version;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        public System.Windows.Forms.Label lbl_Build;
     }
 }

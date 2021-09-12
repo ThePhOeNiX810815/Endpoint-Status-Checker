@@ -28,9 +28,6 @@ namespace EndpointChecker
         // WMI CONNECTION SCOPE
         ManagementScope wmiConnectionScope = new ManagementScope();
 
-        // MAC VENDOR WEBPAGE URL
-        string macVendorWebPage = string.Empty;
-
         // IP ADDRESS COMBOBOX TOOLTIP
         ToolTip ipAddress_ComboboxTooltip = new ToolTip();
 
@@ -51,6 +48,9 @@ namespace EndpointChecker
 
         // VIRUSTOTAL RESULT
         UrlScanResult virusTotal_ScanResult = null;
+
+        // MAC VENDOR WEBPAGE URL
+        string macVendorWebPage = string.Empty;
 
         // WMI MANAGEMENT CLASSES ENUM
         enum WMIManagementClass
@@ -282,10 +282,10 @@ namespace EndpointChecker
                 CheckerMainForm.validationMethod != CheckerMainForm.ValidationMethod.Ping)
             {
                 // ADD FTP TAB PAGE
-                if (_selectedEndpoint.FTPBannerMessage != CheckerMainForm.status_NotAvailable ||
-                    _selectedEndpoint.FTPExitMessage != CheckerMainForm.status_NotAvailable ||
-                    _selectedEndpoint.FTPStatusDescription != CheckerMainForm.status_NotAvailable ||
-                    _selectedEndpoint.FTPWelcomeMessage != CheckerMainForm.status_NotAvailable)
+                if (_selectedEndpoint.FTPBannerMessage != Program.status_NotAvailable ||
+                    _selectedEndpoint.FTPExitMessage != Program.status_NotAvailable ||
+                    _selectedEndpoint.FTPStatusDescription != Program.status_NotAvailable ||
+                    _selectedEndpoint.FTPWelcomeMessage != Program.status_NotAvailable)
                 {
                     tb_FTPInfo_WelcomeMessage.Text = _selectedEndpoint.FTPWelcomeMessage;
                     tb_FTPInfo_BannerMessage.Text = _selectedEndpoint.FTPBannerMessage;
@@ -349,15 +349,15 @@ namespace EndpointChecker
                     }
                     else
                     {
-                        tb_PageInfo_ThemeColor.Text = CheckerMainForm.status_NotAvailable;
+                        tb_PageInfo_ThemeColor.Text = Program.status_NotAvailable;
                     }
 
                     // HTML INFO
-                    if (tb_PageInfo_HTMLTitle.Text != CheckerMainForm.status_NotAvailable ||
-                        tb_PageInfo_Author.Text != CheckerMainForm.status_NotAvailable ||
-                        tb_PageInfo_HTMLDescription.Text != CheckerMainForm.status_NotAvailable ||
-                        tb_PageInfo_ContentLanguage.Text != CheckerMainForm.status_NotAvailable ||
-                        tb_PageInfo_ThemeColor.Text != CheckerMainForm.status_NotAvailable ||
+                    if (tb_PageInfo_HTMLTitle.Text != Program.status_NotAvailable ||
+                        tb_PageInfo_Author.Text != Program.status_NotAvailable ||
+                        tb_PageInfo_HTMLDescription.Text != Program.status_NotAvailable ||
+                        tb_PageInfo_ContentLanguage.Text != Program.status_NotAvailable ||
+                        tb_PageInfo_ThemeColor.Text != Program.status_NotAvailable ||
                         _selectedEndpoint.HTMLMetaInfo.PropertyItem.Count > 0)
                     {
                         foreach (Property meta in _selectedEndpoint.HTMLMetaInfo.PropertyItem)
@@ -480,13 +480,13 @@ namespace EndpointChecker
                     tb_HTTPInfo_ETag.Text = _selectedEndpoint.HTTPetag.TrimStart('W').TrimStart('/').TrimStart('"').TrimEnd('"');
                     pb_HTTPInfo_WeakETag.Visible = _selectedEndpoint.HTTPetag.ToLower().StartsWith("w/");
 
-                    if (tb_HTTPInfo_ServerName.Text != CheckerMainForm.status_NotAvailable ||
-                        tb_HTTPInfo_AutoRedirects.Text != CheckerMainForm.status_NotAvailable ||
-                        tb_HTTPInfo_ContentType.Text != CheckerMainForm.status_NotAvailable ||
-                        tb_HTTPInfo_Encoding.Text != CheckerMainForm.status_NotAvailable ||
-                        tb_HTTPInfo_ContentLenght.Text != CheckerMainForm.status_NotAvailable ||
-                        tb_HTTPInfo_Expires.Text != CheckerMainForm.status_NotAvailable ||
-                        tb_HTTPInfo_ETag.Text != CheckerMainForm.status_NotAvailable)
+                    if (tb_HTTPInfo_ServerName.Text != Program.status_NotAvailable ||
+                        tb_HTTPInfo_AutoRedirects.Text != Program.status_NotAvailable ||
+                        tb_HTTPInfo_ContentType.Text != Program.status_NotAvailable ||
+                        tb_HTTPInfo_Encoding.Text != Program.status_NotAvailable ||
+                        tb_HTTPInfo_ContentLenght.Text != Program.status_NotAvailable ||
+                        tb_HTTPInfo_Expires.Text != Program.status_NotAvailable ||
+                        tb_HTTPInfo_ETag.Text != Program.status_NotAvailable)
                     {
                         // ADD HTTP TAB PAGE
                         tabControl.TabPages.Add(tabPage_HTTPInfo);
@@ -532,7 +532,7 @@ namespace EndpointChecker
 
             // SET TABS [COMMON]
             // NETWORK SHARES
-            if (!_selectedEndpoint.NetworkShare[0].Contains(CheckerMainForm.status_NotAvailable))
+            if (!_selectedEndpoint.NetworkShare[0].Contains(Program.status_NotAvailable))
             {
                 foreach (string netShare in _selectedEndpoint.NetworkShare)
                 {
@@ -594,7 +594,7 @@ namespace EndpointChecker
             {
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(websiteURL + "/favicon.ico");
                 httpWebRequest.Method = WebRequestMethods.Http.Get;
-                httpWebRequest.UserAgent = CheckerMainForm.httpUserAgent;
+                httpWebRequest.UserAgent = Program.httpUserAgent;
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -898,8 +898,8 @@ namespace EndpointChecker
                 wmiConnectionScope.Options.EnablePrivileges = true;
 
                 if (!CheckerMainForm.IsLocalHost(new Uri(_selectedEndpoint.ResponseAddress).Host) &&
-                    _selectedEndpoint.LoginName != CheckerMainForm.status_NotAvailable &&
-                    _selectedEndpoint.LoginPass != CheckerMainForm.status_NotAvailable)
+                    _selectedEndpoint.LoginName != Program.status_NotAvailable &&
+                    _selectedEndpoint.LoginPass != Program.status_NotAvailable)
                 {
                     // PASS CREDENTIALS IF SPECIFIED
                     wmiConnectionScope.Options.Username = _selectedEndpoint.LoginName;
@@ -1035,7 +1035,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    TLDRulesCache.Init(CheckerMainForm.tldRulesCacheFile);
+                    TLDRulesCache.Init(Program.tldRulesCacheFile);
 
                     // TRY TO GET REGISTRABLE DOMAIN NAME
                     if (DomainName.TryParse(
@@ -1181,15 +1181,15 @@ namespace EndpointChecker
             string macLookupAPI = "http://macvendors.co/api/";
             string vendorAutoCompleteAPI = "https://autocomplete.clearbit.com/v1/companies/suggest?query=";
 
-            string macAddressVendor = CheckerMainForm.status_NotAvailable;
+            string macAddressVendor = Program.status_NotAvailable;
 
             NewBackgroundThread((Action)(() =>
             {
-                if (macAddress != CheckerMainForm.status_NotAvailable)
+                if (macAddress != Program.status_NotAvailable)
                 {
                     HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(macLookupAPI + macAddress);
                     httpWebRequest.Method = WebRequestMethods.Http.Get;
-                    httpWebRequest.UserAgent = CheckerMainForm.httpUserAgent;
+                    httpWebRequest.UserAgent = Program.httpUserAgent;
                     httpWebRequest.Timeout = 5000;
                     httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1227,7 +1227,7 @@ namespace EndpointChecker
                                     // GET VENDOR WEBSITE
                                     httpWebRequest = (HttpWebRequest)WebRequest.Create(vendorAutoCompleteAPI + macAddressVendorResponse.result.company.Split(' ')[0]);
                                     httpWebRequest.Method = WebRequestMethods.Http.Get;
-                                    httpWebRequest.UserAgent = CheckerMainForm.httpUserAgent;
+                                    httpWebRequest.UserAgent = Program.httpUserAgent;
                                     httpWebRequest.Timeout = 5000;
                                     httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1327,7 +1327,7 @@ namespace EndpointChecker
                 {
                     bool showTab = false;
 
-                    if (ipAddress != CheckerMainForm.status_NotAvailable)
+                    if (ipAddress != Program.status_NotAvailable)
                     {
                         try
                         {
@@ -1436,7 +1436,7 @@ namespace EndpointChecker
 
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(path);
                 httpWebRequest.Method = WebRequestMethods.Http.Get;
-                httpWebRequest.UserAgent = CheckerMainForm.httpUserAgent;
+                httpWebRequest.UserAgent = Program.httpUserAgent;
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1476,16 +1476,16 @@ namespace EndpointChecker
                 string path = "http://maps.googleapis.com/maps/api/staticmap?center=" +
                 latlng +
                 "&zoom=" +
-                CheckerMainForm.googleMapsZoomFactor +
+                Program.googleMapsZoomFactor +
                 "&size=400x400" +
                 "&maptype=hybrid" +
                 "&markers=color:green%7Clabel:A%7C" +
                 latlng +
-                "&key=" + CheckerMainForm.apiKey_GoogleMaps;
+                "&key=" + Program.apiKey_GoogleMaps;
 
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(path);
                 httpWebRequest.Method = WebRequestMethods.Http.Get;
-                httpWebRequest.UserAgent = CheckerMainForm.httpUserAgent;
+                httpWebRequest.UserAgent = Program.httpUserAgent;
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1543,7 +1543,7 @@ namespace EndpointChecker
         {
             if (string.IsNullOrEmpty(input))
             {
-                return CheckerMainForm.status_NotAvailable;
+                return Program.status_NotAvailable;
             }
             else
             {
@@ -1561,7 +1561,7 @@ namespace EndpointChecker
                     "," +
                     tb_GeoLocation_Longitude.Text +
                     "&zoom=" +
-                    CheckerMainForm.googleMapsZoomFactor +
+                    Program.googleMapsZoomFactor +
                     "&basemap=satellite",
                     null,
                     null,
@@ -1608,15 +1608,15 @@ namespace EndpointChecker
             }
             else
             {
-                tb_MACAddress.Text = CheckerMainForm.status_NotAvailable;
-                tb_MACVendor.Text = CheckerMainForm.status_NotAvailable;
+                tb_MACAddress.Text = Program.status_NotAvailable;
+                tb_MACVendor.Text = Program.status_NotAvailable;
             }
 
             // GET IP ADDRESS GEO INFO
             GetIPGeoInfo(_selectedEndpoint.IPAddress[cb_IPAddress.SelectedIndex]);
 
             // IP ADDRESS PRESENT
-            if (cb_IPAddress.GetItemText(cb_IPAddress.SelectedItem) != CheckerMainForm.status_NotAvailable)
+            if (cb_IPAddress.GetItemText(cb_IPAddress.SelectedItem) != Program.status_NotAvailable)
             {
                 // PORT STATUS
                 if (btn_Ports_Refresh.Enabled)
@@ -1668,7 +1668,7 @@ namespace EndpointChecker
             {
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(imageURL);
                 httpWebRequest.Method = WebRequestMethods.Http.Get;
-                httpWebRequest.UserAgent = CheckerMainForm.httpUserAgent;
+                httpWebRequest.UserAgent = Program.httpUserAgent;
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1749,9 +1749,9 @@ namespace EndpointChecker
                 try
                 {
                     // REQUEST SCAN REPORT
-                    VirusTotal virusTotal = new VirusTotal(CheckerMainForm.apiKey_VirusTotal);
+                    VirusTotal virusTotal = new VirusTotal(Program.apiKey_VirusTotal);
                     virusTotal.UseTLS = true;
-                    virusTotal.UserAgent = CheckerMainForm.httpUserAgent;
+                    virusTotal.UserAgent = Program.httpUserAgent;
                     Task<UrlScanResult> virusTotal_ScanResultTask = virusTotal.ScanUrlAsync(urlToScan);
                     virusTotal_ScanResult = virusTotal_ScanResultTask.Result;
 
@@ -1842,9 +1842,9 @@ namespace EndpointChecker
             try
             {
                 // REQUEST SCAN RESULT
-                VirusTotal virusTotal = new VirusTotal(CheckerMainForm.apiKey_VirusTotal);
+                VirusTotal virusTotal = new VirusTotal(Program.apiKey_VirusTotal);
                 virusTotal.UseTLS = true;
-                virusTotal.UserAgent = CheckerMainForm.httpUserAgent;
+                virusTotal.UserAgent = Program.httpUserAgent;
                 Task<UrlReport> virusTotalReportTask = virusTotal.GetUrlReportAsync(virusTotal_ScanResult.Url);
                 UrlReport virusTotalReport = virusTotalReportTask.Result;
                 virusTotalReportTask.Dispose();
@@ -1972,7 +1972,7 @@ namespace EndpointChecker
                         {
                             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(pageLink.ItemValue);
                             httpWebRequest.Method = WebRequestMethods.Http.Get;
-                            httpWebRequest.UserAgent = CheckerMainForm.httpUserAgent;
+                            httpWebRequest.UserAgent = Program.httpUserAgent;
                             httpWebRequest.Timeout = 10000;
                             httpWebRequest.ReadWriteTimeout = 10000;
                             httpWebRequest.AllowAutoRedirect = true;
@@ -2111,10 +2111,10 @@ namespace EndpointChecker
         {
             CheckerMainForm.TextBox_SetPasswordVisibilty(
                 tb_UserPassword,
-                tb_UserPassword.Text == CheckerMainForm.status_NotAvailable);
+                tb_UserPassword.Text == Program.status_NotAvailable);
 
             pb_ShowPassword.Visible =
-                !(tb_UserPassword.Text == CheckerMainForm.status_NotAvailable);
+                !(tb_UserPassword.Text == Program.status_NotAvailable);
         }
 
         public void pb_SSH_MouseClick(object sender, MouseEventArgs e)

@@ -139,7 +139,6 @@
             this.cb_ResolvePageLinks = new System.Windows.Forms.CheckBox();
             this.groupBox_HTTPOptions = new System.Windows.Forms.GroupBox();
             this.pb_ITNetwork = new System.Windows.Forms.PictureBox();
-            this.link_AuthorMail = new System.Windows.Forms.LinkLabel();
             this.pb_FeatureRequest = new System.Windows.Forms.PictureBox();
             this.TIMER_ListAndLogsFilesWatcher = new System.Windows.Forms.Timer(this.components);
             this.pb_GitHub = new System.Windows.Forms.PictureBox();
@@ -540,7 +539,7 @@
             this.lbl_Copyright.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Copyright.Location = new System.Drawing.Point(5, 501);
             this.lbl_Copyright.Name = "lbl_Copyright";
-            this.lbl_Copyright.Size = new System.Drawing.Size(143, 20);
+            this.lbl_Copyright.Size = new System.Drawing.Size(240, 20);
             this.lbl_Copyright.TabIndex = 12;
             this.lbl_Copyright.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -548,10 +547,10 @@
             // 
             this.lbl_Version.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_Version.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Version.Location = new System.Drawing.Point(802, 501);
+            this.lbl_Version.Location = new System.Drawing.Point(861, 501);
             this.lbl_Version.Name = "lbl_Version";
             this.lbl_Version.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lbl_Version.Size = new System.Drawing.Size(300, 20);
+            this.lbl_Version.Size = new System.Drawing.Size(241, 20);
             this.lbl_Version.TabIndex = 13;
             this.lbl_Version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -1482,20 +1481,6 @@
             this.pb_ITNetwork.TabStop = false;
             this.pb_ITNetwork.Click += new System.EventHandler(this.pb_ITNetwork_Click);
             // 
-            // link_AuthorMail
-            // 
-            this.link_AuthorMail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.link_AuthorMail.AutoSize = true;
-            this.link_AuthorMail.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.link_AuthorMail.Font = new System.Drawing.Font("Arial", 9.75F);
-            this.link_AuthorMail.Location = new System.Drawing.Point(146, 503);
-            this.link_AuthorMail.Name = "link_AuthorMail";
-            this.link_AuthorMail.Size = new System.Drawing.Size(85, 16);
-            this.link_AuthorMail.TabIndex = 61;
-            this.link_AuthorMail.TabStop = true;
-            this.link_AuthorMail.Text = "Peter Machaj";
-            this.link_AuthorMail.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.link_AuthorMail_LinkClicked);
-            // 
             // pb_FeatureRequest
             // 
             this.pb_FeatureRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1588,7 +1573,6 @@
             this.Controls.Add(this.btn_EndpointsList);
             this.Controls.Add(this.lbl_EndpointsList);
             this.Controls.Add(this.btn_ConfigFile);
-            this.Controls.Add(this.link_AuthorMail);
             this.Controls.Add(this.groupBox_HTTPOptions);
             this.Controls.Add(this.groupBox_CommonOptions);
             this.Controls.Add(this.groupBox_Export);
@@ -1763,7 +1747,6 @@
         public System.Windows.Forms.CheckBox cb_ExportEndpointsStatus_JSON;
         public System.Windows.Forms.CheckBox cb_ResolvePageLinks;
         public System.Windows.Forms.ColumnHeader ch_HTTPETag;
-        public System.Windows.Forms.LinkLabel link_AuthorMail;
         public System.Windows.Forms.PictureBox pb_FeatureRequest;
         public System.Windows.Forms.Label lbl_ConfigFile;
         public System.Windows.Forms.Button btn_EndpointsList;

@@ -592,8 +592,27 @@
             this.lbl_HTTPInfo_ServerName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tabControl
-            // 
+            //
+            // VISIBLE TABS [ALWAYS]
             this.tabControl.Controls.Add(this.tabPage_MainInfo);
+
+            // VISIBLE TABS [DURING DESIGN MODE]
+            //this.tabControl.Controls.Add(this.tabPage_FTPInfo);
+            //this.tabControl.Controls.Add(this.tabPage_GeoLocation);
+            //this.tabControl.Controls.Add(this.tabPage_HTMLInfo);
+            //this.tabControl.Controls.Add(this.tabPage_HTTPInfo);
+            //this.tabControl.Controls.Add(this.tabPage_HTTPRequestHeaders);
+            //this.tabControl.Controls.Add(this.tabPage_HTTPResponseHeaders);
+            //this.tabControl.Controls.Add(this.tabPage_NetworkShares);
+            //this.tabControl.Controls.Add(this.tabPage_PageCategory);
+            //this.tabControl.Controls.Add(this.tabPage_PageLinks);
+            //this.tabControl.Controls.Add(this.tabPage_Ports);
+            //this.tabControl.Controls.Add(this.tabPage_SSLCertificate);
+            //this.tabControl.Controls.Add(this.tabPage_TraceRoute);
+            //this.tabControl.Controls.Add(this.tabPage_VirusTotal);
+            //this.tabControl.Controls.Add(this.tabPage_WhoIs);
+            //this.tabControl.Controls.Add(this.tabPage_WMI_ComputerInfo);
+
             this.tabControl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabControl.HotTrack = true;
             this.tabControl.ImageList = this.imageList_Tabs;

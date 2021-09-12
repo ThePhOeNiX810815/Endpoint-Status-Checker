@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -69,6 +71,49 @@ namespace EndpointChecker
 
         // ENDPOINTS DEFINITIONS FILE NAME
         public static string endpointDefinitonsFile = "EndpointChecker_EndpointsList.txt";
+
+        // COMMON HTTP USER AGENT STRING [MOZILLA FIREFOX BROWSER X64 v.92]
+        public static string httpUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0";
+
+        // GOOGLE MAPS API KEY
+        public static string apiKey_GoogleMaps = "AIzaSyBerCYP2d7XxMWy9DMHlS09BZKFh5NKCas";
+        public static int googleMapsZoomFactor = 14;
+
+        // VIRUSTOTAL API KEY
+        public static string apiKey_VirusTotal = "a4260f0ef8eeddcc025d12f700e08c35c118c049ec96bfb5abce842b86447b99";
+
+        // STRING FORMAT FOR 'NOT AVAILABLE' STATUS
+        public static string status_NotAvailable = "N/A";
+
+        // STRING FORMAT FOR 'ERROR' STATUS
+        public static string status_Error = "ERROR";
+
+        // APPLICATION CONFIGURATION FILE
+        public static string appConfigFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+
+        // TOP LEVEL DOMAINS CACHE FILE NAME
+        public static string tldRulesCacheFile = "EndpointChecker_TLDRulesCache.dat";
+
+        // ENDPOINTS 'LAST SEEN ONLINE' LIST FILE NAME
+        public static string lastSeenOnlineJSONFile = "EndpointChecker_LastSeenOnline.json";
+
+        // ERRORS [ENDPOINT DUPLICITIES] LIST FILE NAME
+        public static string endpointsList_Duplicities = "_ERRORS - Invalid Endpoint Definitions - Duplicities.txt";
+
+        // ERRORS [INVALID ENDPOINT DEFINITIONS] LIST FILE NAME
+        public static string endpointsList_InvalidDefs = "_ERRORS - Invalid Endpoint Definitions - Invalid URL format.txt";
+
+        // DEFAULT STATUS EXPORT DIRECTORY AND FILENAMES
+        public static string statusExport_Directory = Program.assembly_CurrentWorkingDir;
+        public static string statusExport_XLSFile = "EndpointsStatus.xlsx";
+        public static string statusExport_JSONFile = "EndpointsStatus.json";
+        public static string statusExport_XMLFile = "EndpointsStatus.xml";
+        public static string statusExport_HTMLFile_InfoPage = "EndpointsStatus_Info.html";
+        public static string statusExport_HTMLFile_HTTPPage = "EndpointsStatus_HTTP.html";
+        public static string statusExport_HTMLFile_FTPPage = "EndpointsStatus_FTP.html";
+
+        // MAXIMUM LENGHT OF HTTP RESPONSE TO READ [5 MB]
+        public static long httpResponse_MaxLenght_Bytes = 5242880;
 
         /// <summary>
         /// The main entry point for the application.
