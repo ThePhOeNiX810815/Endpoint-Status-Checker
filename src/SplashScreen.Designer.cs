@@ -75,11 +75,11 @@ namespace EndpointChecker
             // lbl_Version
             // 
             this.lbl_Version.BackColor = System.Drawing.Color.Transparent;
-            this.lbl_Version.Font = new System.Drawing.Font("Century", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Version.Font = new System.Drawing.Font("Century Gothic", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Version.ForeColor = System.Drawing.Color.Black;
             this.lbl_Version.Location = new System.Drawing.Point(12, 95);
             this.lbl_Version.Name = "lbl_Version";
-            this.lbl_Version.Size = new System.Drawing.Size(631, 26);
+            this.lbl_Version.Size = new System.Drawing.Size(631, 34);
             this.lbl_Version.TabIndex = 2;
             this.lbl_Version.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -88,7 +88,7 @@ namespace EndpointChecker
             this.lbl_Build.BackColor = System.Drawing.Color.Transparent;
             this.lbl_Build.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Build.ForeColor = System.Drawing.Color.Black;
-            this.lbl_Build.Location = new System.Drawing.Point(12, 123);
+            this.lbl_Build.Location = new System.Drawing.Point(12, 131);
             this.lbl_Build.Name = "lbl_Build";
             this.lbl_Build.Size = new System.Drawing.Size(631, 30);
             this.lbl_Build.TabIndex = 4;

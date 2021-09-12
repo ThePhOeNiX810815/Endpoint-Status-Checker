@@ -92,6 +92,13 @@
             this.lbl_Port = new System.Windows.Forms.Label();
             this.lbl_Protocol = new System.Windows.Forms.Label();
             this.lbl_EndpointName = new System.Windows.Forms.Label();
+            this.tabPage_WhoIs = new System.Windows.Forms.TabPage();
+            this.tb_WhoIs_RegistrableDomain = new System.Windows.Forms.TextBox();
+            this.lbl_WhoIs_RegistrableDomain = new System.Windows.Forms.Label();
+            this.lbl_WhoIs_Server = new System.Windows.Forms.Label();
+            this.tb_WhoIs_Server = new System.Windows.Forms.TextBox();
+            this.pb_WhoIsProgress = new System.Windows.Forms.PictureBox();
+            this.rtb_WhoIsInfo = new System.Windows.Forms.RichTextBox();
             this.imageList_Tabs = new System.Windows.Forms.ImageList(this.components);
             this.tabPage_TraceRoute = new System.Windows.Forms.TabPage();
             this.pb_TraceRouteProgress = new System.Windows.Forms.PictureBox();
@@ -118,15 +125,6 @@
             this.serviceHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btn_Ports_Refresh = new System.Windows.Forms.Button();
             this.pb_PortsProgress = new System.Windows.Forms.PictureBox();
-            this.tabPage_WhoIs = new System.Windows.Forms.TabPage();
-            this.tb_WhoIs_RegistrableDomain = new System.Windows.Forms.TextBox();
-            this.lbl_WhoIs_RegistrableDomain = new System.Windows.Forms.Label();
-            this.lbl_WhoIs_Server = new System.Windows.Forms.Label();
-            this.tb_WhoIs_Server = new System.Windows.Forms.TextBox();
-            this.pb_WhoIsProgress = new System.Windows.Forms.PictureBox();
-            this.lv_WhoIs = new System.Windows.Forms.ListView();
-            this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage_GeoLocation = new System.Windows.Forms.TabPage();
             this.tb_GeoLocation_IP = new System.Windows.Forms.TextBox();
             this.pb_GeoLocation_CountryFlag = new System.Windows.Forms.PictureBox();
@@ -238,6 +236,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_PingRefresh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Favicon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_StatusIcon)).BeginInit();
+            this.tabPage_WhoIs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_WhoIsProgress)).BeginInit();
             this.tabPage_TraceRoute.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_TraceRouteProgress)).BeginInit();
             this.tabPage_NetworkShares.SuspendLayout();
@@ -245,8 +245,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_WMIInfoProgress)).BeginInit();
             this.tabPage_Ports.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_PortsProgress)).BeginInit();
-            this.tabPage_WhoIs.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_WhoIsProgress)).BeginInit();
             this.tabPage_GeoLocation.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocation_CountryFlag)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocationProgress)).BeginInit();
@@ -592,27 +590,8 @@
             this.lbl_HTTPInfo_ServerName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tabControl
-            //
-            // VISIBLE TABS [ALWAYS]
+            // 
             this.tabControl.Controls.Add(this.tabPage_MainInfo);
-
-            // VISIBLE TABS [DURING DESIGN MODE]
-            //this.tabControl.Controls.Add(this.tabPage_FTPInfo);
-            //this.tabControl.Controls.Add(this.tabPage_GeoLocation);
-            //this.tabControl.Controls.Add(this.tabPage_HTMLInfo);
-            //this.tabControl.Controls.Add(this.tabPage_HTTPInfo);
-            //this.tabControl.Controls.Add(this.tabPage_HTTPRequestHeaders);
-            //this.tabControl.Controls.Add(this.tabPage_HTTPResponseHeaders);
-            //this.tabControl.Controls.Add(this.tabPage_NetworkShares);
-            //this.tabControl.Controls.Add(this.tabPage_PageCategory);
-            //this.tabControl.Controls.Add(this.tabPage_PageLinks);
-            //this.tabControl.Controls.Add(this.tabPage_Ports);
-            //this.tabControl.Controls.Add(this.tabPage_SSLCertificate);
-            //this.tabControl.Controls.Add(this.tabPage_TraceRoute);
-            //this.tabControl.Controls.Add(this.tabPage_VirusTotal);
-            //this.tabControl.Controls.Add(this.tabPage_WhoIs);
-            //this.tabControl.Controls.Add(this.tabPage_WMI_ComputerInfo);
-
             this.tabControl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabControl.HotTrack = true;
             this.tabControl.ImageList = this.imageList_Tabs;
@@ -1096,6 +1075,94 @@
             this.lbl_EndpointName.Text = "Endpoint Name";
             this.lbl_EndpointName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // tabPage_WhoIs
+            // 
+            this.tabPage_WhoIs.BackColor = System.Drawing.Color.Silver;
+            this.tabPage_WhoIs.Controls.Add(this.tb_WhoIs_RegistrableDomain);
+            this.tabPage_WhoIs.Controls.Add(this.lbl_WhoIs_RegistrableDomain);
+            this.tabPage_WhoIs.Controls.Add(this.lbl_WhoIs_Server);
+            this.tabPage_WhoIs.Controls.Add(this.tb_WhoIs_Server);
+            this.tabPage_WhoIs.Controls.Add(this.pb_WhoIsProgress);
+            this.tabPage_WhoIs.Controls.Add(this.rtb_WhoIsInfo);
+            this.tabPage_WhoIs.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tabPage_WhoIs.Location = new System.Drawing.Point(4, 23);
+            this.tabPage_WhoIs.Name = "tabPage_WhoIs";
+            this.tabPage_WhoIs.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_WhoIs.Size = new System.Drawing.Size(783, 397);
+            this.tabPage_WhoIs.TabIndex = 9;
+            this.tabPage_WhoIs.Text = "WhoIS Info";
+            // 
+            // tb_WhoIs_RegistrableDomain
+            // 
+            this.tb_WhoIs_RegistrableDomain.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_WhoIs_RegistrableDomain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_WhoIs_RegistrableDomain.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_WhoIs_RegistrableDomain.Location = new System.Drawing.Point(547, 12);
+            this.tb_WhoIs_RegistrableDomain.Multiline = true;
+            this.tb_WhoIs_RegistrableDomain.Name = "tb_WhoIs_RegistrableDomain";
+            this.tb_WhoIs_RegistrableDomain.ReadOnly = true;
+            this.tb_WhoIs_RegistrableDomain.Size = new System.Drawing.Size(227, 23);
+            this.tb_WhoIs_RegistrableDomain.TabIndex = 50;
+            this.tb_WhoIs_RegistrableDomain.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // lbl_WhoIs_RegistrableDomain
+            // 
+            this.lbl_WhoIs_RegistrableDomain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_WhoIs_RegistrableDomain.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_WhoIs_RegistrableDomain.Location = new System.Drawing.Point(407, 12);
+            this.lbl_WhoIs_RegistrableDomain.Name = "lbl_WhoIs_RegistrableDomain";
+            this.lbl_WhoIs_RegistrableDomain.Size = new System.Drawing.Size(134, 23);
+            this.lbl_WhoIs_RegistrableDomain.TabIndex = 49;
+            this.lbl_WhoIs_RegistrableDomain.Text = "Registrable Domain";
+            this.lbl_WhoIs_RegistrableDomain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_WhoIs_Server
+            // 
+            this.lbl_WhoIs_Server.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_WhoIs_Server.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_WhoIs_Server.Location = new System.Drawing.Point(12, 12);
+            this.lbl_WhoIs_Server.Name = "lbl_WhoIs_Server";
+            this.lbl_WhoIs_Server.Size = new System.Drawing.Size(134, 23);
+            this.lbl_WhoIs_Server.TabIndex = 47;
+            this.lbl_WhoIs_Server.Text = "WhoIs Server";
+            this.lbl_WhoIs_Server.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_WhoIs_Server
+            // 
+            this.tb_WhoIs_Server.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_WhoIs_Server.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_WhoIs_Server.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_WhoIs_Server.Location = new System.Drawing.Point(152, 12);
+            this.tb_WhoIs_Server.Multiline = true;
+            this.tb_WhoIs_Server.Name = "tb_WhoIs_Server";
+            this.tb_WhoIs_Server.ReadOnly = true;
+            this.tb_WhoIs_Server.Size = new System.Drawing.Size(226, 23);
+            this.tb_WhoIs_Server.TabIndex = 48;
+            this.tb_WhoIs_Server.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // pb_WhoIsProgress
+            // 
+            this.pb_WhoIsProgress.BackColor = System.Drawing.Color.Transparent;
+            this.pb_WhoIsProgress.Image = ((System.Drawing.Image)(resources.GetObject("pb_WhoIsProgress.Image")));
+            this.pb_WhoIsProgress.Location = new System.Drawing.Point(354, 168);
+            this.pb_WhoIsProgress.Name = "pb_WhoIsProgress";
+            this.pb_WhoIsProgress.Size = new System.Drawing.Size(79, 79);
+            this.pb_WhoIsProgress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_WhoIsProgress.TabIndex = 9;
+            this.pb_WhoIsProgress.TabStop = false;
+            // 
+            // rtb_WhoIsInfo
+            // 
+            this.rtb_WhoIsInfo.BackColor = System.Drawing.SystemColors.Info;
+            this.rtb_WhoIsInfo.Font = new System.Drawing.Font("Arial Narrow", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtb_WhoIsInfo.Location = new System.Drawing.Point(11, 41);
+            this.rtb_WhoIsInfo.Name = "rtb_WhoIsInfo";
+            this.rtb_WhoIsInfo.Size = new System.Drawing.Size(763, 326);
+            this.rtb_WhoIsInfo.TabIndex = 51;
+            this.rtb_WhoIsInfo.Text = "";
+            this.rtb_WhoIsInfo.Visible = false;
+            this.rtb_WhoIsInfo.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.rtb_WhoIsInfo_LinkClicked);
+            // 
             // imageList_Tabs
             // 
             this.imageList_Tabs.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
@@ -1397,116 +1464,6 @@
             this.pb_PortsProgress.TabIndex = 8;
             this.pb_PortsProgress.TabStop = false;
             this.pb_PortsProgress.Visible = false;
-            // 
-            // tabPage_WhoIs
-            // 
-            this.tabPage_WhoIs.BackColor = System.Drawing.Color.Silver;
-            this.tabPage_WhoIs.Controls.Add(this.tb_WhoIs_RegistrableDomain);
-            this.tabPage_WhoIs.Controls.Add(this.lbl_WhoIs_RegistrableDomain);
-            this.tabPage_WhoIs.Controls.Add(this.lbl_WhoIs_Server);
-            this.tabPage_WhoIs.Controls.Add(this.tb_WhoIs_Server);
-            this.tabPage_WhoIs.Controls.Add(this.pb_WhoIsProgress);
-            this.tabPage_WhoIs.Controls.Add(this.lv_WhoIs);
-            this.tabPage_WhoIs.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tabPage_WhoIs.Location = new System.Drawing.Point(4, 42);
-            this.tabPage_WhoIs.Name = "tabPage_WhoIs";
-            this.tabPage_WhoIs.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_WhoIs.Size = new System.Drawing.Size(783, 378);
-            this.tabPage_WhoIs.TabIndex = 9;
-            this.tabPage_WhoIs.Text = "WhoIS Info";
-            // 
-            // tb_WhoIs_RegistrableDomain
-            // 
-            this.tb_WhoIs_RegistrableDomain.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_WhoIs_RegistrableDomain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_WhoIs_RegistrableDomain.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_WhoIs_RegistrableDomain.Location = new System.Drawing.Point(547, 12);
-            this.tb_WhoIs_RegistrableDomain.Multiline = true;
-            this.tb_WhoIs_RegistrableDomain.Name = "tb_WhoIs_RegistrableDomain";
-            this.tb_WhoIs_RegistrableDomain.ReadOnly = true;
-            this.tb_WhoIs_RegistrableDomain.Size = new System.Drawing.Size(227, 23);
-            this.tb_WhoIs_RegistrableDomain.TabIndex = 50;
-            // 
-            // lbl_WhoIs_RegistrableDomain
-            // 
-            this.lbl_WhoIs_RegistrableDomain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_WhoIs_RegistrableDomain.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_WhoIs_RegistrableDomain.Location = new System.Drawing.Point(407, 12);
-            this.lbl_WhoIs_RegistrableDomain.Name = "lbl_WhoIs_RegistrableDomain";
-            this.lbl_WhoIs_RegistrableDomain.Size = new System.Drawing.Size(134, 23);
-            this.lbl_WhoIs_RegistrableDomain.TabIndex = 49;
-            this.lbl_WhoIs_RegistrableDomain.Text = "Registrable Domain";
-            this.lbl_WhoIs_RegistrableDomain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_WhoIs_Server
-            // 
-            this.lbl_WhoIs_Server.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_WhoIs_Server.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_WhoIs_Server.Location = new System.Drawing.Point(12, 12);
-            this.lbl_WhoIs_Server.Name = "lbl_WhoIs_Server";
-            this.lbl_WhoIs_Server.Size = new System.Drawing.Size(134, 23);
-            this.lbl_WhoIs_Server.TabIndex = 47;
-            this.lbl_WhoIs_Server.Text = "WhoIs Server";
-            this.lbl_WhoIs_Server.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_WhoIs_Server
-            // 
-            this.tb_WhoIs_Server.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_WhoIs_Server.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_WhoIs_Server.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_WhoIs_Server.Location = new System.Drawing.Point(152, 12);
-            this.tb_WhoIs_Server.Multiline = true;
-            this.tb_WhoIs_Server.Name = "tb_WhoIs_Server";
-            this.tb_WhoIs_Server.ReadOnly = true;
-            this.tb_WhoIs_Server.Size = new System.Drawing.Size(226, 23);
-            this.tb_WhoIs_Server.TabIndex = 48;
-            // 
-            // pb_WhoIsProgress
-            // 
-            this.pb_WhoIsProgress.BackColor = System.Drawing.Color.Transparent;
-            this.pb_WhoIsProgress.Image = ((System.Drawing.Image)(resources.GetObject("pb_WhoIsProgress.Image")));
-            this.pb_WhoIsProgress.Location = new System.Drawing.Point(354, 168);
-            this.pb_WhoIsProgress.Name = "pb_WhoIsProgress";
-            this.pb_WhoIsProgress.Size = new System.Drawing.Size(79, 79);
-            this.pb_WhoIsProgress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_WhoIsProgress.TabIndex = 9;
-            this.pb_WhoIsProgress.TabStop = false;
-            // 
-            // lv_WhoIs
-            // 
-            this.lv_WhoIs.AllowColumnReorder = true;
-            this.lv_WhoIs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lv_WhoIs.BackColor = System.Drawing.SystemColors.Info;
-            this.lv_WhoIs.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader11,
-            this.columnHeader14});
-            this.lv_WhoIs.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lv_WhoIs.FullRowSelect = true;
-            this.lv_WhoIs.GridLines = true;
-            this.lv_WhoIs.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lv_WhoIs.HideSelection = false;
-            this.lv_WhoIs.LargeImageList = this.imageList_ListViewIcons_20pix;
-            this.lv_WhoIs.Location = new System.Drawing.Point(11, 41);
-            this.lv_WhoIs.Name = "lv_WhoIs";
-            this.lv_WhoIs.ShowItemToolTips = true;
-            this.lv_WhoIs.Size = new System.Drawing.Size(763, 326);
-            this.lv_WhoIs.SmallImageList = this.imageList_ListViewIcons_20pix;
-            this.lv_WhoIs.TabIndex = 46;
-            this.lv_WhoIs.UseCompatibleStateImageBehavior = false;
-            this.lv_WhoIs.View = System.Windows.Forms.View.Details;
-            this.lv_WhoIs.Visible = false;
-            // 
-            // columnHeader11
-            // 
-            this.columnHeader11.Text = "Property";
-            this.columnHeader11.Width = 228;
-            // 
-            // columnHeader14
-            // 
-            this.columnHeader14.Text = "Value";
-            this.columnHeader14.Width = 505;
             // 
             // tabPage_GeoLocation
             // 
@@ -2783,6 +2740,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_PingRefresh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Favicon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_StatusIcon)).EndInit();
+            this.tabPage_WhoIs.ResumeLayout(false);
+            this.tabPage_WhoIs.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_WhoIsProgress)).EndInit();
             this.tabPage_TraceRoute.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pb_TraceRouteProgress)).EndInit();
             this.tabPage_NetworkShares.ResumeLayout(false);
@@ -2790,9 +2750,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_WMIInfoProgress)).EndInit();
             this.tabPage_Ports.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pb_PortsProgress)).EndInit();
-            this.tabPage_WhoIs.ResumeLayout(false);
-            this.tabPage_WhoIs.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_WhoIsProgress)).EndInit();
             this.tabPage_GeoLocation.ResumeLayout(false);
             this.tabPage_GeoLocation.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocation_CountryFlag)).EndInit();
@@ -2915,9 +2872,6 @@
         public System.Windows.Forms.PictureBox pb_WhoIsProgress;
         public System.Windows.Forms.Label lbl_WhoIs_Server;
         public System.Windows.Forms.TextBox tb_WhoIs_Server;
-        public System.Windows.Forms.ListView lv_WhoIs;
-        public System.Windows.Forms.ColumnHeader columnHeader11;
-        public System.Windows.Forms.ColumnHeader columnHeader14;
         public System.Windows.Forms.TextBox tb_WhoIs_RegistrableDomain;
         public System.Windows.Forms.Label lbl_WhoIs_RegistrableDomain;
         public System.Windows.Forms.TabPage tabPage_GeoLocation;
@@ -3024,5 +2978,6 @@
         public System.Windows.Forms.Button btn_PageLinks_Validate;
         public System.Windows.Forms.PictureBox pb_SSH;
         public System.Windows.Forms.Label lbl_SSH;
+        public System.Windows.Forms.RichTextBox rtb_WhoIsInfo;
     }
 }

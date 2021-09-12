@@ -91,9 +91,6 @@ namespace EndpointChecker
         // APPLICATION CONFIGURATION FILE
         public static string appConfigFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
 
-        // TOP LEVEL DOMAINS CACHE FILE NAME
-        public static string tldRulesCacheFile = "EndpointChecker_TLDRulesCache.dat";
-
         // ENDPOINTS 'LAST SEEN ONLINE' LIST FILE NAME
         public static string lastSeenOnlineJSONFile = "EndpointChecker_LastSeenOnline.json";
 
@@ -148,19 +145,21 @@ namespace EndpointChecker
                 }
                 else if (RequiredLibraryExists("ClosedXML.dll") &&
                          RequiredLibraryExists("DocumentFormat.OpenXml.dll") &&
-                         RequiredLibraryExists("DomainPublicSuffix.dll") &&
-                         RequiredLibraryExists("tracert.dll") &&
-                         RequiredLibraryExists("Spire.Common.dll") &&
+                         RequiredLibraryExists("ExcelNumberFormat.dll") &&
+                         RequiredLibraryExists("FastMember.dll") &&
+                         RequiredLibraryExists("HtmlAgilityPack.dll") &&
+                         RequiredLibraryExists("IPAddressRange.dll") &&
+                         RequiredLibraryExists("Microsoft.WindowsAPICodePack.dll") &&
+                         RequiredLibraryExists("Microsoft.WindowsAPICodePack.Shell.dll") &&
+                         RequiredLibraryExists("Nager.PublicSuffix.dll") &&
+                         RequiredLibraryExists("Newtonsoft.Json.dll") &&
+                         RequiredLibraryExists("NSpeedTest.dll") &&
                          RequiredLibraryExists("Spire.License.dll") &&
                          RequiredLibraryExists("Spire.XLS.dll") &&
                          RequiredLibraryExists("Spire.Pdf.dll") &&
-                         RequiredLibraryExists("IPAddressRange.dll") &&
-                         RequiredLibraryExists("WhoisClient.dll") &&
-                         RequiredLibraryExists("Newtonsoft.Json.dll") &&
-                         RequiredLibraryExists("Microsoft.WindowsAPICodePack.dll") &&
-                         RequiredLibraryExists("Microsoft.WindowsAPICodePack.Shell.dll") &&
+                         RequiredLibraryExists("tracert.dll") &&
                          RequiredLibraryExists("VirusTotal.NET.dll") &&
-                         RequiredLibraryExists("NSpeedTest.dll"))
+                         RequiredLibraryExists("WhoisClient.dll"))
                 {
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);

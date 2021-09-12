@@ -1,4 +1,4 @@
-﻿using DomainPublicSuffix;
+﻿using Nager.PublicSuffix;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -1027,27 +1027,17 @@ namespace EndpointChecker
         {
             NewBackgroundThread((Action)(() =>
             {
-                // WHOIS DATA LIST
-                List<Property> whoisData = new List<Property>();
-
-                // DOMAIN INFO
-                DomainName domainInfo = null;
-
                 try
                 {
-                    TLDRulesCache.Init(Program.tldRulesCacheFile);
-
                     // TRY TO GET REGISTRABLE DOMAIN NAME
-                    if (DomainName.TryParse(
-                         new Uri(
-                             _selectedEndpoint.ResponseAddress)
-                             .Host
-                             .Replace(
-                                 "www.",
-                                 string.Empty),
-                             out domainInfo))
+                    DomainParser domainParser = new DomainParser(new WebTldRuleProvider());
+                    DomainInfo domainInfo = domainParser.Parse(new Uri(_selectedEndpoint.ResponseAddress).Host);
+
+                    if (domainInfo != null &&
+                        !string.IsNullOrEmpty(domainInfo.RegistrableDomain))
                     {
                         string registrableDomainName = domainInfo.RegistrableDomain;
+
                         ThreadSafeInvoke((Action)(() =>
                         {
                             tb_WhoIs_RegistrableDomain.Text = registrableDomainName;
@@ -1055,10 +1045,6 @@ namespace EndpointChecker
 
                         // GET WHOIS SERVER
                         string whoisServer = DomainToWhoisServerList.Default.FindWhoisServer(registrableDomainName);
-                        ThreadSafeInvoke((Action)(() =>
-                        {
-                            tb_WhoIs_Server.Text = whoisServer;
-                        }));
 
                         // GET RESPONSE FROM WHOIS SERVER
                         string whoisRawResponse = WhoisClient.RawQuery(
@@ -1069,79 +1055,25 @@ namespace EndpointChecker
                                                                     .TrimStart()
                                                                     .TrimEnd();
 
-                        // PARSE PROPERTIES FROM RESPONSE
-                        string previousKey = string.Empty;
-
-                        foreach (string whoisDataItem in whoisRawResponse.Split(new char[] { '\r', '\n' }))
+                        if (!string.IsNullOrEmpty(whoisRawResponse))
                         {
-                            // FILTER EMPTY LINES AND COMMENTS
-                            if (string.IsNullOrEmpty(whoisDataItem) ||
-                                string.IsNullOrEmpty(whoisDataItem.Trim()))
+                            ThreadSafeInvoke((Action)(() =>
                             {
-                                previousKey = string.Empty;
-                            }
-                            else if (whoisDataItem.Length > 0 && whoisDataItem.TrimStart()[0] != '%')
-                            {
-                                string[] whoisDataItemValues = whoisDataItem.Split(new char[] { ':' }, 2);
-                                string key = whoisDataItemValues[0].TrimStart().TrimEnd();
+                                tb_WhoIs_Server.Text = whoisServer;
 
-                                if (whoisDataItemValues.Length == 2)
-                                {
-                                    string value = whoisDataItemValues[1].TrimStart().TrimEnd();
+                                rtb_WhoIsInfo.Text = whoisRawResponse;
+                                rtb_WhoIsInfo.Visible = true;
+                                pb_WhoIsProgress.Visible = false;
 
-                                    if (string.IsNullOrEmpty(value))
-                                    {
-                                        previousKey = key;
-                                    }
-                                    else if (!string.IsNullOrEmpty(previousKey))
-                                    {
-                                        whoisData.Add(new Property { ItemName = previousKey + "/" + key, ItemValue = value });
-                                    }
-                                    else
-                                    {
-                                        whoisData.Add(new Property { ItemName = key, ItemValue = value });
-                                    }
-                                }
-                                else if (!string.IsNullOrEmpty(previousKey))
-                                {
-                                    whoisData.Add(new Property { ItemName = key, ItemValue = key });
-                                }
-                            }
+                                tabControl.TabPages.Add(tabPage_WhoIs);
+                            }));
                         }
                     }
                 }
-                catch
+                catch (Exception exception)
                 {
+                    CheckerMainForm.ExceptionNotifier(exception);
                 }
-
-                ThreadSafeInvoke((Action)(() =>
-                {
-                    if (domainInfo != null &&
-                        whoisData.Count > 0)
-                    {
-                        foreach (Property whoisDataItem in whoisData)
-                        {
-                            ListViewItem lvItem = new ListViewItem();
-
-                            if (!string.IsNullOrEmpty(whoisDataItem.ItemName) &&
-                                !string.IsNullOrEmpty(whoisDataItem.ItemValue))
-                            {
-                                lvItem.ImageIndex = 6;
-                            }
-
-                            lvItem.Text = whoisDataItem.ItemName;
-                            lvItem.SubItems.Add(whoisDataItem.ItemValue);
-
-                            lv_WhoIs.Items.Add(lvItem);
-                        }
-
-                        pb_WhoIsProgress.Visible = false;
-                        lv_WhoIs.Visible = true;
-
-                        // ADD WHOIS TAB PAGE
-                        tabControl.TabPages.Add(tabPage_WhoIs);
-                    }
-                }));
             }));
         }
 
@@ -2121,6 +2053,15 @@ namespace EndpointChecker
         {
             CheckerMainForm.ConnectEndpoint_Putty(
                 new Uri(_selectedEndpoint.ResponseAddress).Host);
+        }
+
+        public void rtb_WhoIsInfo_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            CheckerMainForm.BrowseEndpoint(
+                    e.LinkText,
+                    null,
+                    null,
+                    null);
         }
     }
 

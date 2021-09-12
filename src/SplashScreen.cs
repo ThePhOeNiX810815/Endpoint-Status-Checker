@@ -22,10 +22,16 @@ namespace EndpointChecker
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
+            // SET INFORMATION LABELS
             lbl_Name.Text = Program.assembly_ApplicationName;
             lbl_Version.Text = "Version " + Program.assembly_Version;
             lbl_Build.Text = "Build " + Program.assembly_BuiltDate;
             lbl_Copyright.Text = Program.assembly_Copyright;
+
+            if (!Program.assembly_Version.EndsWith("0"))
+            {
+                lbl_Version.Text += " Pre-Release";
+            }
         }
         protected override void WndProc(ref Message m)
         {
