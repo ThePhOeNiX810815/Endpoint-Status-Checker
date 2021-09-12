@@ -40,3 +40,22 @@ Application is using following public APIs:
 
 All keys are FREE to use, but mind that all these free APIs works with limits.
 For each of these services you can set your own key (edit config file by 'CONFIG' button on main application window).
+
+# NuGet Packages Used
+
+Application is using following libraries:
+- ClosedXML (0.95.4)
+- DocumentFormat.OpenXml (2.13.1)
+- ExcelNumberFormat (1.1.0)
+- FastMember (1.3.0) (newer version available, but not for target framework version)
+- FreeSpire.PDF (7.8.9)
+- FreeSpire.XLS (11.8.6)
+- HtmlAgilityPack (1.11.36)
+- IPAddressRange (4.2.0)
+- Nager.PublicSuffix (2.2.2)
+- Newtonsoft.Json (13.0.1)
+- NSpeedTest (1.0.0) (newer version available, but not for target framework version)
+- System.Net.Http (4.3.4)
+- WhoisClient.NET (1.0.1) (newer version available, but not for target framework version)
+- WindowsAPICodePack-Core (1.1.2)
+- WindowsAPICodePack-Shell (1.1.1)
