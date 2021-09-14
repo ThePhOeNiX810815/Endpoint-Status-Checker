@@ -59,3 +59,9 @@ Application is using following libraries:
 - WhoisClient.NET (1.0.1) (newer version available, but not for target framework version)
 - WindowsAPICodePack-Core (1.1.2)
 - WindowsAPICodePack-Shell (1.1.1)
+
+# 3rd Party Applications Used
+
+Application is using following external programs:
+- VNC Viewer (vncviever.exe) - https://www.uvnc.com
+- Putty (putty.exe) - https://www.putty.org
