@@ -26,7 +26,7 @@ All unhandled exceptions got to be automatically reported back to author.
 # To-do list
 
 Nothing by now, if you have something to suggest you can use 'Feature Request' button
-on application main window and send your Feature Request or Improvement.
+on application main window and send your Feature Request or Improvement, or create Issue.
 
 # Compiling from source code
 
