@@ -97,7 +97,7 @@ namespace EndpointChecker
         };
 
         // LATEST APPLICATION VERSION
-        public static string appLatestVersion = Program.assembly_Version;
+        public static Version appLatestVersion = assembly_Version;
 
         // FOR MAC ADDRESS RESOLVER FEATURE PURPOSE
         [DllImport("iphlpapi.dll", ExactSpelling = true)]
@@ -192,10 +192,10 @@ namespace EndpointChecker
             tray_Refresh.Image = ResizeImage(Resources.refresh, trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
 
             // SET VERSION / BUILD LABELS
-            Text = Program.assembly_ApplicationName + " v" + Program.assembly_Version;
+            Text = Program.assembly_ApplicationName + " v" + Program.assembly_VersionString;
 
             lbl_Copyright.Text = Program.assembly_Copyright;
-            lbl_Version.Text += "Version: " + Program.assembly_Version +
+            lbl_Version.Text += "Version: " + Program.assembly_VersionString +
                                 ", Built: " + Program.assembly_BuiltDate;
 
             // SET TEMPORARY FOLDER FOR INSTANCE WATCHER
@@ -1079,7 +1079,7 @@ namespace EndpointChecker
                                 {
                                     // GET DEFAULT CREDENTIALS FROM URI [USERNAME]
                                     endpoint.LoginName = ftpWebRequest.Credentials.GetCredential(endpointURI, string.Empty).UserName;
-                                    endpoint.LoginPass = "FTPPassword@EndpointStatusChecker.NET";
+                                    endpoint.LoginPass = Program.anonymousFTPPassword;
                                 }
 
                                 // SET CREDENTIALS
@@ -2830,7 +2830,7 @@ namespace EndpointChecker
 
                         // ADD SUMMARY WORKSHEET
                         endpointsStatusExport_Summary_WorkSheet.Cell("A1").Value = "Endpoint Checker Application";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").Value = "Version " + Program.assembly_Version + " (built " + Program.assembly_BuiltDate + ")";
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").Value = "Version " + Program.assembly_VersionString + " (built " + Program.assembly_BuiltDate + ")";
                         endpointsStatusExport_Summary_WorkSheet.Cell("A2").Value = "Operating System";
                         endpointsStatusExport_Summary_WorkSheet.Cell("B2").Value = Environment.OSVersion.VersionString;
                         endpointsStatusExport_Summary_WorkSheet.Cell("A3").Value = "Latest Installed .NET FrameWork Runtime";
@@ -5107,7 +5107,7 @@ namespace EndpointChecker
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-                    appLatestVersion = updateWC.DownloadString("https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/version.txt").TrimEnd();
+                    appLatestVersion = new Version(updateWC.DownloadString("https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/version.txt").TrimEnd());
                 }
             }
             catch
@@ -5117,11 +5117,7 @@ namespace EndpointChecker
 
         public void BW_UpdateCheck_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Version app_currentVersion = new Version(Program.assembly_Version);
-            Version app_LatestVersion = new Version(appLatestVersion);
-
-
-            if (app_LatestVersion > app_currentVersion)
+            if (appLatestVersion > Program.assembly_Version)
             {
                 DialogResult updateDialogResult = MessageBox.Show(
                     "There is new version " +
@@ -5143,14 +5139,14 @@ namespace EndpointChecker
                         null);
                 }
             }
-            else if ((app_LatestVersion < app_currentVersion))
+            else if (appLatestVersion < Program.assembly_Version)
             {
                 MessageBox.Show(
                     "You are using unreleased application build." +
                     Environment.NewLine +
                     Environment.NewLine +
                     "Version " +
-                    Program.assembly_Version +
+                    Program.assembly_VersionString +
                     " from " +
                     Program.assembly_BuiltDate +
                     "." +

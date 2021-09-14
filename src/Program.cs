@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -60,14 +59,19 @@ namespace EndpointChecker
         public static string assembly_CurrentWorkingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         public static string assembly_BuiltDate = RetrieveLinkerTimestamp();
         public static string assembly_Copyright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).LegalCopyright;
-        public static string assembly_Version = Assembly.GetExecutingAssembly().GetName().Version.Major.ToString() + "." +
-                                                Assembly.GetExecutingAssembly().GetName().Version.Minor.ToString() + "." +
-                                                Assembly.GetExecutingAssembly().GetName().Version.Build.ToString();
+
+        public static Version assembly_Version = Assembly.GetExecutingAssembly().GetName().Version;
+        public static string assembly_VersionString = assembly_Version.Major.ToString() + "." +
+                                                      assembly_Version.Minor.ToString() + "." +
+                                                      assembly_Version.Build.ToString();
+
+        // CURRENT USER INFORMATION
 
         // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES
         public static string exceptionReport_senderEMailAddress = "ExceptionReport@EndpointStatusChecker";
         public static string featureRequest_senderEMailAddress = "FeatureRequest@EndpointStatusChecker";
         public static string authorEmailAddress = "phoenixvm@gmail.com";
+        public static string anonymousFTPPassword = "anonymous";
 
         // ENDPOINTS DEFINITIONS FILE NAME
         public static string endpointDefinitonsFile = "EndpointChecker_EndpointsList.txt";
@@ -179,7 +183,7 @@ namespace EndpointChecker
             if (!File.Exists(Path.Combine(assembly_CurrentWorkingDir, fileName)))
             {
                 MessageBox.Show("Required library \"" + fileName + "\" not found in current working directory \""
-                    + assembly_CurrentWorkingDir + "\".", "Endpoint Status Checker v" + assembly_Version,
+                    + assembly_CurrentWorkingDir + "\".", "Endpoint Status Checker v" + assembly_VersionString,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return false;

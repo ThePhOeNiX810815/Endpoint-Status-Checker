@@ -24,11 +24,11 @@ namespace EndpointChecker
 
             // SET INFORMATION LABELS
             lbl_Name.Text = Program.assembly_ApplicationName;
-            lbl_Version.Text = "Version " + Program.assembly_Version;
+            lbl_Version.Text = "Version " + Program.assembly_VersionString;
             lbl_Build.Text = "Build " + Program.assembly_BuiltDate;
             lbl_Copyright.Text = Program.assembly_Copyright;
 
-            if (!Program.assembly_Version.EndsWith(".0"))
+            if (Program.assembly_Version.Build != 0)
             {
                 lbl_Version.Text += " Pre-Release";
             }

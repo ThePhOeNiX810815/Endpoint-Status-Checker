@@ -1027,52 +1027,54 @@ namespace EndpointChecker
         {
             NewBackgroundThread((Action)(() =>
             {
+                string registrableDomainName = new Uri(_selectedEndpoint.ResponseAddress).Host;
+                string whoISserver_ServerAddress = string.Empty;
+                string whoISserver_RAWresponse = string.Empty;
+
                 try
                 {
-                    // TRY TO GET REGISTRABLE DOMAIN NAME
+                    // TRY TO GET TLD REGISTRABLE DOMAIN NAME
                     DomainParser domainParser = new DomainParser(new WebTldRuleProvider());
-                    DomainInfo domainInfo = domainParser.Parse(new Uri(_selectedEndpoint.ResponseAddress).Host);
+                    registrableDomainName = domainParser.Parse(registrableDomainName).RegistrableDomain;
+                }
+                catch
+                {
+                }
 
-                    if (domainInfo != null &&
-                        !string.IsNullOrEmpty(domainInfo.RegistrableDomain))
+                try
+                {
+                    // TRY TO FIND WHOIS SERVER
+                    whoISserver_ServerAddress = DomainToWhoisServerList.Default.FindWhoisServer(registrableDomainName);
+
+                    if (!string.IsNullOrEmpty(whoISserver_ServerAddress))
                     {
-                        string registrableDomainName = domainInfo.RegistrableDomain;
-
-                        ThreadSafeInvoke((Action)(() =>
-                        {
-                            tb_WhoIs_RegistrableDomain.Text = registrableDomainName;
-                        }));
-
-                        // GET WHOIS SERVER
-                        string whoisServer = DomainToWhoisServerList.Default.FindWhoisServer(registrableDomainName);
-
-                        // GET RESPONSE FROM WHOIS SERVER
-                        string whoisRawResponse = WhoisClient.RawQuery(
+                        // TRY TO GET RESPONSE FROM WHOIS SERVER
+                        whoISserver_RAWresponse = WhoisClient.RawQuery(
                                                                 registrableDomainName,
-                                                                whoisServer,
+                                                                whoISserver_ServerAddress,
                                                                 43,
                                                                 Encoding.UTF8)
                                                                     .TrimStart()
                                                                     .TrimEnd();
-
-                        if (!string.IsNullOrEmpty(whoisRawResponse))
-                        {
-                            ThreadSafeInvoke((Action)(() =>
-                            {
-                                tb_WhoIs_Server.Text = whoisServer;
-
-                                rtb_WhoIsInfo.Text = whoisRawResponse;
-                                rtb_WhoIsInfo.Visible = true;
-                                pb_WhoIsProgress.Visible = false;
-
-                                tabControl.TabPages.Add(tabPage_WhoIs);
-                            }));
-                        }
                     }
                 }
-                catch (Exception exception)
+                catch
                 {
-                    CheckerMainForm.ExceptionNotifier(exception);
+                }
+
+                if (!string.IsNullOrEmpty(whoISserver_RAWresponse))
+                {
+                    ThreadSafeInvoke((Action)(() =>
+                    {
+                        tb_WhoIs_RegistrableDomain.Text = registrableDomainName;
+                        tb_WhoIs_Server.Text = whoISserver_ServerAddress;
+
+                        rtb_WhoIsInfo.Text = whoISserver_RAWresponse;
+                        rtb_WhoIsInfo.Visible = true;
+                        pb_WhoIsProgress.Visible = false;
+
+                        tabControl.TabPages.Add(tabPage_WhoIs);
+                    }));
                 }
             }));
         }

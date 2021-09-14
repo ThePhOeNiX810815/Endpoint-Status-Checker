@@ -56,7 +56,7 @@ namespace EndpointChecker
         {
             List<Property> reportItems = new List<Property>();
 
-            reportItems.Add(new Property { ItemName = "Application Version", ItemValue = Program.assembly_ApplicationName + " v" + Program.assembly_Version });
+            reportItems.Add(new Property { ItemName = "Application Version", ItemValue = Program.assembly_ApplicationName + " v" + Program.assembly_VersionString });
             reportItems.Add(new Property { ItemName = "Date / Time", ItemValue = DateTime.Now.ToString("dd.MM.yyyy HH:mm") });
 
             // OPTIONAL [SYSTEM INFO]
@@ -191,7 +191,7 @@ namespace EndpointChecker
                             Environment.NewLine +
                             Environment.NewLine +
                             ex.Message,
-                        Program.assembly_ApplicationName + " v" + Program.assembly_Version,
+                        Program.assembly_ApplicationName + " v" + Program.assembly_VersionString,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 }));
