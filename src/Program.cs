@@ -61,9 +61,7 @@ namespace EndpointChecker
         public static string assembly_Copyright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).LegalCopyright;
 
         public static Version assembly_Version = Assembly.GetExecutingAssembly().GetName().Version;
-        public static string assembly_VersionString = assembly_Version.Major.ToString() + "." +
-                                                      assembly_Version.Minor.ToString() + "." +
-                                                      assembly_Version.Build.ToString();
+        public static string assembly_VersionString = GetVersionString(assembly_Version, true, false); 
 
         // CURRENT USER INFORMATION
 
@@ -248,6 +246,25 @@ namespace EndpointChecker
             dt = dt.AddSeconds(secondsSince1970);
             dt = dt.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(dt).Hours);
             return dt.ToString("dd.MM.yyyy HH:mm");
+        }
+
+        public static string GetVersionString(Version version, bool addBuildNumber, bool addRevisionNumber)
+        {
+            string versionString = version.Major.ToString() +
+                                   "." +
+                                   version.Minor.ToString();
+
+            if (addBuildNumber)
+            {
+                versionString += (".") + version.Build.ToString();
+
+                if (addRevisionNumber)
+                {
+                    versionString += (".") + version.Revision.ToString();
+                }
+            }
+
+            return versionString;
         }
     }
 }

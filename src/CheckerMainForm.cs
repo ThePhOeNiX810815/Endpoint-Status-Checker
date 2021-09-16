@@ -192,11 +192,11 @@ namespace EndpointChecker
             tray_Refresh.Image = ResizeImage(Resources.refresh, trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
 
             // SET VERSION / BUILD LABELS
-            Text = Program.assembly_ApplicationName + " v" + Program.assembly_VersionString;
+            Text = assembly_ApplicationName + " v" + assembly_VersionString;
 
-            lbl_Copyright.Text = Program.assembly_Copyright;
-            lbl_Version.Text += "Version: " + Program.assembly_VersionString +
-                                ", Built: " + Program.assembly_BuiltDate;
+            lbl_Copyright.Text = assembly_Copyright;
+            lbl_Version.Text += "Version: " + assembly_VersionString +
+                                ", Built: " + assembly_BuiltDate;
 
             // SET TEMPORARY FOLDER FOR INSTANCE WATCHER
             instanceWatcher.Path = Path.GetTempPath();
@@ -305,7 +305,7 @@ namespace EndpointChecker
             toolTip_OpenEndpointsListFile.ToolTipIcon = ToolTipIcon.Info;
             toolTip_OpenEndpointsListFile.IsBalloon = true;
             toolTip_OpenEndpointsListFile.ToolTipTitle = "Open EndPoints list file";
-            toolTip_OpenEndpointsListFile.SetToolTip(btn_EndpointsList, "Open EndPoints list file (" + Program.endpointDefinitonsFile + ") in default editor");
+            toolTip_OpenEndpointsListFile.SetToolTip(btn_EndpointsList, "Open EndPoints list file (" + endpointDefinitonsFile + ") in default editor");
 
             // SET TOOLTIP FOR 'CONFIG' FILE OPEN BUTTON
             ToolTip toolTip_OpenAppConfigFile = new ToolTip();
@@ -1079,7 +1079,7 @@ namespace EndpointChecker
                                 {
                                     // GET DEFAULT CREDENTIALS FROM URI [USERNAME]
                                     endpoint.LoginName = ftpWebRequest.Credentials.GetCredential(endpointURI, string.Empty).UserName;
-                                    endpoint.LoginPass = Program.anonymousFTPPassword;
+                                    endpoint.LoginPass = anonymousFTPPassword;
                                 }
 
                                 // SET CREDENTIALS
@@ -1276,7 +1276,9 @@ namespace EndpointChecker
                     {
                         // UPDATE 'LAST SEEN ONLINE' VALUE
                         if ((validationMethod == ValidationMethod.Protocol &&
-                             endpoint.ResponseCode[0].ToString() == "2") ||
+                             !endpoint.ResponseCode.StartsWith("4") &&
+                             endpoint.ResponseCode != status_Error &&
+                             endpoint.ResponseCode != status_NotAvailable) ||
                             (validationMethod == ValidationMethod.Ping &&
                              endpoint.PingRoundtripTime != status_NotAvailable))
                         {
@@ -1739,9 +1741,9 @@ namespace EndpointChecker
             ExceptionDialog exDialog = new ExceptionDialog(
                 exception,
                 callingMethod,
-                Program.exceptionReport_senderEMailAddress,
-                new List<string> { Program.authorEmailAddress },
-                new List<string> { Program.endpointDefinitonsFile });
+                exceptionReport_senderEMailAddress,
+                new List<string> { authorEmailAddress },
+                new List<string> { endpointDefinitonsFile });
 
             exDialog.ShowDialog();
         }
@@ -2830,14 +2832,14 @@ namespace EndpointChecker
 
                         // ADD SUMMARY WORKSHEET
                         endpointsStatusExport_Summary_WorkSheet.Cell("A1").Value = "Endpoint Checker Application";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").Value = "Version " + Program.assembly_VersionString + " (built " + Program.assembly_BuiltDate + ")";
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").Value = "Version " + assembly_VersionString + " (built " + assembly_BuiltDate + ")";
                         endpointsStatusExport_Summary_WorkSheet.Cell("A2").Value = "Operating System";
                         endpointsStatusExport_Summary_WorkSheet.Cell("B2").Value = Environment.OSVersion.VersionString;
                         endpointsStatusExport_Summary_WorkSheet.Cell("A3").Value = "Latest Installed .NET FrameWork Runtime";
                         endpointsStatusExport_Summary_WorkSheet.Cell("B3").Value = dotNetFramework_LatestInstalledVersion.ToString()
                             .Replace("v", "Version ").Replace("_", ".").Replace("x", " or later");
                         endpointsStatusExport_Summary_WorkSheet.Cell("A4").Value = "System Memory (RAM)";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B4").Value = Program.systemMemorySize;
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B4").Value = systemMemorySize;
                         endpointsStatusExport_Summary_WorkSheet.Cell("A5").Value = "User Name";
                         endpointsStatusExport_Summary_WorkSheet.Cell("B5").Value = Environment.UserName;
                         endpointsStatusExport_Summary_WorkSheet.Cell("A6").Value = "Domain";
@@ -3823,7 +3825,7 @@ namespace EndpointChecker
             endpointsList.Clear();
 
             // CHECK DEFINITIONS FILE EXISTENCE
-            if (File.Exists(Program.endpointDefinitonsFile))
+            if (File.Exists(endpointDefinitonsFile))
             {
                 List<string> endpointDuplicityList = new List<string>();
                 List<string> invalidURLList = new List<string>();
@@ -3831,7 +3833,7 @@ namespace EndpointChecker
                 // READ DEFINITIONS FILE LINE BY LINE
                 int lineNumber = 1;
                 string line;
-                StreamReader file = new StreamReader(Program.endpointDefinitonsFile, Encoding.Default, true);
+                StreamReader file = new StreamReader(endpointDefinitonsFile, Encoding.Default, true);
                 while ((line = file.ReadLine()) != null)
                 {
                     // REMOVE SPACES FROM LINE
@@ -3844,7 +3846,7 @@ namespace EndpointChecker
                         if (lineNumber > Settings.Default.Config_MaximumEndpointReferencesCount)
                         {
                             MessageBox.Show(
-                              "Endpoints definitions file \"" + Program.endpointDefinitonsFile +
+                              "Endpoints definitions file \"" + endpointDefinitonsFile +
                               "\" contains more than " +
                               Settings.Default.Config_MaximumEndpointReferencesCount +
                               " items." +
@@ -4069,7 +4071,7 @@ namespace EndpointChecker
                 {
                     // CREATE AND SHOW MESSAGEBOX 
                     string duplicityMessage = "Endpoints definitions file \"" +
-                    Program.endpointDefinitonsFile + "\" contains " +
+                    endpointDefinitonsFile + "\" contains " +
                     endpointDuplicityList.Count + " items with duplicity names.";
                     duplicityMessage += Environment.NewLine;
                     duplicityMessage += Environment.NewLine;
@@ -4111,7 +4113,7 @@ namespace EndpointChecker
                 {
                     // CREATE AND SHOW MESSAGEBOX, LIST AFFECTED DEFINITIONS ITEMS
                     string invalidURLMessage = "Endpoints definitions file \"" +
-                    Program.endpointDefinitonsFile + "\" contains " +
+                    endpointDefinitonsFile + "\" contains " +
                     invalidURLList.Count + " items with URL in invalid format.";
                     invalidURLMessage += Environment.NewLine;
                     invalidURLMessage += Environment.NewLine;
@@ -4151,7 +4153,7 @@ namespace EndpointChecker
                 SetControls(false, true);
 
                 lbl_NoEndpoints.ForeColor = Color.Red;
-                lbl_NoEndpoints.Text = "Endpoints definitions file \"" + Program.endpointDefinitonsFile + "\" doesn't exists in \"" + Directory.GetCurrentDirectory() + "\".";
+                lbl_NoEndpoints.Text = "Endpoints definitions file \"" + endpointDefinitonsFile + "\" doesn't exists in \"" + Directory.GetCurrentDirectory() + "\".";
             }
         }
 
@@ -5042,18 +5044,18 @@ namespace EndpointChecker
         public void pb_FeatureRequest_Click(object sender, EventArgs e)
         {
             FeatureRequestDialog frDialog = new FeatureRequestDialog(
-                Program.featureRequest_senderEMailAddress,
-                new List<string> { Program.authorEmailAddress });
+                featureRequest_senderEMailAddress,
+                new List<string> { authorEmailAddress });
 
             frDialog.ShowDialog();
         }
 
         public void btn_EndpointsList_Click(object sender, EventArgs e)
         {
-            if (File.Exists(Program.endpointDefinitonsFile))
+            if (File.Exists(endpointDefinitonsFile))
             {
                 BrowseEndpoint(
-                Program.endpointDefinitonsFile,
+                endpointDefinitonsFile,
                 null,
                 null,
                 null);
@@ -5063,8 +5065,8 @@ namespace EndpointChecker
         public void TIMER_ListAndLogsFilesWatcher_Tick(object sender, EventArgs e)
         {
             // ENDPOINTS LIST FILE
-            btn_EndpointsList.Enabled = File.Exists(Program.endpointDefinitonsFile);
-            lbl_EndpointsList.Enabled = File.Exists(Program.endpointDefinitonsFile);
+            btn_EndpointsList.Enabled = File.Exists(endpointDefinitonsFile);
+            lbl_EndpointsList.Enabled = File.Exists(endpointDefinitonsFile);
 
             // ERROR(S) LOG(S) FILES
             btn_ConfigFile.Enabled = File.Exists(appConfigFile);
@@ -5117,11 +5119,11 @@ namespace EndpointChecker
 
         public void BW_UpdateCheck_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (appLatestVersion > Program.assembly_Version)
+            if (appLatestVersion > assembly_Version)
             {
                 DialogResult updateDialogResult = MessageBox.Show(
                     "There is new version " +
-                        appLatestVersion +
+                        GetVersionString(appLatestVersion, true, false) +
                         " avaliable." +
                         Environment.NewLine +
                         Environment.NewLine +
@@ -5139,16 +5141,16 @@ namespace EndpointChecker
                         null);
                 }
             }
-            else if (appLatestVersion < Program.assembly_Version)
+            else if (appLatestVersion < assembly_Version)
             {
                 MessageBox.Show(
                     "You are using unreleased application build." +
                     Environment.NewLine +
                     Environment.NewLine +
                     "Version " +
-                    Program.assembly_VersionString +
+                    assembly_VersionString +
                     " from " +
-                    Program.assembly_BuiltDate +
+                    assembly_BuiltDate +
                     "." +
                     Environment.NewLine +
                     Environment.NewLine +
