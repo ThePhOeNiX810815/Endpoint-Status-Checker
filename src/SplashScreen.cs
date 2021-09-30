@@ -32,6 +32,8 @@ namespace EndpointChecker
             {
                 lbl_Version.Text += " Pre-Release";
             }
+
+            Opacity = 1;
         }
         protected override void WndProc(ref Message m)
         {

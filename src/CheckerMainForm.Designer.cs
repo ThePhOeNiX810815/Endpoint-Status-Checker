@@ -818,7 +818,7 @@
             this.lbl_CheckAllErrors.AutoSize = true;
             this.lbl_CheckAllErrors.Enabled = false;
             this.lbl_CheckAllErrors.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(133, 81);
+            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(135, 81);
             this.lbl_CheckAllErrors.Name = "lbl_CheckAllErrors";
             this.lbl_CheckAllErrors.Size = new System.Drawing.Size(50, 16);
             this.lbl_CheckAllErrors.TabIndex = 22;
@@ -860,7 +860,7 @@
             this.lbl_CheckAll.AutoSize = true;
             this.lbl_CheckAll.Enabled = false;
             this.lbl_CheckAll.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAll.Location = new System.Drawing.Point(46, 38);
+            this.lbl_CheckAll.Location = new System.Drawing.Point(48, 38);
             this.lbl_CheckAll.Name = "lbl_CheckAll";
             this.lbl_CheckAll.Size = new System.Drawing.Size(28, 16);
             this.lbl_CheckAll.TabIndex = 21;
@@ -887,7 +887,7 @@
             this.lbl_UncheckAll.AutoSize = true;
             this.lbl_UncheckAll.Enabled = false;
             this.lbl_UncheckAll.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UncheckAll.Location = new System.Drawing.Point(46, 79);
+            this.lbl_UncheckAll.Location = new System.Drawing.Point(48, 79);
             this.lbl_UncheckAll.Name = "lbl_UncheckAll";
             this.lbl_UncheckAll.Size = new System.Drawing.Size(42, 16);
             this.lbl_UncheckAll.TabIndex = 20;
@@ -914,7 +914,7 @@
             this.lbl_CheckAllAvailable.AutoSize = true;
             this.lbl_CheckAllAvailable.Enabled = false;
             this.lbl_CheckAllAvailable.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(133, 38);
+            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(135, 38);
             this.lbl_CheckAllAvailable.Name = "lbl_CheckAllAvailable";
             this.lbl_CheckAllAvailable.Size = new System.Drawing.Size(53, 16);
             this.lbl_CheckAllAvailable.TabIndex = 19;
@@ -926,7 +926,7 @@
             this.lbl_ConfigFile.AutoSize = true;
             this.lbl_ConfigFile.Enabled = false;
             this.lbl_ConfigFile.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ConfigFile.Location = new System.Drawing.Point(899, 431);
+            this.lbl_ConfigFile.Location = new System.Drawing.Point(902, 431);
             this.lbl_ConfigFile.Name = "lbl_ConfigFile";
             this.lbl_ConfigFile.Size = new System.Drawing.Size(53, 16);
             this.lbl_ConfigFile.TabIndex = 26;
@@ -968,7 +968,7 @@
             this.lbl_EndpointsList.AutoSize = true;
             this.lbl_EndpointsList.Enabled = false;
             this.lbl_EndpointsList.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_EndpointsList.Location = new System.Drawing.Point(812, 431);
+            this.lbl_EndpointsList.Location = new System.Drawing.Point(815, 431);
             this.lbl_EndpointsList.Name = "lbl_EndpointsList";
             this.lbl_EndpointsList.Size = new System.Drawing.Size(36, 16);
             this.lbl_EndpointsList.TabIndex = 25;
@@ -980,7 +980,7 @@
             this.lbl_Refresh.AutoSize = true;
             this.lbl_Refresh.Enabled = false;
             this.lbl_Refresh.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Refresh.Location = new System.Drawing.Point(1017, 310);
+            this.lbl_Refresh.Location = new System.Drawing.Point(1020, 310);
             this.lbl_Refresh.Name = "lbl_Refresh";
             this.lbl_Refresh.Size = new System.Drawing.Size(59, 16);
             this.lbl_Refresh.TabIndex = 39;
@@ -992,7 +992,7 @@
             this.lbl_Terminate.AutoSize = true;
             this.lbl_Terminate.Enabled = false;
             this.lbl_Terminate.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Terminate.Location = new System.Drawing.Point(1017, 370);
+            this.lbl_Terminate.Location = new System.Drawing.Point(1020, 370);
             this.lbl_Terminate.Name = "lbl_Terminate";
             this.lbl_Terminate.Size = new System.Drawing.Size(79, 16);
             this.lbl_Terminate.TabIndex = 40;
@@ -1016,7 +1016,7 @@
             this.lbl_SpeedTest.AutoSize = true;
             this.lbl_SpeedTest.Enabled = false;
             this.lbl_SpeedTest.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest.Location = new System.Drawing.Point(1017, 430);
+            this.lbl_SpeedTest.Location = new System.Drawing.Point(1020, 430);
             this.lbl_SpeedTest.Name = "lbl_SpeedTest";
             this.lbl_SpeedTest.Size = new System.Drawing.Size(75, 16);
             this.lbl_SpeedTest.TabIndex = 44;
