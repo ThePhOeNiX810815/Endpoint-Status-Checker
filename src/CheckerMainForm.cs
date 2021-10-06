@@ -28,6 +28,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using static EndpointChecker.Program;
@@ -1355,12 +1356,12 @@ namespace EndpointChecker
             if (encoding != null)
             {
                 StreamReader httpWebResponseStreamReader = new StreamReader(httpWebResponseMemoryStream, encoding);
-                return WebUtility.HtmlDecode(httpWebResponseStreamReader.ReadToEnd());
+                return HttpUtility.HtmlDecode(httpWebResponseStreamReader.ReadToEnd());
             }
             else
             {
                 StreamReader httpWebResponseStreamReader = new StreamReader(httpWebResponseMemoryStream);
-                return WebUtility.HtmlDecode(httpWebResponseStreamReader.ReadToEnd());
+                return HttpUtility.HtmlDecode(httpWebResponseStreamReader.ReadToEnd());
             }
         }
 
@@ -2696,51 +2697,51 @@ namespace EndpointChecker
                         int ftpWorkSheetLineNumber = 1;
 
                         // ADD HEADER [HTTP ENDPOINTS WORKSHEET]
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("A" + httpWorkSheetLineNumber).Value = "Endpoint Name";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("B" + httpWorkSheetLineNumber).Value = "Protocol";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("C" + httpWorkSheetLineNumber).Value = "Target Port";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).Value = "Endpoint Response URL";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).Value = "Endpoint IP Address";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).Value = "Response Time";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).Value = "Status Code";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("H" + httpWorkSheetLineNumber).Value = "Status Message";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("I" + httpWorkSheetLineNumber).Value = "Last Seen Online";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("J" + httpWorkSheetLineNumber).Value = "Endpoint Host MAC Address";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("K" + httpWorkSheetLineNumber).Value = "Ping Time";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("L" + httpWorkSheetLineNumber).Value = "UserName [Basic Auth]";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("M" + httpWorkSheetLineNumber).Value = "Server ID";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("N" + httpWorkSheetLineNumber).Value = "Endpoint DNS Name";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("O" + httpWorkSheetLineNumber).Value = "Network Shares";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("P" + httpWorkSheetLineNumber).Value = "HTTP Auto Redirects";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("Q" + httpWorkSheetLineNumber).Value = "HTTP Content Type";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("R" + httpWorkSheetLineNumber).Value = "HTTP Content Lenght";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("S" + httpWorkSheetLineNumber).Value = "HTTP Expires";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("T" + httpWorkSheetLineNumber).Value = "HTTP ETag";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("U" + httpWorkSheetLineNumber).Value = "HTTP Encoding";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("V" + httpWorkSheetLineNumber).Value = "HTML Encoding";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("W" + httpWorkSheetLineNumber).Value = "HTML Page Title";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("X" + httpWorkSheetLineNumber).Value = "HTML Page Author";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("Y" + httpWorkSheetLineNumber).Value = "HTML Page Description";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("Z" + httpWorkSheetLineNumber).Value = "HTML Content Language";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("AA" + httpWorkSheetLineNumber).Value = "HTML Theme Color";
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("AB" + httpWorkSheetLineNumber).Value = "HTML Page Links Count";
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("A" + httpWorkSheetLineNumber).SetValue<string>("Endpoint Name");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("B" + httpWorkSheetLineNumber).SetValue<string>("Protocol");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("C" + httpWorkSheetLineNumber).SetValue<string>("Target Port");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetValue<string>("Endpoint Response URL");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).SetValue<string>("Endpoint IP Address");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).SetValue<string>("Response Time");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).SetValue<string>("Status Code");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("H" + httpWorkSheetLineNumber).SetValue<string>("Status Message");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("I" + httpWorkSheetLineNumber).SetValue<string>("Last Seen Online");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("J" + httpWorkSheetLineNumber).SetValue<string>("Endpoint Host MAC Address");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("K" + httpWorkSheetLineNumber).SetValue<string>("Ping Time");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("L" + httpWorkSheetLineNumber).SetValue<string>("UserName [Basic Auth]");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("M" + httpWorkSheetLineNumber).SetValue<string>("Server ID");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("N" + httpWorkSheetLineNumber).SetValue<string>("Endpoint DNS Name");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("O" + httpWorkSheetLineNumber).SetValue<string>("Network Shares");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("P" + httpWorkSheetLineNumber).SetValue<string>("HTTP Auto Redirects");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("Q" + httpWorkSheetLineNumber).SetValue<string>("HTTP Content Type");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("R" + httpWorkSheetLineNumber).SetValue<string>("HTTP Content Lenght");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("S" + httpWorkSheetLineNumber).SetValue<string>("HTTP Expires");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("T" + httpWorkSheetLineNumber).SetValue<string>("HTTP ETag");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("U" + httpWorkSheetLineNumber).SetValue<string>("HTTP Encoding");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("V" + httpWorkSheetLineNumber).SetValue<string>("HTML Encoding");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("W" + httpWorkSheetLineNumber).SetValue<string>("HTML Page Title");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("X" + httpWorkSheetLineNumber).SetValue<string>("HTML Page Author");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("Y" + httpWorkSheetLineNumber).SetValue<string>("HTML Page Description");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("Z" + httpWorkSheetLineNumber).SetValue<string>("HTML Content Language");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("AA" + httpWorkSheetLineNumber).SetValue<string>("HTML Theme Color");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("AB" + httpWorkSheetLineNumber).SetValue<string>("HTML Page Links Count");
                         httpWorkSheetLineNumber++;
 
                         // ADD HEADER [FTP ENDPOINTS WORKSHEET]
-                        endpointsStatusExport_FTP_WorkSheet.Cell("A" + ftpWorkSheetLineNumber).Value = "Endpoint Name";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("B" + ftpWorkSheetLineNumber).Value = "Protocol";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("C" + ftpWorkSheetLineNumber).Value = "Target Port";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).Value = "Endpoint Response URL";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).Value = "Endpoint IP Address";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).Value = "Response Time";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("G" + ftpWorkSheetLineNumber).Value = "Status Code";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("H" + ftpWorkSheetLineNumber).Value = "Status Message";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("I" + ftpWorkSheetLineNumber).Value = "Last Seen Online";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("J" + ftpWorkSheetLineNumber).Value = "Endpoint Host MAC Address";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("K" + ftpWorkSheetLineNumber).Value = "Ping Time";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("L" + ftpWorkSheetLineNumber).Value = "UserName";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("M" + ftpWorkSheetLineNumber).Value = "Endpoint DNS Name";
-                        endpointsStatusExport_FTP_WorkSheet.Cell("N" + ftpWorkSheetLineNumber).Value = "Network Shares";
+                        endpointsStatusExport_FTP_WorkSheet.Cell("A" + ftpWorkSheetLineNumber).SetValue<string>("Endpoint Name");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("B" + ftpWorkSheetLineNumber).SetValue<string>("Protocol");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("C" + ftpWorkSheetLineNumber).SetValue<string>("Target Port");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).SetValue<string>("Endpoint Response URL");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).SetValue<string>("Endpoint IP Address");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).SetValue<string>("Response Time");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("G" + ftpWorkSheetLineNumber).SetValue<string>("Status Code");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("H" + ftpWorkSheetLineNumber).SetValue<string>("Status Message");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("I" + ftpWorkSheetLineNumber).SetValue<string>("Last Seen Online");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("J" + ftpWorkSheetLineNumber).SetValue<string>("Endpoint Host MAC Address");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("K" + ftpWorkSheetLineNumber).SetValue<string>("Ping Time");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("L" + ftpWorkSheetLineNumber).SetValue<string>("UserName");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("M" + ftpWorkSheetLineNumber).SetValue<string>("Endpoint DNS Name");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("N" + ftpWorkSheetLineNumber).SetValue<string>("Network Shares");
                         ftpWorkSheetLineNumber++;
 
                         // ADD ENDPOINTS ITEMS TO SHEETS 
@@ -2753,39 +2754,37 @@ namespace EndpointChecker
                                     endpointItem.Protocol == Uri.UriSchemeHttps.ToUpper())
                                 {
                                     // ADD ENDPOINT ITEM TO HTTP SHEET
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("A" + httpWorkSheetLineNumber).Value = endpointItem.Name;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("B" + httpWorkSheetLineNumber).Value = endpointItem.Protocol;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("C" + httpWorkSheetLineNumber).Value = endpointItem.Port;
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("A" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.Name);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("B" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.Protocol);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("C" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.Port);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.ResponseAddress.Split(';')[0]);
 
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).Value = endpointItem.ResponseAddress.Split(';')[0];
                                     // CREATE RESPONSE ADDRESS HYPERLINK
                                     endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).Hyperlink = new XLHyperlink(endpointItem.ResponseAddress.Split(';')[0]);
-
-
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).Value = string.Join(Environment.NewLine, endpointItem.IPAddress);
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).Value = endpointItem.ResponseTime;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).Value = endpointItem.ResponseCode;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("H" + httpWorkSheetLineNumber).Value = endpointItem.ResponseMessage;
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).SetValue<string>(string.Join(Environment.NewLine, endpointItem.IPAddress));
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.ResponseTime);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.ResponseCode);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("H" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.ResponseMessage);
                                     endpointsStatusExport_HTTP_WorkSheet.Cell("I" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.LastSeenOnline);
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("J" + httpWorkSheetLineNumber).Value = string.Join(Environment.NewLine, endpointItem.MACAddress);
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("K" + httpWorkSheetLineNumber).Value = endpointItem.PingRoundtripTime;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("L" + httpWorkSheetLineNumber).Value = endpointItem.LoginName;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("M" + httpWorkSheetLineNumber).Value = endpointItem.ServerID;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("N" + httpWorkSheetLineNumber).Value = string.Join(Environment.NewLine, endpointItem.DNSName);
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("O" + httpWorkSheetLineNumber).Value = string.Join(Environment.NewLine, endpointItem.NetworkShare);
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("P" + httpWorkSheetLineNumber).Value = endpointItem.HTTPautoRedirects;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("Q" + httpWorkSheetLineNumber).Value = endpointItem.HTTPcontentType;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("R" + httpWorkSheetLineNumber).Value = endpointItem.HTTPcontentLenght;
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("J" + httpWorkSheetLineNumber).SetValue<string>(string.Join(Environment.NewLine, endpointItem.MACAddress));
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("K" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.PingRoundtripTime);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("L" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.LoginName);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("M" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.ServerID);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("N" + httpWorkSheetLineNumber).SetValue<string>(string.Join(Environment.NewLine, endpointItem.DNSName));
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("O" + httpWorkSheetLineNumber).SetValue<string>(string.Join(Environment.NewLine, endpointItem.NetworkShare));
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("P" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.HTTPautoRedirects);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("Q" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.HTTPcontentType);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("R" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.HTTPcontentLenght);
                                     endpointsStatusExport_HTTP_WorkSheet.Cell("S" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.HTTPexpires);
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("T" + httpWorkSheetLineNumber).Value = endpointItem.HTTPetag;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("U" + httpWorkSheetLineNumber).Value = GetEncodingName(endpointItem.HTTPencoding);
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("V" + httpWorkSheetLineNumber).Value = GetEncodingName(endpointItem.HTMLencoding);
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("W" + httpWorkSheetLineNumber).Value = endpointItem.HTMLTitle;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("X" + httpWorkSheetLineNumber).Value = endpointItem.HTMLAuthor;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("Y" + httpWorkSheetLineNumber).Value = endpointItem.HTMLDescription;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("Z" + httpWorkSheetLineNumber).Value = endpointItem.HTMLContentLanguage;
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("AA" + httpWorkSheetLineNumber).Value = GetKnownColorNameString(endpointItem.HTMLThemeColor);
-                                    endpointsStatusExport_HTTP_WorkSheet.Cell("AB" + httpWorkSheetLineNumber).Value = endpointItem.HTMLPageLinks.PropertyItem.Count().ToString();
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("T" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.HTTPetag);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("U" + httpWorkSheetLineNumber).SetValue<string>(GetEncodingName(endpointItem.HTTPencoding));
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("V" + httpWorkSheetLineNumber).SetValue<string>(GetEncodingName(endpointItem.HTMLencoding));
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("W" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.HTMLTitle);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("X" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.HTMLAuthor);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("Y" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.HTMLDescription);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("Z" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.HTMLContentLanguage);
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("AA" + httpWorkSheetLineNumber).SetValue<string>(GetKnownColorNameString(endpointItem.HTMLThemeColor));
+                                    endpointsStatusExport_HTTP_WorkSheet.Cell("AB" + httpWorkSheetLineNumber).SetValue<string>(endpointItem.HTMLPageLinks.PropertyItem.Count().ToString());
 
                                     // SET BACKGROUND COLOR BY STATUS CODE
                                     endpointsStatusExport_HTTP_WorkSheet.Row(httpWorkSheetLineNumber)
@@ -2802,21 +2801,21 @@ namespace EndpointChecker
                                             Uri.UriSchemeFtp);
 
                                     // ADD ENDPOINT ITEM TO FTP SHEET
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("A" + ftpWorkSheetLineNumber).Value = endpointItem.Name;
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("B" + ftpWorkSheetLineNumber).Value = endpointItem.Protocol;
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("C" + ftpWorkSheetLineNumber).Value = endpointItem.Port;
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).Value = connectionString;
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("A" + ftpWorkSheetLineNumber).SetValue<string>(endpointItem.Name);
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("B" + ftpWorkSheetLineNumber).SetValue<string>(endpointItem.Protocol);
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("C" + ftpWorkSheetLineNumber).SetValue<string>(endpointItem.Port);
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).SetValue<string>(connectionString);
                                     endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).Hyperlink = new XLHyperlink(connectionString);
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).Value = string.Join(Environment.NewLine, endpointItem.IPAddress);
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).Value = endpointItem.ResponseTime;
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("G" + ftpWorkSheetLineNumber).Value = endpointItem.ResponseCode;
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("H" + ftpWorkSheetLineNumber).Value = endpointItem.ResponseMessage;
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).SetValue<string>(string.Join(Environment.NewLine, endpointItem.IPAddress));
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).SetValue<string>(endpointItem.ResponseTime);
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("G" + ftpWorkSheetLineNumber).SetValue<string>(endpointItem.ResponseCode);
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("H" + ftpWorkSheetLineNumber).SetValue<string>(endpointItem.ResponseMessage);
                                     endpointsStatusExport_FTP_WorkSheet.Cell("I" + ftpWorkSheetLineNumber).SetValue<string>(endpointItem.LastSeenOnline);
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("J" + ftpWorkSheetLineNumber).Value = string.Join(Environment.NewLine, endpointItem.MACAddress);
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("K" + ftpWorkSheetLineNumber).Value = endpointItem.PingRoundtripTime;
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("L" + ftpWorkSheetLineNumber).Value = endpointItem.LoginName;
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("M" + ftpWorkSheetLineNumber).Value = string.Join(Environment.NewLine, endpointItem.DNSName);
-                                    endpointsStatusExport_FTP_WorkSheet.Cell("N" + ftpWorkSheetLineNumber).Value = string.Join(Environment.NewLine, endpointItem.NetworkShare);
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("J" + ftpWorkSheetLineNumber).SetValue<string>(string.Join(Environment.NewLine, endpointItem.MACAddress));
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("K" + ftpWorkSheetLineNumber).SetValue<string>(endpointItem.PingRoundtripTime);
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("L" + ftpWorkSheetLineNumber).SetValue<string>(endpointItem.LoginName);
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("M" + ftpWorkSheetLineNumber).SetValue<string>(string.Join(Environment.NewLine, endpointItem.DNSName));
+                                    endpointsStatusExport_FTP_WorkSheet.Cell("N" + ftpWorkSheetLineNumber).SetValue<string>(string.Join(Environment.NewLine, endpointItem.NetworkShare));
 
                                     // SET BACKGROUND COLOR BY STATUS CODE
                                     endpointsStatusExport_FTP_WorkSheet.Row(ftpWorkSheetLineNumber)
@@ -2831,52 +2830,52 @@ namespace EndpointChecker
                         }
 
                         // ADD SUMMARY WORKSHEET
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A1").Value = "Endpoint Checker Application";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").Value = "Version " + assembly_VersionString + " (built " + assembly_BuiltDate + ")";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A2").Value = "Operating System";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B2").Value = Environment.OSVersion.VersionString;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A3").Value = "Latest Installed .NET FrameWork Runtime";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B3").Value = dotNetFramework_LatestInstalledVersion.ToString()
-                            .Replace("v", "Version ").Replace("_", ".").Replace("x", " or later");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A4").Value = "System Memory (RAM)";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B4").Value = systemMemorySize;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A5").Value = "User Name";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B5").Value = Environment.UserName;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A6").Value = "Domain";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B6").Value = Environment.UserDomainName;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A7").Value = "Computer Name";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B7").Value = Environment.MachineName;
+                        endpointsStatusExport_Summary_WorkSheet.Cell("A1").SetValue<string>("Endpoint Checker Application");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").SetValue<string>("Version " + assembly_VersionString + " (built " + assembly_BuiltDate + ")");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("A2").SetValue<string>("Operating System");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B2").SetValue<string>(Environment.OSVersion.VersionString);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("A3").SetValue<string>("Latest Installed .NET FrameWork Runtime");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B3").SetValue<string>(dotNetFramework_LatestInstalledVersion.ToString()
+                            .Replace("v", "Version ").Replace("_", ".").Replace("x", " or later"));
+                        endpointsStatusExport_Summary_WorkSheet.Cell("A4").SetValue<string>("System Memory (RAM)");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B4").SetValue<string>(systemMemorySize);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("A5").SetValue<string>("User Name");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B5").SetValue<string>(Environment.UserName);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("A6").SetValue<string>("Domain");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B6").SetValue<string>(Environment.UserDomainName);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("A7").SetValue<string>("Computer Name");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B7").SetValue<string>(Environment.MachineName);
 
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D1").Value = "Check Started";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E1").Value = "'" + startDT;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D2").Value = "Check Ended";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E2").Value = "'" + endDT;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D3").Value = "Check Duration";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E3").Value = durationSeconds + " " + GetFormattedValueCountString(durationSeconds, "second");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D4").Value = "HTTP Endpoints Count";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E4").Value = (httpWorkSheetLineNumber - 2).ToString();
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D5").Value = "FTP Endpoints Count";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E5").Value = (ftpWorkSheetLineNumber - 2).ToString();
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D6").Value = "Parallel Threads Count";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E6").Value = threadsCount;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D7").Value = "Ping Timeout";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E7").Value = pingTimeout + " " + GetFormattedValueCountString(pingTimeout, "second");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D8").Value = "HTTP Request Timeout";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E8").Value = httpRequestTimeout + " " + GetFormattedValueCountString(httpRequestTimeout, "second");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D9").Value = "FTP Request Timeout";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E9").Value = ftpRequestTimeout + " " + GetFormattedValueCountString(ftpRequestTimeout, "second");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D10").Value = "Supported Security Protocols [HTTPS]";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E10").Value = sslSecurityProtocols;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D11").Value = "Server Certificate Validation [HTTPS]";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E11").Value = sslCertificateValidation;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D12").Value = "Auto Redirection [HTTP]";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E12").Value = httpAutoRedirection;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D13").Value = "Resolve Network Shares";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E13").Value = resolveNetworkShares;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D14").Value = "Resolve Page Meta Info [HTTP/HTML]";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E14").Value = resolvePageMetaInfo;
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D15").Value = "Save Response [HTTP]";
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E15").Value = saveResponse;
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D1").SetValue<string>("Check Started");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E1").SetValue<string>("'" + startDT);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D2").SetValue<string>("Check Ended");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E2").SetValue<string>("'" + endDT);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D3").SetValue<string>("Check Duration");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E3").SetValue<string>(durationSeconds + " " + GetFormattedValueCountString(durationSeconds, "second"));
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D4").SetValue<string>("HTTP Endpoints Count");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E4").SetValue<string>((httpWorkSheetLineNumber - 2).ToString());
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D5").SetValue<string>("FTP Endpoints Count");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E5").SetValue<string>((ftpWorkSheetLineNumber - 2).ToString());
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D6").SetValue<string>("Parallel Threads Count");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E6").SetValue<string>(threadsCount);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D7").SetValue<string>("Ping Timeout");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E7").SetValue<string>(pingTimeout + " " + GetFormattedValueCountString(pingTimeout, "second"));
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D8").SetValue<string>("HTTP Request Timeout");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E8").SetValue<string>(httpRequestTimeout + " " + GetFormattedValueCountString(httpRequestTimeout, "second"));
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D9").SetValue<string>("FTP Request Timeout");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E9").SetValue<string>(ftpRequestTimeout + " " + GetFormattedValueCountString(ftpRequestTimeout, "second"));
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D10").SetValue<string>("Supported Security Protocols [HTTPS]");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E10").SetValue<string>(sslSecurityProtocols);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D11").SetValue<string>("Server Certificate Validation [HTTPS]");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E11").SetValue<string>(sslCertificateValidation);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D12").SetValue<string>("Auto Redirection [HTTP]");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E12").SetValue<string>(httpAutoRedirection);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D13").SetValue<string>("Resolve Network Shares");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E13").SetValue<string>(resolveNetworkShares);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D14").SetValue<string>("Resolve Page Meta Info [HTTP/HTML]");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E14").SetValue<string>(resolvePageMetaInfo);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D15").SetValue<string>("Save Response [HTTP]");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E15").SetValue<string>(saveResponse);
 
                         // SETTINGS FOR HTTP ENDPOINTS WORKSHEET
                         endpointsStatusExport_HTTP_WorkSheet.Style
@@ -2969,32 +2968,35 @@ namespace EndpointChecker
 
                             Worksheet summaryWorkSheet = xlsxWorkBook.Worksheets["Summary"];
 
+                            // SET WHITE BACKGROUND FOR UNUSED CELLS [CREATE SEPARATE CLASS FOR IT]
+                            summaryWorkSheet["A09"].Style.Color = Color.White;
+
                             if (cb_ExportEndpointsStatus_JSON.Checked)
                             {
                                 // ADD 'JSON' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
-                                RichText jsonPageHyperlink = summaryWorkSheet.Range["A10"].RichText;
-                                jsonPageHyperlink.Text = "JSON_Endpoints_Status_List_Hyperlink_Placeholder";
-                                summaryWorkSheet.Range["A10"].Style.Color = Color.DarkOrange;
-                                summaryWorkSheet.Range["A10"].Style.Font.IsBold = true;
-                                summaryWorkSheet.Range["A10"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                                RichText jsonPageHyperlink = summaryWorkSheet["A10"].RichText;
+                                jsonPageHyperlink.Text = "JSON_Endpoints_Status_List_Hyperlink";
+                                summaryWorkSheet["A10"].Style.Color = Color.DarkOrange;
+                                summaryWorkSheet["A10"].Style.Font.IsBold = true;
+                                summaryWorkSheet["A10"].Style.HorizontalAlignment = HorizontalAlignType.Center;
                             }
 
                             if (cb_ExportEndpointsStatus_XML.Checked)
                             {
                                 // ADD 'XML' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
-                                RichText xmlPageHyperlink = summaryWorkSheet.Range["A11"].RichText;
-                                xmlPageHyperlink.Text = "XML_Endpoints_Status_List_Hyperlink_Placeholder";
-                                summaryWorkSheet.Range["A11"].Style.Color = Color.Red;
-                                summaryWorkSheet.Range["A11"].Style.Font.IsBold = true;
-                                summaryWorkSheet.Range["A11"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                                RichText xmlPageHyperlink = summaryWorkSheet["A11"].RichText;
+                                xmlPageHyperlink.Text = "XML_Endpoints_Status_List_Hyperlink";
+                                summaryWorkSheet["A11"].Style.Color = Color.Red;
+                                summaryWorkSheet["A11"].Style.Font.IsBold = true;
+                                summaryWorkSheet["A11"].Style.HorizontalAlignment = HorizontalAlignType.Center;
                             }
 
                             // ADD 'XLSX' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
-                            RichText xlsxPageHyperlink = summaryWorkSheet.Range["A12"].RichText;
-                            xlsxPageHyperlink.Text = "XLSX_Endpoints_Status_List_Hyperlink_Placeholder";
-                            summaryWorkSheet.Range["A12"].Style.Color = Color.DarkViolet;
-                            summaryWorkSheet.Range["A12"].Style.Font.IsBold = true;
-                            summaryWorkSheet.Range["A12"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                            RichText xlsxPageHyperlink = summaryWorkSheet["A12"].RichText;
+                            xlsxPageHyperlink.Text = "XLSX_Endpoints_Status_List_Hyperlink";
+                            summaryWorkSheet["A12"].Style.Color = Color.DarkViolet;
+                            summaryWorkSheet["A12"].Style.Font.IsBold = true;
+                            summaryWorkSheet["A12"].Style.HorizontalAlignment = HorizontalAlignType.Center;
 
                             if (xlsxWorkBook.Worksheets.Where(w => w.Name == "HTTP Endpoints").Count() == 1)
                             {
@@ -3017,11 +3019,11 @@ namespace EndpointChecker
                                 definitonsStatusExport_HTML_HTTP_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
 
                                 // ADD 'HTTP' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
-                                RichText httpPageHyperlink = summaryWorkSheet.Range["A14"].RichText;
-                                httpPageHyperlink.Text = "HTTP_Endpoints_Status_List_Hyperlink_Placeholder";
-                                summaryWorkSheet.Range["A14"].Style.Color = Color.Green;
-                                summaryWorkSheet.Range["A14"].Style.Font.IsBold = true;
-                                summaryWorkSheet.Range["A14"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                                RichText httpPageHyperlink = summaryWorkSheet["A14"].RichText;
+                                httpPageHyperlink.Text = "HTTP_Endpoints_Status_List_Hyperlink";
+                                summaryWorkSheet["A14"].Style.Color = Color.Green;
+                                summaryWorkSheet["A14"].Style.Font.IsBold = true;
+                                summaryWorkSheet["A14"].Style.HorizontalAlignment = HorizontalAlignType.Center;
                             }
 
                             if (xlsxWorkBook.Worksheets.Where(w => w.Name == "FTP Endpoints").Count() == 1)
@@ -3045,11 +3047,11 @@ namespace EndpointChecker
                                 definitonsStatusExport_HTML_FTP_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
 
                                 // ADD 'FTP' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
-                                RichText ftpPageHyperlink = summaryWorkSheet.Range["A15"].RichText;
-                                ftpPageHyperlink.Text = "FTP_Endpoints_Status_List_Hyperlink_Placeholder";
-                                summaryWorkSheet.Range["A15"].Style.Color = Color.Blue;
-                                summaryWorkSheet.Range["A15"].Style.Font.IsBold = true;
-                                summaryWorkSheet.Range["A15"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                                RichText ftpPageHyperlink = summaryWorkSheet["A15"].RichText;
+                                ftpPageHyperlink.Text = "FTP_Endpoints_Status_List_Hyperlink";
+                                summaryWorkSheet["A15"].Style.Color = Color.Blue;
+                                summaryWorkSheet["A15"].Style.Font.IsBold = true;
+                                summaryWorkSheet["A15"].Style.HorizontalAlignment = HorizontalAlignType.Center;
                             }
 
                             // SAVE HTML [SUMMARY PAGE]
@@ -3060,11 +3062,11 @@ namespace EndpointChecker
                             // REPLACE HYPERLINKS ON 'SUMMARY' PAGE
                             string summaryHTMLstring = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
                             summaryHTMLstring = summaryHTMLstring
-                                .Replace("XLSX_Endpoints_Status_List_Hyperlink_Placeholder", "<a href=\"" + statusExport_XLSFile + "\" style=\"color:white;\">Endpoints Status XLSX Export</a>")
-                                .Replace("JSON_Endpoints_Status_List_Hyperlink_Placeholder", "<a href=\"" + statusExport_JSONFile + "\" style=\"color:white;\">Endpoints Status JSON Export </a>")
-                                .Replace("XML_Endpoints_Status_List_Hyperlink_Placeholder", "<a href=\"" + statusExport_XMLFile + "\" style=\"color:white;\">Endpoints Status XML Export</a>")
-                                .Replace("HTTP_Endpoints_Status_List_Hyperlink_Placeholder", "<a href=\"" + statusExport_HTMLFile_HTTPPage + "\" style=\"color:white;\">HTTP Endpoints Status List</a>")
-                                .Replace("FTP_Endpoints_Status_List_Hyperlink_Placeholder", "<a href=\"" + statusExport_HTMLFile_FTPPage + "\" style=\"color:white;\">FTP Endpoints Status List</a>");
+                                .Replace("XLSX_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_XLSFile + "\" style=\"color:white;\">Endpoints Status XLSX Export</a>")
+                                .Replace("JSON_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_JSONFile + "\" style=\"color:white;\">Endpoints Status JSON Export </a>")
+                                .Replace("XML_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_XMLFile + "\" style=\"color:white;\">Endpoints Status XML Export</a>")
+                                .Replace("HTTP_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_HTMLFile_HTTPPage + "\" style=\"color:white;\">HTTP Endpoints Status List</a>")
+                                .Replace("FTP_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_HTMLFile_FTPPage + "\" style=\"color:white;\">FTP Endpoints Status List</a>");
 
                             // ADD HTML AUTO REFRESH
                             summaryHTMLstring = AddAutoRefreshToHTMLString(summaryHTMLstring, 30);

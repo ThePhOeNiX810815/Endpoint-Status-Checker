@@ -106,7 +106,7 @@ namespace EndpointChecker
             this.Controls.Add(this.lbl_Version);
             this.Controls.Add(this.lbl_Copyright);
             this.Controls.Add(this.lbl_Name);
-            this.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.Color.Transparent;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
