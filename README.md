@@ -19,20 +19,20 @@ This piece of software is safe to use on your host, ignore any false positives.
 - .NET Framework 4.5 or later
 - Application needs to be run As Administrator
 
-# Known issues
+# Known Issues
 App may hang or stop responding, possibly throw unhandled exception from code.
 All unhandled exceptions got to be automatically reported back to author. 
 
-# To-do list
+# To-Do List
 
 Nothing by now, if you have something to suggest you can use 'Feature Request' button
 on application main window and send your Feature Request or Improvement, or create Issue.
 
-# Compiling from source code
+# Compiling From Source Code
 
 Just open the solution in Visual Studio and click the (re)build button.
 
-# Public Keys Used
+# Public API Keys Used
 
 Application is using following public APIs:
 - Google Maps (https://developers.google.com/maps/documentation/javascript/overview)
