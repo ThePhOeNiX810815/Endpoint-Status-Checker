@@ -82,7 +82,7 @@ namespace EndpointChecker
         public static int googleMapsZoomFactor = 14;
 
         // VIRUSTOTAL API KEY
-        public static string apiKey_VirusTotal = "a4260f0ef8eeddcc025d12f700e08c35c118c049ec96bfb5abce842b86447b99";
+        public static string apiKey_VirusTotal = string.Empty;
 
         // STRING FORMAT FOR 'NOT AVAILABLE' STATUS
         public static string status_NotAvailable = "N/A";

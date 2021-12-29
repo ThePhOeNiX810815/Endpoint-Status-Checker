@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml;
+using Microsoft.VisualBasic.Devices;
 using static EndpointChecker.Program;
 
 namespace EndpointChecker
@@ -2833,7 +2834,7 @@ namespace EndpointChecker
                         endpointsStatusExport_Summary_WorkSheet.Cell("A1").SetValue<string>("Endpoint Checker Application");
                         endpointsStatusExport_Summary_WorkSheet.Cell("B1").SetValue<string>("Version " + assembly_VersionString + " (built " + assembly_BuiltDate + ")");
                         endpointsStatusExport_Summary_WorkSheet.Cell("A2").SetValue<string>("Operating System");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B2").SetValue<string>(Environment.OSVersion.VersionString);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B2").SetValue<string>(new ComputerInfo().OSVersion);
                         endpointsStatusExport_Summary_WorkSheet.Cell("A3").SetValue<string>("Latest Installed .NET FrameWork Runtime");
                         endpointsStatusExport_Summary_WorkSheet.Cell("B3").SetValue<string>(dotNetFramework_LatestInstalledVersion.ToString()
                             .Replace("v", "Version ").Replace("_", ".").Replace("x", " or later"));
@@ -2847,9 +2848,9 @@ namespace EndpointChecker
                         endpointsStatusExport_Summary_WorkSheet.Cell("B7").SetValue<string>(Environment.MachineName);
 
                         endpointsStatusExport_Summary_WorkSheet.Cell("D1").SetValue<string>("Check Started");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E1").SetValue<string>("'" + startDT);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E1").SetValue<string>(startDT);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D2").SetValue<string>("Check Ended");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E2").SetValue<string>("'" + endDT);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E2").SetValue<string>(endDT);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D3").SetValue<string>("Check Duration");
                         endpointsStatusExport_Summary_WorkSheet.Cell("E3").SetValue<string>(durationSeconds + " " + GetFormattedValueCountString(durationSeconds, "second"));
                         endpointsStatusExport_Summary_WorkSheet.Cell("D4").SetValue<string>("HTTP Endpoints Count");

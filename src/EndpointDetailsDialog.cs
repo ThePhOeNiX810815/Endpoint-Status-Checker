@@ -527,7 +527,11 @@ namespace EndpointChecker
 
                 // VIRUSTOTAL SCAN
                 tabControl.TabPages.Add(tabPage_VirusTotal);
-                btn_VirusTotal_Refresh_Click(this, null);
+
+                if (!string.IsNullOrEmpty(Program.apiKey_VirusTotal))
+                {
+                    btn_VirusTotal_Refresh_Click(this, null);
+                }
             }
 
             // SET TABS [COMMON]
@@ -1587,7 +1591,8 @@ namespace EndpointChecker
             }
 
             // VIRUS TOTAL
-            if (btn_VirusTotal_Refresh.Enabled)
+            if (string.IsNullOrEmpty(Program.apiKey_VirusTotal) &&
+                tabControl.Controls.Contains(tabPage_VirusTotal))
             {
                 btn_VirusTotal_Refresh_Click(this, null);
             }
@@ -1652,31 +1657,52 @@ namespace EndpointChecker
 
         public void btn_VirusTotal_Refresh_Click(object sender, EventArgs e)
         {
-            // SET CONTROLS
-            lv_VirusTotal.Visible = false;
+            if (string.IsNullOrEmpty(Program.apiKey_VirusTotal))
+            {
+                // ASK FOR API KEY
+                DialogResult questionDialogResult = MessageBox.Show("API key required for VirusTotal scan option is not set. Do you want to set your own API key in application config file ?", "VirusTotal API Key", MessageBoxButtons.YesNo);
+                if (questionDialogResult == DialogResult.Yes)
+                {
+                    if (File.Exists(Program.appConfigFile))
+                    {
+                        CheckerMainForm.BrowseEndpoint(
+                        Program.appConfigFile,
+                        null,
+                        null,
+                        null);
+                    }
+                }
+                else
+                {
+                    tabControl.TabPages.Remove(tabPage_VirusTotal);
+                }
+            }
+            else
+            {
+                // SET CONTROLS / RUN SCAN
+                lv_VirusTotal.Visible = false;
 
-            lbl_VirusTotal_Permalink.Visible = false;
-            lbl_VirusTotal_ScanDateTime.Visible = false;
+                lbl_VirusTotal_Permalink.Visible = false;
+                lbl_VirusTotal_ScanDateTime.Visible = false;
 
-            tb_VirusTotal_Permalink.Visible = false;
-            tb_VirusTotal_ScanDateTime.Visible = false;
+                tb_VirusTotal_Permalink.Visible = false;
+                tb_VirusTotal_ScanDateTime.Visible = false;
 
-            lbl_VirusTotal_Status.Visible = true;
-            lbl_VirusTotal_Status.Text = "Website scan in progress ...";
+                lbl_VirusTotal_Status.Visible = true;
+                lbl_VirusTotal_Status.Text = "Website scan in progress ...";
 
-            btn_VirusTotal_Refresh.Enabled = false;
-            pb_VirusTotalRefresh.Visible = true;
-            pb_VirusTotal_Status.Visible = false;
-            lv_VirusTotal.Items.Clear();
+                btn_VirusTotal_Refresh.Enabled = false;
+                pb_VirusTotalRefresh.Visible = true;
+                pb_VirusTotal_Status.Visible = false;
+                lv_VirusTotal.Items.Clear();
 
-            GetVirusTotalScanReport(tb_ResponseURL.Text, 0);
+                GetVirusTotalScanReport(tb_ResponseURL.Text, 24, 0);
+            }
         }
 
-        public void GetVirusTotalScanReport(string urlToScan, int retry)
+        public void GetVirusTotalScanReport(string urlToScan, int maxRetryCount, int retry)
         {
             virusTotal_ScanResult = null;
-
-            lbl_VirusTotal_Status.ForeColor = Color.DarkGreen;
 
             NewBackgroundThread((Action)(() =>
             {
@@ -1693,12 +1719,8 @@ namespace EndpointChecker
                     {
                         ThreadSafeInvoke((Action)(() =>
                         {
+                            lbl_VirusTotal_Status.ForeColor = Color.DarkGreen;
                             lbl_VirusTotal_Status.Text = virusTotal_ScanResultTask.Result.VerboseMsg;
-
-                            if (retry > 0)
-                            {
-                                lbl_VirusTotal_Status.Text += " [Retry " + retry + "]";
-                            }
                         }));
                     }
                     else
@@ -1708,11 +1730,11 @@ namespace EndpointChecker
                 }
                 catch (Exception vtException)
                 {
-                    if (!vtException.GetType().IsAssignableFrom(typeof(VirusTotalNET.Exceptions.InvalidResourceException)))
+                    if (!vtException.GetType().IsAssignableFrom(typeof(VirusTotalNET.Exceptions.InvalidResourceException)) && retry <= maxRetryCount)
                     {
                         ThreadSafeInvoke((Action)(() =>
                         {
-                            lbl_VirusTotal_Status.ForeColor = Color.Firebrick;
+                            lbl_VirusTotal_Status.ForeColor = Color.MediumVioletRed;
 
                             if (vtException.InnerException != null)
                             {
@@ -1736,11 +1758,10 @@ namespace EndpointChecker
                             }
                         }));
 
-                        Thread.Sleep(5000);
-
                         retry++;
 
-                        GetVirusTotalScanReport(urlToScan, retry);
+                        Thread.Sleep(5000);
+                        GetVirusTotalScanReport(urlToScan, maxRetryCount, retry);
                     }
                     else
                     {
@@ -1765,6 +1786,7 @@ namespace EndpointChecker
         public void TIMER_VirusTotalResult_Tick(object sender, EventArgs e)
         {
             if (virusTotal_ScanResult != null &&
+                !string.IsNullOrEmpty(virusTotal_ScanResult.Url) &&
                 !BW_VirusTotal_Report.IsBusy)
             {
                 BW_VirusTotal_Report.RunWorkerAsync();

@@ -27,11 +27,7 @@ namespace EndpointChecker
             lbl_Version.Text = "Version " + Program.assembly_VersionString;
             lbl_Build.Text = "Build " + Program.assembly_BuiltDate;
             lbl_Copyright.Text = Program.assembly_Copyright;
-
-            if (Program.assembly_Version.Build != 0)
-            {
-                lbl_Version.Text += " Pre-Release";
-            }
+            lbl_PreRelease.Visible = (Program.assembly_Version.Build != 0);
 
             Opacity = 1;
         }

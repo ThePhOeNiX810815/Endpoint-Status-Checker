@@ -92,6 +92,19 @@
             this.lbl_Port = new System.Windows.Forms.Label();
             this.lbl_Protocol = new System.Windows.Forms.Label();
             this.lbl_EndpointName = new System.Windows.Forms.Label();
+            this.tabPage_VirusTotal = new System.Windows.Forms.TabPage();
+            this.pb_VirusTotal_Status = new System.Windows.Forms.PictureBox();
+            this.tb_VirusTotal_ScanDateTime = new System.Windows.Forms.TextBox();
+            this.lbl_VirusTotal_ScanDateTime = new System.Windows.Forms.Label();
+            this.tb_VirusTotal_Permalink = new System.Windows.Forms.TextBox();
+            this.lbl_VirusTotal_Permalink = new System.Windows.Forms.Label();
+            this.pb_VirusTotalRefresh = new System.Windows.Forms.PictureBox();
+            this.btn_VirusTotal_Refresh = new System.Windows.Forms.Button();
+            this.lbl_VirusTotal_Status = new System.Windows.Forms.Label();
+            this.lv_VirusTotal = new System.Windows.Forms.ListView();
+            this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.imageList_Tabs = new System.Windows.Forms.ImageList(this.components);
             this.tabPage_WhoIs = new System.Windows.Forms.TabPage();
             this.tb_WhoIs_RegistrableDomain = new System.Windows.Forms.TextBox();
             this.lbl_WhoIs_RegistrableDomain = new System.Windows.Forms.Label();
@@ -99,7 +112,6 @@
             this.tb_WhoIs_Server = new System.Windows.Forms.TextBox();
             this.pb_WhoIsProgress = new System.Windows.Forms.PictureBox();
             this.rtb_WhoIsInfo = new System.Windows.Forms.RichTextBox();
-            this.imageList_Tabs = new System.Windows.Forms.ImageList(this.components);
             this.tabPage_TraceRoute = new System.Windows.Forms.TabPage();
             this.pb_TraceRouteProgress = new System.Windows.Forms.PictureBox();
             this.btn_TraceRoute_Refresh = new System.Windows.Forms.Button();
@@ -182,18 +194,6 @@
             this.lv_SSLCertificate = new System.Windows.Forms.ListView();
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tabPage_VirusTotal = new System.Windows.Forms.TabPage();
-            this.pb_VirusTotal_Status = new System.Windows.Forms.PictureBox();
-            this.tb_VirusTotal_ScanDateTime = new System.Windows.Forms.TextBox();
-            this.lbl_VirusTotal_ScanDateTime = new System.Windows.Forms.Label();
-            this.tb_VirusTotal_Permalink = new System.Windows.Forms.TextBox();
-            this.lbl_VirusTotal_Permalink = new System.Windows.Forms.Label();
-            this.pb_VirusTotalRefresh = new System.Windows.Forms.PictureBox();
-            this.btn_VirusTotal_Refresh = new System.Windows.Forms.Button();
-            this.lbl_VirusTotal_Status = new System.Windows.Forms.Label();
-            this.lv_VirusTotal = new System.Windows.Forms.ListView();
-            this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage_PageCategory = new System.Windows.Forms.TabPage();
             this.lv_CategoryList = new System.Windows.Forms.ListView();
             this.tabPage_PageLinks = new System.Windows.Forms.TabPage();
@@ -236,6 +236,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_PingRefresh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Favicon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_StatusIcon)).BeginInit();
+            this.tabPage_VirusTotal.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotal_Status)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotalRefresh)).BeginInit();
             this.tabPage_WhoIs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_WhoIsProgress)).BeginInit();
             this.tabPage_TraceRoute.SuspendLayout();
@@ -255,9 +258,6 @@
             this.tabPage_HTTPRequestHeaders.SuspendLayout();
             this.tabPage_HTTPResponseHeaders.SuspendLayout();
             this.tabPage_SSLCertificate.SuspendLayout();
-            this.tabPage_VirusTotal.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotal_Status)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotalRefresh)).BeginInit();
             this.tabPage_PageCategory.SuspendLayout();
             this.tabPage_PageLinks.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_PageLinks_CommonLinksStatus)).BeginInit();
@@ -1075,6 +1075,170 @@
             this.lbl_EndpointName.Text = "Endpoint Name";
             this.lbl_EndpointName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // tabPage_VirusTotal
+            // 
+            this.tabPage_VirusTotal.BackColor = System.Drawing.Color.Silver;
+            this.tabPage_VirusTotal.Controls.Add(this.pb_VirusTotal_Status);
+            this.tabPage_VirusTotal.Controls.Add(this.tb_VirusTotal_ScanDateTime);
+            this.tabPage_VirusTotal.Controls.Add(this.lbl_VirusTotal_ScanDateTime);
+            this.tabPage_VirusTotal.Controls.Add(this.tb_VirusTotal_Permalink);
+            this.tabPage_VirusTotal.Controls.Add(this.lbl_VirusTotal_Permalink);
+            this.tabPage_VirusTotal.Controls.Add(this.pb_VirusTotalRefresh);
+            this.tabPage_VirusTotal.Controls.Add(this.btn_VirusTotal_Refresh);
+            this.tabPage_VirusTotal.Controls.Add(this.lbl_VirusTotal_Status);
+            this.tabPage_VirusTotal.Controls.Add(this.lv_VirusTotal);
+            this.tabPage_VirusTotal.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tabPage_VirusTotal.Location = new System.Drawing.Point(4, 23);
+            this.tabPage_VirusTotal.Name = "tabPage_VirusTotal";
+            this.tabPage_VirusTotal.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_VirusTotal.Size = new System.Drawing.Size(783, 397);
+            this.tabPage_VirusTotal.TabIndex = 12;
+            this.tabPage_VirusTotal.Text = "VirusTotal";
+            // 
+            // pb_VirusTotal_Status
+            // 
+            this.pb_VirusTotal_Status.BackColor = System.Drawing.Color.Transparent;
+            this.pb_VirusTotal_Status.Location = new System.Drawing.Point(695, 179);
+            this.pb_VirusTotal_Status.Name = "pb_VirusTotal_Status";
+            this.pb_VirusTotal_Status.Size = new System.Drawing.Size(79, 79);
+            this.pb_VirusTotal_Status.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_VirusTotal_Status.TabIndex = 56;
+            this.pb_VirusTotal_Status.TabStop = false;
+            this.pb_VirusTotal_Status.Visible = false;
+            // 
+            // tb_VirusTotal_ScanDateTime
+            // 
+            this.tb_VirusTotal_ScanDateTime.BackColor = System.Drawing.Color.SkyBlue;
+            this.tb_VirusTotal_ScanDateTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_VirusTotal_ScanDateTime.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.tb_VirusTotal_ScanDateTime.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_VirusTotal_ScanDateTime.Location = new System.Drawing.Point(152, 40);
+            this.tb_VirusTotal_ScanDateTime.Multiline = true;
+            this.tb_VirusTotal_ScanDateTime.Name = "tb_VirusTotal_ScanDateTime";
+            this.tb_VirusTotal_ScanDateTime.ReadOnly = true;
+            this.tb_VirusTotal_ScanDateTime.Size = new System.Drawing.Size(622, 23);
+            this.tb_VirusTotal_ScanDateTime.TabIndex = 55;
+            this.tb_VirusTotal_ScanDateTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // lbl_VirusTotal_ScanDateTime
+            // 
+            this.lbl_VirusTotal_ScanDateTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_VirusTotal_ScanDateTime.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_VirusTotal_ScanDateTime.Location = new System.Drawing.Point(12, 40);
+            this.lbl_VirusTotal_ScanDateTime.Name = "lbl_VirusTotal_ScanDateTime";
+            this.lbl_VirusTotal_ScanDateTime.Size = new System.Drawing.Size(134, 23);
+            this.lbl_VirusTotal_ScanDateTime.TabIndex = 54;
+            this.lbl_VirusTotal_ScanDateTime.Text = "Scan Date / Time";
+            this.lbl_VirusTotal_ScanDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_VirusTotal_Permalink
+            // 
+            this.tb_VirusTotal_Permalink.BackColor = System.Drawing.Color.PaleGreen;
+            this.tb_VirusTotal_Permalink.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_VirusTotal_Permalink.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.tb_VirusTotal_Permalink.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_VirusTotal_Permalink.Location = new System.Drawing.Point(152, 12);
+            this.tb_VirusTotal_Permalink.Multiline = true;
+            this.tb_VirusTotal_Permalink.Name = "tb_VirusTotal_Permalink";
+            this.tb_VirusTotal_Permalink.ReadOnly = true;
+            this.tb_VirusTotal_Permalink.Size = new System.Drawing.Size(622, 23);
+            this.tb_VirusTotal_Permalink.TabIndex = 53;
+            this.tb_VirusTotal_Permalink.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tb_VirusTotal_Permalink.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tb_VirusTotal_Permalink_MouseClick);
+            // 
+            // lbl_VirusTotal_Permalink
+            // 
+            this.lbl_VirusTotal_Permalink.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_VirusTotal_Permalink.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_VirusTotal_Permalink.Location = new System.Drawing.Point(12, 12);
+            this.lbl_VirusTotal_Permalink.Name = "lbl_VirusTotal_Permalink";
+            this.lbl_VirusTotal_Permalink.Size = new System.Drawing.Size(134, 23);
+            this.lbl_VirusTotal_Permalink.TabIndex = 52;
+            this.lbl_VirusTotal_Permalink.Text = "Permalink";
+            this.lbl_VirusTotal_Permalink.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // pb_VirusTotalRefresh
+            // 
+            this.pb_VirusTotalRefresh.BackColor = System.Drawing.Color.Transparent;
+            this.pb_VirusTotalRefresh.Image = ((System.Drawing.Image)(resources.GetObject("pb_VirusTotalRefresh.Image")));
+            this.pb_VirusTotalRefresh.Location = new System.Drawing.Point(695, 179);
+            this.pb_VirusTotalRefresh.Name = "pb_VirusTotalRefresh";
+            this.pb_VirusTotalRefresh.Size = new System.Drawing.Size(79, 79);
+            this.pb_VirusTotalRefresh.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_VirusTotalRefresh.TabIndex = 9;
+            this.pb_VirusTotalRefresh.TabStop = false;
+            this.pb_VirusTotalRefresh.Visible = false;
+            // 
+            // btn_VirusTotal_Refresh
+            // 
+            this.btn_VirusTotal_Refresh.BackColor = System.Drawing.Color.DarkGray;
+            this.btn_VirusTotal_Refresh.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btn_VirusTotal_Refresh.Location = new System.Drawing.Point(699, 78);
+            this.btn_VirusTotal_Refresh.Name = "btn_VirusTotal_Refresh";
+            this.btn_VirusTotal_Refresh.Size = new System.Drawing.Size(75, 23);
+            this.btn_VirusTotal_Refresh.TabIndex = 8;
+            this.btn_VirusTotal_Refresh.Text = "Refresh";
+            this.btn_VirusTotal_Refresh.UseVisualStyleBackColor = false;
+            this.btn_VirusTotal_Refresh.Click += new System.EventHandler(this.btn_VirusTotal_Refresh_Click);
+            // 
+            // lbl_VirusTotal_Status
+            // 
+            this.lbl_VirusTotal_Status.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_VirusTotal_Status.BackColor = System.Drawing.SystemColors.Info;
+            this.lbl_VirusTotal_Status.Cursor = System.Windows.Forms.Cursors.Default;
+            this.lbl_VirusTotal_Status.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_VirusTotal_Status.ForeColor = System.Drawing.Color.DarkGreen;
+            this.lbl_VirusTotal_Status.Location = new System.Drawing.Point(12, 77);
+            this.lbl_VirusTotal_Status.Name = "lbl_VirusTotal_Status";
+            this.lbl_VirusTotal_Status.Size = new System.Drawing.Size(662, 277);
+            this.lbl_VirusTotal_Status.TabIndex = 10;
+            this.lbl_VirusTotal_Status.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lv_VirusTotal
+            // 
+            this.lv_VirusTotal.AllowColumnReorder = true;
+            this.lv_VirusTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lv_VirusTotal.BackColor = System.Drawing.SystemColors.Info;
+            this.lv_VirusTotal.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader15,
+            this.columnHeader16});
+            this.lv_VirusTotal.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lv_VirusTotal.FullRowSelect = true;
+            this.lv_VirusTotal.GridLines = true;
+            this.lv_VirusTotal.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lv_VirusTotal.HideSelection = false;
+            this.lv_VirusTotal.LargeImageList = this.imageList_ListViewIcons_20pix;
+            this.lv_VirusTotal.Location = new System.Drawing.Point(11, 78);
+            this.lv_VirusTotal.Name = "lv_VirusTotal";
+            this.lv_VirusTotal.ShowItemToolTips = true;
+            this.lv_VirusTotal.Size = new System.Drawing.Size(663, 276);
+            this.lv_VirusTotal.SmallImageList = this.imageList_ListViewIcons_20pix;
+            this.lv_VirusTotal.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lv_VirusTotal.TabIndex = 7;
+            this.lv_VirusTotal.UseCompatibleStateImageBehavior = false;
+            this.lv_VirusTotal.View = System.Windows.Forms.View.Details;
+            this.lv_VirusTotal.Visible = false;
+            // 
+            // columnHeader15
+            // 
+            this.columnHeader15.Text = "Scan Engine";
+            this.columnHeader15.Width = 180;
+            // 
+            // columnHeader16
+            // 
+            this.columnHeader16.Text = "Status";
+            this.columnHeader16.Width = 380;
+            // 
+            // imageList_Tabs
+            // 
+            this.imageList_Tabs.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.imageList_Tabs.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList_Tabs.TransparentColor = System.Drawing.Color.Transparent;
+            // 
             // tabPage_WhoIs
             // 
             this.tabPage_WhoIs.BackColor = System.Drawing.Color.Silver;
@@ -1162,12 +1326,6 @@
             this.rtb_WhoIsInfo.Text = "";
             this.rtb_WhoIsInfo.Visible = false;
             this.rtb_WhoIsInfo.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.rtb_WhoIsInfo_LinkClicked);
-            // 
-            // imageList_Tabs
-            // 
-            this.imageList_Tabs.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.imageList_Tabs.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList_Tabs.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // tabPage_TraceRoute
             // 
@@ -2205,168 +2363,6 @@
             this.columnHeader12.Text = "Value";
             this.columnHeader12.Width = 593;
             // 
-            // tabPage_VirusTotal
-            // 
-            this.tabPage_VirusTotal.BackColor = System.Drawing.Color.Silver;
-            this.tabPage_VirusTotal.Controls.Add(this.pb_VirusTotal_Status);
-            this.tabPage_VirusTotal.Controls.Add(this.tb_VirusTotal_ScanDateTime);
-            this.tabPage_VirusTotal.Controls.Add(this.lbl_VirusTotal_ScanDateTime);
-            this.tabPage_VirusTotal.Controls.Add(this.tb_VirusTotal_Permalink);
-            this.tabPage_VirusTotal.Controls.Add(this.lbl_VirusTotal_Permalink);
-            this.tabPage_VirusTotal.Controls.Add(this.pb_VirusTotalRefresh);
-            this.tabPage_VirusTotal.Controls.Add(this.btn_VirusTotal_Refresh);
-            this.tabPage_VirusTotal.Controls.Add(this.lbl_VirusTotal_Status);
-            this.tabPage_VirusTotal.Controls.Add(this.lv_VirusTotal);
-            this.tabPage_VirusTotal.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tabPage_VirusTotal.Location = new System.Drawing.Point(4, 42);
-            this.tabPage_VirusTotal.Name = "tabPage_VirusTotal";
-            this.tabPage_VirusTotal.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_VirusTotal.Size = new System.Drawing.Size(783, 378);
-            this.tabPage_VirusTotal.TabIndex = 12;
-            this.tabPage_VirusTotal.Text = "VirusTotal";
-            // 
-            // pb_VirusTotal_Status
-            // 
-            this.pb_VirusTotal_Status.BackColor = System.Drawing.Color.Transparent;
-            this.pb_VirusTotal_Status.Location = new System.Drawing.Point(695, 179);
-            this.pb_VirusTotal_Status.Name = "pb_VirusTotal_Status";
-            this.pb_VirusTotal_Status.Size = new System.Drawing.Size(79, 79);
-            this.pb_VirusTotal_Status.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_VirusTotal_Status.TabIndex = 56;
-            this.pb_VirusTotal_Status.TabStop = false;
-            this.pb_VirusTotal_Status.Visible = false;
-            // 
-            // tb_VirusTotal_ScanDateTime
-            // 
-            this.tb_VirusTotal_ScanDateTime.BackColor = System.Drawing.Color.SkyBlue;
-            this.tb_VirusTotal_ScanDateTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_VirusTotal_ScanDateTime.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.tb_VirusTotal_ScanDateTime.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_VirusTotal_ScanDateTime.Location = new System.Drawing.Point(152, 40);
-            this.tb_VirusTotal_ScanDateTime.Multiline = true;
-            this.tb_VirusTotal_ScanDateTime.Name = "tb_VirusTotal_ScanDateTime";
-            this.tb_VirusTotal_ScanDateTime.ReadOnly = true;
-            this.tb_VirusTotal_ScanDateTime.Size = new System.Drawing.Size(622, 23);
-            this.tb_VirusTotal_ScanDateTime.TabIndex = 55;
-            this.tb_VirusTotal_ScanDateTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tb_VirusTotal_ScanDateTime.Visible = false;
-            // 
-            // lbl_VirusTotal_ScanDateTime
-            // 
-            this.lbl_VirusTotal_ScanDateTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_VirusTotal_ScanDateTime.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_VirusTotal_ScanDateTime.Location = new System.Drawing.Point(12, 40);
-            this.lbl_VirusTotal_ScanDateTime.Name = "lbl_VirusTotal_ScanDateTime";
-            this.lbl_VirusTotal_ScanDateTime.Size = new System.Drawing.Size(134, 23);
-            this.lbl_VirusTotal_ScanDateTime.TabIndex = 54;
-            this.lbl_VirusTotal_ScanDateTime.Text = "Scan Date / Time";
-            this.lbl_VirusTotal_ScanDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lbl_VirusTotal_ScanDateTime.Visible = false;
-            // 
-            // tb_VirusTotal_Permalink
-            // 
-            this.tb_VirusTotal_Permalink.BackColor = System.Drawing.Color.PaleGreen;
-            this.tb_VirusTotal_Permalink.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_VirusTotal_Permalink.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.tb_VirusTotal_Permalink.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_VirusTotal_Permalink.Location = new System.Drawing.Point(152, 12);
-            this.tb_VirusTotal_Permalink.Multiline = true;
-            this.tb_VirusTotal_Permalink.Name = "tb_VirusTotal_Permalink";
-            this.tb_VirusTotal_Permalink.ReadOnly = true;
-            this.tb_VirusTotal_Permalink.Size = new System.Drawing.Size(622, 23);
-            this.tb_VirusTotal_Permalink.TabIndex = 53;
-            this.tb_VirusTotal_Permalink.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tb_VirusTotal_Permalink.Visible = false;
-            this.tb_VirusTotal_Permalink.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tb_VirusTotal_Permalink_MouseClick);
-            // 
-            // lbl_VirusTotal_Permalink
-            // 
-            this.lbl_VirusTotal_Permalink.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_VirusTotal_Permalink.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_VirusTotal_Permalink.Location = new System.Drawing.Point(12, 12);
-            this.lbl_VirusTotal_Permalink.Name = "lbl_VirusTotal_Permalink";
-            this.lbl_VirusTotal_Permalink.Size = new System.Drawing.Size(134, 23);
-            this.lbl_VirusTotal_Permalink.TabIndex = 52;
-            this.lbl_VirusTotal_Permalink.Text = "Permalink";
-            this.lbl_VirusTotal_Permalink.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lbl_VirusTotal_Permalink.Visible = false;
-            // 
-            // pb_VirusTotalRefresh
-            // 
-            this.pb_VirusTotalRefresh.BackColor = System.Drawing.Color.Transparent;
-            this.pb_VirusTotalRefresh.Image = ((System.Drawing.Image)(resources.GetObject("pb_VirusTotalRefresh.Image")));
-            this.pb_VirusTotalRefresh.Location = new System.Drawing.Point(695, 179);
-            this.pb_VirusTotalRefresh.Name = "pb_VirusTotalRefresh";
-            this.pb_VirusTotalRefresh.Size = new System.Drawing.Size(79, 79);
-            this.pb_VirusTotalRefresh.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_VirusTotalRefresh.TabIndex = 9;
-            this.pb_VirusTotalRefresh.TabStop = false;
-            // 
-            // btn_VirusTotal_Refresh
-            // 
-            this.btn_VirusTotal_Refresh.BackColor = System.Drawing.Color.DarkGray;
-            this.btn_VirusTotal_Refresh.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_VirusTotal_Refresh.Enabled = false;
-            this.btn_VirusTotal_Refresh.Location = new System.Drawing.Point(699, 78);
-            this.btn_VirusTotal_Refresh.Name = "btn_VirusTotal_Refresh";
-            this.btn_VirusTotal_Refresh.Size = new System.Drawing.Size(75, 23);
-            this.btn_VirusTotal_Refresh.TabIndex = 8;
-            this.btn_VirusTotal_Refresh.Text = "Refresh";
-            this.btn_VirusTotal_Refresh.UseVisualStyleBackColor = false;
-            this.btn_VirusTotal_Refresh.Click += new System.EventHandler(this.btn_VirusTotal_Refresh_Click);
-            // 
-            // lbl_VirusTotal_Status
-            // 
-            this.lbl_VirusTotal_Status.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_VirusTotal_Status.BackColor = System.Drawing.SystemColors.Info;
-            this.lbl_VirusTotal_Status.Cursor = System.Windows.Forms.Cursors.Default;
-            this.lbl_VirusTotal_Status.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_VirusTotal_Status.ForeColor = System.Drawing.Color.DarkGreen;
-            this.lbl_VirusTotal_Status.Location = new System.Drawing.Point(12, 77);
-            this.lbl_VirusTotal_Status.Name = "lbl_VirusTotal_Status";
-            this.lbl_VirusTotal_Status.Size = new System.Drawing.Size(662, 277);
-            this.lbl_VirusTotal_Status.TabIndex = 10;
-            this.lbl_VirusTotal_Status.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lv_VirusTotal
-            // 
-            this.lv_VirusTotal.AllowColumnReorder = true;
-            this.lv_VirusTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lv_VirusTotal.BackColor = System.Drawing.SystemColors.Info;
-            this.lv_VirusTotal.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader15,
-            this.columnHeader16});
-            this.lv_VirusTotal.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lv_VirusTotal.FullRowSelect = true;
-            this.lv_VirusTotal.GridLines = true;
-            this.lv_VirusTotal.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lv_VirusTotal.HideSelection = false;
-            this.lv_VirusTotal.LargeImageList = this.imageList_ListViewIcons_20pix;
-            this.lv_VirusTotal.Location = new System.Drawing.Point(11, 78);
-            this.lv_VirusTotal.Name = "lv_VirusTotal";
-            this.lv_VirusTotal.ShowItemToolTips = true;
-            this.lv_VirusTotal.Size = new System.Drawing.Size(663, 276);
-            this.lv_VirusTotal.SmallImageList = this.imageList_ListViewIcons_20pix;
-            this.lv_VirusTotal.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lv_VirusTotal.TabIndex = 7;
-            this.lv_VirusTotal.UseCompatibleStateImageBehavior = false;
-            this.lv_VirusTotal.View = System.Windows.Forms.View.Details;
-            this.lv_VirusTotal.Visible = false;
-            // 
-            // columnHeader15
-            // 
-            this.columnHeader15.Text = "Scan Engine";
-            this.columnHeader15.Width = 180;
-            // 
-            // columnHeader16
-            // 
-            this.columnHeader16.Text = "Status";
-            this.columnHeader16.Width = 380;
-            // 
             // tabPage_PageCategory
             // 
             this.tabPage_PageCategory.BackColor = System.Drawing.Color.Silver;
@@ -2740,6 +2736,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_PingRefresh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Favicon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_StatusIcon)).EndInit();
+            this.tabPage_VirusTotal.ResumeLayout(false);
+            this.tabPage_VirusTotal.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotal_Status)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotalRefresh)).EndInit();
             this.tabPage_WhoIs.ResumeLayout(false);
             this.tabPage_WhoIs.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_WhoIsProgress)).EndInit();
@@ -2763,10 +2763,6 @@
             this.tabPage_HTTPRequestHeaders.ResumeLayout(false);
             this.tabPage_HTTPResponseHeaders.ResumeLayout(false);
             this.tabPage_SSLCertificate.ResumeLayout(false);
-            this.tabPage_VirusTotal.ResumeLayout(false);
-            this.tabPage_VirusTotal.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotal_Status)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotalRefresh)).EndInit();
             this.tabPage_PageCategory.ResumeLayout(false);
             this.tabPage_PageLinks.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pb_PageLinks_CommonLinksStatus)).EndInit();
