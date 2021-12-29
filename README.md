@@ -35,8 +35,8 @@ Just open the solution in Visual Studio and click the (re)build button.
 # Public API Keys Used
 
 Application is using following public APIs:
-- Google Maps (https://developers.google.com/maps/documentation/javascript/overview)
-- VirusTotal (https://developers.virustotal.com/reference)
+- Google Maps (https://developers.google.com/maps/documentation/javascript/overview) (free key provided)
+- VirusTotal (https://developers.virustotal.com/reference) (custom key must be created)
 
 All keys are FREE to use, but mind that all these free APIs works with limits.
 For each of these services you can set your own key (edit config file by 'CONFIG' button on main application window).
