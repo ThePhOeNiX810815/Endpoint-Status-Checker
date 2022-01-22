@@ -45,12 +45,12 @@ For each of these services you can set your own key (edit config file by 'CONFIG
 
 Application is using following libraries:
 - ClosedXML (0.95.4)
-- DocumentFormat.OpenXml (2.13.1)
+- DocumentFormat.OpenXml (2.15.0)
 - ExcelNumberFormat (1.1.0)
 - FastMember (1.3.0) (newer version available, but not for target framework version)
 - FreeSpire.PDF (7.8.9)
 - FreeSpire.XLS (11.8.6)
-- HtmlAgilityPack (1.11.36)
+- HtmlAgilityPack (1.11.40)
 - IPAddressRange (4.2.0)
 - Nager.PublicSuffix (2.2.2)
 - Newtonsoft.Json (13.0.1)
