@@ -32,10 +32,10 @@
     <Setting Name="Config_AutomaticRefreshIntervalSeconds" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="Config_HTTPRequestTimeoutSeconds" Type="System.Decimal" Scope="User">
+    <Setting Name="Config_HTTP_RequestTimeoutSeconds" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="Config_FTPRequestTimeoutSeconds" Type="System.Decimal" Scope="User">
+    <Setting Name="Config_FTP_RequestTimeoutSeconds" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="Config_EnableTrayNotificationsOnError" Type="System.Boolean" Scope="User">
@@ -194,12 +194,6 @@
     <Setting Name="ListView_DisplayIndex_LastSeenOnline" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
     </Setting>
-    <Setting Name="Config_GoogleMaps_API_Key" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="Config_VirusTotal_API_Key" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="ListView_DisplayIndex_Expires" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
     </Setting>
@@ -222,6 +216,21 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Config_Executable_Putty" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Config_HTTP_UserAgent" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.100.4758.66 Safari/537.36</Value>
+    </Setting>
+    <Setting Name="Config_HTTP_SaveResponse_MaxLenght_Bytes" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5242880</Value>
+    </Setting>
+    <Setting Name="GoogleMaps_API_Key" Type="System.String" Scope="User">
+      <Value Profile="(Default)">AIzaSyBerCYP2d7XxMWy9DMHlS09BZKFh5NKCas</Value>
+    </Setting>
+    <Setting Name="GoogleMaps_API_ZoomFactor" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">14</Value>
+    </Setting>
+    <Setting Name="VirusTotal_API_Key" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

@@ -598,7 +598,7 @@ namespace EndpointChecker
             {
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(websiteURL + "/favicon.ico");
                 httpWebRequest.Method = WebRequestMethods.Http.Get;
-                httpWebRequest.UserAgent = Program.httpUserAgent;
+                httpWebRequest.UserAgent = Program.http_UserAgent;
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1127,7 +1127,7 @@ namespace EndpointChecker
                 {
                     HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(macLookupAPI + macAddress);
                     httpWebRequest.Method = WebRequestMethods.Http.Get;
-                    httpWebRequest.UserAgent = Program.httpUserAgent;
+                    httpWebRequest.UserAgent = Program.http_UserAgent;
                     httpWebRequest.Timeout = 5000;
                     httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1165,7 +1165,7 @@ namespace EndpointChecker
                                     // GET VENDOR WEBSITE
                                     httpWebRequest = (HttpWebRequest)WebRequest.Create(vendorAutoCompleteAPI + macAddressVendorResponse.result.company.Split(' ')[0]);
                                     httpWebRequest.Method = WebRequestMethods.Http.Get;
-                                    httpWebRequest.UserAgent = Program.httpUserAgent;
+                                    httpWebRequest.UserAgent = Program.http_UserAgent;
                                     httpWebRequest.Timeout = 5000;
                                     httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1374,7 +1374,7 @@ namespace EndpointChecker
 
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(path);
                 httpWebRequest.Method = WebRequestMethods.Http.Get;
-                httpWebRequest.UserAgent = Program.httpUserAgent;
+                httpWebRequest.UserAgent = Program.http_UserAgent;
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1423,7 +1423,7 @@ namespace EndpointChecker
 
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(path);
                 httpWebRequest.Method = WebRequestMethods.Http.Get;
-                httpWebRequest.UserAgent = Program.httpUserAgent;
+                httpWebRequest.UserAgent = Program.http_UserAgent;
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1607,7 +1607,7 @@ namespace EndpointChecker
             {
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(imageURL);
                 httpWebRequest.Method = WebRequestMethods.Http.Get;
-                httpWebRequest.UserAgent = Program.httpUserAgent;
+                httpWebRequest.UserAgent = Program.http_UserAgent;
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
@@ -1711,7 +1711,7 @@ namespace EndpointChecker
                     // REQUEST SCAN REPORT
                     VirusTotal virusTotal = new VirusTotal(Program.apiKey_VirusTotal);
                     virusTotal.UseTLS = true;
-                    virusTotal.UserAgent = Program.httpUserAgent;
+                    virusTotal.UserAgent = Program.http_UserAgent;
                     Task<UrlScanResult> virusTotal_ScanResultTask = virusTotal.ScanUrlAsync(urlToScan);
                     virusTotal_ScanResult = virusTotal_ScanResultTask.Result;
 
@@ -1800,7 +1800,7 @@ namespace EndpointChecker
                 // REQUEST SCAN RESULT
                 VirusTotal virusTotal = new VirusTotal(Program.apiKey_VirusTotal);
                 virusTotal.UseTLS = true;
-                virusTotal.UserAgent = Program.httpUserAgent;
+                virusTotal.UserAgent = Program.http_UserAgent;
                 Task<UrlReport> virusTotalReportTask = virusTotal.GetUrlReportAsync(virusTotal_ScanResult.Url);
                 UrlReport virusTotalReport = virusTotalReportTask.Result;
                 virusTotalReportTask.Dispose();
@@ -1928,7 +1928,7 @@ namespace EndpointChecker
                         {
                             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(pageLink.ItemValue);
                             httpWebRequest.Method = WebRequestMethods.Http.Get;
-                            httpWebRequest.UserAgent = Program.httpUserAgent;
+                            httpWebRequest.UserAgent = Program.http_UserAgent;
                             httpWebRequest.Timeout = 10000;
                             httpWebRequest.ReadWriteTimeout = 10000;
                             httpWebRequest.AllowAutoRedirect = true;

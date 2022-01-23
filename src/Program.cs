@@ -63,8 +63,6 @@ namespace EndpointChecker
         public static Version assembly_Version = Assembly.GetExecutingAssembly().GetName().Version;
         public static string assembly_VersionString = GetVersionString(assembly_Version, true, false); 
 
-        // CURRENT USER INFORMATION
-
         // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES
         public static string exceptionReport_senderEMailAddress = "ExceptionReport@EndpointStatusChecker";
         public static string featureRequest_senderEMailAddress = "FeatureRequest@EndpointStatusChecker";
@@ -74,15 +72,15 @@ namespace EndpointChecker
         // ENDPOINTS DEFINITIONS FILE NAME
         public static string endpointDefinitonsFile = "EndpointChecker_EndpointsList.txt";
 
-        // COMMON HTTP USER AGENT STRING [MOZILLA FIREFOX BROWSER X64 v.92]
-        public static string httpUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0";
-
         // GOOGLE MAPS API KEY
-        public static string apiKey_GoogleMaps = "AIzaSyBerCYP2d7XxMWy9DMHlS09BZKFh5NKCas";
-        public static int googleMapsZoomFactor = 14;
+        public static string apiKey_GoogleMaps = string.Empty;
+        public static int googleMapsZoomFactor = 0;
 
         // VIRUSTOTAL API KEY
         public static string apiKey_VirusTotal = string.Empty;
+
+        // HTTP CLIENT USER-AGENT STRING
+        public static string http_UserAgent = string.Empty;
 
         // STRING FORMAT FOR 'NOT AVAILABLE' STATUS
         public static string status_NotAvailable = "N/A";
@@ -111,8 +109,8 @@ namespace EndpointChecker
         public static string statusExport_HTMLFile_HTTPPage = "EndpointsStatus_HTTP.html";
         public static string statusExport_HTMLFile_FTPPage = "EndpointsStatus_FTP.html";
 
-        // MAXIMUM LENGHT OF HTTP RESPONSE TO READ [5 MB]
-        public static long httpResponse_MaxLenght_Bytes = 5242880;
+        // MAXIMUM LENGHT OF HTTP RESPONSE TO READ
+        public static long http_SaveResponse_MaxLenght_Bytes = 0;
 
         /// <summary>
         /// The main entry point for the application.

@@ -68,10 +68,13 @@ HTTP Status Test - Code 999[X]|https://httpstat.us/999
 
 Non-Existing Web Test|http://nonexistingwebtest.com
 
-FaceBook|https://www.facebook.com
+META FaceBook|https://www.facebook.com
+META Instagram|https://www.instagram.com
+META Messenger|https://www.messenger.com
+META WhatsApp|https://www.whatsapp.com
+
 Google|https://www.google.com
 Microsoft|https://www.microsoft.com
-MajorGeeks|https://www.majorgeeks.com
 CodeProject|https://www.codeproject.com
 PayPal|https://www.paypal.com
 Amazon|https://www.amazon.com

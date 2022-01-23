@@ -381,8 +381,8 @@ namespace EndpointChecker
                     comboBox_Validate.SelectedIndex = Settings.Default.Config_ValidationMethod;
                     num_RefreshInterval.Value = Settings.Default.Config_AutomaticRefreshIntervalSeconds;
                     num_PingTimeout.Value = Settings.Default.Config_PingTimeoutSeconds;
-                    num_HTTPRequestTimeout.Value = Settings.Default.Config_HTTPRequestTimeoutSeconds;
-                    num_FTPRequestTimeout.Value = Settings.Default.Config_FTPRequestTimeoutSeconds;
+                    num_HTTPRequestTimeout.Value = Settings.Default.Config_HTTP_RequestTimeoutSeconds;
+                    num_FTPRequestTimeout.Value = Settings.Default.Config_FTP_RequestTimeoutSeconds;
                     cb_TrayBalloonNotify.Checked = Settings.Default.Config_EnableTrayNotificationsOnError;
                     cb_AllowAutoRedirect.Checked = Settings.Default.Config_AllowAutoRedirect;
                     cb_ValidateSSLCertificate.Checked = Settings.Default.Config_ValidateSSLCertificate;
@@ -396,20 +396,15 @@ namespace EndpointChecker
                     cb_RemoveURLParameters.Checked = Settings.Default.Config_RemoveURLParameters;
                     cb_ResolvePageLinks.Checked = Settings.Default.Config_ResolvePageLinks;
                     cb_SaveResponse.Checked = Settings.Default.Config_SaveResponse;
+                    apiKey_VirusTotal = Settings.Default.VirusTotal_API_Key;
+                    apiKey_GoogleMaps = Settings.Default.GoogleMaps_API_Key;
+                    googleMapsZoomFactor = Settings.Default.GoogleMaps_API_ZoomFactor;
+                    http_UserAgent = Settings.Default.Config_HTTP_UserAgent;
+                    http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
 
                     if (Directory.Exists(Settings.Default.Config_EndpointsStatusExportDirectory))
                     {
                         statusExport_Directory = Settings.Default.Config_EndpointsStatusExportDirectory;
-                    }
-
-                    if (!string.IsNullOrEmpty(Settings.Default.Config_GoogleMaps_API_Key))
-                    {
-                        apiKey_GoogleMaps = Settings.Default.Config_GoogleMaps_API_Key;
-                    }
-
-                    if (!string.IsNullOrEmpty(Settings.Default.Config_VirusTotal_API_Key))
-                    {
-                        apiKey_VirusTotal = Settings.Default.Config_VirusTotal_API_Key;
                     }
 
                     if (!string.IsNullOrEmpty(Settings.Default.Config_Executable_VNCViewer))
@@ -441,8 +436,8 @@ namespace EndpointChecker
                 Settings.Default.Config_AutoAdjustRefreshInterval = cb_RefreshAutoSet.Checked;
                 Settings.Default.Config_AutomaticRefreshIntervalSeconds = num_RefreshInterval.Value;
                 Settings.Default.Config_PingTimeoutSeconds = num_PingTimeout.Value;
-                Settings.Default.Config_HTTPRequestTimeoutSeconds = num_HTTPRequestTimeout.Value;
-                Settings.Default.Config_FTPRequestTimeoutSeconds = num_FTPRequestTimeout.Value;
+                Settings.Default.Config_HTTP_RequestTimeoutSeconds = num_HTTPRequestTimeout.Value;
+                Settings.Default.Config_FTP_RequestTimeoutSeconds = num_FTPRequestTimeout.Value;
                 Settings.Default.Config_EnableTrayNotificationsOnError = cb_TrayBalloonNotify.Checked;
                 Settings.Default.Config_AllowAutoRedirect = cb_AllowAutoRedirect.Checked;
                 Settings.Default.Config_ValidateSSLCertificate = cb_ValidateSSLCertificate.Checked;
@@ -458,8 +453,8 @@ namespace EndpointChecker
                 Settings.Default.Config_RemoveURLParameters = cb_RemoveURLParameters.Checked;
                 Settings.Default.Config_ResolvePageLinks = cb_ResolvePageLinks.Checked;
                 Settings.Default.Config_SaveResponse = cb_SaveResponse.Checked;
-                Settings.Default.Config_GoogleMaps_API_Key = apiKey_GoogleMaps;
-                Settings.Default.Config_VirusTotal_API_Key = apiKey_VirusTotal;
+                Settings.Default.VirusTotal_API_Key = apiKey_VirusTotal;
+                Settings.Default.GoogleMaps_API_Key = apiKey_GoogleMaps;
                 Settings.Default.Config_Executable_VNCViewer = appExecutable_VNC;
                 Settings.Default.Config_Executable_Putty = appExecutable_Putty;
                 Settings.Default.HasSavedConfiguration = true;
@@ -754,23 +749,43 @@ namespace EndpointChecker
                                 // CREATE REQUEST
                                 httpWebRequest = (HttpWebRequest)WebRequest.Create(endpointAbsoluteURI);
                                 httpWebRequest.Method = WebRequestMethods.Http.Get;
-                                httpWebRequest.UserAgent = httpUserAgent;
+                                httpWebRequest.UserAgent = http_UserAgent;
                                 httpWebRequest.Accept = "*/*";
                                 httpWebRequest.Timeout = httpRequestTimeout;
                                 httpWebRequest.ReadWriteTimeout = httpRequestTimeout;
                                 httpWebRequest.AllowAutoRedirect = allowAutoRedirect;
                                 httpWebRequest.KeepAlive = true;
-                                httpWebRequest.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-                                httpWebRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate | DecompressionMethods.None;
+                                httpWebRequest.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
                                 httpWebRequest.CookieContainer = new CookieContainer();
+                                httpWebRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate | DecompressionMethods.None;
                                 httpWebRequest.Proxy = null;
                                 httpWebRequest.ProtocolVersion = HttpVersion.Version11;
                                 httpWebRequest.Host = endpointURI.Host;
 
+                                // CUSTOM HEADERS
                                 WebHeaderCollection requestHeadersCollection = new WebHeaderCollection();
+
                                 requestHeadersCollection.Add("Accept-Encoding", "*");
                                 requestHeadersCollection.Add("Accept-Language", "*");
+
+                                requestHeadersCollection.Add("Cache-Control", "max-age=0");
+
+                                requestHeadersCollection.Add("DNT", "1");
                                 requestHeadersCollection.Add("Upgrade-Insecure-Requests", "1");
+
+                                requestHeadersCollection.Add("Authority", endpointURI.Authority);
+                                requestHeadersCollection.Add("Path", endpointURI.AbsolutePath);
+                                requestHeadersCollection.Add("Scheme", endpointURI.Scheme);
+
+                                requestHeadersCollection.Add("sec-fetch-user", "?1");
+                                requestHeadersCollection.Add("sec-fetch-site", "same-origin");
+                                requestHeadersCollection.Add("sec-fetch-mode", "navigate");
+                                requestHeadersCollection.Add("sec-fetch-dest", "empty");
+
+                                requestHeadersCollection.Add("sec-ch-ua", "\"(Not(A: Brand\";v=\"8\", \"Chromium\";v=\"98\", \"Google Chrome\";v=\"98\"");
+                                requestHeadersCollection.Add("sec-ch-ua-mobile", "?0");
+                                requestHeadersCollection.Add("sec-ch-ua-platform", "\"Windows\"");
+
                                 httpWebRequest.Headers.Add(requestHeadersCollection);
 
                                 if (validateSSLCertificate)
@@ -811,6 +826,9 @@ namespace EndpointChecker
                                 // GET RESPONSE
                                 httpWebResponse = GetHTTPWebResponse(httpWebRequest, 3);
 
+                                // STOP STOPWATCH FOR ITEM CHECK DURATION
+                                sw_ItemProgress.Stop();
+
                                 // GET SSL INFO
                                 if (validateSSLCertificate &&
                                     httpWebRequest.ServicePoint.Certificate != null)
@@ -829,9 +847,6 @@ namespace EndpointChecker
                                     if (!string.IsNullOrEmpty(sslCert2.Subject)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Subject", ItemValue = sslCert2.Subject }); };
                                     if (!string.IsNullOrEmpty(sslCert2.Thumbprint)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Thumbprint", ItemValue = sslCert2.Thumbprint }); };
                                 }
-
-                                // STOP STOPWATCH FOR ITEM CHECK DURATION
-                                sw_ItemProgress.Stop();
 
                                 responseURI = httpWebResponse.ResponseUri;
                                 endpoint.Port = responseURI.Port.ToString();
@@ -913,14 +928,14 @@ namespace EndpointChecker
 
                                 if (saveResponse || resolvePageMetaInfo)
                                 {
-                                    // GET RESPONSE STREAM (UP TO 20MB)
+                                    // GET RESPONSE STREAM
                                     using (BinaryReader httpWebResponseBinaryReader = new BinaryReader(httpWebResponse.GetResponseStream()))
                                     {
                                         MemoryStream httpWebResponseMemoryStream = new MemoryStream();
 
                                         byte[] httpWebResponseByteArray;
                                         byte[] httpWebResponseBuffer = httpWebResponseBinaryReader.ReadBytes(1024);
-                                        while (httpWebResponseBuffer.Length > 0 && httpWebResponseMemoryStream.Length < (httpResponse_MaxLenght_Bytes + 1024))
+                                        while (httpWebResponseBuffer.Length > 0 && httpWebResponseMemoryStream.Length < (http_SaveResponse_MaxLenght_Bytes + 1024))
                                         {
                                             httpWebResponseMemoryStream.Write(httpWebResponseBuffer, 0, httpWebResponseBuffer.Length);
                                             httpWebResponseBuffer = httpWebResponseBinaryReader.ReadBytes(1024);
@@ -1379,10 +1394,10 @@ namespace EndpointChecker
         }
         public bool CheckWebResponseContentLenght(EndpointDefinition endpoint, HttpWebResponse httpWebResponse, long contentLenght)
         {
-            if (contentLenght > httpResponse_MaxLenght_Bytes)
+            if (contentLenght > http_SaveResponse_MaxLenght_Bytes)
             {
                 MessageBox.Show(
-                    "Response content is too big for download (" + httpResponse_MaxLenght_Bytes + " bytes limit)" +
+                    "Response content is too big for download (" + http_SaveResponse_MaxLenght_Bytes + " bytes limit)" +
                     Environment.NewLine +
                     Environment.NewLine +
                     "Endpoint Name:  " + endpoint.Name +
@@ -1397,7 +1412,7 @@ namespace EndpointChecker
                     MessageBoxIcon.Warning);
             }
 
-            return (contentLenght <= httpResponse_MaxLenght_Bytes);
+            return (contentLenght <= http_SaveResponse_MaxLenght_Bytes);
         }
         public void GetWebResponseContentLenghtString(EndpointDefinition endpoint, long contentLenght)
         {

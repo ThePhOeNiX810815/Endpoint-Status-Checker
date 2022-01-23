@@ -146,24 +146,24 @@ namespace EndpointChecker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public decimal Config_HTTPRequestTimeoutSeconds {
+        public decimal Config_HTTP_RequestTimeoutSeconds {
             get {
-                return ((decimal)(this["Config_HTTPRequestTimeoutSeconds"]));
+                return ((decimal)(this["Config_HTTP_RequestTimeoutSeconds"]));
             }
             set {
-                this["Config_HTTPRequestTimeoutSeconds"] = value;
+                this["Config_HTTP_RequestTimeoutSeconds"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public decimal Config_FTPRequestTimeoutSeconds {
+        public decimal Config_FTP_RequestTimeoutSeconds {
             get {
-                return ((decimal)(this["Config_FTPRequestTimeoutSeconds"]));
+                return ((decimal)(this["Config_FTP_RequestTimeoutSeconds"]));
             }
             set {
-                this["Config_FTPRequestTimeoutSeconds"] = value;
+                this["Config_FTP_RequestTimeoutSeconds"] = value;
             }
         }
         
@@ -793,30 +793,6 @@ namespace EndpointChecker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Config_GoogleMaps_API_Key {
-            get {
-                return ((string)(this["Config_GoogleMaps_API_Key"]));
-            }
-            set {
-                this["Config_GoogleMaps_API_Key"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Config_VirusTotal_API_Key {
-            get {
-                return ((string)(this["Config_VirusTotal_API_Key"]));
-            }
-            set {
-                this["Config_VirusTotal_API_Key"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
         public int ListView_DisplayIndex_Expires {
             get {
@@ -908,6 +884,67 @@ namespace EndpointChecker.Properties {
             }
             set {
                 this["Config_Executable_Putty"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
+            "Chrome/98.100.4758.66 Safari/537.36")]
+        public string Config_HTTP_UserAgent {
+            get {
+                return ((string)(this["Config_HTTP_UserAgent"]));
+            }
+            set {
+                this["Config_HTTP_UserAgent"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5242880")]
+        public int Config_HTTP_SaveResponse_MaxLenght_Bytes {
+            get {
+                return ((int)(this["Config_HTTP_SaveResponse_MaxLenght_Bytes"]));
+            }
+            set {
+                this["Config_HTTP_SaveResponse_MaxLenght_Bytes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("AIzaSyBerCYP2d7XxMWy9DMHlS09BZKFh5NKCas")]
+        public string GoogleMaps_API_Key {
+            get {
+                return ((string)(this["GoogleMaps_API_Key"]));
+            }
+            set {
+                this["GoogleMaps_API_Key"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("14")]
+        public int GoogleMaps_API_ZoomFactor {
+            get {
+                return ((int)(this["GoogleMaps_API_ZoomFactor"]));
+            }
+            set {
+                this["GoogleMaps_API_ZoomFactor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string VirusTotal_API_Key {
+            get {
+                return ((string)(this["VirusTotal_API_Key"]));
+            }
+            set {
+                this["VirusTotal_API_Key"] = value;
             }
         }
     }
