@@ -70,8 +70,15 @@ namespace EndpointChecker
             lbl_SpeedTest_Mbps_Upload_Label.Visible = false;
             lbl_SpeedTest_Download_Label.Visible = false;
             lbl_SpeedTest_Upload_Label.Visible = false;
+
             aGauge_DownloadSpeed.Visible = false;
             aGauge_UploadSpeed.Visible = false;
+
+            aGauge_DownloadSpeed.MaxValue = 50;
+            aGauge_UploadSpeed.MaxValue = 50;
+
+            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 10;
+            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 10;
 
             NewBackgroundThread((Action)(() =>
             {
@@ -94,6 +101,7 @@ namespace EndpointChecker
 
                             SpeedTestClient speedTestClient = new SpeedTestClient();
                             Settings speedTestSettings = speedTestClient.GetSettings();
+
                             IEnumerable<Server> servers = SelectServers(
                                                                         speedTestSettings,
                                                                         currentCountry_RegionInfo,
@@ -144,7 +152,7 @@ namespace EndpointChecker
                                         Color.Green,
                                         true);
 
-                                double downloadSpeed = Math.Round(speedTestClient.TestDownloadSpeed(bestServer, speedTestSettings.Download.ThreadsPerUrl) / 1024, 2);
+                                double downloadSpeed = Math.Round(speedTestClient.TestDownloadSpeed(bestServer, speedTestSettings.Download.ThreadsPerUrl) / 1024);
 
                                 SpeedTest_AppendTextToLogBox(
                                         rtb_SpeedTest_LogConsole,
@@ -161,7 +169,7 @@ namespace EndpointChecker
                                         Color.DarkOrange,
                                         true);
 
-                                double uploadSpeed = Math.Round(speedTestClient.TestUploadSpeed(bestServer, speedTestSettings.Upload.ThreadsPerUrl) / 1024, 2);
+                                double uploadSpeed = Math.Round(speedTestClient.TestUploadSpeed(bestServer, speedTestSettings.Upload.ThreadsPerUrl) / 1024);
 
                                 SpeedTest_AppendTextToLogBox(
                                                              rtb_SpeedTest_LogConsole,
@@ -178,25 +186,39 @@ namespace EndpointChecker
                                     lbl_SpeedTest_Mbps_Download_Label.Text = downloadSpeed.ToString() + " Mbps";
                                     lbl_SpeedTest_Mbps_Upload_Label.Text = uploadSpeed.ToString() + " Mbps";
 
-                                    if (downloadSpeed >= aGauge_DownloadSpeed.MaxValue)
+                                    float downloadSpeed_FloatValue = (float)downloadSpeed;
+                                    float uploadSpeed_FloatValue = (float)uploadSpeed;
+
+                                    while (aGauge_DownloadSpeed.MaxValue <= downloadSpeed_FloatValue)
                                     {
-                                        aGauge_DownloadSpeed.Value = (float)downloadSpeed;
+                                        aGauge_DownloadSpeed.MaxValue += (float)50;
                                     }
-                                    else
+                                    
+                                    while (aGauge_UploadSpeed.MaxValue <= uploadSpeed_FloatValue)
                                     {
-                                        // TODO: DYNAMICALLY CHANGE AGAUGE
-                                        aGauge_DownloadSpeed.Value = aGauge_DownloadSpeed.MaxValue;
+                                        aGauge_UploadSpeed.MaxValue += (float)50;
                                     }
 
-                                    if (uploadSpeed >= aGauge_UploadSpeed.MaxValue)
+                                    if (aGauge_DownloadSpeed.MaxValue > 200)
                                     {
-                                        aGauge_UploadSpeed.Value = (float)uploadSpeed;
+                                        aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 25;
                                     }
-                                    else
+                                    else if (aGauge_DownloadSpeed.MaxValue > 500)
                                     {
-                                        // TODO: DYNAMICALLY CHANGE AGAUGE
-                                        aGauge_UploadSpeed.Value = aGauge_UploadSpeed.MaxValue;
+                                        aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 50;
                                     }
+
+                                    if (aGauge_UploadSpeed.MaxValue > 200)
+                                    {
+                                        aGauge_UploadSpeed.ScaleLinesMajorStepValue = 25;
+                                    }
+                                    else if (aGauge_UploadSpeed.MaxValue > 500)
+                                    {
+                                        aGauge_UploadSpeed.ScaleLinesMajorStepValue = 50;
+                                    }
+
+                                    aGauge_DownloadSpeed.Value = (float)downloadSpeed;
+                                    aGauge_UploadSpeed.Value = (float)uploadSpeed;
 
                                     aGauge_DownloadSpeed.Visible = true;
                                     aGauge_UploadSpeed.Visible = true;
@@ -364,7 +386,7 @@ namespace EndpointChecker
 
         public string GetStringCorrectEncoding(string content)
         {
-            Byte[] encodedBytes = Encoding.Default.GetBytes(content);
+            byte[] encodedBytes = Encoding.Default.GetBytes(content);
             return Encoding.UTF8.GetString(encodedBytes);
         }
 

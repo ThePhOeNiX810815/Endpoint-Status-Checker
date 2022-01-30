@@ -947,5 +947,17 @@ namespace EndpointChecker.Properties {
                 this["VirusTotal_API_Key"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\"\\\"(Not(A: Brand\\\";v=\\\"8\\\", \\\"Chromium\\\";v=\\\"98\\\", \\\"Google Chrome\\\";v=\\\"98\\\"\"")]
+        public string Config_HTTP_Sec_CH_UserAgent {
+            get {
+                return ((string)(this["Config_HTTP_Sec_CH_UserAgent"]));
+            }
+            set {
+                this["Config_HTTP_Sec_CH_UserAgent"] = value;
+            }
+        }
     }
 }

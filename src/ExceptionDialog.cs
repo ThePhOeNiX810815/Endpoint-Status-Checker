@@ -56,7 +56,7 @@ namespace EndpointChecker
         {
             List<Property> reportItems = new List<Property>();
 
-            reportItems.Add(new Property { ItemName = "Application Version", ItemValue = Program.assembly_ApplicationName + " v" + Program.assembly_VersionString });
+            reportItems.Add(new Property { ItemName = "Application Version", ItemValue = Program.app_ApplicationName + " v" + Program.app_VersionString });
             reportItems.Add(new Property { ItemName = "Date / Time", ItemValue = DateTime.Now.ToString("dd.MM.yyyy HH:mm") });
 
             // OPTIONAL [SYSTEM INFO]
@@ -65,7 +65,8 @@ namespace EndpointChecker
                 reportItems.Add(new Property { ItemName = "Machine Name", ItemValue = _machineInfo_MachineName });
                 reportItems.Add(new Property { ItemName = "IP Address(es)", ItemValue = string.Join(", ", _machineInfo_IPList) });
                 reportItems.Add(new Property { ItemName = "MAC Address(es)", ItemValue = string.Join(", ", _machineInfo_MACList) });
-                reportItems.Add(new Property { ItemName = "OS Login Name", ItemValue = _machineInfo_UserName });
+                reportItems.Add(new Property { ItemName = "Operating System Version", ItemValue = Program.os_VersionString });
+                reportItems.Add(new Property { ItemName = "Operating System Login Name", ItemValue = _machineInfo_UserName });
                 reportItems.Add(new Property { ItemName = "Operating Memory", ItemValue = _machineInfo_RAM });
                 reportItems.Add(new Property { ItemName = "System Drive (C)", ItemValue = _machineInfo_DiskSpace });
             }
@@ -88,7 +89,7 @@ namespace EndpointChecker
             }
 
             // E-MAIL SUBJECT AND CREATE BODY HTML TABLE
-            string eMailMessageSubject = Program.assembly_ApplicationName + " Unhandled Exception Report";
+            string eMailMessageSubject = Program.app_ApplicationName + " Unhandled Exception Report";
             string eMailMessageBody = string.Empty;
 
             HtmlTable table = new HtmlTable
@@ -191,7 +192,7 @@ namespace EndpointChecker
                             Environment.NewLine +
                             Environment.NewLine +
                             ex.Message,
-                        Program.assembly_ApplicationName + " v" + Program.assembly_VersionString,
+                        Program.app_ApplicationName + " v" + Program.app_VersionString,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 }));
@@ -453,7 +454,7 @@ namespace EndpointChecker
             public int ThreadCount;
         }
 
-        public static Int64 GetPhysicalAvailableMemoryInMiB()
+        public static long GetPhysicalAvailableMemoryInMiB()
         {
             PerformanceInformation pi = new PerformanceInformation();
             if (GetPerformanceInfo(out pi, Marshal.SizeOf(pi)))
@@ -466,7 +467,7 @@ namespace EndpointChecker
             }
         }
 
-        public static Int64 GetTotalMemoryInMiB()
+        public static long GetTotalMemoryInMiB()
         {
             PerformanceInformation pi = new PerformanceInformation();
             if (GetPerformanceInfo(out pi, Marshal.SizeOf(pi)))

@@ -52,7 +52,7 @@
             this.ch_HTTPETag = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList_ListViewIcons_20pix = new System.Windows.Forms.ImageList(this.components);
             this.cb_AutomaticRefresh = new System.Windows.Forms.CheckBox();
-            this.bw_GetStatus = new System.ComponentModel.BackgroundWorker();
+            this.BW_GetStatus = new System.ComponentModel.BackgroundWorker();
             this.TIMER_Refresh = new System.Windows.Forms.Timer(this.components);
             this.num_RefreshInterval = new System.Windows.Forms.NumericUpDown();
             this.lbl_TimerIntervalMinutesText = new System.Windows.Forms.Label();
@@ -78,7 +78,6 @@
             this.cb_ContinuousRefresh = new System.Windows.Forms.CheckBox();
             this.num_ParallelThreadsCount = new System.Windows.Forms.NumericUpDown();
             this.lbl_ParallelThreadsCount = new System.Windows.Forms.Label();
-            this.instanceWatcher = new System.IO.FileSystemWatcher();
             this.cb_ResolveNetworkShares = new System.Windows.Forms.CheckBox();
             this.cb_ExportEndpointsStatus_XLSX = new System.Windows.Forms.CheckBox();
             this.folderBrowserExportDir = new System.Windows.Forms.FolderBrowserDialog();
@@ -86,7 +85,6 @@
             this.cb_SaveResponse = new System.Windows.Forms.CheckBox();
             this.cb_ResolvePageMetaInfo = new System.Windows.Forms.CheckBox();
             this.cb_ValidateSSLCertificate = new System.Windows.Forms.CheckBox();
-            this.bw_LoadEndpointReferences = new System.ComponentModel.BackgroundWorker();
             this.groupBox_EndpointSelection = new System.Windows.Forms.GroupBox();
             this.lbl_CheckAllErrors = new System.Windows.Forms.Label();
             this.btn_UncheckAll = new System.Windows.Forms.Button();
@@ -144,15 +142,16 @@
             this.pb_GitHub = new System.Windows.Forms.PictureBox();
             this.openFileDialog_VNCExe = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog_PuttyExe = new System.Windows.Forms.OpenFileDialog();
-            this.BW_UpdateCheck = new System.ComponentModel.BackgroundWorker();
             this.pb_GitLab = new System.Windows.Forms.PictureBox();
             this.pb_AppWebPage = new System.Windows.Forms.PictureBox();
+            this.lbl_ListFilter = new System.Windows.Forms.Label();
+            this.tb_ListFilter = new System.Windows.Forms.TextBox();
+            this.pb_ListFilterClear = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_FTPRequestTimeout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_ParallelThreadsCount)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.instanceWatcher)).BeginInit();
             this.groupBox_EndpointSelection.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_PingTimeout)).BeginInit();
             this.lv_Endpoints_ContextMenuStrip.SuspendLayout();
@@ -166,6 +165,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_GitHub)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GitLab)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_AppWebPage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).BeginInit();
             this.SuspendLayout();
             // 
             // lv_Endpoints
@@ -202,10 +202,10 @@
             this.lv_Endpoints.GridLines = true;
             this.lv_Endpoints.HideSelection = false;
             this.lv_Endpoints.LargeImageList = this.imageList_ListViewIcons_20pix;
-            this.lv_Endpoints.Location = new System.Drawing.Point(12, 9);
+            this.lv_Endpoints.Location = new System.Drawing.Point(10, 13);
             this.lv_Endpoints.Name = "lv_Endpoints";
             this.lv_Endpoints.ShowItemToolTips = true;
-            this.lv_Endpoints.Size = new System.Drawing.Size(1084, 281);
+            this.lv_Endpoints.Size = new System.Drawing.Size(1110, 256);
             this.lv_Endpoints.SmallImageList = this.imageList_ListViewIcons_20pix;
             this.lv_Endpoints.TabIndex = 0;
             this.lv_Endpoints.UseCompatibleStateImageBehavior = false;
@@ -328,7 +328,7 @@
             this.cb_AutomaticRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_AutomaticRefresh.Enabled = false;
             this.cb_AutomaticRefresh.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_AutomaticRefresh.Location = new System.Drawing.Point(10, 41);
+            this.cb_AutomaticRefresh.Location = new System.Drawing.Point(10, 40);
             this.cb_AutomaticRefresh.Name = "cb_AutomaticRefresh";
             this.cb_AutomaticRefresh.Size = new System.Drawing.Size(217, 19);
             this.cb_AutomaticRefresh.TabIndex = 2;
@@ -336,11 +336,11 @@
             this.cb_AutomaticRefresh.UseVisualStyleBackColor = true;
             this.cb_AutomaticRefresh.CheckedChanged += new System.EventHandler(this.cb_AutomaticRefresh_CheckedChanged);
             // 
-            // bw_GetStatus
+            // BW_GetStatus
             // 
-            this.bw_GetStatus.WorkerSupportsCancellation = true;
-            this.bw_GetStatus.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bw_GetStatus_DoWork);
-            this.bw_GetStatus.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bw_GetStatus_RunWorkerCompleted);
+            this.BW_GetStatus.WorkerSupportsCancellation = true;
+            this.BW_GetStatus.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bw_GetStatus_DoWork);
+            this.BW_GetStatus.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bw_GetStatus_RunWorkerCompleted);
             // 
             // TIMER_Refresh
             // 
@@ -355,7 +355,7 @@
             this.num_RefreshInterval.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_RefreshInterval.Enabled = false;
             this.num_RefreshInterval.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_RefreshInterval.Location = new System.Drawing.Point(150, 295);
+            this.num_RefreshInterval.Location = new System.Drawing.Point(150, 308);
             this.num_RefreshInterval.Maximum = new decimal(new int[] {
             1440,
             0,
@@ -383,7 +383,7 @@
             this.lbl_TimerIntervalMinutesText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_TimerIntervalMinutesText.Enabled = false;
             this.lbl_TimerIntervalMinutesText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_TimerIntervalMinutesText.Location = new System.Drawing.Point(201, 297);
+            this.lbl_TimerIntervalMinutesText.Location = new System.Drawing.Point(201, 310);
             this.lbl_TimerIntervalMinutesText.Name = "lbl_TimerIntervalMinutesText";
             this.lbl_TimerIntervalMinutesText.Size = new System.Drawing.Size(52, 15);
             this.lbl_TimerIntervalMinutesText.TabIndex = 4;
@@ -398,7 +398,7 @@
             this.lbl_NoEndpoints.ForeColor = System.Drawing.Color.DarkOrange;
             this.lbl_NoEndpoints.Location = new System.Drawing.Point(0, 5);
             this.lbl_NoEndpoints.Name = "lbl_NoEndpoints";
-            this.lbl_NoEndpoints.Size = new System.Drawing.Size(1104, 291);
+            this.lbl_NoEndpoints.Size = new System.Drawing.Size(1130, 272);
             this.lbl_NoEndpoints.TabIndex = 6;
             this.lbl_NoEndpoints.Text = "List of predefined endpoints is empty";
             this.lbl_NoEndpoints.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -423,12 +423,12 @@
             this.tray_Exit});
             this.trayContextMenu.Name = "tray_contextMenu";
             this.trayContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.trayContextMenu.Size = new System.Drawing.Size(121, 54);
+            this.trayContextMenu.Size = new System.Drawing.Size(119, 54);
             // 
             // tray_Refresh
             // 
             this.tray_Refresh.Name = "tray_Refresh";
-            this.tray_Refresh.Size = new System.Drawing.Size(120, 22);
+            this.tray_Refresh.Size = new System.Drawing.Size(118, 22);
             this.tray_Refresh.Text = "Refresh";
             this.tray_Refresh.Visible = false;
             this.tray_Refresh.Click += new System.EventHandler(this.tray_Refresh_Click);
@@ -436,13 +436,13 @@
             // tray_Separator
             // 
             this.tray_Separator.Name = "tray_Separator";
-            this.tray_Separator.Size = new System.Drawing.Size(117, 6);
+            this.tray_Separator.Size = new System.Drawing.Size(115, 6);
             this.tray_Separator.Visible = false;
             // 
             // tray_Exit
             // 
             this.tray_Exit.Name = "tray_Exit";
-            this.tray_Exit.Size = new System.Drawing.Size(120, 22);
+            this.tray_Exit.Size = new System.Drawing.Size(118, 22);
             this.tray_Exit.Text = "Close";
             this.tray_Exit.Click += new System.EventHandler(this.tray_Exit_Click);
             // 
@@ -454,7 +454,7 @@
             this.cb_TrayBalloonNotify.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_TrayBalloonNotify.Enabled = false;
             this.cb_TrayBalloonNotify.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_TrayBalloonNotify.Location = new System.Drawing.Point(10, 75);
+            this.cb_TrayBalloonNotify.Location = new System.Drawing.Point(10, 74);
             this.cb_TrayBalloonNotify.Name = "cb_TrayBalloonNotify";
             this.cb_TrayBalloonNotify.Size = new System.Drawing.Size(217, 19);
             this.cb_TrayBalloonNotify.TabIndex = 7;
@@ -470,7 +470,7 @@
             this.lbl_RequestTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_RequestTimeoutSecondsText.Enabled = false;
             this.lbl_RequestTimeoutSecondsText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_RequestTimeoutSecondsText.Location = new System.Drawing.Point(201, 353);
+            this.lbl_RequestTimeoutSecondsText.Location = new System.Drawing.Point(201, 366);
             this.lbl_RequestTimeoutSecondsText.Name = "lbl_RequestTimeoutSecondsText";
             this.lbl_RequestTimeoutSecondsText.Size = new System.Drawing.Size(50, 15);
             this.lbl_RequestTimeoutSecondsText.TabIndex = 9;
@@ -483,7 +483,7 @@
             this.num_HTTPRequestTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_HTTPRequestTimeout.Enabled = false;
             this.num_HTTPRequestTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_HTTPRequestTimeout.Location = new System.Drawing.Point(150, 351);
+            this.num_HTTPRequestTimeout.Location = new System.Drawing.Point(150, 364);
             this.num_HTTPRequestTimeout.Maximum = new decimal(new int[] {
             60,
             0,
@@ -510,7 +510,7 @@
             this.lbl_RequestTimeout.AutoSize = true;
             this.lbl_RequestTimeout.Enabled = false;
             this.lbl_RequestTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_RequestTimeout.Location = new System.Drawing.Point(10, 353);
+            this.lbl_RequestTimeout.Location = new System.Drawing.Point(10, 366);
             this.lbl_RequestTimeout.Name = "lbl_RequestTimeout";
             this.lbl_RequestTimeout.Size = new System.Drawing.Size(131, 15);
             this.lbl_RequestTimeout.TabIndex = 10;
@@ -537,7 +537,7 @@
             this.lbl_Copyright.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_Copyright.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lbl_Copyright.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Copyright.Location = new System.Drawing.Point(5, 501);
+            this.lbl_Copyright.Location = new System.Drawing.Point(5, 514);
             this.lbl_Copyright.Name = "lbl_Copyright";
             this.lbl_Copyright.Size = new System.Drawing.Size(240, 20);
             this.lbl_Copyright.TabIndex = 12;
@@ -547,7 +547,7 @@
             // 
             this.lbl_Version.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_Version.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Version.Location = new System.Drawing.Point(861, 501);
+            this.lbl_Version.Location = new System.Drawing.Point(887, 514);
             this.lbl_Version.Name = "lbl_Version";
             this.lbl_Version.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lbl_Version.Size = new System.Drawing.Size(241, 20);
@@ -558,7 +558,7 @@
             // 
             this.lbl_ProgressCount.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lbl_ProgressCount.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ProgressCount.Location = new System.Drawing.Point(249, 489);
+            this.lbl_ProgressCount.Location = new System.Drawing.Point(262, 502);
             this.lbl_ProgressCount.Name = "lbl_ProgressCount";
             this.lbl_ProgressCount.Size = new System.Drawing.Size(610, 30);
             this.lbl_ProgressCount.TabIndex = 19;
@@ -570,11 +570,11 @@
             this.lbl_AutomaticRefresh.AutoSize = true;
             this.lbl_AutomaticRefresh.Enabled = false;
             this.lbl_AutomaticRefresh.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_AutomaticRefresh.Location = new System.Drawing.Point(10, 297);
+            this.lbl_AutomaticRefresh.Location = new System.Drawing.Point(10, 310);
             this.lbl_AutomaticRefresh.Name = "lbl_AutomaticRefresh";
-            this.lbl_AutomaticRefresh.Size = new System.Drawing.Size(127, 15);
+            this.lbl_AutomaticRefresh.Size = new System.Drawing.Size(124, 15);
             this.lbl_AutomaticRefresh.TabIndex = 21;
-            this.lbl_AutomaticRefresh.Text = "Auto Refresh  Interval";
+            this.lbl_AutomaticRefresh.Text = "Auto Refresh Interval";
             // 
             // num_FTPRequestTimeout
             // 
@@ -583,7 +583,7 @@
             this.num_FTPRequestTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_FTPRequestTimeout.Enabled = false;
             this.num_FTPRequestTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_FTPRequestTimeout.Location = new System.Drawing.Point(150, 379);
+            this.num_FTPRequestTimeout.Location = new System.Drawing.Point(150, 392);
             this.num_FTPRequestTimeout.Maximum = new decimal(new int[] {
             60,
             0,
@@ -610,7 +610,7 @@
             this.lbl_FTPRequestTimeout.AutoSize = true;
             this.lbl_FTPRequestTimeout.Enabled = false;
             this.lbl_FTPRequestTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_FTPRequestTimeout.Location = new System.Drawing.Point(10, 381);
+            this.lbl_FTPRequestTimeout.Location = new System.Drawing.Point(10, 394);
             this.lbl_FTPRequestTimeout.Name = "lbl_FTPRequestTimeout";
             this.lbl_FTPRequestTimeout.Size = new System.Drawing.Size(123, 15);
             this.lbl_FTPRequestTimeout.TabIndex = 24;
@@ -623,7 +623,7 @@
             this.lbl_FTPRequestTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_FTPRequestTimeoutSecondsText.Enabled = false;
             this.lbl_FTPRequestTimeoutSecondsText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_FTPRequestTimeoutSecondsText.Location = new System.Drawing.Point(201, 381);
+            this.lbl_FTPRequestTimeoutSecondsText.Location = new System.Drawing.Point(201, 394);
             this.lbl_FTPRequestTimeoutSecondsText.Name = "lbl_FTPRequestTimeoutSecondsText";
             this.lbl_FTPRequestTimeoutSecondsText.Size = new System.Drawing.Size(50, 15);
             this.lbl_FTPRequestTimeoutSecondsText.TabIndex = 23;
@@ -637,7 +637,7 @@
             this.cb_RefreshAutoSet.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_RefreshAutoSet.Enabled = false;
             this.cb_RefreshAutoSet.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_RefreshAutoSet.Location = new System.Drawing.Point(10, 58);
+            this.cb_RefreshAutoSet.Location = new System.Drawing.Point(10, 57);
             this.cb_RefreshAutoSet.Name = "cb_RefreshAutoSet";
             this.cb_RefreshAutoSet.Size = new System.Drawing.Size(217, 19);
             this.cb_RefreshAutoSet.TabIndex = 26;
@@ -651,7 +651,7 @@
             this.cb_ContinuousRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ContinuousRefresh.Enabled = false;
             this.cb_ContinuousRefresh.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ContinuousRefresh.Location = new System.Drawing.Point(10, 24);
+            this.cb_ContinuousRefresh.Location = new System.Drawing.Point(10, 23);
             this.cb_ContinuousRefresh.Name = "cb_ContinuousRefresh";
             this.cb_ContinuousRefresh.Size = new System.Drawing.Size(217, 19);
             this.cb_ContinuousRefresh.TabIndex = 27;
@@ -666,7 +666,7 @@
             this.num_ParallelThreadsCount.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_ParallelThreadsCount.Enabled = false;
             this.num_ParallelThreadsCount.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_ParallelThreadsCount.Location = new System.Drawing.Point(150, 407);
+            this.num_ParallelThreadsCount.Location = new System.Drawing.Point(150, 420);
             this.num_ParallelThreadsCount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -688,18 +688,11 @@
             this.lbl_ParallelThreadsCount.AutoSize = true;
             this.lbl_ParallelThreadsCount.Enabled = false;
             this.lbl_ParallelThreadsCount.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ParallelThreadsCount.Location = new System.Drawing.Point(10, 409);
+            this.lbl_ParallelThreadsCount.Location = new System.Drawing.Point(10, 422);
             this.lbl_ParallelThreadsCount.Name = "lbl_ParallelThreadsCount";
             this.lbl_ParallelThreadsCount.Size = new System.Drawing.Size(129, 15);
             this.lbl_ParallelThreadsCount.TabIndex = 30;
             this.lbl_ParallelThreadsCount.Text = "Parallel Threads Count";
-            // 
-            // instanceWatcher
-            // 
-            this.instanceWatcher.EnableRaisingEvents = true;
-            this.instanceWatcher.NotifyFilter = System.IO.NotifyFilters.FileName;
-            this.instanceWatcher.SynchronizingObject = this;
-            this.instanceWatcher.Created += new System.IO.FileSystemEventHandler(this.instanceWatcher_Created);
             // 
             // cb_ResolveNetworkShares
             // 
@@ -707,7 +700,7 @@
             this.cb_ResolveNetworkShares.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ResolveNetworkShares.Enabled = false;
             this.cb_ResolveNetworkShares.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ResolveNetworkShares.Location = new System.Drawing.Point(10, 92);
+            this.cb_ResolveNetworkShares.Location = new System.Drawing.Point(10, 91);
             this.cb_ResolveNetworkShares.Name = "cb_ResolveNetworkShares";
             this.cb_ResolveNetworkShares.Size = new System.Drawing.Size(217, 19);
             this.cb_ResolveNetworkShares.TabIndex = 31;
@@ -787,11 +780,6 @@
             this.cb_ValidateSSLCertificate.UseVisualStyleBackColor = true;
             this.cb_ValidateSSLCertificate.CheckedChanged += new System.EventHandler(this.cb_ValidateSSLCertificate_CheckedChanged);
             // 
-            // bw_LoadEndpointReferences
-            // 
-            this.bw_LoadEndpointReferences.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bw_LoadEndpointReferences_DoWork);
-            this.bw_LoadEndpointReferences.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bw_LoadEndpointReferences_RunWorkerCompleted);
-            // 
             // groupBox_EndpointSelection
             // 
             this.groupBox_EndpointSelection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -805,9 +793,9 @@
             this.groupBox_EndpointSelection.Controls.Add(this.lbl_CheckAllAvailable);
             this.groupBox_EndpointSelection.Enabled = false;
             this.groupBox_EndpointSelection.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox_EndpointSelection.Location = new System.Drawing.Point(766, 290);
+            this.groupBox_EndpointSelection.Location = new System.Drawing.Point(792, 303);
             this.groupBox_EndpointSelection.Name = "groupBox_EndpointSelection";
-            this.groupBox_EndpointSelection.Size = new System.Drawing.Size(189, 120);
+            this.groupBox_EndpointSelection.Size = new System.Drawing.Size(189, 122);
             this.groupBox_EndpointSelection.TabIndex = 38;
             this.groupBox_EndpointSelection.TabStop = false;
             this.groupBox_EndpointSelection.Text = "Endpoints Selection";
@@ -818,9 +806,9 @@
             this.lbl_CheckAllErrors.AutoSize = true;
             this.lbl_CheckAllErrors.Enabled = false;
             this.lbl_CheckAllErrors.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(135, 81);
+            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(135, 83);
             this.lbl_CheckAllErrors.Name = "lbl_CheckAllErrors";
-            this.lbl_CheckAllErrors.Size = new System.Drawing.Size(50, 16);
+            this.lbl_CheckAllErrors.Size = new System.Drawing.Size(49, 16);
             this.lbl_CheckAllErrors.TabIndex = 22;
             this.lbl_CheckAllErrors.Text = "FAILED";
             // 
@@ -832,7 +820,7 @@
             this.btn_UncheckAll.Enabled = false;
             this.btn_UncheckAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_UncheckAll.Image = global::EndpointChecker.Properties.Resources.minus;
-            this.btn_UncheckAll.Location = new System.Drawing.Point(8, 67);
+            this.btn_UncheckAll.Location = new System.Drawing.Point(8, 69);
             this.btn_UncheckAll.Name = "btn_UncheckAll";
             this.btn_UncheckAll.Size = new System.Drawing.Size(40, 40);
             this.btn_UncheckAll.TabIndex = 15;
@@ -847,7 +835,7 @@
             this.btn_CheckAll.Enabled = false;
             this.btn_CheckAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_CheckAll.Image = global::EndpointChecker.Properties.Resources.plus;
-            this.btn_CheckAll.Location = new System.Drawing.Point(8, 25);
+            this.btn_CheckAll.Location = new System.Drawing.Point(8, 27);
             this.btn_CheckAll.Name = "btn_CheckAll";
             this.btn_CheckAll.Size = new System.Drawing.Size(40, 40);
             this.btn_CheckAll.TabIndex = 17;
@@ -860,9 +848,9 @@
             this.lbl_CheckAll.AutoSize = true;
             this.lbl_CheckAll.Enabled = false;
             this.lbl_CheckAll.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAll.Location = new System.Drawing.Point(48, 38);
+            this.lbl_CheckAll.Location = new System.Drawing.Point(48, 40);
             this.lbl_CheckAll.Name = "lbl_CheckAll";
-            this.lbl_CheckAll.Size = new System.Drawing.Size(28, 16);
+            this.lbl_CheckAll.Size = new System.Drawing.Size(27, 16);
             this.lbl_CheckAll.TabIndex = 21;
             this.lbl_CheckAll.Text = "ALL";
             // 
@@ -874,7 +862,7 @@
             this.btn_CheckAllErrors.Enabled = false;
             this.btn_CheckAllErrors.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_CheckAllErrors.Image = global::EndpointChecker.Properties.Resources.error;
-            this.btn_CheckAllErrors.Location = new System.Drawing.Point(95, 67);
+            this.btn_CheckAllErrors.Location = new System.Drawing.Point(95, 69);
             this.btn_CheckAllErrors.Name = "btn_CheckAllErrors";
             this.btn_CheckAllErrors.Size = new System.Drawing.Size(40, 40);
             this.btn_CheckAllErrors.TabIndex = 16;
@@ -887,9 +875,9 @@
             this.lbl_UncheckAll.AutoSize = true;
             this.lbl_UncheckAll.Enabled = false;
             this.lbl_UncheckAll.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UncheckAll.Location = new System.Drawing.Point(48, 79);
+            this.lbl_UncheckAll.Location = new System.Drawing.Point(48, 81);
             this.lbl_UncheckAll.Name = "lbl_UncheckAll";
-            this.lbl_UncheckAll.Size = new System.Drawing.Size(42, 16);
+            this.lbl_UncheckAll.Size = new System.Drawing.Size(41, 16);
             this.lbl_UncheckAll.TabIndex = 20;
             this.lbl_UncheckAll.Text = "NONE";
             // 
@@ -901,7 +889,7 @@
             this.btn_CheckAllAvailable.Enabled = false;
             this.btn_CheckAllAvailable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_CheckAllAvailable.Image = global::EndpointChecker.Properties.Resources.passed;
-            this.btn_CheckAllAvailable.Location = new System.Drawing.Point(96, 25);
+            this.btn_CheckAllAvailable.Location = new System.Drawing.Point(96, 27);
             this.btn_CheckAllAvailable.Name = "btn_CheckAllAvailable";
             this.btn_CheckAllAvailable.Size = new System.Drawing.Size(40, 40);
             this.btn_CheckAllAvailable.TabIndex = 18;
@@ -914,9 +902,9 @@
             this.lbl_CheckAllAvailable.AutoSize = true;
             this.lbl_CheckAllAvailable.Enabled = false;
             this.lbl_CheckAllAvailable.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(135, 38);
+            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(135, 40);
             this.lbl_CheckAllAvailable.Name = "lbl_CheckAllAvailable";
-            this.lbl_CheckAllAvailable.Size = new System.Drawing.Size(53, 16);
+            this.lbl_CheckAllAvailable.Size = new System.Drawing.Size(52, 16);
             this.lbl_CheckAllAvailable.TabIndex = 19;
             this.lbl_CheckAllAvailable.Text = "PASSED";
             // 
@@ -926,9 +914,9 @@
             this.lbl_ConfigFile.AutoSize = true;
             this.lbl_ConfigFile.Enabled = false;
             this.lbl_ConfigFile.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ConfigFile.Location = new System.Drawing.Point(902, 431);
+            this.lbl_ConfigFile.Location = new System.Drawing.Point(928, 444);
             this.lbl_ConfigFile.Name = "lbl_ConfigFile";
-            this.lbl_ConfigFile.Size = new System.Drawing.Size(53, 16);
+            this.lbl_ConfigFile.Size = new System.Drawing.Size(52, 16);
             this.lbl_ConfigFile.TabIndex = 26;
             this.lbl_ConfigFile.Text = "CONFIG";
             // 
@@ -940,7 +928,7 @@
             this.btn_EndpointsList.Enabled = false;
             this.btn_EndpointsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_EndpointsList.Image = ((System.Drawing.Image)(resources.GetObject("btn_EndpointsList.Image")));
-            this.btn_EndpointsList.Location = new System.Drawing.Point(774, 419);
+            this.btn_EndpointsList.Location = new System.Drawing.Point(800, 432);
             this.btn_EndpointsList.Name = "btn_EndpointsList";
             this.btn_EndpointsList.Size = new System.Drawing.Size(40, 40);
             this.btn_EndpointsList.TabIndex = 23;
@@ -955,7 +943,7 @@
             this.btn_ConfigFile.Enabled = false;
             this.btn_ConfigFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_ConfigFile.Image = global::EndpointChecker.Properties.Resources.appConfig;
-            this.btn_ConfigFile.Location = new System.Drawing.Point(861, 419);
+            this.btn_ConfigFile.Location = new System.Drawing.Point(887, 432);
             this.btn_ConfigFile.Name = "btn_ConfigFile";
             this.btn_ConfigFile.Size = new System.Drawing.Size(40, 40);
             this.btn_ConfigFile.TabIndex = 24;
@@ -968,9 +956,9 @@
             this.lbl_EndpointsList.AutoSize = true;
             this.lbl_EndpointsList.Enabled = false;
             this.lbl_EndpointsList.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_EndpointsList.Location = new System.Drawing.Point(815, 431);
+            this.lbl_EndpointsList.Location = new System.Drawing.Point(841, 444);
             this.lbl_EndpointsList.Name = "lbl_EndpointsList";
-            this.lbl_EndpointsList.Size = new System.Drawing.Size(36, 16);
+            this.lbl_EndpointsList.Size = new System.Drawing.Size(35, 16);
             this.lbl_EndpointsList.TabIndex = 25;
             this.lbl_EndpointsList.Text = "LIST";
             // 
@@ -980,9 +968,9 @@
             this.lbl_Refresh.AutoSize = true;
             this.lbl_Refresh.Enabled = false;
             this.lbl_Refresh.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Refresh.Location = new System.Drawing.Point(1020, 310);
+            this.lbl_Refresh.Location = new System.Drawing.Point(1046, 323);
             this.lbl_Refresh.Name = "lbl_Refresh";
-            this.lbl_Refresh.Size = new System.Drawing.Size(59, 16);
+            this.lbl_Refresh.Size = new System.Drawing.Size(58, 16);
             this.lbl_Refresh.TabIndex = 39;
             this.lbl_Refresh.Text = "REFRESH";
             // 
@@ -992,9 +980,9 @@
             this.lbl_Terminate.AutoSize = true;
             this.lbl_Terminate.Enabled = false;
             this.lbl_Terminate.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Terminate.Location = new System.Drawing.Point(1020, 370);
+            this.lbl_Terminate.Location = new System.Drawing.Point(1046, 383);
             this.lbl_Terminate.Name = "lbl_Terminate";
-            this.lbl_Terminate.Size = new System.Drawing.Size(79, 16);
+            this.lbl_Terminate.Size = new System.Drawing.Size(78, 16);
             this.lbl_Terminate.TabIndex = 40;
             this.lbl_Terminate.Text = "TERMINATE";
             // 
@@ -1004,7 +992,7 @@
             this.lbl_BrowseExportDir.AutoSize = true;
             this.lbl_BrowseExportDir.Enabled = false;
             this.lbl_BrowseExportDir.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_BrowseExportDir.Location = new System.Drawing.Point(331, 16);
+            this.lbl_BrowseExportDir.Location = new System.Drawing.Point(330, 16);
             this.lbl_BrowseExportDir.Name = "lbl_BrowseExportDir";
             this.lbl_BrowseExportDir.Size = new System.Drawing.Size(85, 15);
             this.lbl_BrowseExportDir.TabIndex = 42;
@@ -1016,9 +1004,9 @@
             this.lbl_SpeedTest.AutoSize = true;
             this.lbl_SpeedTest.Enabled = false;
             this.lbl_SpeedTest.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest.Location = new System.Drawing.Point(1020, 430);
+            this.lbl_SpeedTest.Location = new System.Drawing.Point(1046, 443);
             this.lbl_SpeedTest.Name = "lbl_SpeedTest";
-            this.lbl_SpeedTest.Size = new System.Drawing.Size(75, 16);
+            this.lbl_SpeedTest.Size = new System.Drawing.Size(74, 16);
             this.lbl_SpeedTest.TabIndex = 44;
             this.lbl_SpeedTest.Text = "SPEEDTEST";
             // 
@@ -1055,7 +1043,7 @@
             this.num_PingTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_PingTimeout.Enabled = false;
             this.num_PingTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_PingTimeout.Location = new System.Drawing.Point(150, 323);
+            this.num_PingTimeout.Location = new System.Drawing.Point(150, 336);
             this.num_PingTimeout.Maximum = new decimal(new int[] {
             30,
             0,
@@ -1082,7 +1070,7 @@
             this.lbl_PingTimeout.AutoSize = true;
             this.lbl_PingTimeout.Enabled = false;
             this.lbl_PingTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_PingTimeout.Location = new System.Drawing.Point(10, 325);
+            this.lbl_PingTimeout.Location = new System.Drawing.Point(10, 338);
             this.lbl_PingTimeout.Name = "lbl_PingTimeout";
             this.lbl_PingTimeout.Size = new System.Drawing.Size(79, 15);
             this.lbl_PingTimeout.TabIndex = 47;
@@ -1095,7 +1083,7 @@
             this.lbl_PingTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_PingTimeoutSecondsText.Enabled = false;
             this.lbl_PingTimeoutSecondsText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_PingTimeoutSecondsText.Location = new System.Drawing.Point(201, 325);
+            this.lbl_PingTimeoutSecondsText.Location = new System.Drawing.Point(201, 338);
             this.lbl_PingTimeoutSecondsText.Name = "lbl_PingTimeoutSecondsText";
             this.lbl_PingTimeoutSecondsText.Size = new System.Drawing.Size(50, 15);
             this.lbl_PingTimeoutSecondsText.TabIndex = 46;
@@ -1107,7 +1095,7 @@
             this.lbl_Validate.AutoSize = true;
             this.lbl_Validate.Enabled = false;
             this.lbl_Validate.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Validate.Location = new System.Drawing.Point(10, 437);
+            this.lbl_Validate.Location = new System.Drawing.Point(10, 450);
             this.lbl_Validate.Name = "lbl_Validate";
             this.lbl_Validate.Size = new System.Drawing.Size(108, 15);
             this.lbl_Validate.TabIndex = 48;
@@ -1124,9 +1112,9 @@
             this.comboBox_Validate.Items.AddRange(new object[] {
             "Protocol",
             "Ping"});
-            this.comboBox_Validate.Location = new System.Drawing.Point(150, 435);
+            this.comboBox_Validate.Location = new System.Drawing.Point(150, 448);
             this.comboBox_Validate.Name = "comboBox_Validate";
-            this.comboBox_Validate.Size = new System.Drawing.Size(95, 23);
+            this.comboBox_Validate.Size = new System.Drawing.Size(136, 23);
             this.comboBox_Validate.TabIndex = 49;
             this.comboBox_Validate.SelectedIndexChanged += new System.EventHandler(this.comboBox_Validate_SelectedIndexChanged);
             // 
@@ -1146,26 +1134,26 @@
             this.toolStripMenuItem_SSH});
             this.lv_Endpoints_ContextMenuStrip.Name = "lv_Endpoints_ContextMenuStrip";
             this.lv_Endpoints_ContextMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.lv_Endpoints_ContextMenuStrip.Size = new System.Drawing.Size(161, 192);
+            this.lv_Endpoints_ContextMenuStrip.Size = new System.Drawing.Size(160, 192);
             // 
             // toolStripMenuItem_Details
             // 
             this.toolStripMenuItem_Details.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_Details.Name = "toolStripMenuItem_Details";
-            this.toolStripMenuItem_Details.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_Details.Size = new System.Drawing.Size(159, 22);
             this.toolStripMenuItem_Details.Text = "Details";
             this.toolStripMenuItem_Details.Click += new System.EventHandler(this.toolStripMenuItem_Details_Click);
             // 
             // toolStripSeparator_2
             // 
             this.toolStripSeparator_2.Name = "toolStripSeparator_2";
-            this.toolStripSeparator_2.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator_2.Size = new System.Drawing.Size(156, 6);
             // 
             // toolStripMenuItem_Browse
             // 
             this.toolStripMenuItem_Browse.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_Browse.Name = "toolStripMenuItem_Browse";
-            this.toolStripMenuItem_Browse.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_Browse.Size = new System.Drawing.Size(159, 22);
             this.toolStripMenuItem_Browse.Text = "Browse";
             this.toolStripMenuItem_Browse.Click += new System.EventHandler(this.toolStripMenuItem_Browse_Click);
             // 
@@ -1173,7 +1161,7 @@
             // 
             this.toolStripMenuItem_AdminBrowse.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_AdminBrowse.Name = "toolStripMenuItem_AdminBrowse";
-            this.toolStripMenuItem_AdminBrowse.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_AdminBrowse.Size = new System.Drawing.Size(159, 22);
             this.toolStripMenuItem_AdminBrowse.Text = "Admin Browse";
             this.toolStripMenuItem_AdminBrowse.Click += new System.EventHandler(this.toolStripMenuItem_AdminBrowse_Click);
             // 
@@ -1181,7 +1169,7 @@
             // 
             this.toolStripMenuItem_HTTP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_HTTP.Name = "toolStripMenuItem_HTTP";
-            this.toolStripMenuItem_HTTP.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_HTTP.Size = new System.Drawing.Size(159, 22);
             this.toolStripMenuItem_HTTP.Text = "Open as HTTP";
             this.toolStripMenuItem_HTTP.Click += new System.EventHandler(this.toolStripMenuItem_HTTP_Click);
             // 
@@ -1189,20 +1177,20 @@
             // 
             this.toolStripMenuItem_FTP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_FTP.Name = "toolStripMenuItem_FTP";
-            this.toolStripMenuItem_FTP.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_FTP.Size = new System.Drawing.Size(159, 22);
             this.toolStripMenuItem_FTP.Text = "Open as FTP";
             this.toolStripMenuItem_FTP.Click += new System.EventHandler(this.toolStripMenuItem_FTP_Click);
             // 
             // toolStripSeparator_1
             // 
             this.toolStripSeparator_1.Name = "toolStripSeparator_1";
-            this.toolStripSeparator_1.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator_1.Size = new System.Drawing.Size(156, 6);
             // 
             // toolStripMenuItem_RDP
             // 
             this.toolStripMenuItem_RDP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_RDP.Name = "toolStripMenuItem_RDP";
-            this.toolStripMenuItem_RDP.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_RDP.Size = new System.Drawing.Size(159, 22);
             this.toolStripMenuItem_RDP.Text = "RDP Connect";
             this.toolStripMenuItem_RDP.Click += new System.EventHandler(this.toolStripMenuItem_RDP_Click);
             // 
@@ -1210,7 +1198,7 @@
             // 
             this.toolStripMenuItem_VNC.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.toolStripMenuItem_VNC.Name = "toolStripMenuItem_VNC";
-            this.toolStripMenuItem_VNC.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_VNC.Size = new System.Drawing.Size(159, 22);
             this.toolStripMenuItem_VNC.Text = "VNC Connect";
             this.toolStripMenuItem_VNC.Click += new System.EventHandler(this.toolStripMenuItem_VNC_Click);
             // 
@@ -1218,7 +1206,7 @@
             // 
             this.toolStripMenuItem_SSH.Font = new System.Drawing.Font("Arial", 9.75F);
             this.toolStripMenuItem_SSH.Name = "toolStripMenuItem_SSH";
-            this.toolStripMenuItem_SSH.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_SSH.Size = new System.Drawing.Size(159, 22);
             this.toolStripMenuItem_SSH.Text = "SSH Connect";
             this.toolStripMenuItem_SSH.Click += new System.EventHandler(this.toolStripMenuItem_SSH_Click);
             // 
@@ -1230,7 +1218,7 @@
             this.btn_Terminate.Enabled = false;
             this.btn_Terminate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Terminate.Image = global::EndpointChecker.Properties.Resources.notAvailable;
-            this.btn_Terminate.Location = new System.Drawing.Point(979, 357);
+            this.btn_Terminate.Location = new System.Drawing.Point(1005, 370);
             this.btn_Terminate.Name = "btn_Terminate";
             this.btn_Terminate.Size = new System.Drawing.Size(40, 40);
             this.btn_Terminate.TabIndex = 28;
@@ -1245,7 +1233,7 @@
             this.btn_Refresh.Enabled = false;
             this.btn_Refresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Refresh.Image = global::EndpointChecker.Properties.Resources.refresh;
-            this.btn_Refresh.Location = new System.Drawing.Point(979, 297);
+            this.btn_Refresh.Location = new System.Drawing.Point(1005, 310);
             this.btn_Refresh.Name = "btn_Refresh";
             this.btn_Refresh.Size = new System.Drawing.Size(40, 40);
             this.btn_Refresh.TabIndex = 1;
@@ -1262,7 +1250,7 @@
             this.btn_SpeedTest.FlatAppearance.BorderSize = 2;
             this.btn_SpeedTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_SpeedTest.Image = ((System.Drawing.Image)(resources.GetObject("btn_SpeedTest.Image")));
-            this.btn_SpeedTest.Location = new System.Drawing.Point(979, 417);
+            this.btn_SpeedTest.Location = new System.Drawing.Point(1005, 430);
             this.btn_SpeedTest.Name = "btn_SpeedTest";
             this.btn_SpeedTest.Size = new System.Drawing.Size(40, 40);
             this.btn_SpeedTest.TabIndex = 43;
@@ -1277,7 +1265,7 @@
             this.btn_BrowseExportDir.Enabled = false;
             this.btn_BrowseExportDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_BrowseExportDir.Image = global::EndpointChecker.Properties.Resources.browseFolder_16x16;
-            this.btn_BrowseExportDir.Location = new System.Drawing.Point(308, 14);
+            this.btn_BrowseExportDir.Location = new System.Drawing.Point(307, 14);
             this.btn_BrowseExportDir.Name = "btn_BrowseExportDir";
             this.btn_BrowseExportDir.Size = new System.Drawing.Size(20, 20);
             this.btn_BrowseExportDir.TabIndex = 41;
@@ -1288,7 +1276,7 @@
             // 
             this.pb_Progress.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.pb_Progress.Image = global::EndpointChecker.Properties.Resources.loadingProgressSmall;
-            this.pb_Progress.Location = new System.Drawing.Point(445, 464);
+            this.pb_Progress.Location = new System.Drawing.Point(458, 477);
             this.pb_Progress.Name = "pb_Progress";
             this.pb_Progress.Size = new System.Drawing.Size(219, 22);
             this.pb_Progress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1300,7 +1288,7 @@
             // 
             this.pb_Progress_Init.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pb_Progress_Init.Image = global::EndpointChecker.Properties.Resources.loadingProgress;
-            this.pb_Progress_Init.Location = new System.Drawing.Point(461, 56);
+            this.pb_Progress_Init.Location = new System.Drawing.Point(472, 52);
             this.pb_Progress_Init.Name = "pb_Progress_Init";
             this.pb_Progress_Init.Size = new System.Drawing.Size(186, 186);
             this.pb_Progress_Init.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1329,7 +1317,7 @@
             this.lbl_LastUpdate_Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_LastUpdate_Label.AutoSize = true;
             this.lbl_LastUpdate_Label.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LastUpdate_Label.Location = new System.Drawing.Point(10, 468);
+            this.lbl_LastUpdate_Label.Location = new System.Drawing.Point(10, 481);
             this.lbl_LastUpdate_Label.Name = "lbl_LastUpdate_Label";
             this.lbl_LastUpdate_Label.Size = new System.Drawing.Size(78, 15);
             this.lbl_LastUpdate_Label.TabIndex = 51;
@@ -1341,7 +1329,7 @@
             this.lbl_LastUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_LastUpdate.AutoSize = true;
             this.lbl_LastUpdate.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LastUpdate.Location = new System.Drawing.Point(148, 466);
+            this.lbl_LastUpdate.Location = new System.Drawing.Point(148, 479);
             this.lbl_LastUpdate.Name = "lbl_LastUpdate";
             this.lbl_LastUpdate.Size = new System.Drawing.Size(0, 18);
             this.lbl_LastUpdate.TabIndex = 52;
@@ -1393,9 +1381,9 @@
             this.groupBox_Export.Controls.Add(this.lbl_BrowseExportDir);
             this.groupBox_Export.Enabled = false;
             this.groupBox_Export.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold);
-            this.groupBox_Export.Location = new System.Drawing.Point(283, 419);
+            this.groupBox_Export.Location = new System.Drawing.Point(310, 432);
             this.groupBox_Export.Name = "groupBox_Export";
-            this.groupBox_Export.Size = new System.Drawing.Size(468, 40);
+            this.groupBox_Export.Size = new System.Drawing.Size(467, 40);
             this.groupBox_Export.TabIndex = 55;
             this.groupBox_Export.TabStop = false;
             this.groupBox_Export.Text = "Status Export";
@@ -1429,9 +1417,9 @@
             this.groupBox_CommonOptions.Controls.Add(this.cb_ResolveNetworkShares);
             this.groupBox_CommonOptions.Enabled = false;
             this.groupBox_CommonOptions.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.groupBox_CommonOptions.Location = new System.Drawing.Point(283, 290);
+            this.groupBox_CommonOptions.Location = new System.Drawing.Point(310, 303);
             this.groupBox_CommonOptions.Name = "groupBox_CommonOptions";
-            this.groupBox_CommonOptions.Size = new System.Drawing.Size(229, 123);
+            this.groupBox_CommonOptions.Size = new System.Drawing.Size(229, 122);
             this.groupBox_CommonOptions.TabIndex = 57;
             this.groupBox_CommonOptions.TabStop = false;
             this.groupBox_CommonOptions.Text = "Common Options";
@@ -1461,7 +1449,7 @@
             this.groupBox_HTTPOptions.Controls.Add(this.cb_RemoveURLParameters);
             this.groupBox_HTTPOptions.Enabled = false;
             this.groupBox_HTTPOptions.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.groupBox_HTTPOptions.Location = new System.Drawing.Point(526, 290);
+            this.groupBox_HTTPOptions.Location = new System.Drawing.Point(552, 303);
             this.groupBox_HTTPOptions.Name = "groupBox_HTTPOptions";
             this.groupBox_HTTPOptions.Size = new System.Drawing.Size(225, 122);
             this.groupBox_HTTPOptions.TabIndex = 59;
@@ -1473,7 +1461,7 @@
             this.pb_ITNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_ITNetwork.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_ITNetwork.Image = global::EndpointChecker.Properties.Resources.itnetwork_logo_text;
-            this.pb_ITNetwork.Location = new System.Drawing.Point(941, 470);
+            this.pb_ITNetwork.Location = new System.Drawing.Point(967, 483);
             this.pb_ITNetwork.Name = "pb_ITNetwork";
             this.pb_ITNetwork.Size = new System.Drawing.Size(123, 30);
             this.pb_ITNetwork.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1486,7 +1474,7 @@
             this.pb_FeatureRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_FeatureRequest.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_FeatureRequest.Image = ((System.Drawing.Image)(resources.GetObject("pb_FeatureRequest.Image")));
-            this.pb_FeatureRequest.Location = new System.Drawing.Point(835, 466);
+            this.pb_FeatureRequest.Location = new System.Drawing.Point(861, 479);
             this.pb_FeatureRequest.Name = "pb_FeatureRequest";
             this.pb_FeatureRequest.Size = new System.Drawing.Size(30, 30);
             this.pb_FeatureRequest.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1505,7 +1493,7 @@
             this.pb_GitHub.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_GitHub.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_GitHub.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitHub.Image")));
-            this.pb_GitHub.Location = new System.Drawing.Point(859, 468);
+            this.pb_GitHub.Location = new System.Drawing.Point(885, 481);
             this.pb_GitHub.Name = "pb_GitHub";
             this.pb_GitHub.Size = new System.Drawing.Size(53, 30);
             this.pb_GitHub.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1523,20 +1511,13 @@
             this.openFileDialog_PuttyExe.Filter = "Putty executable|putty.exe";
             this.openFileDialog_PuttyExe.Title = "Browse Putty executable ...";
             // 
-            // BW_UpdateCheck
-            // 
-            this.BW_UpdateCheck.WorkerReportsProgress = true;
-            this.BW_UpdateCheck.WorkerSupportsCancellation = true;
-            this.BW_UpdateCheck.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BW_UpdateCheck_DoWork);
-            this.BW_UpdateCheck.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BW_UpdateCheck_RunWorkerCompleted);
-            // 
             // pb_GitLab
             // 
             this.pb_GitLab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_GitLab.BackColor = System.Drawing.Color.Transparent;
             this.pb_GitLab.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_GitLab.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitLab.Image")));
-            this.pb_GitLab.Location = new System.Drawing.Point(903, 467);
+            this.pb_GitLab.Location = new System.Drawing.Point(929, 480);
             this.pb_GitLab.Name = "pb_GitLab";
             this.pb_GitLab.Size = new System.Drawing.Size(41, 35);
             this.pb_GitLab.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1550,7 +1531,7 @@
             this.pb_AppWebPage.BackColor = System.Drawing.Color.Transparent;
             this.pb_AppWebPage.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_AppWebPage.Image = ((System.Drawing.Image)(resources.GetObject("pb_AppWebPage.Image")));
-            this.pb_AppWebPage.Location = new System.Drawing.Point(1066, 469);
+            this.pb_AppWebPage.Location = new System.Drawing.Point(1092, 482);
             this.pb_AppWebPage.Name = "pb_AppWebPage";
             this.pb_AppWebPage.Size = new System.Drawing.Size(32, 32);
             this.pb_AppWebPage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1558,12 +1539,57 @@
             this.pb_AppWebPage.TabStop = false;
             this.pb_AppWebPage.Click += new System.EventHandler(this.pb_AppWebPage_Click);
             // 
+            // lbl_ListFilter
+            // 
+            this.lbl_ListFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbl_ListFilter.AutoSize = true;
+            this.lbl_ListFilter.Enabled = false;
+            this.lbl_ListFilter.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ListFilter.Location = new System.Drawing.Point(10, 282);
+            this.lbl_ListFilter.Name = "lbl_ListFilter";
+            this.lbl_ListFilter.Size = new System.Drawing.Size(115, 15);
+            this.lbl_ListFilter.TabIndex = 66;
+            this.lbl_ListFilter.Text = "Endpoints List Filter";
+            // 
+            // tb_ListFilter
+            // 
+            this.tb_ListFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tb_ListFilter.BackColor = System.Drawing.Color.LightGray;
+            this.tb_ListFilter.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.tb_ListFilter.Enabled = false;
+            this.tb_ListFilter.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb_ListFilter.Location = new System.Drawing.Point(150, 280);
+            this.tb_ListFilter.Multiline = true;
+            this.tb_ListFilter.Name = "tb_ListFilter";
+            this.tb_ListFilter.Size = new System.Drawing.Size(136, 22);
+            this.tb_ListFilter.TabIndex = 67;
+            this.tb_ListFilter.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tb_ListFilter.TextChanged += new System.EventHandler(this.tb_ListFilter_TextChanged);
+            // 
+            // pb_ListFilterClear
+            // 
+            this.pb_ListFilterClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pb_ListFilterClear.BackColor = System.Drawing.Color.Transparent;
+            this.pb_ListFilterClear.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pb_ListFilterClear.Image = global::EndpointChecker.Properties.Resources.close;
+            this.pb_ListFilterClear.Location = new System.Drawing.Point(284, 280);
+            this.pb_ListFilterClear.Name = "pb_ListFilterClear";
+            this.pb_ListFilterClear.Size = new System.Drawing.Size(22, 22);
+            this.pb_ListFilterClear.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_ListFilterClear.TabIndex = 68;
+            this.pb_ListFilterClear.TabStop = false;
+            this.pb_ListFilterClear.Visible = false;
+            this.pb_ListFilterClear.Click += new System.EventHandler(this.pb_ListFilterClear_Click);
+            // 
             // CheckerMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
-            this.ClientSize = new System.Drawing.Size(1108, 522);
+            this.ClientSize = new System.Drawing.Size(1134, 536);
+            this.Controls.Add(this.pb_ListFilterClear);
+            this.Controls.Add(this.tb_ListFilter);
+            this.Controls.Add(this.lbl_ListFilter);
             this.Controls.Add(this.pb_AppWebPage);
             this.Controls.Add(this.pb_GitLab);
             this.Controls.Add(this.pb_FeatureRequest);
@@ -1612,7 +1638,7 @@
             this.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MinimumSize = new System.Drawing.Size(1124, 528);
+            this.MinimumSize = new System.Drawing.Size(1124, 575);
             this.Name = "CheckerMainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Endpoint Status Checker v";
@@ -1623,7 +1649,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_FTPRequestTimeout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_ParallelThreadsCount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.instanceWatcher)).EndInit();
             this.groupBox_EndpointSelection.ResumeLayout(false);
             this.groupBox_EndpointSelection.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_PingTimeout)).EndInit();
@@ -1639,13 +1664,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_GitHub)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GitLab)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_AppWebPage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        public System.ComponentModel.BackgroundWorker bw_GetStatus;
+        public System.ComponentModel.BackgroundWorker BW_GetStatus;
         public System.Windows.Forms.Timer TIMER_Refresh;
         public System.Windows.Forms.NumericUpDown num_RefreshInterval;
         public System.Windows.Forms.Label lbl_TimerIntervalMinutesText;
@@ -1672,7 +1698,6 @@
         public System.Windows.Forms.ColumnHeader ch_Message;
         public System.Windows.Forms.NumericUpDown num_ParallelThreadsCount;
         public System.Windows.Forms.ColumnHeader ch_IPAddress;
-        public System.IO.FileSystemWatcher instanceWatcher;
         public System.Windows.Forms.ColumnHeader ch_PingTime;
         public System.Windows.Forms.ColumnHeader ch_Server;
         public System.Windows.Forms.ColumnHeader ch_UserName;
@@ -1681,7 +1706,6 @@
         public System.Windows.Forms.ColumnHeader ch_DNSName;
         public System.Windows.Forms.Timer TIMER_StartupRefresh;
         public System.Windows.Forms.ColumnHeader ch_HTTPContentLenght;
-        public System.ComponentModel.BackgroundWorker bw_LoadEndpointReferences;
         public System.Windows.Forms.Button btn_SpeedTest;
         public System.Windows.Forms.Button btn_BrowseExportDir;
         public System.Windows.Forms.ColumnHeader ch_HTTPContentType;
@@ -1759,9 +1783,11 @@
         public System.Windows.Forms.OpenFileDialog openFileDialog_VNCExe;
         public System.Windows.Forms.OpenFileDialog openFileDialog_PuttyExe;
         public System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_SSH;
-        public System.ComponentModel.BackgroundWorker BW_UpdateCheck;
         public System.Windows.Forms.PictureBox pb_GitLab;
         public System.Windows.Forms.PictureBox pb_AppWebPage;
+        public System.Windows.Forms.Label lbl_ListFilter;
+        public System.Windows.Forms.TextBox tb_ListFilter;
+        public System.Windows.Forms.PictureBox pb_ListFilterClear;
     }
 }
 

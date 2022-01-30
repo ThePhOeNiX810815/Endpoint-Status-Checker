@@ -233,5 +233,8 @@
     <Setting Name="VirusTotal_API_Key" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="Config_HTTP_Sec_CH_UserAgent" Type="System.String" Scope="User">
+      <Value Profile="(Default)">"\"(Not(A: Brand\";v=\"8\", \"Chromium\";v=\"98\", \"Google Chrome\";v=\"98\""</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

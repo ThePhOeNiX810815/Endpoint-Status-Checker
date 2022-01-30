@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -26,7 +27,7 @@ namespace EndpointChecker
         IntPtr QueryAssemblyInfo(
             int flags,
             [MarshalAs(UnmanagedType.LPWStr)]
-            String assemblyName,
+            string assemblyName,
             ref ASSEMBLY_INFO assemblyInfo);
 
         int Dummy2();
@@ -42,7 +43,7 @@ namespace EndpointChecker
         public long assemblySizeInKB;
 
         [MarshalAs(UnmanagedType.LPWStr)]
-        public String currentAssemblyPath;
+        public string currentAssemblyPath;
 
         public int cchBuf;
     }
@@ -53,15 +54,55 @@ namespace EndpointChecker
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
 
-        // APPLICATION SPECIFICATION
-        public static string systemMemorySize;
-        public static string assembly_ApplicationName = "Endpoint Status Checker";
-        public static string assembly_CurrentWorkingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        public static string assembly_BuiltDate = RetrieveLinkerTimestamp();
-        public static string assembly_Copyright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).LegalCopyright;
+        [DllImport("user32.dll")]
+        public static extern IntPtr FindWindow(string className, string windowTitle);
 
-        public static Version assembly_Version = Assembly.GetExecutingAssembly().GetName().Version;
-        public static string assembly_VersionString = GetVersionString(assembly_Version, true, false); 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool ShowWindow(IntPtr hWnd, ShowWindowEnum flags);
+
+        [DllImport("user32.dll")]
+        private static extern int SetForegroundWindow(IntPtr hwnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetWindowPlacement(IntPtr hWnd, ref Windowplacement lpwndpl);
+
+        private enum ShowWindowEnum
+        {
+            Hide = 0,
+            ShowNormal = 1, ShowMinimized = 2, ShowMaximized = 3,
+            Maximize = 3, ShowNormalNoActivate = 4, Show = 5,
+            Minimize = 6, ShowMinNoActivate = 7, ShowNoActivate = 8,
+            Restore = 9, ShowDefault = 10, ForceMinimized = 11
+        };
+
+        private struct Windowplacement
+        {
+            public int length;
+            public int flags;
+            public int showCmd;
+            public System.Drawing.Point ptMinPosition;
+            public System.Drawing.Point ptMaxPosition;
+            public System.Drawing.Rectangle rcNormalPosition;
+        }
+
+        // APPLICATION SPECIFICATION
+        public static Version app_Version = Assembly.GetExecutingAssembly().GetName().Version;
+        public static string app_VersionString = GetVersionString(app_Version, true, false);
+
+        public static string os_VersionString =
+            (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion", "ProductName", null) +
+            " " +
+            (Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit") +
+            ", Build " +
+            Environment.OSVersion.Version.Build.ToString();
+
+        public static string app_ApplicationName = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductName;
+        public static string app_CurrentWorkingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public static string app_BuiltDate = RetrieveLinkerTimestamp();
+        public static string app_Copyright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).LegalCopyright;
+        public static string app_Title = app_ApplicationName + " v" + app_VersionString;
 
         // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES
         public static string exceptionReport_senderEMailAddress = "ExceptionReport@EndpointStatusChecker";
@@ -72,15 +113,19 @@ namespace EndpointChecker
         // ENDPOINTS DEFINITIONS FILE NAME
         public static string endpointDefinitonsFile = "EndpointChecker_EndpointsList.txt";
 
-        // GOOGLE MAPS API KEY
+        // GOOGLE MAPS API KEY & ZOOM FACTOR
         public static string apiKey_GoogleMaps = string.Empty;
         public static int googleMapsZoomFactor = 0;
+
+        // SYSTEM MEMORY SIZE STRING
+        public static string systemMemorySize;
 
         // VIRUSTOTAL API KEY
         public static string apiKey_VirusTotal = string.Empty;
 
-        // HTTP CLIENT USER-AGENT STRING
+        // HTTP CLIENT USER-AGENT STRINGS
         public static string http_UserAgent = string.Empty;
+        public static string http_Sec_CH_UserAgent = string.Empty;
 
         // STRING FORMAT FOR 'NOT AVAILABLE' STATUS
         public static string status_NotAvailable = "N/A";
@@ -101,7 +146,7 @@ namespace EndpointChecker
         public static string endpointsList_InvalidDefs = "_ERRORS - Invalid Endpoint Definitions - Invalid URL format.txt";
 
         // DEFAULT STATUS EXPORT DIRECTORY AND FILENAMES
-        public static string statusExport_Directory = Program.assembly_CurrentWorkingDir;
+        public static string statusExport_Directory = app_CurrentWorkingDir;
         public static string statusExport_XLSFile = "EndpointsStatus.xlsx";
         public static string statusExport_JSONFile = "EndpointsStatus.json";
         public static string statusExport_XMLFile = "EndpointsStatus.xml";
@@ -125,26 +170,24 @@ namespace EndpointChecker
 
             // CHECK APPLICATION INSTANCE
             bool createdNew = true;
-            using (Mutex mainMutex = new Mutex(true, "Endpoint Checker Instance", out createdNew))
+            using (Mutex mainMutex = new Mutex(true, app_Title, out createdNew))
             {
                 if (!createdNew)
                 {
-                    // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, CREATE CHECK FILE
-                    try
-                    {
-                        if (File.Exists(Path.GetTempPath() + @"\EndpointCheckerInstanceRunning"))
-                        {
-                            File.Delete(Path.GetTempPath() + @"\EndpointCheckerInstanceRunning");
-                        }
+                    // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, RESTORE WINDOW
+                    IntPtr wdwIntPtr = FindWindow(null, app_Title);
 
-                        File.Create(Path.GetTempPath() + @"\EndpointCheckerInstanceRunning").Dispose();
-                    }
-                    catch
-                    {
-                    }
+                    Windowplacement placement = new Windowplacement();
+                    GetWindowPlacement(wdwIntPtr, ref placement);
+
+                    ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
+                                       
+                    SetForegroundWindow(wdwIntPtr);
                 }
-                else if (RequiredLibraryExists("ClosedXML.dll") &&
+                else if (RequiredLibraryExists("AGauge.dll") &&
+                         RequiredLibraryExists("ClosedXML.dll") &&
                          RequiredLibraryExists("DocumentFormat.OpenXml.dll") &&
+                         RequiredLibraryExists("DomainPublicSuffix.dll") &&
                          RequiredLibraryExists("ExcelNumberFormat.dll") &&
                          RequiredLibraryExists("FastMember.dll") &&
                          RequiredLibraryExists("HtmlAgilityPack.dll") &&
@@ -176,10 +219,10 @@ namespace EndpointChecker
 
         public static bool RequiredLibraryExists(string fileName)
         {
-            if (!File.Exists(Path.Combine(assembly_CurrentWorkingDir, fileName)))
+            if (!File.Exists(Path.Combine(app_CurrentWorkingDir, fileName)))
             {
                 MessageBox.Show("Required library \"" + fileName + "\" not found in current working directory \""
-                    + assembly_CurrentWorkingDir + "\".", "Endpoint Status Checker v" + assembly_VersionString,
+                    + app_CurrentWorkingDir + "\".", "Endpoint Status Checker v" + app_VersionString,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return false;
@@ -191,11 +234,11 @@ namespace EndpointChecker
         }
 
         // If assemblyName is not fully qualified, a random matching may be 
-        public static String QueryAssemblyInfo(String assemblyName)
+        public static string QueryAssemblyInfo(string assemblyName)
         {
             ASSEMBLY_INFO assembyInfo = new ASSEMBLY_INFO();
             assembyInfo.cchBuf = 512;
-            assembyInfo.currentAssemblyPath = new String('\0',
+            assembyInfo.currentAssemblyPath = new string('\0',
                 assembyInfo.cchBuf);
 
             IAssemblyCache assemblyCache = null;

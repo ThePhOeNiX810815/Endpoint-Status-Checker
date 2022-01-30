@@ -540,7 +540,7 @@ namespace EndpointChecker
             {
                 foreach (string netShare in _selectedEndpoint.NetworkShare)
                 {
-                    string[] valueStringArray = netShare.Split(new Char[]
+                    string[] valueStringArray = netShare.Split(new char[]
                                         {
                                             ']',
                                             '('
@@ -1089,7 +1089,7 @@ namespace EndpointChecker
 
             foreach (Property keywordTag in keywordTagList)
             {
-                foreach (string keywordItem in keywordTag.ItemValue.Split(new Char[] { ',', ';' }))
+                foreach (string keywordItem in keywordTag.ItemValue.Split(new char[] { ',', ';' }))
                 {
                     string keywordValue = keywordItem.TrimStart().TrimEnd();
 

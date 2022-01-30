@@ -31,7 +31,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml;
-using Microsoft.VisualBasic.Devices;
 using static EndpointChecker.Program;
 
 namespace EndpointChecker
@@ -97,9 +96,6 @@ namespace EndpointChecker
             [Description("Not Checked (Terminated)")]
             TERMINATED = 3
         };
-
-        // LATEST APPLICATION VERSION
-        public static Version appLatestVersion = assembly_Version;
 
         // FOR MAC ADDRESS RESOLVER FEATURE PURPOSE
         [DllImport("iphlpapi.dll", ExactSpelling = true)]
@@ -194,14 +190,11 @@ namespace EndpointChecker
             tray_Refresh.Image = ResizeImage(Resources.refresh, trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
 
             // SET VERSION / BUILD LABELS
-            Text = assembly_ApplicationName + " v" + assembly_VersionString;
+            Text = app_Title;
 
-            lbl_Copyright.Text = assembly_Copyright;
-            lbl_Version.Text += "Version: " + assembly_VersionString +
-                                ", Built: " + assembly_BuiltDate;
-
-            // SET TEMPORARY FOLDER FOR INSTANCE WATCHER
-            instanceWatcher.Path = Path.GetTempPath();
+            lbl_Copyright.Text = app_Copyright;
+            lbl_Version.Text += "Version: " + app_VersionString +
+                                ", Built: " + app_BuiltDate;
 
             // SET CONTROLS TOOLTIPS
             SetControlsTooltips();
@@ -210,7 +203,7 @@ namespace EndpointChecker
             CheckDotNetFWKInstalledVersion();
 
             // CHECK FOR LATEST VERSION [GITHUB]
-            BW_UpdateCheck.RunWorkerAsync();
+            CheckForUpdate();
 
             TIMER_StartupRefresh.Start();
         }
@@ -369,6 +362,69 @@ namespace EndpointChecker
             }
         }
 
+        public void CheckForUpdate()
+        {
+            NewBackgroundThread((Action)(() =>
+            {
+                try
+                {
+                    using (WebClient updateWC = new WebClient())
+                    {
+                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                        Version appLatestVersion = new Version(updateWC.DownloadString("https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/version.txt").TrimEnd());
+
+                        ThreadSafeInvoke((Action)(() =>
+                        {
+                            if (appLatestVersion > app_Version)
+                            {
+                                DialogResult updateDialogResult = MessageBox.Show(
+                                    "There is new version " +
+                                        GetVersionString(appLatestVersion, true, false) +
+                                        " avaliable." +
+                                        Environment.NewLine +
+                                        Environment.NewLine +
+                                        "Do you want to download latest release from GitHub ?"
+                                    , "New Version Avaliable",
+                                    MessageBoxButtons.YesNo,
+                                    MessageBoxIcon.Question);
+
+                                if (updateDialogResult == DialogResult.Yes)
+                                {
+                                    BrowseEndpoint(
+                                        "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases",
+                                        null,
+                                        null,
+                                        null);
+                                }
+                            }
+                            else if (appLatestVersion < app_Version)
+                            {
+                                MessageBox.Show(
+                                    "You are using unreleased application build." +
+                                    Environment.NewLine +
+                                    Environment.NewLine +
+                                    "Version " +
+                                    app_VersionString +
+                                    " from " +
+                                    app_BuiltDate +
+                                    "." +
+                                    Environment.NewLine +
+                                    Environment.NewLine +
+                                    "This build is intended for testing purposes only."
+                                    , "Unreleased Build",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+                            }
+                        }));
+                    }
+                }
+                catch
+                {
+                }
+            }));
+        }
+
         public void LoadConfiguration()
         {
             if (Settings.Default.HasSavedConfiguration)
@@ -400,6 +456,7 @@ namespace EndpointChecker
                     apiKey_GoogleMaps = Settings.Default.GoogleMaps_API_Key;
                     googleMapsZoomFactor = Settings.Default.GoogleMaps_API_ZoomFactor;
                     http_UserAgent = Settings.Default.Config_HTTP_UserAgent;
+                    http_Sec_CH_UserAgent = Settings.Default.Config_HTTP_Sec_CH_UserAgent;
                     http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
 
                     if (Directory.Exists(Settings.Default.Config_EndpointsStatusExportDirectory))
@@ -416,6 +473,8 @@ namespace EndpointChecker
                     {
                         appExecutable_Putty = Settings.Default.Config_Executable_Putty;
                     }
+
+                    SaveConfiguration();
                 }
                 catch
                 {
@@ -480,114 +539,117 @@ namespace EndpointChecker
 
             foreach (EndpointDefinition endpointItem in endpointsList)
             {
-                // CREATE ITEM
-                ListViewItem newitem = new ListViewItem(
-                    endpointItem.Name,
-                    GetStatusImageIndex(
-                        endpointItem.ResponseCode,
-                        endpointItem.PingRoundtripTime,
-                        endpointItem.ResponseMessage));
-
-                // ADD SUBITEMS
-                newitem.SubItems.Add(endpointItem.Protocol);
-                newitem.SubItems.Add(endpointItem.Port);
-
-                newitem.SubItems.Add(
-                    BuildUpConnectionString(
-                        endpointItem,
-                        new Uri(endpointItem.ResponseAddress).Scheme));
-
-                newitem.SubItems.Add(string.Join(", ", endpointItem.IPAddress));
-                newitem.SubItems.Add(endpointItem.ResponseTime);
-                newitem.SubItems.Add(endpointItem.ResponseCode);
-                newitem.SubItems.Add(endpointItem.ResponseMessage);
-                newitem.SubItems.Add(endpointItem.LastSeenOnline);
-                newitem.SubItems.Add(string.Join(", ", endpointItem.MACAddress));
-                newitem.SubItems.Add(endpointItem.PingRoundtripTime);
-                newitem.SubItems.Add(endpointItem.ServerID);
-                newitem.SubItems.Add(endpointItem.LoginName);
-                newitem.SubItems.Add(string.Join(", ", endpointItem.NetworkShare));
-                newitem.SubItems.Add(string.Join(", ", endpointItem.DNSName));
-                newitem.SubItems.Add(endpointItem.HTTPcontentType);
-                newitem.SubItems.Add(endpointItem.HTTPcontentLenght);
-                newitem.SubItems.Add(endpointItem.HTTPexpires);
-                newitem.SubItems.Add(endpointItem.HTTPetag);
-
-                // ADD SUBITEMS NAME
-                newitem.Name = "Endpoint Name";
-                newitem.SubItems[1].Name = "Protocol";
-                newitem.SubItems[2].Name = "Port";
-                newitem.SubItems[3].Name = "Response URL";
-                newitem.SubItems[4].Name = "IP Address";
-                newitem.SubItems[5].Name = "Response Time";
-                newitem.SubItems[6].Name = "Status Code";
-                newitem.SubItems[7].Name = "Status Message";
-                newitem.SubItems[8].Name = "Last Seen Online";
-                newitem.SubItems[9].Name = "MAC Address";
-                newitem.SubItems[10].Name = "Ping Roundtrip Time";
-                newitem.SubItems[11].Name = "Server";
-                newitem.SubItems[12].Name = "User Name";
-                newitem.SubItems[13].Name = "Network Shares";
-                newitem.SubItems[14].Name = "DNS Name";
-                newitem.SubItems[15].Name = "HTTP Content Type";
-                newitem.SubItems[16].Name = "HTTP Content Lenght";
-                newitem.SubItems[17].Name = "HTTP Expires";
-                newitem.SubItems[18].Name = "HTTP ETag";
-
-                // SET BACKGROUND COLOR BY STATUS CODE
-                newitem.BackColor = GetColorByStatus(endpointItem.ResponseCode, endpointItem.PingRoundtripTime, endpointItem.ResponseMessage);
-
-                // SET CHECKED [ENABLED] STATUS - DEPENDING ON REFRESH METHOD
-                if (refreshMethod == ListViewRefreshMethod.CurrentState)
+                if (endpointItem.Name.ToLower().Contains(tb_ListFilter.Text.ToLower()))
                 {
-                    newitem.Checked = !(endpointItem.ResponseMessage == GetEnumDescription(EndpointStatus.DISABLED));
-                }
-                else if (refreshMethod == ListViewRefreshMethod.CheckAll)
-                {
-                    newitem.Checked = true;
-                }
-                else if (refreshMethod == ListViewRefreshMethod.UncheckAll)
-                {
-                    newitem.Checked = false;
-                }
-                else if (refreshMethod == ListViewRefreshMethod.CheckAllPassed)
-                {
-                    if (newitem.ImageIndex == 0)
+                    // CREATE ITEM
+                    ListViewItem newitem = new ListViewItem(
+                        endpointItem.Name,
+                        GetStatusImageIndex(
+                            endpointItem.ResponseCode,
+                            endpointItem.PingRoundtripTime,
+                            endpointItem.ResponseMessage));
+
+                    // ADD SUBITEMS
+                    newitem.SubItems.Add(endpointItem.Protocol);
+                    newitem.SubItems.Add(endpointItem.Port);
+
+                    newitem.SubItems.Add(
+                        BuildUpConnectionString(
+                            endpointItem,
+                            new Uri(endpointItem.ResponseAddress).Scheme));
+
+                    newitem.SubItems.Add(string.Join(", ", endpointItem.IPAddress));
+                    newitem.SubItems.Add(endpointItem.ResponseTime);
+                    newitem.SubItems.Add(endpointItem.ResponseCode);
+                    newitem.SubItems.Add(endpointItem.ResponseMessage);
+                    newitem.SubItems.Add(endpointItem.LastSeenOnline);
+                    newitem.SubItems.Add(string.Join(", ", endpointItem.MACAddress));
+                    newitem.SubItems.Add(endpointItem.PingRoundtripTime);
+                    newitem.SubItems.Add(endpointItem.ServerID);
+                    newitem.SubItems.Add(endpointItem.LoginName);
+                    newitem.SubItems.Add(string.Join(", ", endpointItem.NetworkShare));
+                    newitem.SubItems.Add(string.Join(", ", endpointItem.DNSName));
+                    newitem.SubItems.Add(endpointItem.HTTPcontentType);
+                    newitem.SubItems.Add(endpointItem.HTTPcontentLenght);
+                    newitem.SubItems.Add(endpointItem.HTTPexpires);
+                    newitem.SubItems.Add(endpointItem.HTTPetag);
+
+                    // ADD SUBITEMS NAME
+                    newitem.Name = "Endpoint Name";
+                    newitem.SubItems[1].Name = "Protocol";
+                    newitem.SubItems[2].Name = "Port";
+                    newitem.SubItems[3].Name = "Response URL";
+                    newitem.SubItems[4].Name = "IP Address";
+                    newitem.SubItems[5].Name = "Response Time";
+                    newitem.SubItems[6].Name = "Status Code";
+                    newitem.SubItems[7].Name = "Status Message";
+                    newitem.SubItems[8].Name = "Last Seen Online";
+                    newitem.SubItems[9].Name = "MAC Address";
+                    newitem.SubItems[10].Name = "Ping Roundtrip Time";
+                    newitem.SubItems[11].Name = "Server";
+                    newitem.SubItems[12].Name = "User Name";
+                    newitem.SubItems[13].Name = "Network Shares";
+                    newitem.SubItems[14].Name = "DNS Name";
+                    newitem.SubItems[15].Name = "HTTP Content Type";
+                    newitem.SubItems[16].Name = "HTTP Content Lenght";
+                    newitem.SubItems[17].Name = "HTTP Expires";
+                    newitem.SubItems[18].Name = "HTTP ETag";
+
+                    // SET BACKGROUND COLOR BY STATUS CODE
+                    newitem.BackColor = GetColorByStatus(endpointItem.ResponseCode, endpointItem.PingRoundtripTime, endpointItem.ResponseMessage);
+
+                    // SET CHECKED [ENABLED] STATUS - DEPENDING ON REFRESH METHOD
+                    if (refreshMethod == ListViewRefreshMethod.CurrentState)
+                    {
+                        newitem.Checked = !(endpointItem.ResponseMessage == GetEnumDescription(EndpointStatus.DISABLED));
+                    }
+                    else if (refreshMethod == ListViewRefreshMethod.CheckAll)
                     {
                         newitem.Checked = true;
                     }
-                    else if (newitem.ImageIndex == 1 ||
-                             newitem.ImageIndex == 2 ||
-                             newitem.ImageIndex == 5)
+                    else if (refreshMethod == ListViewRefreshMethod.UncheckAll)
                     {
                         newitem.Checked = false;
                     }
-                }
-                else if (refreshMethod == ListViewRefreshMethod.CheckAllFailed)
-                {
-                    if (newitem.ImageIndex == 0)
+                    else if (refreshMethod == ListViewRefreshMethod.CheckAllPassed)
                     {
-                        newitem.Checked = false;
+                        if (newitem.ImageIndex == 0)
+                        {
+                            newitem.Checked = true;
+                        }
+                        else if (newitem.ImageIndex == 1 ||
+                                 newitem.ImageIndex == 2 ||
+                                 newitem.ImageIndex == 5)
+                        {
+                            newitem.Checked = false;
+                        }
                     }
-                    else if (newitem.ImageIndex == 1 ||
-                             newitem.ImageIndex == 2 ||
-                             newitem.ImageIndex == 5)
+                    else if (refreshMethod == ListViewRefreshMethod.CheckAllFailed)
                     {
-                        newitem.Checked = true;
+                        if (newitem.ImageIndex == 0)
+                        {
+                            newitem.Checked = false;
+                        }
+                        else if (newitem.ImageIndex == 1 ||
+                                 newitem.ImageIndex == 2 ||
+                                 newitem.ImageIndex == 5)
+                        {
+                            newitem.Checked = true;
+                        }
                     }
-                }
 
-                if (!newitem.Checked)
-                {
-                    endpointsList_Disabled.Add(newitem.Text);
-                }
+                    if (!newitem.Checked)
+                    {
+                        endpointsList_Disabled.Add(newitem.Text);
+                    }
 
-                lv_Endpoints.Items.Add(newitem);
+                    lv_Endpoints.Items.Add(newitem);
+                }
             }
 
             lv_Endpoints.EndUpdate();
 
-            if (lv_Endpoints.Items.Count > 0)
+            if (endpointsList.Count() > 0)
             {
                 try
                 {
@@ -621,9 +683,6 @@ namespace EndpointChecker
 
         public void bw_GetStatus_DoWork(object sender, DoWorkEventArgs e)
         {
-            // STORE PROGRESS START DATE/TIME [FOR 'EXPORT' AND 'AUTO ADJUST REFRESH INTERVAL' PURPOSES]
-            DateTime startDT_List = DateTime.Now;
-
             // WORKING VARIABLES
             ConcurrentBag<EndpointDefinition> updatedEndpointsList = new ConcurrentBag<EndpointDefinition>();
             bool allowAutoRedirect = cb_AllowAutoRedirect.Checked;
@@ -640,17 +699,27 @@ namespace EndpointChecker
             int ftpRequestTimeout = (int)num_FTPRequestTimeout.Value * 1000;
             int endpointsCount_Enabled = endpointsList.Count - endpointsList_Disabled.Count;
             int endpointsCount_Current = 0;
-            string sslSecurityProtocols = string.Empty;
 
-            // SERVICE POINT MANAGER SETTINGS
-            ServicePointManager.Expect100Continue = false;
+            // FLUSH LOCAL DNS CACHE
+            DnsFlushResolverCache();
 
+            if (validateSSLCertificate)
+            {   // VALIDATE SERVER CERTIFICATE [HTTPS]
+                ServicePointManager.ServerCertificateValidationCallback = null;
+            }
+            else
+            {
+                // BYPASS SERVER CERTIFICATE VALIDATION
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            }
+
+            // ALLOWED SECURITY PROTOCOLS
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)SecurityProtocol_Type.TLS_12 |
                                                    (SecurityProtocolType)SecurityProtocol_Type.TLS_11 |
                                                    (SecurityProtocolType)SecurityProtocol_Type.TLS_10 |
                                                    (SecurityProtocolType)SecurityProtocol_Type.SSL_30;
 
-            sslSecurityProtocols = "SSL 3.0, TLS 1.0, TLS 1.1, TLS 1.2";
+            string sslSecurityProtocols = "SSL 3.0, TLS 1.0, TLS 1.1, TLS 1.2";
 
             // ADJUST THREADS COUNT SETTING BY ENABLED ITEMS COUNT [IF LESS]
             if (endpointsCount_Enabled > 0 &&
@@ -659,8 +728,8 @@ namespace EndpointChecker
                 threadsCount = endpointsCount_Enabled;
             }
 
-            // FLUSH LOCAL DNS CACHE
-            DnsFlushResolverCache();
+            // STORE PROGRESS START DATE/TIME [FOR 'EXPORT' AND 'AUTO ADJUST REFRESH INTERVAL' PURPOSES]
+            DateTime startDT_List = DateTime.Now;
 
             // EXECUTE PARALLEL PROCESS 
             Parallel.ForEach(
@@ -716,7 +785,7 @@ namespace EndpointChecker
                     bool endpointEnabled = !endpointsList_Disabled.Contains(endpoint.Name);
 
                     if (endpointEnabled &&
-                        !bw_GetStatus.CancellationPending)
+                        !BW_GetStatus.CancellationPending)
                     {
                         // INCREMENT PROGRESS COUNTER
                         Interlocked.Increment(ref endpointsCount_Current);
@@ -728,7 +797,7 @@ namespace EndpointChecker
                         Stopwatch sw_ItemProgress = new Stopwatch();
 
                         if (validationMethod == ValidationMethod.Protocol &&
-                            !bw_GetStatus.CancellationPending &&
+                            !BW_GetStatus.CancellationPending &&
                             (endpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
                              endpoint.Protocol.ToLower() == Uri.UriSchemeHttps))
                         {
@@ -777,26 +846,16 @@ namespace EndpointChecker
                                 requestHeadersCollection.Add("Path", endpointURI.AbsolutePath);
                                 requestHeadersCollection.Add("Scheme", endpointURI.Scheme);
 
-                                requestHeadersCollection.Add("sec-fetch-user", "?1");
-                                requestHeadersCollection.Add("sec-fetch-site", "same-origin");
-                                requestHeadersCollection.Add("sec-fetch-mode", "navigate");
-                                requestHeadersCollection.Add("sec-fetch-dest", "empty");
+                                requestHeadersCollection.Add("Sec-Fetch-User", "?1");
+                                requestHeadersCollection.Add("Sec-Fetch-Site", "same-origin");
+                                requestHeadersCollection.Add("Sec-Fetch-Node", "navigate");
+                                requestHeadersCollection.Add("Sec-Fetch-Dest", "empty");
 
-                                requestHeadersCollection.Add("sec-ch-ua", "\"(Not(A: Brand\";v=\"8\", \"Chromium\";v=\"98\", \"Google Chrome\";v=\"98\"");
-                                requestHeadersCollection.Add("sec-ch-ua-mobile", "?0");
-                                requestHeadersCollection.Add("sec-ch-ua-platform", "\"Windows\"");
+                                requestHeadersCollection.Add("Sec-CH-UA", http_Sec_CH_UserAgent);
+                                requestHeadersCollection.Add("Sec-CH-UA-Mobile", "?0");
+                                requestHeadersCollection.Add("Sec-CH-UA-Platform", "\"Windows\"");
 
                                 httpWebRequest.Headers.Add(requestHeadersCollection);
-
-                                if (validateSSLCertificate)
-                                {   // VALIDATE SERVER CERTIFICATE [HTTPS]
-                                    httpWebRequest.ServerCertificateValidationCallback = null;
-                                }
-                                else
-                                {
-                                    // BYPASS SERVER CERTIFICATE VALIDATION
-                                    httpWebRequest.ServerCertificateValidationCallback = delegate { return true; };
-                                }
 
                                 // SET CREDENTIALS [IF SPECIFIED]
                                 string loginName = string.Empty;
@@ -856,7 +915,7 @@ namespace EndpointChecker
                                 // SERVER IDENTIFICATION
                                 if (!string.IsNullOrEmpty(httpWebResponse.Server))
                                 {
-                                    endpoint.ServerID = Regex.Replace(httpWebResponse.Server, "<.*?>", String.Empty);
+                                    endpoint.ServerID = Regex.Replace(httpWebResponse.Server, "<.*?>", string.Empty);
                                 }
 
                                 // STATUS MESSAGE
@@ -1071,7 +1130,7 @@ namespace EndpointChecker
                             }
                         }
                         else if (validationMethod == ValidationMethod.Protocol &&
-                                 !bw_GetStatus.CancellationPending &&
+                                 !BW_GetStatus.CancellationPending &&
                                  endpoint.Protocol.ToLower() == Uri.UriSchemeFtp)
                         {
                             // FTP PROTOCOL SCHEME
@@ -1159,12 +1218,12 @@ namespace EndpointChecker
 
                         // GET ITEM CHECK DURATION TIME [FOR 'EXPORT' PURPOSE]
                         if (validationMethod == ValidationMethod.Protocol &&
-                            !bw_GetStatus.CancellationPending)
+                            !BW_GetStatus.CancellationPending)
                         {
                             durationTime_Item = sw_ItemProgress.ElapsedMilliseconds.ToString() + " ms";
                         }
 
-                        if (!bw_GetStatus.CancellationPending)
+                        if (!BW_GetStatus.CancellationPending)
                         {
                             try
                             {
@@ -1248,7 +1307,7 @@ namespace EndpointChecker
                             }
                         }
 
-                        if (!bw_GetStatus.CancellationPending)
+                        if (!BW_GetStatus.CancellationPending)
                         {
                             // PING HOST
                             try
@@ -1284,7 +1343,7 @@ namespace EndpointChecker
                     endpoint.ResponseTime = durationTime_Item;
 
                     // CHECK 'TERMINATED' STATUS
-                    if (bw_GetStatus.CancellationPending)
+                    if (BW_GetStatus.CancellationPending)
                     {
                         endpoint.ResponseCode = status_NotAvailable;
                         endpoint.ResponseMessage = GetEnumDescription(EndpointStatus.TERMINATED);
@@ -1332,7 +1391,7 @@ namespace EndpointChecker
             SaveLastSeenOnlineList();
 
             // SORT ENDPOINTS LIST BY ENDPOINT NAME
-            endpointsList.Sort((s, t) => String.Compare(s.Name, t.Name));
+            endpointsList.Sort((s, t) => string.Compare(s.Name, t.Name));
 
             // EXPORT UPDATED LIST
             EndpointsStatusExport(
@@ -1720,7 +1779,7 @@ namespace EndpointChecker
 
             if (!string.IsNullOrEmpty(valueString))
             {
-                string[] valueStringArray = valueString.Split(new Char[]
+                string[] valueStringArray = valueString.Split(new char[]
                                         {
                                             ' ',
                                             ';',
@@ -1771,7 +1830,7 @@ namespace EndpointChecker
 
             if (!string.IsNullOrEmpty(valueString.TrimStart().TrimEnd()))
             {
-                string[] valueStringArray = valueString.Split(new Char[]
+                string[] valueStringArray = valueString.Split(new char[]
                                         {
                                             ' ',
                                             ';',
@@ -2036,7 +2095,7 @@ namespace EndpointChecker
                 int threadCountUsed = threadCountMax_WT - threadCountAvailable_WT;
 
                 // SET STATUS INFORMATION
-                if (bw_GetStatus.CancellationPending)
+                if (BW_GetStatus.CancellationPending)
                 {
                     // TERMINATING
                     statusColor = Color.Red;
@@ -2065,7 +2124,7 @@ namespace EndpointChecker
                 {
                     var taskBarInstance = Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance;
 
-                    if (bw_GetStatus.CancellationPending ||
+                    if (BW_GetStatus.CancellationPending ||
                         onClose)
                     {
                         taskBarInstance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.Paused);
@@ -2098,7 +2157,7 @@ namespace EndpointChecker
 
                 SetControls(true, true);
 
-                bw_GetStatus.RunWorkerAsync();
+                BW_GetStatus.RunWorkerAsync();
             }
         }
 
@@ -2174,6 +2233,24 @@ namespace EndpointChecker
             lbl_Refresh.Enabled = !inProgress && !locked;
             lbl_BrowseExportDir.Enabled = !inProgress && !locked;
             lbl_SpeedTest.Enabled = !inProgress && !locked;
+
+            lbl_ListFilter.Enabled = !inProgress && !locked && endpointsList.Count > 0;
+            tb_ListFilter.Enabled = !inProgress && !locked && endpointsList.Count > 0;
+
+            pb_ListFilterClear.Visible = !inProgress && !locked && endpointsList.Count > 0 && !string.IsNullOrEmpty(tb_ListFilter.Text);
+
+            if (string.IsNullOrEmpty(tb_ListFilter.Text))
+            {
+                tb_ListFilter.BackColor = Color.LightGray;
+            }
+            else if (lv_Endpoints.Items.Count > 0)
+            {
+                tb_ListFilter.BackColor = Color.Honeydew;
+            }
+            else
+            {
+                tb_ListFilter.BackColor = Color.MistyRose;
+            }                
         }
 
         public static int GetStatusImageIndex(string statusCode, string pingTime, string statusMessage)
@@ -2305,7 +2382,7 @@ namespace EndpointChecker
                 List<string> itemsWarning = new List<string>();
                 List<string> itemsError = new List<string>();
 
-                if (!bw_GetStatus.IsBusy)
+                if (!BW_GetStatus.IsBusy)
                 {
                     foreach (ListViewItem item in lv_Endpoints.Items)
                     {
@@ -2509,7 +2586,7 @@ namespace EndpointChecker
 
         public void tray_Refresh_Click(object sender, EventArgs e)
         {
-            if (!bw_GetStatus.IsBusy)
+            if (!BW_GetStatus.IsBusy)
             {
                 btn_Refresh_Click(this, null);
             }
@@ -2847,9 +2924,9 @@ namespace EndpointChecker
 
                         // ADD SUMMARY WORKSHEET
                         endpointsStatusExport_Summary_WorkSheet.Cell("A1").SetValue<string>("Endpoint Checker Application");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").SetValue<string>("Version " + assembly_VersionString + " (built " + assembly_BuiltDate + ")");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").SetValue<string>("Version " + app_VersionString + " (built " + app_BuiltDate + ")");
                         endpointsStatusExport_Summary_WorkSheet.Cell("A2").SetValue<string>("Operating System");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B2").SetValue<string>(new ComputerInfo().OSVersion);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B2").SetValue<string>(os_VersionString);
                         endpointsStatusExport_Summary_WorkSheet.Cell("A3").SetValue<string>("Latest Installed .NET FrameWork Runtime");
                         endpointsStatusExport_Summary_WorkSheet.Cell("B3").SetValue<string>(dotNetFramework_LatestInstalledVersion.ToString()
                             .Replace("v", "Version ").Replace("_", ".").Replace("x", " or later"));
@@ -3274,7 +3351,7 @@ namespace EndpointChecker
             lbl_Terminate.Enabled = false;
 
             // TERMINATE WORKER
-            bw_GetStatus.CancelAsync();
+            BW_GetStatus.CancelAsync();
 
             // DISABLE AUTOMATIC / CONTINUOUS CHECKING
             cb_AutomaticRefresh.Checked = false;
@@ -3291,7 +3368,7 @@ namespace EndpointChecker
             onClose = true;
 
             // DISABLE FORM CLOSE WHILE ASYNC WORKER IS IN PROGRESS
-            if (bw_GetStatus.IsBusy)
+            if (BW_GetStatus.IsBusy)
             {
                 // CANCEL ACTUAL CLOSE EVENT
                 e.Cancel = true;
@@ -3317,22 +3394,6 @@ namespace EndpointChecker
         public void trayIcon_BalloonTipShown(object sender, EventArgs e)
         {
             balloonVisible = true;
-        }
-
-        public void instanceWatcher_Created(object sender, FileSystemEventArgs e)
-        {
-            if (e.Name == "EndpointCheckerInstanceRunning")
-            {
-                if (!Visible)
-                {
-                    RestoreFromTray();
-                }
-
-                if (WindowState == FormWindowState.Minimized)
-                {
-                    WindowState = FormWindowState.Normal;
-                }
-            }
         }
 
         public void cb_ResolveNetworkShares_CheckedChanged(object sender, EventArgs e)
@@ -3687,6 +3748,354 @@ namespace EndpointChecker
             }
         }
 
+        public void LoadEndpointReferences()
+        {
+            NewBackgroundThread((Action)(() =>
+            {
+                // CLEAR ENDPOINTS CHECK LIST
+                endpointsList.Clear();
+
+                // CHECK DEFINITIONS FILE EXISTENCE
+                if (File.Exists(endpointDefinitonsFile))
+                {
+                    List<string> endpointDuplicityList = new List<string>();
+                    List<string> invalidURLList = new List<string>();
+
+                    // READ DEFINITIONS FILE LINE BY LINE
+                    int lineNumber = 1;
+                    string line;
+                    StreamReader file = new StreamReader(endpointDefinitonsFile, Encoding.Default, true);
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        // REMOVE SPACES FROM LINE
+                        line = line.Trim();
+
+                        // CHECK LINE
+                        if (!string.IsNullOrEmpty(line) && line != "|")
+                        {
+                            // CHECK ITEMS COUNT LIMIT
+                            if (lineNumber > Settings.Default.Config_MaximumEndpointReferencesCount)
+                            {
+                                MessageBox.Show(
+                                  "Endpoints definitions file \"" + endpointDefinitonsFile +
+                                  "\" contains more than " +
+                                  Settings.Default.Config_MaximumEndpointReferencesCount +
+                                  " items." +
+                                  Environment.NewLine + Environment.NewLine +
+                                  "Rest of definitions will be ignored",
+                                  "Maximum Endpoints limit reached",
+                                  MessageBoxButtons.OK,
+                                  MessageBoxIcon.Warning);
+
+                                break;
+                            }
+
+                            // SET PROGRESS STATUS INFORMATION
+                            SetProgressStatus(0, 0,
+                                "Loading Endpoints References [" + lineNumber + "] ...", Color.Blue);
+
+                            // CHECK DEFINITION FOR NAME PARAMETER
+                            if (!line.Contains("|"))
+                            {
+                                // CREATE DEFAULT DEFINITION WITH DEFAULT NAME [ENDPOINT URL]
+                                line = line + "|" + line;
+                            }
+
+                            // CREATE ENDPOINT STATUS DEFINITION
+                            EndpointDefinition endpointStatusDefiniton = new EndpointDefinition()
+                            {
+                                Name = line.Split('|')[0].TrimEnd('/'),
+                                Protocol = status_NotAvailable,
+                                Port = status_NotAvailable,
+                                Address = line.Split('|')[1].TrimEnd('/'),
+                                ResponseAddress = line.Split('|')[1].TrimEnd('/'),
+                                IPAddress = new string[] { status_NotAvailable },
+                                ResponseTime = status_NotAvailable,
+                                ResponseCode = status_NotAvailable,
+                                ResponseMessage = status_NotAvailable,
+                                LastSeenOnline = status_NotAvailable,
+                                PingRoundtripTime = status_NotAvailable,
+                                ServerID = status_NotAvailable,
+                                LoginName = status_NotAvailable,
+                                LoginPass = status_NotAvailable,
+                                NetworkShare = new string[] { status_NotAvailable },
+                                DNSName = new string[] { status_NotAvailable },
+                                HTMLMetaInfo = new PropertyItems() { PropertyItem = new List<Property>() },
+                                HTTPautoRedirects = status_NotAvailable,
+                                HTTPcontentType = status_NotAvailable,
+                                HTTPencoding = null,
+                                HTMLdefaultStreamEncoding = null,
+                                HTMLencoding = null,
+                                HTMLTitle = status_NotAvailable,
+                                HTMLAuthor = status_NotAvailable,
+                                HTMLPageLinks = new PropertyItems() { PropertyItem = new List<Property>() },
+                                HTMLDescription = status_NotAvailable,
+                                HTMLContentLanguage = status_NotAvailable,
+                                HTMLThemeColor = Color.Empty,
+                                HTTPcontentLenght = status_NotAvailable,
+                                HTTPexpires = status_NotAvailable,
+                                HTTPetag = status_NotAvailable,
+                                HTTPRequestHeaders = new PropertyItems() { PropertyItem = new List<Property>() },
+                                HTTPResponseHeaders = new PropertyItems() { PropertyItem = new List<Property>() },
+                                MACAddress = new string[] { status_NotAvailable },
+                                FTPBannerMessage = status_NotAvailable,
+                                FTPWelcomeMessage = status_NotAvailable,
+                                FTPExitMessage = status_NotAvailable,
+                                FTPStatusDescription = status_NotAvailable,
+                                SSLCertificateProperties = new PropertyItems() { PropertyItem = new List<Property>() }
+                            };
+
+                            bool duplicityDefinition = false;
+                            bool invalidURL = false;
+
+                            // CHECK URL
+                            if (!endpointStatusDefiniton.Address.ToLower().Contains(Uri.SchemeDelimiter))
+                            {
+                                // URL FORMAT IS INVALID, ADD TO ERRORS LIST [MISSING PROTOCOL PREFIX]
+                                invalidURL = true;
+                                invalidURLList.Add(
+                                        "Line:  " + lineNumber +
+                                        Environment.NewLine +
+                                        "Endpoint Name:  " + endpointStatusDefiniton.Name +
+                                        Environment.NewLine +
+                                        "Endpoint Address:  " + endpointStatusDefiniton.Address +
+                                        Environment.NewLine +
+                                        "Missing protocol prefix" +
+                                        Environment.NewLine +
+                                        Uri.UriSchemeHttp.ToUpper() + ", " +
+                                        Uri.UriSchemeHttps.ToUpper() + " and " +
+                                        Uri.UriSchemeFtp.ToUpper() + " protocols are supported" +
+                                        Environment.NewLine +
+                                        Environment.NewLine
+                                    );
+                            }
+                            else
+                            {
+                                // GET CREDENTIALS FROM URL [IF PRESENT]
+                                if (endpointStatusDefiniton.Address.Contains("@"))
+                                {
+                                    string[] credentials = endpointStatusDefiniton.Address.Split('@')[0].Split('/')[2].Split(':');
+                                    if (credentials.Length == 2)
+                                    {
+                                        // EXTRACT
+                                        endpointStatusDefiniton.LoginName = credentials[0];
+                                        endpointStatusDefiniton.LoginPass = credentials[1];
+
+                                        // REMOVE CREDENTIALS FROM ENDPOINT NAME
+                                        // ADD USERNAME IDENTIFIER
+                                        endpointStatusDefiniton.Name = endpointStatusDefiniton.Name
+                                            .Replace(
+                                            endpointStatusDefiniton.LoginName + ":" +
+                                            endpointStatusDefiniton.LoginPass + "@", string.Empty) +
+                                            " [as '" + endpointStatusDefiniton.LoginName + "']";
+
+                                        // REMOVE CREDENTIALS FROM ENDPOINT ADDRESS
+                                        endpointStatusDefiniton.Address = endpointStatusDefiniton.Address
+                                            .Replace(endpointStatusDefiniton.LoginName + ":" +
+                                            endpointStatusDefiniton.LoginPass + "@", string.Empty);
+                                    }
+                                }
+
+                                try
+                                {
+                                    // CHECK URL FORMAT [TRY TO CREATE ENDPOINT URI]
+                                    Uri endpointURI = new Uri(endpointStatusDefiniton.Address, UriKind.Absolute);
+
+                                    // GET URI ATTRIBUTES
+                                    endpointStatusDefiniton.Port = endpointURI.Port.ToString();
+                                    endpointStatusDefiniton.Protocol = endpointURI.Scheme.ToUpper();
+
+                                    // CHECK SUPPORTED PROTOCOLS TYPES
+                                    if (endpointStatusDefiniton.Protocol != Uri.UriSchemeHttp.ToUpper() &&
+                                        endpointStatusDefiniton.Protocol != Uri.UriSchemeHttps.ToUpper() &&
+                                        endpointStatusDefiniton.Protocol != Uri.UriSchemeFtp.ToUpper())
+                                    {
+                                        // UNSUPPORTED PROTOCOL TYPE, ADD TO ERRORS LIST [UNSUPPORTED PROTOCOL TYPE]
+                                        invalidURL = true;
+                                        invalidURLList.Add(
+                                            "Line:  " + lineNumber +
+                                            Environment.NewLine +
+                                            "Endpoint Name:  " + endpointStatusDefiniton.Name +
+                                            Environment.NewLine +
+                                            "Endpoint Address:  " + endpointStatusDefiniton.Address +
+                                            Environment.NewLine +
+                                            "Unsupported protocol type: " + endpointStatusDefiniton.Protocol +
+                                            Environment.NewLine +
+                                            Uri.UriSchemeHttp.ToUpper() + ", " +
+                                            Uri.UriSchemeHttps.ToUpper() + " and " +
+                                            Uri.UriSchemeFtp.ToUpper() + " protocols are supported" +
+                                            Environment.NewLine +
+                                            Environment.NewLine
+                                        );
+                                    }
+                                }
+                                catch (Exception exception)
+                                {
+                                    // URL FORMAT IS INVALID, ADD TO ERRORS LIST [INVALID URL FORMAT]
+                                    invalidURL = true;
+                                    invalidURLList.Add(
+                                            "Line:  " + lineNumber +
+                                            Environment.NewLine +
+                                            "Endpoint Name:  " + endpointStatusDefiniton.Name +
+                                            Environment.NewLine +
+                                            "Endpoint Address:  " + endpointStatusDefiniton.Address +
+                                            Environment.NewLine +
+                                            "URL in invalid format" +
+                                            Environment.NewLine +
+                                            exception.Message +
+                                            Environment.NewLine +
+                                            Environment.NewLine
+                                        );
+                                }
+                            }
+
+                            foreach (EndpointDefinition endpointDefinition in endpointsList)
+                            {
+                                // CHECK ALL EXISTING DEFINITIONS FOR NAME DUPLICITY
+                                if (endpointDefinition.Name == endpointStatusDefiniton.Name)
+                                {
+                                    // DUPLICITY EXISTS, ADD TO ERRORS LIST [DUPLICITIES]
+                                    duplicityDefinition = true;
+                                    endpointDuplicityList.Add(
+                                        "Line:  " + lineNumber +
+                                        Environment.NewLine +
+                                        "Endpoint Name:  " + endpointStatusDefiniton.Name +
+                                        Environment.NewLine +
+                                        "Endpoint Address:  " + endpointStatusDefiniton.Address +
+                                        Environment.NewLine +
+                                        Environment.NewLine
+                                    );
+                                }
+                            }
+
+                            if (!duplicityDefinition &&
+                                !invalidURL)
+                            {
+                                // RESTORE 'LAST SEEN ONLINE' VALUE
+                                if (endpointsList_LastSeenOnline.ContainsKey(endpointStatusDefiniton.Name))
+                                {
+                                    endpointStatusDefiniton.LastSeenOnline = endpointsList_LastSeenOnline[endpointStatusDefiniton.Name];
+                                }
+                                else
+                                {
+                                    endpointsList_LastSeenOnline.Add(endpointStatusDefiniton.Name, endpointStatusDefiniton.LastSeenOnline);
+                                }
+
+                                // ENDPOINT DEFINITION IS VALID, ADD TO ENDPOINTS CHECK LIST
+                                endpointsList.Add(endpointStatusDefiniton);
+                            }
+                        }
+
+                        lineNumber++;
+                    }
+
+                    // SET PROGRESS STATUS INFORMATION
+                    SetProgressStatus(0, 0, endpointsList.Count + " Valid Endpoints References Loaded", Color.Gray);
+
+                    file.Close();
+
+                    // SORT ENDPOINTS LIST BY ENDPOINT NAME
+                    endpointsList.Sort((s, t) => string.Compare(s.Name, t.Name));
+
+                    // CHECK DUPLICITY LIST
+                    if (endpointDuplicityList.Count > 0)
+                    {
+                        // CREATE AND SHOW MESSAGEBOX 
+                        string duplicityMessage = "Endpoints definitions file \"" +
+                        endpointDefinitonsFile + "\" contains " +
+                        endpointDuplicityList.Count + " items with duplicity names.";
+                        duplicityMessage += Environment.NewLine;
+                        duplicityMessage += Environment.NewLine;
+                        duplicityMessage += "This definitions will be ignored because Endpoint Name must be unique identifier.";
+                        duplicityMessage += Environment.NewLine;
+                        duplicityMessage += Environment.NewLine;
+
+                        if (endpointDuplicityList.Count <= 5)
+                        {
+                            // LIST AFFECTED DEFINITIONS ITEMS
+                            duplicityMessage += string.Join(string.Empty, endpointDuplicityList.ToArray());
+                        }
+                        else
+                        {
+                            try
+                            {
+                                using (StreamWriter sw = new StreamWriter(endpointsList_Duplicities))
+                                {
+                                    // WRITE AFFECTED DEFINITIONS ITEMS
+                                    sw.WriteLine(duplicityMessage + string.Join(string.Empty, endpointDuplicityList.ToArray()));
+                                }
+                            }
+                            catch
+                            {
+                            }
+
+                            duplicityMessage += "See \"" + endpointsList_Duplicities + "\" for details.";
+                        }
+
+                        MessageBox.Show(
+                                duplicityMessage,
+                                "Invalid endpoint definitions - Name duplicity",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+                    }
+
+                    // CHECK INVALID FORMAT LIST
+                    if (invalidURLList.Count > 0)
+                    {
+                        // CREATE AND SHOW MESSAGEBOX, LIST AFFECTED DEFINITIONS ITEMS
+                        string invalidURLMessage = "Endpoints definitions file \"" +
+                        endpointDefinitonsFile + "\" contains " +
+                        invalidURLList.Count + " items with URL in invalid format.";
+                        invalidURLMessage += Environment.NewLine;
+                        invalidURLMessage += Environment.NewLine;
+                        invalidURLMessage += "This definitions will be ignored.";
+                        invalidURLMessage += Environment.NewLine;
+                        invalidURLMessage += Environment.NewLine;
+
+                        if (invalidURLList.Count <= 5)
+                        {
+                            // LIST AFFECTED DEFINITIONS ITEMS
+                            invalidURLMessage += string.Join(string.Empty, invalidURLList.ToArray());
+                        }
+                        else
+                        {
+                            try
+                            {
+                                using (StreamWriter sw = new StreamWriter(endpointsList_InvalidDefs))
+                                {
+                                    // WRITE AFFECTED DEFINITIONS ITEMS
+                                    sw.WriteLine(
+                                        invalidURLMessage +
+                                        string.Join(string.Empty, invalidURLList.ToArray()));
+                                }
+                            }
+                            catch
+                            {
+                            }
+
+                            invalidURLMessage += "See \"" + endpointsList_InvalidDefs + "\" for details.";
+                        }
+
+                        MessageBox.Show(invalidURLMessage, "Invalid endpoint definitions - Invalid URL format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else
+                {
+                    SetControls(false, true);
+
+                    lbl_NoEndpoints.ForeColor = Color.Red;
+                    lbl_NoEndpoints.Text = "Endpoints definitions file \"" + endpointDefinitonsFile + "\" doesn't exists in \"" + Directory.GetCurrentDirectory() + "\".";
+                }
+
+                RestoreDisabledItemsList();
+
+                ThreadSafeInvoke((Action)(() =>
+                {
+                    btn_Refresh_Click(this, null);
+                }));
+            }));
+        }
+
         public void SaveLastSeenOnlineList()
         {
             try
@@ -3718,7 +4127,7 @@ namespace EndpointChecker
 
         public void SaveDisabledItemsList()
         {
-            Settings.Default.DisabledItemsList = String.Join("|", endpointsList_Disabled.Select(i => i).ToArray());
+            Settings.Default.DisabledItemsList = string.Join("|", endpointsList_Disabled.Select(i => i).ToArray());
             Settings.Default.Save();
         }
 
@@ -3761,7 +4170,7 @@ namespace EndpointChecker
             RestoreLastSeenOnlineList();
 
             // LOAD ENDPOINT REFERENCES
-            bw_LoadEndpointReferences.RunWorkerAsync();
+            LoadEndpointReferences();
         }
 
         public void SetTrayIcon(int firstFrameIndex, int lastFrameIndex)
@@ -3835,350 +4244,6 @@ namespace EndpointChecker
                 {
                 }
             }
-        }
-
-        public void bw_LoadEndpointReferences_DoWork(object sender, DoWorkEventArgs e)
-        {
-            // CLEAR ENDPOINTS CHECK LIST
-            endpointsList.Clear();
-
-            // CHECK DEFINITIONS FILE EXISTENCE
-            if (File.Exists(endpointDefinitonsFile))
-            {
-                List<string> endpointDuplicityList = new List<string>();
-                List<string> invalidURLList = new List<string>();
-
-                // READ DEFINITIONS FILE LINE BY LINE
-                int lineNumber = 1;
-                string line;
-                StreamReader file = new StreamReader(endpointDefinitonsFile, Encoding.Default, true);
-                while ((line = file.ReadLine()) != null)
-                {
-                    // REMOVE SPACES FROM LINE
-                    line = line.Trim();
-
-                    // CHECK LINE
-                    if (!string.IsNullOrEmpty(line) && line != "|")
-                    {
-                        // CHECK ITEMS COUNT LIMIT
-                        if (lineNumber > Settings.Default.Config_MaximumEndpointReferencesCount)
-                        {
-                            MessageBox.Show(
-                              "Endpoints definitions file \"" + endpointDefinitonsFile +
-                              "\" contains more than " +
-                              Settings.Default.Config_MaximumEndpointReferencesCount +
-                              " items." +
-                              Environment.NewLine + Environment.NewLine +
-                              "Rest of definitions will be ignored",
-                              "Maximum Endpoints limit reached",
-                              MessageBoxButtons.OK,
-                              MessageBoxIcon.Warning);
-
-                            break;
-                        }
-
-                        // SET PROGRESS STATUS INFORMATION
-                        SetProgressStatus(0, 0,
-                            "Loading Endpoints References [" + lineNumber + "] ...", Color.Blue);
-
-                        // CHECK DEFINITION FOR NAME PARAMETER
-                        if (!line.Contains("|"))
-                        {
-                            // CREATE DEFAULT DEFINITION WITH DEFAULT NAME [ENDPOINT URL]
-                            line = line + "|" + line;
-                        }
-
-                        // CREATE ENDPOINT STATUS DEFINITION
-                        EndpointDefinition endpointStatusDefiniton = new EndpointDefinition()
-                        {
-                            Name = line.Split('|')[0].TrimEnd('/'),
-                            Protocol = status_NotAvailable,
-                            Port = status_NotAvailable,
-                            Address = line.Split('|')[1].TrimEnd('/'),
-                            ResponseAddress = line.Split('|')[1].TrimEnd('/'),
-                            IPAddress = new string[] { status_NotAvailable },
-                            ResponseTime = status_NotAvailable,
-                            ResponseCode = status_NotAvailable,
-                            ResponseMessage = status_NotAvailable,
-                            LastSeenOnline = status_NotAvailable,
-                            PingRoundtripTime = status_NotAvailable,
-                            ServerID = status_NotAvailable,
-                            LoginName = status_NotAvailable,
-                            LoginPass = status_NotAvailable,
-                            NetworkShare = new string[] { status_NotAvailable },
-                            DNSName = new string[] { status_NotAvailable },
-                            HTMLMetaInfo = new PropertyItems() { PropertyItem = new List<Property>() },
-                            HTTPautoRedirects = status_NotAvailable,
-                            HTTPcontentType = status_NotAvailable,
-                            HTTPencoding = null,
-                            HTMLdefaultStreamEncoding = null,
-                            HTMLencoding = null,
-                            HTMLTitle = status_NotAvailable,
-                            HTMLAuthor = status_NotAvailable,
-                            HTMLPageLinks = new PropertyItems() { PropertyItem = new List<Property>() },
-                            HTMLDescription = status_NotAvailable,
-                            HTMLContentLanguage = status_NotAvailable,
-                            HTMLThemeColor = Color.Empty,
-                            HTTPcontentLenght = status_NotAvailable,
-                            HTTPexpires = status_NotAvailable,
-                            HTTPetag = status_NotAvailable,
-                            HTTPRequestHeaders = new PropertyItems() { PropertyItem = new List<Property>() },
-                            HTTPResponseHeaders = new PropertyItems() { PropertyItem = new List<Property>() },
-                            MACAddress = new string[] { status_NotAvailable },
-                            FTPBannerMessage = status_NotAvailable,
-                            FTPWelcomeMessage = status_NotAvailable,
-                            FTPExitMessage = status_NotAvailable,
-                            FTPStatusDescription = status_NotAvailable,
-                            SSLCertificateProperties = new PropertyItems() { PropertyItem = new List<Property>() }
-                        };
-
-                        bool duplicityDefinition = false;
-                        bool invalidURL = false;
-
-                        // CHECK URL
-                        if (!endpointStatusDefiniton.Address.ToLower().Contains(Uri.SchemeDelimiter))
-                        {
-                            // URL FORMAT IS INVALID, ADD TO ERRORS LIST [MISSING PROTOCOL PREFIX]
-                            invalidURL = true;
-                            invalidURLList.Add(
-                                    "Line:  " + lineNumber +
-                                    Environment.NewLine +
-                                    "Endpoint Name:  " + endpointStatusDefiniton.Name +
-                                    Environment.NewLine +
-                                    "Endpoint Address:  " + endpointStatusDefiniton.Address +
-                                    Environment.NewLine +
-                                    "Missing protocol prefix" +
-                                    Environment.NewLine +
-                                    Uri.UriSchemeHttp.ToUpper() + ", " +
-                                    Uri.UriSchemeHttps.ToUpper() + " and " +
-                                    Uri.UriSchemeFtp.ToUpper() + " protocols are supported" +
-                                    Environment.NewLine +
-                                    Environment.NewLine
-                                );
-                        }
-                        else
-                        {
-                            // GET CREDENTIALS FROM URL [IF PRESENT]
-                            if (endpointStatusDefiniton.Address.Contains("@"))
-                            {
-                                string[] credentials = endpointStatusDefiniton.Address.Split('@')[0].Split('/')[2].Split(':');
-                                if (credentials.Length == 2)
-                                {
-                                    // EXTRACT
-                                    endpointStatusDefiniton.LoginName = credentials[0];
-                                    endpointStatusDefiniton.LoginPass = credentials[1];
-
-                                    // REMOVE CREDENTIALS FROM ENDPOINT NAME
-                                    // ADD USERNAME IDENTIFIER
-                                    endpointStatusDefiniton.Name = endpointStatusDefiniton.Name
-                                        .Replace(
-                                        endpointStatusDefiniton.LoginName + ":" +
-                                        endpointStatusDefiniton.LoginPass + "@", string.Empty) +
-                                        " [as '" + endpointStatusDefiniton.LoginName + "']";
-
-                                    // REMOVE CREDENTIALS FROM ENDPOINT ADDRESS
-                                    endpointStatusDefiniton.Address = endpointStatusDefiniton.Address
-                                        .Replace(endpointStatusDefiniton.LoginName + ":" +
-                                        endpointStatusDefiniton.LoginPass + "@", string.Empty);
-                                }
-                            }
-
-                            try
-                            {
-                                // CHECK URL FORMAT [TRY TO CREATE ENDPOINT URI]
-                                Uri endpointURI = new Uri(endpointStatusDefiniton.Address, UriKind.Absolute);
-
-                                // GET URI ATTRIBUTES
-                                endpointStatusDefiniton.Port = endpointURI.Port.ToString();
-                                endpointStatusDefiniton.Protocol = endpointURI.Scheme.ToUpper();
-
-                                // CHECK SUPPORTED PROTOCOLS TYPES
-                                if (endpointStatusDefiniton.Protocol != Uri.UriSchemeHttp.ToUpper() &&
-                                    endpointStatusDefiniton.Protocol != Uri.UriSchemeHttps.ToUpper() &&
-                                    endpointStatusDefiniton.Protocol != Uri.UriSchemeFtp.ToUpper())
-                                {
-                                    // UNSUPPORTED PROTOCOL TYPE, ADD TO ERRORS LIST [UNSUPPORTED PROTOCOL TYPE]
-                                    invalidURL = true;
-                                    invalidURLList.Add(
-                                        "Line:  " + lineNumber +
-                                        Environment.NewLine +
-                                        "Endpoint Name:  " + endpointStatusDefiniton.Name +
-                                        Environment.NewLine +
-                                        "Endpoint Address:  " + endpointStatusDefiniton.Address +
-                                        Environment.NewLine +
-                                        "Unsupported protocol type: " + endpointStatusDefiniton.Protocol +
-                                        Environment.NewLine +
-                                        Uri.UriSchemeHttp.ToUpper() + ", " +
-                                        Uri.UriSchemeHttps.ToUpper() + " and " +
-                                        Uri.UriSchemeFtp.ToUpper() + " protocols are supported" +
-                                        Environment.NewLine +
-                                        Environment.NewLine
-                                    );
-                                }
-                            }
-                            catch (Exception exception)
-                            {
-                                // URL FORMAT IS INVALID, ADD TO ERRORS LIST [INVALID URL FORMAT]
-                                invalidURL = true;
-                                invalidURLList.Add(
-                                        "Line:  " + lineNumber +
-                                        Environment.NewLine +
-                                        "Endpoint Name:  " + endpointStatusDefiniton.Name +
-                                        Environment.NewLine +
-                                        "Endpoint Address:  " + endpointStatusDefiniton.Address +
-                                        Environment.NewLine +
-                                        "URL in invalid format" +
-                                        Environment.NewLine +
-                                        exception.Message +
-                                        Environment.NewLine +
-                                        Environment.NewLine
-                                    );
-                            }
-                        }
-
-                        foreach (EndpointDefinition endpointDefinition in endpointsList)
-                        {
-                            // CHECK ALL EXISTING DEFINITIONS FOR NAME DUPLICITY
-                            if (endpointDefinition.Name == endpointStatusDefiniton.Name)
-                            {
-                                // DUPLICITY EXISTS, ADD TO ERRORS LIST [DUPLICITIES]
-                                duplicityDefinition = true;
-                                endpointDuplicityList.Add(
-                                    "Line:  " + lineNumber +
-                                    Environment.NewLine +
-                                    "Endpoint Name:  " + endpointStatusDefiniton.Name +
-                                    Environment.NewLine +
-                                    "Endpoint Address:  " + endpointStatusDefiniton.Address +
-                                    Environment.NewLine +
-                                    Environment.NewLine
-                                );
-                            }
-                        }
-
-                        if (!duplicityDefinition &&
-                            !invalidURL)
-                        {
-                            // RESTORE 'LAST SEEN ONLINE' VALUE
-                            if (endpointsList_LastSeenOnline.ContainsKey(endpointStatusDefiniton.Name))
-                            {
-                                endpointStatusDefiniton.LastSeenOnline = endpointsList_LastSeenOnline[endpointStatusDefiniton.Name];
-                            }
-                            else
-                            {
-                                endpointsList_LastSeenOnline.Add(endpointStatusDefiniton.Name, endpointStatusDefiniton.LastSeenOnline);
-                            }
-
-                            // ENDPOINT DEFINITION IS VALID, ADD TO ENDPOINTS CHECK LIST
-                            endpointsList.Add(endpointStatusDefiniton);
-                        }
-                    }
-
-                    lineNumber++;
-                }
-
-                // SET PROGRESS STATUS INFORMATION
-                SetProgressStatus(0, 0, endpointsList.Count + " Valid Endpoints References Loaded", Color.Gray);
-
-                file.Close();
-
-                // SORT ENDPOINTS LIST BY ENDPOINT NAME
-                endpointsList.Sort((s, t) => String.Compare(s.Name, t.Name));
-
-                // CHECK DUPLICITY LIST
-                if (endpointDuplicityList.Count > 0)
-                {
-                    // CREATE AND SHOW MESSAGEBOX 
-                    string duplicityMessage = "Endpoints definitions file \"" +
-                    endpointDefinitonsFile + "\" contains " +
-                    endpointDuplicityList.Count + " items with duplicity names.";
-                    duplicityMessage += Environment.NewLine;
-                    duplicityMessage += Environment.NewLine;
-                    duplicityMessage += "This definitions will be ignored because Endpoint Name must be unique identifier.";
-                    duplicityMessage += Environment.NewLine;
-                    duplicityMessage += Environment.NewLine;
-
-                    if (endpointDuplicityList.Count <= 5)
-                    {
-                        // LIST AFFECTED DEFINITIONS ITEMS
-                        duplicityMessage += string.Join(string.Empty, endpointDuplicityList.ToArray());
-                    }
-                    else
-                    {
-                        try
-                        {
-                            using (StreamWriter sw = new StreamWriter(endpointsList_Duplicities))
-                            {
-                                // WRITE AFFECTED DEFINITIONS ITEMS
-                                sw.WriteLine(duplicityMessage + string.Join(string.Empty, endpointDuplicityList.ToArray()));
-                            }
-                        }
-                        catch
-                        {
-                        }
-
-                        duplicityMessage += "See \"" + endpointsList_Duplicities + "\" for details.";
-                    }
-
-                    MessageBox.Show(
-                            duplicityMessage,
-                            "Invalid endpoint definitions - Name duplicity",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
-                }
-
-                // CHECK INVALID FORMAT LIST
-                if (invalidURLList.Count > 0)
-                {
-                    // CREATE AND SHOW MESSAGEBOX, LIST AFFECTED DEFINITIONS ITEMS
-                    string invalidURLMessage = "Endpoints definitions file \"" +
-                    endpointDefinitonsFile + "\" contains " +
-                    invalidURLList.Count + " items with URL in invalid format.";
-                    invalidURLMessage += Environment.NewLine;
-                    invalidURLMessage += Environment.NewLine;
-                    invalidURLMessage += "This definitions will be ignored.";
-                    invalidURLMessage += Environment.NewLine;
-                    invalidURLMessage += Environment.NewLine;
-
-                    if (invalidURLList.Count <= 5)
-                    {
-                        // LIST AFFECTED DEFINITIONS ITEMS
-                        invalidURLMessage += string.Join(string.Empty, invalidURLList.ToArray());
-                    }
-                    else
-                    {
-                        try
-                        {
-                            using (StreamWriter sw = new StreamWriter(endpointsList_InvalidDefs))
-                            {
-                                // WRITE AFFECTED DEFINITIONS ITEMS
-                                sw.WriteLine(
-                                    invalidURLMessage +
-                                    string.Join(string.Empty, invalidURLList.ToArray()));
-                            }
-                        }
-                        catch
-                        {
-                        }
-
-                        invalidURLMessage += "See \"" + endpointsList_InvalidDefs + "\" for details.";
-                    }
-
-                    MessageBox.Show(invalidURLMessage, "Invalid endpoint definitions - Invalid URL format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-            }
-            else
-            {
-                SetControls(false, true);
-
-                lbl_NoEndpoints.ForeColor = Color.Red;
-                lbl_NoEndpoints.Text = "Endpoints definitions file \"" + endpointDefinitonsFile + "\" doesn't exists in \"" + Directory.GetCurrentDirectory() + "\".";
-            }
-        }
-
-        public void bw_LoadEndpointReferences_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            RestoreDisabledItemsList();
-            btn_Refresh_Click(this, null);
         }
 
         public void RestoreSavedSettingsError(string settingName)
@@ -5117,68 +5182,6 @@ namespace EndpointChecker
             ConnectEndpoint_Putty(new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress).Host);
         }
 
-        public void BW_UpdateCheck_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                using (WebClient updateWC = new WebClient())
-                {
-                    ServicePointManager.Expect100Continue = true;
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-
-                    appLatestVersion = new Version(updateWC.DownloadString("https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/version.txt").TrimEnd());
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        public void BW_UpdateCheck_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (appLatestVersion > assembly_Version)
-            {
-                DialogResult updateDialogResult = MessageBox.Show(
-                    "There is new version " +
-                        GetVersionString(appLatestVersion, true, false) +
-                        " avaliable." +
-                        Environment.NewLine +
-                        Environment.NewLine +
-                        "Do you want to download latest release from GitHub ?"
-                    , "New Version Avaliable",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (updateDialogResult == DialogResult.Yes)
-                {
-                    BrowseEndpoint(
-                        "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases",
-                        null,
-                        null,
-                        null);
-                }
-            }
-            else if (appLatestVersion < assembly_Version)
-            {
-                MessageBox.Show(
-                    "You are using unreleased application build." +
-                    Environment.NewLine +
-                    Environment.NewLine +
-                    "Version " +
-                    assembly_VersionString +
-                    " from " +
-                    assembly_BuiltDate +
-                    "." +
-                    Environment.NewLine +
-                    Environment.NewLine +
-                    "This build is intended for testing purposes only."
-                    , "Unreleased Build",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-            }
-        }
-
         public void pb_GitLab_Click(object sender, EventArgs e)
         {
             BrowseEndpoint(
@@ -5195,6 +5198,16 @@ namespace EndpointChecker
                 null,
                 null,
                 null);
+        }
+
+        public void tb_ListFilter_TextChanged(object sender, EventArgs e)
+        {
+            ListEndpoints(ListViewRefreshMethod.CurrentState);
+        }
+
+        public void pb_ListFilterClear_Click(object sender, EventArgs e)
+        {
+            tb_ListFilter.Text = string.Empty;
         }
     }
 
@@ -5217,7 +5230,7 @@ namespace EndpointChecker
         public int Compare(object x, object y)
         {
             int returnVal = -1;
-            returnVal = String.Compare(((ListViewItem)x).SubItems[col].Text,
+            returnVal = string.Compare(((ListViewItem)x).SubItems[col].Text,
                             ((ListViewItem)y).SubItems[col].Text);
 
             if (order == SortOrder.Descending)

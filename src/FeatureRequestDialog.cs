@@ -31,7 +31,7 @@ namespace EndpointChecker
         {
             List<Property> reportItems = new List<Property>();
 
-            reportItems.Add(new Property { ItemName = "Application Version", ItemValue = Program.assembly_ApplicationName + " v" + Program.assembly_Version });
+            reportItems.Add(new Property { ItemName = "Application Version", ItemValue = Program.app_ApplicationName + " v" + Program.app_Version });
             reportItems.Add(new Property { ItemName = "Date / Time", ItemValue = DateTime.Now.ToString("dd.MM.yyyy HH:mm") });
             reportItems.Add(new Property { ItemName = "Improvement Description", ItemValue = user_Comment });
 
@@ -42,7 +42,7 @@ namespace EndpointChecker
             }
 
             // E-MAIL SUBJECT AND CREATE BODY HTML TABLE
-            string eMailMessageSubject = Program.assembly_ApplicationName + " Feature Request";
+            string eMailMessageSubject = Program.app_ApplicationName + " Feature Request";
             string eMailMessageBody = string.Empty;
 
             HtmlTable table = new HtmlTable
@@ -129,7 +129,7 @@ namespace EndpointChecker
                             Environment.NewLine +
                             Environment.NewLine +
                             ex.Message,
-                        Program.assembly_ApplicationName + " v" + Program.assembly_Version,
+                        Program.app_ApplicationName + " v" + Program.app_Version,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 }));

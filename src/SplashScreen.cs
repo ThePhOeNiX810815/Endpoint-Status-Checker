@@ -14,20 +14,25 @@ namespace EndpointChecker
         {
             InitializeComponent();
 
-            // COMMON EXCEPTION HANDLERS
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
-            Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
-
             // SET DOUBLE BUFFER
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
             // SET INFORMATION LABELS
-            lbl_Name.Text = Program.assembly_ApplicationName;
-            lbl_Version.Text = "Version " + Program.assembly_VersionString;
-            lbl_Build.Text = "Build " + Program.assembly_BuiltDate;
-            lbl_Copyright.Text = Program.assembly_Copyright;
-            lbl_PreRelease.Visible = (Program.assembly_Version.Build != 0);
+            lbl_Name.Text = Program.app_ApplicationName;
+            lbl_Version.Text = "Version ";
+            lbl_Build.Text = "Build " + Program.app_BuiltDate;
+            lbl_Copyright.Text = Program.app_Copyright;
+
+            if (Program.app_Version.Build == 0)
+            {
+                lbl_Version.Text += Program.app_Version.Major + "." + Program.app_Version.Minor;
+            }
+            else
+            {
+                lbl_Version.Text += Program.app_VersionString;
+                lbl_PreRelease.Visible = true;
+            }
 
             Opacity = 1;
         }
@@ -63,31 +68,9 @@ namespace EndpointChecker
             TIMER_FadeOutAndClose.Start();
         }
 
-        public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
+        public void pb_CloseDialog_Click(object sender, EventArgs e)
         {
-            ExceptionNotifier((Exception)args.ExceptionObject);
-        }
-
-        public static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs args)
-        {
-            ExceptionNotifier(args.Exception);
-        }
-
-        public static void ExceptionNotifier(Exception exception, string callingMethod = "")
-        {
-            if (string.IsNullOrEmpty(callingMethod))
-            {
-                callingMethod = new StackTrace().GetFrame(1).GetMethod().Name;
-            }
-
-            ExceptionDialog exDialog = new ExceptionDialog(
-                exception,
-                callingMethod,
-                Program.exceptionReport_senderEMailAddress,
-                new List<string> { Program.authorEmailAddress },
-                new List<string> { Program.endpointDefinitonsFile });
-
-            exDialog.ShowDialog();
+            Close();
         }
     }
 }
