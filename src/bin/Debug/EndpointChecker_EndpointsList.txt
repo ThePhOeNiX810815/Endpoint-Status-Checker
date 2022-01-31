@@ -1,70 +1,11 @@
 SpeedTest|ftp://speedtest.tele2.net
 OS Boxes - VMWare Images|ftp://www.osboxes.org/vmware-images
 
-HTTP Status Test - Code 100|https://httpstat.us/100
-HTTP Status Test - Code 101|https://httpstat.us/101
-HTTP Status Test - Code 102|https://httpstat.us/102
-HTTP Status Test - Code 103|https://httpstat.us/103
 HTTP Status Test - Code 200|https://httpstat.us/200
-HTTP Status Test - Code 201|https://httpstat.us/201
-HTTP Status Test - Code 202|https://httpstat.us/202
-HTTP Status Test - Code 203|https://httpstat.us/203
-HTTP Status Test - Code 204|https://httpstat.us/204
-HTTP Status Test - Code 205|https://httpstat.us/205
-HTTP Status Test - Code 206|https://httpstat.us/206
-HTTP Status Test - Code 300|https://httpstat.us/300
-HTTP Status Test - Code 301|https://httpstat.us/301
-HTTP Status Test - Code 302|https://httpstat.us/302
-HTTP Status Test - Code 303|https://httpstat.us/303
-HTTP Status Test - Code 304|https://httpstat.us/304
-HTTP Status Test - Code 305|https://httpstat.us/305
-HTTP Status Test - Code 306|https://httpstat.us/306
-HTTP Status Test - Code 307|https://httpstat.us/307
-HTTP Status Test - Code 308|https://httpstat.us/308
-HTTP Status Test - Code 400|https://httpstat.us/400
 HTTP Status Test - Code 401|https://httpstat.us/401
-HTTP Status Test - Code 402|https://httpstat.us/402
 HTTP Status Test - Code 403|https://httpstat.us/403
 HTTP Status Test - Code 404|https://httpstat.us/404
-HTTP Status Test - Code 405|https://httpstat.us/405
-HTTP Status Test - Code 406|https://httpstat.us/406
-HTTP Status Test - Code 407|https://httpstat.us/407
-HTTP Status Test - Code 408|https://httpstat.us/408
-HTTP Status Test - Code 409|https://httpstat.us/409
-HTTP Status Test - Code 410|https://httpstat.us/410
-HTTP Status Test - Code 411|https://httpstat.us/411
-HTTP Status Test - Code 412|https://httpstat.us/412
-HTTP Status Test - Code 413|https://httpstat.us/413
-HTTP Status Test - Code 414|https://httpstat.us/414
-HTTP Status Test - Code 415|https://httpstat.us/415
-HTTP Status Test - Code 416|https://httpstat.us/416
-HTTP Status Test - Code 417|https://httpstat.us/417
-HTTP Status Test - Code 418|https://httpstat.us/418
-HTTP Status Test - Code 421|https://httpstat.us/421
-HTTP Status Test - Code 422|https://httpstat.us/422
-HTTP Status Test - Code 423|https://httpstat.us/423
-HTTP Status Test - Code 425|https://httpstat.us/425
-HTTP Status Test - Code 426|https://httpstat.us/426
-HTTP Status Test - Code 428|https://httpstat.us/428
-HTTP Status Test - Code 429|https://httpstat.us/429
-HTTP Status Test - Code 431|https://httpstat.us/431
-HTTP Status Test - Code 451|https://httpstat.us/451
 HTTP Status Test - Code 500|https://httpstat.us/500
-HTTP Status Test - Code 501|https://httpstat.us/501
-HTTP Status Test - Code 502|https://httpstat.us/502
-HTTP Status Test - Code 503|https://httpstat.us/503
-HTTP Status Test - Code 504|https://httpstat.us/504
-HTTP Status Test - Code 505|https://httpstat.us/505
-HTTP Status Test - Code 506|https://httpstat.us/506
-HTTP Status Test - Code 507|https://httpstat.us/507
-HTTP Status Test - Code 511|https://httpstat.us/511
-HTTP Status Test - Code 520|https://httpstat.us/520
-HTTP Status Test - Code 522|https://httpstat.us/522
-HTTP Status Test - Code 524|https://httpstat.us/524
-HTTP Status Test - Code 600[X]|https://httpstat.us/600
-HTTP Status Test - Code 700[X]|https://httpstat.us/700
-HTTP Status Test - Code 800[X]|https://httpstat.us/800
-HTTP Status Test - Code 999[X]|https://httpstat.us/999
 
 Non-Existing Web Test|http://nonexistingwebtest.com
 
@@ -84,3 +25,4 @@ Status Checker Home Page|https://endpoint-status-checker.webnode.com
 IT Network CZ|https://www.itnetwork.cz
 GitHUB|https://github.com
 GitLAB|https://gitlab.com
+SoftPedia|https://www.softpedia.com
