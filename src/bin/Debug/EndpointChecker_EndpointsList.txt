@@ -1,5 +1,4 @@
-SpeedTest|ftp://speedtest.tele2.net
-OS Boxes - VMWare Images|ftp://www.osboxes.org/vmware-images
+FTP - OS Boxes - VMWare Images|ftp://www.osboxes.org/vmware-images
 
 HTTP Status Test - Code 200|https://httpstat.us/200
 HTTP Status Test - Code 401|https://httpstat.us/401
