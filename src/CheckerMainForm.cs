@@ -94,7 +94,9 @@ namespace EndpointChecker
             [Description("Not Checked (Endpoint Disabled)")]
             DISABLED = 2,
             [Description("Not Checked (Terminated)")]
-            TERMINATED = 3
+            TERMINATED = 3,
+            [Description("Not Checked Yet")]
+            NOTCHECKED = 4
         };
 
         // FOR MAC ADDRESS RESOLVER FEATURE PURPOSE
@@ -202,10 +204,11 @@ namespace EndpointChecker
             // CHECK .NET FRAMEWORK INSTALLED VERSION [FOR EXPORT INFORMATION PURPOSE]
             CheckDotNetFWKInstalledVersion();
 
-            // CHECK FOR LATEST VERSION [GITHUB]
-            CheckForUpdate();
+            // LOAD 'LAST SEEN ONLINE' LIST
+            RestoreLastSeenOnlineList();
 
-            TIMER_StartupRefresh.Start();
+            // LOAD ENDPOINT REFERENCES
+            LoadEndpointReferences();
         }
 
         public void SetControlsTooltips()
@@ -362,69 +365,6 @@ namespace EndpointChecker
             }
         }
 
-        public void CheckForUpdate()
-        {
-            NewBackgroundThread((Action)(() =>
-            {
-                try
-                {
-                    using (WebClient updateWC = new WebClient())
-                    {
-                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-                        Version appLatestVersion = new Version(updateWC.DownloadString("https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/version.txt").TrimEnd());
-
-                        ThreadSafeInvoke((Action)(() =>
-                        {
-                            if (appLatestVersion > app_Version)
-                            {
-                                DialogResult updateDialogResult = MessageBox.Show(
-                                    "There is new version " +
-                                        GetVersionString(appLatestVersion, true, false) +
-                                        " avaliable." +
-                                        Environment.NewLine +
-                                        Environment.NewLine +
-                                        "Do you want to download latest release from GitHub ?"
-                                    , "New Version Avaliable",
-                                    MessageBoxButtons.YesNo,
-                                    MessageBoxIcon.Question);
-
-                                if (updateDialogResult == DialogResult.Yes)
-                                {
-                                    BrowseEndpoint(
-                                        "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases",
-                                        null,
-                                        null,
-                                        null);
-                                }
-                            }
-                            else if (appLatestVersion < app_Version)
-                            {
-                                MessageBox.Show(
-                                    "You are using unreleased application build." +
-                                    Environment.NewLine +
-                                    Environment.NewLine +
-                                    "Version " +
-                                    app_VersionString +
-                                    " from " +
-                                    app_BuiltDate +
-                                    "." +
-                                    Environment.NewLine +
-                                    Environment.NewLine +
-                                    "This build is intended for testing purposes only."
-                                    , "Unreleased Build",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Warning);
-                            }
-                        }));
-                    }
-                }
-                catch
-                {
-                }
-            }));
-        }
-
         public void LoadConfiguration()
         {
             if (Settings.Default.HasSavedConfiguration)
@@ -452,12 +392,8 @@ namespace EndpointChecker
                     cb_RemoveURLParameters.Checked = Settings.Default.Config_RemoveURLParameters;
                     cb_ResolvePageLinks.Checked = Settings.Default.Config_ResolvePageLinks;
                     cb_SaveResponse.Checked = Settings.Default.Config_SaveResponse;
-                    apiKey_VirusTotal = Settings.Default.VirusTotal_API_Key;
-                    apiKey_GoogleMaps = Settings.Default.GoogleMaps_API_Key;
-                    googleMapsZoomFactor = Settings.Default.GoogleMaps_API_ZoomFactor;
-                    http_UserAgent = Settings.Default.Config_HTTP_UserAgent;
-                    http_Sec_CH_UserAgent = Settings.Default.Config_HTTP_Sec_CH_UserAgent;
-                    http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
+
+                    cb_RefreshOnStartup.Checked = app_ScanOnStartup;
 
                     if (Directory.Exists(Settings.Default.Config_EndpointsStatusExportDirectory))
                     {
@@ -516,6 +452,7 @@ namespace EndpointChecker
                 Settings.Default.GoogleMaps_API_Key = apiKey_GoogleMaps;
                 Settings.Default.Config_Executable_VNCViewer = appExecutable_VNC;
                 Settings.Default.Config_Executable_Putty = appExecutable_Putty;
+                Settings.Default.Config_ScanOnStartup = cb_RefreshOnStartup.Checked;
                 Settings.Default.HasSavedConfiguration = true;
                 Settings.Default.Save();
             }
@@ -535,7 +472,7 @@ namespace EndpointChecker
 
             lv_Endpoints.BeginUpdate();
             lv_Endpoints.Items.Clear();
-            endpointsList_Disabled.Clear();
+            List<string> _endpointsList_Disabled = new List<string>();
 
             foreach (EndpointDefinition endpointItem in endpointsList)
             {
@@ -601,7 +538,7 @@ namespace EndpointChecker
                     // SET CHECKED [ENABLED] STATUS - DEPENDING ON REFRESH METHOD
                     if (refreshMethod == ListViewRefreshMethod.CurrentState)
                     {
-                        newitem.Checked = !(endpointItem.ResponseMessage == GetEnumDescription(EndpointStatus.DISABLED));
+                        newitem.Checked = !endpointsList_Disabled.Contains(endpointItem.Name);
                     }
                     else if (refreshMethod == ListViewRefreshMethod.CheckAll)
                     {
@@ -640,12 +577,14 @@ namespace EndpointChecker
 
                     if (!newitem.Checked)
                     {
-                        endpointsList_Disabled.Add(newitem.Text);
+                        _endpointsList_Disabled.Add(newitem.Text);
                     }
 
                     lv_Endpoints.Items.Add(newitem);
                 }
             }
+
+            endpointsList_Disabled = _endpointsList_Disabled;
 
             lv_Endpoints.EndUpdate();
 
@@ -881,12 +820,14 @@ namespace EndpointChecker
 
                                 // START STOPWATCH FOR ITEM CHECK DURATION
                                 sw_ItemProgress.Start();
+                                Application.DoEvents();
 
                                 // GET RESPONSE
                                 httpWebResponse = GetHTTPWebResponse(httpWebRequest, 3);
 
                                 // STOP STOPWATCH FOR ITEM CHECK DURATION
                                 sw_ItemProgress.Stop();
+                                Application.DoEvents();
 
                                 // GET SSL INFO
                                 if (validateSSLCertificate &&
@@ -2198,6 +2139,7 @@ namespace EndpointChecker
             comboBox_Validate.Enabled = !inProgress && !locked;
             lbl_Validate.Enabled = !inProgress && !locked;
             lbl_AutomaticRefresh.Enabled = !inProgress && !locked;
+            cb_RefreshOnStartup.Enabled = !inProgress && !locked;
             cb_AutomaticRefresh.Enabled = !inProgress && !locked;
             cb_ContinuousRefresh.Enabled = !inProgress && !locked;
             cb_TrayBalloonNotify.Enabled = !inProgress && !locked;
@@ -2257,9 +2199,10 @@ namespace EndpointChecker
         {
             if (statusCode == status_NotAvailable)
             {
-                if (statusMessage == GetEnumDescription(EndpointStatus.TERMINATED))
+                if (statusMessage == GetEnumDescription(EndpointStatus.NOTCHECKED) ||
+                    statusMessage == GetEnumDescription(EndpointStatus.TERMINATED))
                 {
-                    // TERMINATED
+                    // NOT CHECKED / TERMINATED
                     return 3;
                 }
                 else if (statusMessage == GetEnumDescription(EndpointStatus.DISABLED))
@@ -3279,9 +3222,10 @@ namespace EndpointChecker
                     // TERMINATED
                     return Color.LightSkyBlue;
                 }
-                else if (statusMessage == GetEnumDescription(EndpointStatus.DISABLED))
+                else if (statusMessage == GetEnumDescription(EndpointStatus.NOTCHECKED) ||
+                         statusMessage == GetEnumDescription(EndpointStatus.DISABLED))
                 {
-                    // DISABLED
+                    // DISABLED / NOT CHECKED
                     return Color.Gray;
                 }
             }
@@ -3812,7 +3756,7 @@ namespace EndpointChecker
                                 IPAddress = new string[] { status_NotAvailable },
                                 ResponseTime = status_NotAvailable,
                                 ResponseCode = status_NotAvailable,
-                                ResponseMessage = status_NotAvailable,
+                                ResponseMessage = GetEnumDescription(EndpointStatus.NOTCHECKED),
                                 LastSeenOnline = status_NotAvailable,
                                 PingRoundtripTime = status_NotAvailable,
                                 ServerID = status_NotAvailable,
@@ -4087,12 +4031,23 @@ namespace EndpointChecker
                     lbl_NoEndpoints.Text = "Endpoints definitions file \"" + endpointDefinitonsFile + "\" doesn't exists in \"" + Directory.GetCurrentDirectory() + "\".";
                 }
 
+                // RESTORE DISABLED ITEMS LIST
                 RestoreDisabledItemsList();
 
+                // LIST ENDPOINTS
                 ThreadSafeInvoke((Action)(() =>
                 {
-                    btn_Refresh_Click(this, null);
+                    ListEndpoints(ListViewRefreshMethod.CurrentState);
                 }));
+
+                // REFRESH
+                if (app_ScanOnStartup)
+                {
+                    ThreadSafeInvoke((Action)(() =>
+                    {
+                        btn_Refresh_Click(this, null);
+                    }));
+                }                
             }));
         }
 
@@ -4159,18 +4114,6 @@ namespace EndpointChecker
             }
 
             SaveConfiguration();
-        }
-
-        public void TIMER_StartupRefresh_Tick(object sender, EventArgs e)
-        {
-            // DISABLE ITFSELF
-            TIMER_StartupRefresh.Enabled = false;
-
-            // LOAD 'LAST SEEN ONLINE' LIST
-            RestoreLastSeenOnlineList();
-
-            // LOAD ENDPOINT REFERENCES
-            LoadEndpointReferences();
         }
 
         public void SetTrayIcon(int firstFrameIndex, int lastFrameIndex)
@@ -5207,6 +5150,8 @@ namespace EndpointChecker
 
         public void pb_ListFilterClear_Click(object sender, EventArgs e)
         {
+            pb_ListFilterClear.Visible = false;
+            tb_ListFilter.BackColor = Color.LightGray;
             tb_ListFilter.Text = string.Empty;
         }
     }

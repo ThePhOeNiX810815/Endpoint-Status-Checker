@@ -81,7 +81,6 @@
             this.cb_ResolveNetworkShares = new System.Windows.Forms.CheckBox();
             this.cb_ExportEndpointsStatus_XLSX = new System.Windows.Forms.CheckBox();
             this.folderBrowserExportDir = new System.Windows.Forms.FolderBrowserDialog();
-            this.TIMER_StartupRefresh = new System.Windows.Forms.Timer(this.components);
             this.cb_SaveResponse = new System.Windows.Forms.CheckBox();
             this.cb_ResolvePageMetaInfo = new System.Windows.Forms.CheckBox();
             this.cb_ValidateSSLCertificate = new System.Windows.Forms.CheckBox();
@@ -134,6 +133,7 @@
             this.TIMER_TrayIconAnimation = new System.Windows.Forms.Timer(this.components);
             this.cb_RemoveURLParameters = new System.Windows.Forms.CheckBox();
             this.groupBox_CommonOptions = new System.Windows.Forms.GroupBox();
+            this.cb_RefreshOnStartup = new System.Windows.Forms.CheckBox();
             this.cb_ResolvePageLinks = new System.Windows.Forms.CheckBox();
             this.groupBox_HTTPOptions = new System.Windows.Forms.GroupBox();
             this.pb_ITNetwork = new System.Windows.Forms.PictureBox();
@@ -328,7 +328,7 @@
             this.cb_AutomaticRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_AutomaticRefresh.Enabled = false;
             this.cb_AutomaticRefresh.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_AutomaticRefresh.Location = new System.Drawing.Point(10, 40);
+            this.cb_AutomaticRefresh.Location = new System.Drawing.Point(10, 50);
             this.cb_AutomaticRefresh.Name = "cb_AutomaticRefresh";
             this.cb_AutomaticRefresh.Size = new System.Drawing.Size(217, 19);
             this.cb_AutomaticRefresh.TabIndex = 2;
@@ -454,7 +454,7 @@
             this.cb_TrayBalloonNotify.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_TrayBalloonNotify.Enabled = false;
             this.cb_TrayBalloonNotify.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_TrayBalloonNotify.Location = new System.Drawing.Point(10, 74);
+            this.cb_TrayBalloonNotify.Location = new System.Drawing.Point(10, 84);
             this.cb_TrayBalloonNotify.Name = "cb_TrayBalloonNotify";
             this.cb_TrayBalloonNotify.Size = new System.Drawing.Size(217, 19);
             this.cb_TrayBalloonNotify.TabIndex = 7;
@@ -637,7 +637,7 @@
             this.cb_RefreshAutoSet.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_RefreshAutoSet.Enabled = false;
             this.cb_RefreshAutoSet.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_RefreshAutoSet.Location = new System.Drawing.Point(10, 57);
+            this.cb_RefreshAutoSet.Location = new System.Drawing.Point(10, 67);
             this.cb_RefreshAutoSet.Name = "cb_RefreshAutoSet";
             this.cb_RefreshAutoSet.Size = new System.Drawing.Size(217, 19);
             this.cb_RefreshAutoSet.TabIndex = 26;
@@ -651,7 +651,7 @@
             this.cb_ContinuousRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ContinuousRefresh.Enabled = false;
             this.cb_ContinuousRefresh.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ContinuousRefresh.Location = new System.Drawing.Point(10, 23);
+            this.cb_ContinuousRefresh.Location = new System.Drawing.Point(10, 33);
             this.cb_ContinuousRefresh.Name = "cb_ContinuousRefresh";
             this.cb_ContinuousRefresh.Size = new System.Drawing.Size(217, 19);
             this.cb_ContinuousRefresh.TabIndex = 27;
@@ -700,7 +700,7 @@
             this.cb_ResolveNetworkShares.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ResolveNetworkShares.Enabled = false;
             this.cb_ResolveNetworkShares.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ResolveNetworkShares.Location = new System.Drawing.Point(10, 91);
+            this.cb_ResolveNetworkShares.Location = new System.Drawing.Point(10, 101);
             this.cb_ResolveNetworkShares.Name = "cb_ResolveNetworkShares";
             this.cb_ResolveNetworkShares.Size = new System.Drawing.Size(217, 19);
             this.cb_ResolveNetworkShares.TabIndex = 31;
@@ -728,11 +728,6 @@
             // folderBrowserExportDir
             // 
             this.folderBrowserExportDir.Description = "Browse directory for Endpoints Status Export";
-            // 
-            // TIMER_StartupRefresh
-            // 
-            this.TIMER_StartupRefresh.Interval = 1000;
-            this.TIMER_StartupRefresh.Tick += new System.EventHandler(this.TIMER_StartupRefresh_Tick);
             // 
             // cb_SaveResponse
             // 
@@ -1410,6 +1405,7 @@
             // groupBox_CommonOptions
             // 
             this.groupBox_CommonOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox_CommonOptions.Controls.Add(this.cb_RefreshOnStartup);
             this.groupBox_CommonOptions.Controls.Add(this.cb_AutomaticRefresh);
             this.groupBox_CommonOptions.Controls.Add(this.cb_TrayBalloonNotify);
             this.groupBox_CommonOptions.Controls.Add(this.cb_RefreshAutoSet);
@@ -1423,6 +1419,19 @@
             this.groupBox_CommonOptions.TabIndex = 57;
             this.groupBox_CommonOptions.TabStop = false;
             this.groupBox_CommonOptions.Text = "Common Options";
+            // 
+            // cb_RefreshOnStartup
+            // 
+            this.cb_RefreshOnStartup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cb_RefreshOnStartup.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cb_RefreshOnStartup.Enabled = false;
+            this.cb_RefreshOnStartup.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_RefreshOnStartup.Location = new System.Drawing.Point(10, 16);
+            this.cb_RefreshOnStartup.Name = "cb_RefreshOnStartup";
+            this.cb_RefreshOnStartup.Size = new System.Drawing.Size(217, 19);
+            this.cb_RefreshOnStartup.TabIndex = 32;
+            this.cb_RefreshOnStartup.Text = "Enable Refresh on Startup";
+            this.cb_RefreshOnStartup.UseVisualStyleBackColor = true;
             // 
             // cb_ResolvePageLinks
             // 
@@ -1638,7 +1647,7 @@
             this.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MinimumSize = new System.Drawing.Size(1124, 575);
+            this.MinimumSize = new System.Drawing.Size(1150, 575);
             this.Name = "CheckerMainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Endpoint Status Checker v";
@@ -1704,7 +1713,6 @@
         public System.Windows.Forms.ColumnHeader ch_NetworkShares;
         public System.Windows.Forms.FolderBrowserDialog folderBrowserExportDir;
         public System.Windows.Forms.ColumnHeader ch_DNSName;
-        public System.Windows.Forms.Timer TIMER_StartupRefresh;
         public System.Windows.Forms.ColumnHeader ch_HTTPContentLenght;
         public System.Windows.Forms.Button btn_SpeedTest;
         public System.Windows.Forms.Button btn_BrowseExportDir;
@@ -1788,6 +1796,7 @@
         public System.Windows.Forms.Label lbl_ListFilter;
         public System.Windows.Forms.TextBox tb_ListFilter;
         public System.Windows.Forms.PictureBox pb_ListFilterClear;
+        public System.Windows.Forms.CheckBox cb_RefreshOnStartup;
     }
 }
 

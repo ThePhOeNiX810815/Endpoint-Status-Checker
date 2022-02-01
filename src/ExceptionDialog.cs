@@ -225,9 +225,8 @@ namespace EndpointChecker
                     _screenshotStream.Position = 0;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                string abc = ex.Message;
             }
 
             // SHOW DIALOG

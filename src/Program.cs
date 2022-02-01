@@ -1,8 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using EndpointChecker.Properties;
+using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -98,12 +101,15 @@ namespace EndpointChecker
             ", Build " +
             Environment.OSVersion.Version.Build.ToString();
 
+        public static bool app_DebugMode = Settings.Default.Config_DebugMode;
+        public static bool app_ScanOnStartup = Settings.Default.Config_ScanOnStartup;
         public static string app_ApplicationName = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductName;
+        public static string app_ApplicationExecutableName = AppDomain.CurrentDomain.FriendlyName;
         public static string app_CurrentWorkingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         public static string app_BuiltDate = RetrieveLinkerTimestamp();
         public static string app_Copyright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).LegalCopyright;
         public static string app_Title = app_ApplicationName + " v" + app_VersionString;
-
+        
         // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES
         public static string exceptionReport_senderEMailAddress = "ExceptionReport@EndpointStatusChecker";
         public static string featureRequest_senderEMailAddress = "FeatureRequest@EndpointStatusChecker";
@@ -114,18 +120,18 @@ namespace EndpointChecker
         public static string endpointDefinitonsFile = "EndpointChecker_EndpointsList.txt";
 
         // GOOGLE MAPS API KEY & ZOOM FACTOR
-        public static string apiKey_GoogleMaps = string.Empty;
-        public static int googleMapsZoomFactor = 0;
+        public static string apiKey_GoogleMaps = Settings.Default.GoogleMaps_API_Key;
+        public static int googleMapsZoomFactor = Settings.Default.GoogleMaps_API_ZoomFactor;
 
         // SYSTEM MEMORY SIZE STRING
         public static string systemMemorySize;
 
         // VIRUSTOTAL API KEY
-        public static string apiKey_VirusTotal = string.Empty;
+        public static string apiKey_VirusTotal = Settings.Default.VirusTotal_API_Key;
 
         // HTTP CLIENT USER-AGENT STRINGS
-        public static string http_UserAgent = string.Empty;
-        public static string http_Sec_CH_UserAgent = string.Empty;
+        public static string http_UserAgent = Settings.Default.Config_HTTP_UserAgent;
+        public static string http_Sec_CH_UserAgent = Settings.Default.Config_HTTP_Sec_CH_UserAgent;
 
         // STRING FORMAT FOR 'NOT AVAILABLE' STATUS
         public static string status_NotAvailable = "N/A";
@@ -155,64 +161,125 @@ namespace EndpointChecker
         public static string statusExport_HTMLFile_FTPPage = "EndpointsStatus_FTP.html";
 
         // MAXIMUM LENGHT OF HTTP RESPONSE TO READ
-        public static long http_SaveResponse_MaxLenght_Bytes = 0;
+        public static long http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
+
+        // AUTO UPDATE VARIABLES
+        public static bool app_AutoUpdate = false;
+        public static Version app_LatestPackageVersion = new Version();
+        public static string app_LatestPackageLink = string.Empty;
+        public static string app_LatestPackageDate = string.Empty;
 
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            // GET SYSTEM MEMORY SIZE
-            long systemMemorySize_KB;
-            GetPhysicallyInstalledSystemMemory(out systemMemorySize_KB);
-            systemMemorySize = (systemMemorySize_KB / 1024 / 1024).ToString() + " GB";
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
-            // CHECK APPLICATION INSTANCE
-            bool createdNew = true;
-            using (Mutex mainMutex = new Mutex(true, app_Title, out createdNew))
+            if (args.Length == 6 &&
+                args[0] == "/AutoUpdate" &&
+                Directory.Exists(args[1]) &&
+                !string.IsNullOrEmpty(args[2]) &&
+                !string.IsNullOrEmpty(args[3]) &&
+                !string.IsNullOrEmpty(args[4]) &&
+                !string.IsNullOrEmpty(args[5]))
             {
-                if (!createdNew)
+                // PASS ARGUMENTS
+                app_CurrentWorkingDir = args[1];
+                app_ApplicationExecutableName = args[2];
+                app_LatestPackageVersion = new Version(args[3]);
+                app_LatestPackageLink = args[4];
+                app_LatestPackageDate = args[5];
+
+                // AUTO UPDATE FROM GITHUB PACKAGE
+                Application.Run(new AutoUpdaterDialog());
+            }
+            else
+            {
+                // GET SYSTEM MEMORY SIZE
+                long systemMemorySize_KB;
+                GetPhysicallyInstalledSystemMemory(out systemMemorySize_KB);
+                systemMemorySize = (systemMemorySize_KB / 1024 / 1024).ToString() + " GB";
+
+                // CHECK APPLICATION INSTANCE
+                bool createdNew = true;
+                using (Mutex mainMutex = new Mutex(true, app_Title, out createdNew))
                 {
-                    // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, RESTORE WINDOW
-                    IntPtr wdwIntPtr = FindWindow(null, app_Title);
+                    if (!createdNew)
+                    {
+                        // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, RESTORE WINDOW
+                        IntPtr wdwIntPtr = FindWindow(null, app_Title);
 
-                    Windowplacement placement = new Windowplacement();
-                    GetWindowPlacement(wdwIntPtr, ref placement);
+                        Windowplacement placement = new Windowplacement();
+                        GetWindowPlacement(wdwIntPtr, ref placement);
 
-                    ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
-                                       
-                    SetForegroundWindow(wdwIntPtr);
-                }
-                else if (RequiredLibraryExists("AGauge.dll") &&
-                         RequiredLibraryExists("ClosedXML.dll") &&
-                         RequiredLibraryExists("DocumentFormat.OpenXml.dll") &&
-                         RequiredLibraryExists("DomainPublicSuffix.dll") &&
-                         RequiredLibraryExists("ExcelNumberFormat.dll") &&
-                         RequiredLibraryExists("FastMember.dll") &&
-                         RequiredLibraryExists("HtmlAgilityPack.dll") &&
-                         RequiredLibraryExists("IPAddressRange.dll") &&
-                         RequiredLibraryExists("Microsoft.WindowsAPICodePack.dll") &&
-                         RequiredLibraryExists("Microsoft.WindowsAPICodePack.Shell.dll") &&
-                         RequiredLibraryExists("Nager.PublicSuffix.dll") &&
-                         RequiredLibraryExists("Newtonsoft.Json.dll") &&
-                         RequiredLibraryExists("NSpeedTest.dll") &&
-                         RequiredLibraryExists("Spire.License.dll") &&
-                         RequiredLibraryExists("Spire.XLS.dll") &&
-                         RequiredLibraryExists("Spire.Pdf.dll") &&
-                         RequiredLibraryExists("tracert.dll") &&
-                         RequiredLibraryExists("VirusTotal.NET.dll") &&
-                         RequiredLibraryExists("WhoisClient.dll"))
-                {
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
-                    Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                        ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
 
-                    // SHOW SPLASH SCREEN
-                    Application.Run(new SplashScreen());
+                        SetForegroundWindow(wdwIntPtr);
+                    }
+                    else if (RequiredLibraryExists("AGauge.dll") &&
+                             RequiredLibraryExists("ClosedXML.dll") &&
+                             RequiredLibraryExists("DocumentFormat.OpenXml.dll") &&
+                             RequiredLibraryExists("DomainPublicSuffix.dll") &&
+                             RequiredLibraryExists("ExcelNumberFormat.dll") &&
+                             RequiredLibraryExists("FastMember.dll") &&
+                             RequiredLibraryExists("HtmlAgilityPack.dll") &&
+                             RequiredLibraryExists("IPAddressRange.dll") &&
+                             RequiredLibraryExists("Microsoft.WindowsAPICodePack.dll") &&
+                             RequiredLibraryExists("Microsoft.WindowsAPICodePack.Shell.dll") &&
+                             RequiredLibraryExists("Nager.PublicSuffix.dll") &&
+                             RequiredLibraryExists("Newtonsoft.Json.dll") &&
+                             RequiredLibraryExists("NSpeedTest.dll") &&
+                             RequiredLibraryExists("Spire.License.dll") &&
+                             RequiredLibraryExists("Spire.XLS.dll") &&
+                             RequiredLibraryExists("Spire.Pdf.dll") &&
+                             RequiredLibraryExists("tracert.dll") &&
+                             RequiredLibraryExists("VirusTotal.NET.dll") &&
+                             RequiredLibraryExists("WhoisClient.dll"))
+                    {
+                        CheckForUpdate();
 
-                    // RUN NEW APPLICATION INSTANCE
-                    Application.Run(new CheckerMainForm());
+                        if (app_AutoUpdate)
+                        {
+                            string currentExecutable = Assembly.GetEntryAssembly().Location;
+                            string updaterExecutable = Path.Combine(Path.GetTempPath(), "EndpointChecker_AutoUpdater.exe");
+
+                            // COPY UPDATER TO TEMP DIRECORY
+                            File.Copy(currentExecutable, updaterExecutable, true);
+
+                            // UPDATER ARGUMENTS
+                            List<string> updaterArgs = new List<string>();
+                            updaterArgs.Add("/AutoUpdate");
+                            updaterArgs.Add("\"" + Path.GetDirectoryName(currentExecutable) + "\"");
+                            updaterArgs.Add(app_ApplicationExecutableName);
+                            updaterArgs.Add(app_LatestPackageVersion.ToString());
+                            updaterArgs.Add(app_LatestPackageLink);
+                            updaterArgs.Add(app_LatestPackageDate);
+                            
+                            // EXECUTE UPDATER
+                            ProcessStartInfo startUpdater = new ProcessStartInfo(updaterExecutable);
+                            startUpdater.Arguments = string.Join(" ", updaterArgs);
+                            startUpdater.UseShellExecute = false;
+                            Process.Start(startUpdater);
+
+                            // CLOSE
+                            Application.Exit();
+                        }
+                        else
+                        {
+                            if (!app_DebugMode)
+                            {
+                                // SHOW SPLASH SCREEN
+                                Application.Run(new SplashScreen());
+                            }
+
+                            // RUN NEW APPLICATION INSTANCE
+                            Application.Run(new CheckerMainForm());
+                        }
+                    }
                 }
             }
         }
@@ -278,6 +345,8 @@ namespace EndpointChecker
                 if (s != null)
                 {
                     s.Close();
+
+                    GC.Collect();
                 }
             }
 
@@ -306,6 +375,84 @@ namespace EndpointChecker
             }
 
             return versionString;
+        }
+
+        public static void CheckForUpdate()
+        {
+            try
+            {
+                using (WebClient updateWC = new WebClient())
+                {
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                    // GET LATEST VERSION NUMBER
+                    app_LatestPackageVersion = new Version(
+                        updateWC
+                        .DownloadString(
+                            "https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/version.txt")
+                        .TrimEnd());
+
+                    // GET LATEST PACKAGE INFO
+                    string[] app_LatestPackageInfo = 
+                        updateWC
+                        .DownloadString(
+                            "https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/package.txt")
+                        .TrimEnd()
+                        .Split(
+                            new string[] { "\n" },
+                            StringSplitOptions.None);
+
+                    app_LatestPackageLink = app_LatestPackageInfo[0];
+                    app_LatestPackageDate = app_LatestPackageInfo[1];
+
+                    if (app_LatestPackageVersion > app_Version)
+                    {
+                        DialogResult updateDialogResult = MessageBox.Show(
+                                "New Version available:" +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                "Version: " +
+                                GetVersionString(app_LatestPackageVersion, true, false) +
+                                Environment.NewLine +
+                                "Released: " +
+                                app_LatestPackageDate +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                "Do you want to apply update now ?",
+                            "Update available",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question);
+
+                        if (updateDialogResult == DialogResult.Yes)
+                        {
+                            app_AutoUpdate = true;
+                        }
+                    }
+                    else if (!app_DebugMode && (app_LatestPackageVersion < app_Version))
+                    {
+                        MessageBox.Show(
+                            "You are using unreleased application build." +
+                            Environment.NewLine +
+                            Environment.NewLine +
+                            "Version " +
+                            app_VersionString +
+                            " from " +
+                            app_BuiltDate +
+                            "." +
+                            Environment.NewLine +
+                            Environment.NewLine +
+                            "This build is intended for testing purposes only."
+                            , "Unreleased Build",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                    }
+                }
+            }
+            catch
+            {
+            }
         }
     }
 }

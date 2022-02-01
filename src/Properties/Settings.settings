@@ -236,5 +236,11 @@
     <Setting Name="Config_HTTP_Sec_CH_UserAgent" Type="System.String" Scope="User">
       <Value Profile="(Default)">"\"(Not(A: Brand\";v=\"8\", \"Chromium\";v=\"98\", \"Google Chrome\";v=\"98\""</Value>
     </Setting>
+    <Setting Name="Config_DebugMode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Config_ScanOnStartup" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

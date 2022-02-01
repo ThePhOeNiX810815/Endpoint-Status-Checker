@@ -141,6 +141,8 @@ namespace EndpointChecker
             {
                 // CLOSE DIALOG
                 Close();
+
+                GC.Collect();
             }));
         }
 
@@ -269,6 +271,8 @@ namespace EndpointChecker
         public void btn_Close_Click(object sender, EventArgs e)
         {
             Close();
+
+            GC.Collect();
         }
 
         public void btn_AttachFiles_Click(object sender, EventArgs e)

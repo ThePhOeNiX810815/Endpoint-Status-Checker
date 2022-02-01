@@ -622,6 +622,8 @@ namespace EndpointChecker
                     if (httpWebResponse != null)
                     {
                         httpWebResponse.Close();
+
+                        GC.Collect();
                     }
                 }
             }));
@@ -1231,6 +1233,8 @@ namespace EndpointChecker
                                         if (httpWebResponse != null)
                                         {
                                             httpWebResponse.Close();
+
+                                            GC.Collect();
                                         }
                                     }
                                 }
@@ -1245,6 +1249,8 @@ namespace EndpointChecker
                         if (httpWebResponse != null)
                         {
                             httpWebResponse.Close();
+
+                            GC.Collect();
                         }
                     }
                 }
@@ -1397,6 +1403,8 @@ namespace EndpointChecker
                 if (httpWebResponse != null)
                 {
                     httpWebResponse.Close();
+
+                    GC.Collect();
                 }
             }
 
@@ -1446,6 +1454,8 @@ namespace EndpointChecker
                 if (httpWebResponse != null)
                 {
                     httpWebResponse.Close();
+
+                    GC.Collect();
                 }
             }
 
@@ -1630,6 +1640,8 @@ namespace EndpointChecker
                 if (httpWebResponse != null)
                 {
                     httpWebResponse.Close();
+
+                    GC.Collect();
                 }
             }
 
@@ -1804,6 +1816,7 @@ namespace EndpointChecker
                 Task<UrlReport> virusTotalReportTask = virusTotal.GetUrlReportAsync(virusTotal_ScanResult.Url);
                 UrlReport virusTotalReport = virusTotalReportTask.Result;
                 virusTotalReportTask.Dispose();
+                GC.Collect();
 
                 if (virusTotalReport.ResponseCode == VirusTotalNET.ResponseCodes.UrlReportResponseCode.Present)
                 {
@@ -1964,6 +1977,8 @@ namespace EndpointChecker
                             if (httpWebResponse != null)
                             {
                                 httpWebResponse.Close();
+
+                                GC.Collect();
                             }
                         }
 

@@ -959,5 +959,29 @@ namespace EndpointChecker.Properties {
                 this["Config_HTTP_Sec_CH_UserAgent"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Config_DebugMode {
+            get {
+                return ((bool)(this["Config_DebugMode"]));
+            }
+            set {
+                this["Config_DebugMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Config_ScanOnStartup {
+            get {
+                return ((bool)(this["Config_ScanOnStartup"]));
+            }
+            set {
+                this["Config_ScanOnStartup"] = value;
+            }
+        }
     }
 }
