@@ -26,7 +26,7 @@ namespace EndpointChecker
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
             // SET VERSION LABEL
-            lbl_Version.Text = 
+            lbl_Version.Text =
                 "Version " +
                 GetVersionString(app_LatestPackageVersion, true, false) +
                 " from " +
@@ -115,5 +115,5 @@ namespace EndpointChecker
                 Directory.Delete(Path.Combine(Path.GetTempPath(), tempPackageFolderName), true);
             }
         }
-     }
+    }
 }

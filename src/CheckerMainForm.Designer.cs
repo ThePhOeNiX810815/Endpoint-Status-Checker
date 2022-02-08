@@ -147,6 +147,7 @@
             this.lbl_ListFilter = new System.Windows.Forms.Label();
             this.tb_ListFilter = new System.Windows.Forms.TextBox();
             this.pb_ListFilterClear = new System.Windows.Forms.PictureBox();
+            this.pb_SoftPedia = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
@@ -166,6 +167,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_GitLab)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_AppWebPage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_SoftPedia)).BeginInit();
             this.SuspendLayout();
             // 
             // lv_Endpoints
@@ -214,6 +216,7 @@
             this.lv_Endpoints.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lv_Endpoints_ColumnClick);
             this.lv_Endpoints.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lv_Endpoints_ItemChecked);
             this.lv_Endpoints.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lv_Endpoints_ItemSelectionChanged);
+            this.lv_Endpoints.SelectedIndexChanged += new System.EventHandler(this.lv_Endpoints_SelectedIndexChanged);
             this.lv_Endpoints.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lv_Endpoints_KeyUp);
             this.lv_Endpoints.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lv_Endpoints_MouseClick);
             this.lv_Endpoints.MouseLeave += new System.EventHandler(this.Lv_Endpoints_MouseLeave);
@@ -1469,10 +1472,10 @@
             // 
             this.pb_ITNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_ITNetwork.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_ITNetwork.Image = global::EndpointChecker.Properties.Resources.itnetwork_logo_text;
-            this.pb_ITNetwork.Location = new System.Drawing.Point(967, 483);
+            this.pb_ITNetwork.Image = ((System.Drawing.Image)(resources.GetObject("pb_ITNetwork.Image")));
+            this.pb_ITNetwork.Location = new System.Drawing.Point(1051, 478);
             this.pb_ITNetwork.Name = "pb_ITNetwork";
-            this.pb_ITNetwork.Size = new System.Drawing.Size(123, 30);
+            this.pb_ITNetwork.Size = new System.Drawing.Size(40, 40);
             this.pb_ITNetwork.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pb_ITNetwork.TabIndex = 60;
             this.pb_ITNetwork.TabStop = false;
@@ -1483,9 +1486,9 @@
             this.pb_FeatureRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_FeatureRequest.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_FeatureRequest.Image = ((System.Drawing.Image)(resources.GetObject("pb_FeatureRequest.Image")));
-            this.pb_FeatureRequest.Location = new System.Drawing.Point(861, 479);
+            this.pb_FeatureRequest.Location = new System.Drawing.Point(908, 481);
             this.pb_FeatureRequest.Name = "pb_FeatureRequest";
-            this.pb_FeatureRequest.Size = new System.Drawing.Size(30, 30);
+            this.pb_FeatureRequest.Size = new System.Drawing.Size(32, 32);
             this.pb_FeatureRequest.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pb_FeatureRequest.TabIndex = 62;
             this.pb_FeatureRequest.TabStop = false;
@@ -1502,7 +1505,7 @@
             this.pb_GitHub.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_GitHub.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_GitHub.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitHub.Image")));
-            this.pb_GitHub.Location = new System.Drawing.Point(885, 481);
+            this.pb_GitHub.Location = new System.Drawing.Point(933, 483);
             this.pb_GitHub.Name = "pb_GitHub";
             this.pb_GitHub.Size = new System.Drawing.Size(53, 30);
             this.pb_GitHub.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1526,9 +1529,9 @@
             this.pb_GitLab.BackColor = System.Drawing.Color.Transparent;
             this.pb_GitLab.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_GitLab.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitLab.Image")));
-            this.pb_GitLab.Location = new System.Drawing.Point(929, 480);
+            this.pb_GitLab.Location = new System.Drawing.Point(975, 479);
             this.pb_GitLab.Name = "pb_GitLab";
-            this.pb_GitLab.Size = new System.Drawing.Size(41, 35);
+            this.pb_GitLab.Size = new System.Drawing.Size(42, 40);
             this.pb_GitLab.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pb_GitLab.TabIndex = 64;
             this.pb_GitLab.TabStop = false;
@@ -1540,7 +1543,7 @@
             this.pb_AppWebPage.BackColor = System.Drawing.Color.Transparent;
             this.pb_AppWebPage.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_AppWebPage.Image = ((System.Drawing.Image)(resources.GetObject("pb_AppWebPage.Image")));
-            this.pb_AppWebPage.Location = new System.Drawing.Point(1092, 482);
+            this.pb_AppWebPage.Location = new System.Drawing.Point(1092, 483);
             this.pb_AppWebPage.Name = "pb_AppWebPage";
             this.pb_AppWebPage.Size = new System.Drawing.Size(32, 32);
             this.pb_AppWebPage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1590,12 +1593,26 @@
             this.pb_ListFilterClear.Visible = false;
             this.pb_ListFilterClear.Click += new System.EventHandler(this.pb_ListFilterClear_Click);
             // 
+            // pb_SoftPedia
+            // 
+            this.pb_SoftPedia.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pb_SoftPedia.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pb_SoftPedia.Image = ((System.Drawing.Image)(resources.GetObject("pb_SoftPedia.Image")));
+            this.pb_SoftPedia.Location = new System.Drawing.Point(1016, 481);
+            this.pb_SoftPedia.Name = "pb_SoftPedia";
+            this.pb_SoftPedia.Size = new System.Drawing.Size(32, 32);
+            this.pb_SoftPedia.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_SoftPedia.TabIndex = 69;
+            this.pb_SoftPedia.TabStop = false;
+            this.pb_SoftPedia.Click += new System.EventHandler(this.pb_SoftPedia_Click);
+            // 
             // CheckerMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1134, 536);
+            this.Controls.Add(this.pb_SoftPedia);
             this.Controls.Add(this.pb_ListFilterClear);
             this.Controls.Add(this.tb_ListFilter);
             this.Controls.Add(this.lbl_ListFilter);
@@ -1674,6 +1691,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_GitLab)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_AppWebPage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_SoftPedia)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1797,6 +1815,7 @@
         public System.Windows.Forms.TextBox tb_ListFilter;
         public System.Windows.Forms.PictureBox pb_ListFilterClear;
         public System.Windows.Forms.CheckBox cb_RefreshOnStartup;
+        public System.Windows.Forms.PictureBox pb_SoftPedia;
     }
 }
 

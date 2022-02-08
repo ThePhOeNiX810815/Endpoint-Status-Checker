@@ -193,28 +193,52 @@ namespace EndpointChecker
                                     {
                                         aGauge_DownloadSpeed.MaxValue += (float)50;
                                     }
-                                    
+
                                     while (aGauge_UploadSpeed.MaxValue <= uploadSpeed_FloatValue)
                                     {
                                         aGauge_UploadSpeed.MaxValue += (float)50;
                                     }
 
-                                    if (aGauge_DownloadSpeed.MaxValue > 200)
+                                    if (aGauge_DownloadSpeed.MaxValue > 150)
                                     {
                                         aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 25;
                                     }
+                                    else if (aGauge_DownloadSpeed.MaxValue > 300)
+                                    {
+                                        aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 75;
+                                    }
                                     else if (aGauge_DownloadSpeed.MaxValue > 500)
                                     {
-                                        aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 50;
+                                        aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 125;
+                                    }
+                                    else if (aGauge_DownloadSpeed.MaxValue > 750)
+                                    {
+                                        aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 150;
+                                    }
+                                    else if (aGauge_DownloadSpeed.MaxValue > 1000)
+                                    {
+                                        aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 1175;
                                     }
 
-                                    if (aGauge_UploadSpeed.MaxValue > 200)
+                                    if (aGauge_UploadSpeed.MaxValue > 150)
                                     {
                                         aGauge_UploadSpeed.ScaleLinesMajorStepValue = 25;
                                     }
-                                    else if (aGauge_UploadSpeed.MaxValue > 500)
+                                    else if (aGauge_UploadSpeed.MaxValue > 300)
                                     {
                                         aGauge_UploadSpeed.ScaleLinesMajorStepValue = 50;
+                                    }
+                                    else if (aGauge_UploadSpeed.MaxValue > 500)
+                                    {
+                                        aGauge_UploadSpeed.ScaleLinesMajorStepValue = 75;
+                                    }
+                                    else if (aGauge_UploadSpeed.MaxValue > 750)
+                                    {
+                                        aGauge_UploadSpeed.ScaleLinesMajorStepValue = 100;
+                                    }
+                                    else if (aGauge_UploadSpeed.MaxValue > 1000)
+                                    {
+                                        aGauge_UploadSpeed.ScaleLinesMajorStepValue = 150;
                                     }
 
                                     aGauge_DownloadSpeed.Value = (float)downloadSpeed;

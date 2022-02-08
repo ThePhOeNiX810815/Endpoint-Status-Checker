@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Drawing;
 using System.Security.Permissions;
-using System.Threading;
 using System.Windows.Forms;
+using static EndpointChecker.Program;
 
 namespace EndpointChecker
 {
@@ -19,19 +18,33 @@ namespace EndpointChecker
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
             // SET INFORMATION LABELS
-            lbl_Name.Text = Program.app_ApplicationName;
+            lbl_Name.Text = app_ApplicationName;
             lbl_Version.Text = "Version ";
-            lbl_Build.Text = "Build " + Program.app_BuiltDate;
-            lbl_Copyright.Text = Program.app_Copyright;
+            lbl_Build.Text = "Build " + app_BuiltDate;
+            lbl_Copyright.Text = app_Copyright;
 
-            if (Program.app_Version.Build == 0)
+            // SET VERSION LABEL
+            if (app_Version.Build == 0)
             {
-                lbl_Version.Text += Program.app_Version.Major + "." + Program.app_Version.Minor;
+                lbl_Version.Text += app_Version.Major + "." + app_Version.Minor;
             }
             else
             {
-                lbl_Version.Text += Program.app_VersionString;
-                lbl_PreRelease.Visible = true;
+                lbl_Version.Text += app_VersionString;
+            }
+
+            // SET RELEASE TYPE LABEL
+            if (app_LatestPackageVersion < app_Version)
+            {
+                lbl_ReleaseType.Text = "Unreleased Build";
+                lbl_ReleaseType.ForeColor = Color.Red;
+                lbl_ReleaseType.Visible = true;
+            }
+            else if (app_Version.Build != 0)
+            {
+                lbl_ReleaseType.Text = "Pre-Release Build";
+                lbl_ReleaseType.ForeColor = Color.DodgerBlue;
+                lbl_ReleaseType.Visible = true;
             }
 
             Opacity = 1;

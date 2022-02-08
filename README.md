@@ -51,7 +51,7 @@ Application is using following libraries:
 - FastMember (1.3.0) (newer version available, but not for target framework version)
 - FreeSpire.PDF (7.8.9)
 - FreeSpire.XLS (12.1.0)
-- HtmlAgilityPack (1.11.40)
+- HtmlAgilityPack (1.11.42)
 - IPAddressRange (4.2.0)
 - Nager.PublicSuffix (2.2.2)
 - Newtonsoft.Json (13.0.1)

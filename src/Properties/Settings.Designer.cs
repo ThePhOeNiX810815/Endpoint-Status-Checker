@@ -890,7 +890,7 @@ namespace EndpointChecker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
-            "Chrome/98.100.4758.66 Safari/537.36")]
+            "Chrome/99.100.4844.17 Safari/537.36")]
         public string Config_HTTP_UserAgent {
             get {
                 return ((string)(this["Config_HTTP_UserAgent"]));
@@ -950,25 +950,13 @@ namespace EndpointChecker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\"\\\"(Not(A: Brand\\\";v=\\\"8\\\", \\\"Chromium\\\";v=\\\"98\\\", \\\"Google Chrome\\\";v=\\\"98\\\"\"")]
+        [global::System.Configuration.DefaultSettingValueAttribute("\"(Not(A:Brand\";v=\"8\", \"Chromium\";v=\"99\", \"Google Chrome\";v=\"99\"")]
         public string Config_HTTP_Sec_CH_UserAgent {
             get {
                 return ((string)(this["Config_HTTP_Sec_CH_UserAgent"]));
             }
             set {
                 this["Config_HTTP_Sec_CH_UserAgent"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Config_DebugMode {
-            get {
-                return ((bool)(this["Config_DebugMode"]));
-            }
-            set {
-                this["Config_DebugMode"] = value;
             }
         }
         

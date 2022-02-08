@@ -37,7 +37,7 @@ namespace EndpointChecker
             this.lbl_Copyright = new System.Windows.Forms.Label();
             this.lbl_Version = new System.Windows.Forms.Label();
             this.lbl_Build = new System.Windows.Forms.Label();
-            this.lbl_PreRelease = new System.Windows.Forms.Label();
+            this.lbl_ReleaseType = new System.Windows.Forms.Label();
             this.pb_CloseDialog = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pb_CloseDialog)).BeginInit();
             this.SuspendLayout();
@@ -58,7 +58,7 @@ namespace EndpointChecker
             this.lbl_Name.BackColor = System.Drawing.Color.Transparent;
             this.lbl_Name.Font = new System.Drawing.Font("Arial Rounded MT Bold", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Name.ForeColor = System.Drawing.Color.MidnightBlue;
-            this.lbl_Name.Location = new System.Drawing.Point(12, 44);
+            this.lbl_Name.Location = new System.Drawing.Point(12, 33);
             this.lbl_Name.Name = "lbl_Name";
             this.lbl_Name.Size = new System.Drawing.Size(631, 41);
             this.lbl_Name.TabIndex = 0;
@@ -80,7 +80,7 @@ namespace EndpointChecker
             this.lbl_Version.BackColor = System.Drawing.Color.Transparent;
             this.lbl_Version.Font = new System.Drawing.Font("Century Gothic", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Version.ForeColor = System.Drawing.Color.Black;
-            this.lbl_Version.Location = new System.Drawing.Point(12, 95);
+            this.lbl_Version.Location = new System.Drawing.Point(12, 84);
             this.lbl_Version.Name = "lbl_Version";
             this.lbl_Version.Size = new System.Drawing.Size(631, 34);
             this.lbl_Version.TabIndex = 2;
@@ -91,24 +91,23 @@ namespace EndpointChecker
             this.lbl_Build.BackColor = System.Drawing.Color.Transparent;
             this.lbl_Build.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Build.ForeColor = System.Drawing.Color.Black;
-            this.lbl_Build.Location = new System.Drawing.Point(12, 131);
+            this.lbl_Build.Location = new System.Drawing.Point(12, 120);
             this.lbl_Build.Name = "lbl_Build";
             this.lbl_Build.Size = new System.Drawing.Size(631, 30);
             this.lbl_Build.TabIndex = 4;
             this.lbl_Build.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lbl_PreRelease
+            // lbl_ReleaseType
             // 
-            this.lbl_PreRelease.BackColor = System.Drawing.Color.Silver;
-            this.lbl_PreRelease.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_PreRelease.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.lbl_PreRelease.Location = new System.Drawing.Point(537, 192);
-            this.lbl_PreRelease.Name = "lbl_PreRelease";
-            this.lbl_PreRelease.Size = new System.Drawing.Size(111, 25);
-            this.lbl_PreRelease.TabIndex = 5;
-            this.lbl_PreRelease.Text = "Pre-Release";
-            this.lbl_PreRelease.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lbl_PreRelease.Visible = false;
+            this.lbl_ReleaseType.BackColor = System.Drawing.Color.Silver;
+            this.lbl_ReleaseType.Font = new System.Drawing.Font("Cambria", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ReleaseType.ForeColor = System.Drawing.Color.Black;
+            this.lbl_ReleaseType.Location = new System.Drawing.Point(232, 155);
+            this.lbl_ReleaseType.Name = "lbl_ReleaseType";
+            this.lbl_ReleaseType.Size = new System.Drawing.Size(191, 25);
+            this.lbl_ReleaseType.TabIndex = 5;
+            this.lbl_ReleaseType.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_ReleaseType.Visible = false;
             // 
             // pb_CloseDialog
             // 
@@ -132,7 +131,7 @@ namespace EndpointChecker
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(655, 223);
             this.Controls.Add(this.pb_CloseDialog);
-            this.Controls.Add(this.lbl_PreRelease);
+            this.Controls.Add(this.lbl_ReleaseType);
             this.Controls.Add(this.lbl_Build);
             this.Controls.Add(this.lbl_Version);
             this.Controls.Add(this.lbl_Copyright);
@@ -161,7 +160,7 @@ namespace EndpointChecker
         public System.Windows.Forms.Label lbl_Copyright;
         public System.Windows.Forms.Label lbl_Version;
         public System.Windows.Forms.Label lbl_Build;
-        public System.Windows.Forms.Label lbl_PreRelease;
+        public System.Windows.Forms.Label lbl_ReleaseType;
         public System.Windows.Forms.PictureBox pb_CloseDialog;
     }
 }

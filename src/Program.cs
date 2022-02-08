@@ -101,7 +101,6 @@ namespace EndpointChecker
             ", Build " +
             Environment.OSVersion.Version.Build.ToString();
 
-        public static bool app_DebugMode = Settings.Default.Config_DebugMode;
         public static bool app_ScanOnStartup = Settings.Default.Config_ScanOnStartup;
         public static string app_ApplicationName = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductName;
         public static string app_ApplicationExecutableName = AppDomain.CurrentDomain.FriendlyName;
@@ -109,7 +108,7 @@ namespace EndpointChecker
         public static string app_BuiltDate = RetrieveLinkerTimestamp();
         public static string app_Copyright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).LegalCopyright;
         public static string app_Title = app_ApplicationName + " v" + app_VersionString;
-        
+
         // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES
         public static string exceptionReport_senderEMailAddress = "ExceptionReport@EndpointStatusChecker";
         public static string featureRequest_senderEMailAddress = "FeatureRequest@EndpointStatusChecker";
@@ -206,24 +205,21 @@ namespace EndpointChecker
 
                 // CHECK APPLICATION INSTANCE
                 bool createdNew = true;
-                using (Mutex mainMutex = new Mutex(true, app_Title, out createdNew))
+                using (Mutex mainMutex = new Mutex(true, app_ApplicationName, out createdNew))
                 {
                     if (!createdNew)
                     {
                         // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, RESTORE WINDOW
-                        IntPtr wdwIntPtr = FindWindow(null, app_Title);
-
+                        IntPtr wdwIntPtr = FindWindow(null, app_ApplicationName);
                         Windowplacement placement = new Windowplacement();
+
                         GetWindowPlacement(wdwIntPtr, ref placement);
-
                         ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
-
                         SetForegroundWindow(wdwIntPtr);
                     }
                     else if (RequiredLibraryExists("AGauge.dll") &&
                              RequiredLibraryExists("ClosedXML.dll") &&
                              RequiredLibraryExists("DocumentFormat.OpenXml.dll") &&
-                             RequiredLibraryExists("DomainPublicSuffix.dll") &&
                              RequiredLibraryExists("ExcelNumberFormat.dll") &&
                              RequiredLibraryExists("FastMember.dll") &&
                              RequiredLibraryExists("HtmlAgilityPack.dll") &&
@@ -258,7 +254,7 @@ namespace EndpointChecker
                             updaterArgs.Add(app_LatestPackageVersion.ToString());
                             updaterArgs.Add(app_LatestPackageLink);
                             updaterArgs.Add(app_LatestPackageDate);
-                            
+
                             // EXECUTE UPDATER
                             ProcessStartInfo startUpdater = new ProcessStartInfo(updaterExecutable);
                             startUpdater.Arguments = string.Join(" ", updaterArgs);
@@ -270,11 +266,8 @@ namespace EndpointChecker
                         }
                         else
                         {
-                            if (!app_DebugMode)
-                            {
-                                // SHOW SPLASH SCREEN
-                                Application.Run(new SplashScreen());
-                            }
+                            // SHOW SPLASH SCREEN
+                            Application.Run(new SplashScreen());
 
                             // RUN NEW APPLICATION INSTANCE
                             Application.Run(new CheckerMainForm());
@@ -393,7 +386,7 @@ namespace EndpointChecker
                         .TrimEnd());
 
                     // GET LATEST PACKAGE INFO
-                    string[] app_LatestPackageInfo = 
+                    string[] app_LatestPackageInfo =
                         updateWC
                         .DownloadString(
                             "https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/package.txt")
@@ -429,24 +422,6 @@ namespace EndpointChecker
                         {
                             app_AutoUpdate = true;
                         }
-                    }
-                    else if (!app_DebugMode && (app_LatestPackageVersion < app_Version))
-                    {
-                        MessageBox.Show(
-                            "You are using unreleased application build." +
-                            Environment.NewLine +
-                            Environment.NewLine +
-                            "Version " +
-                            app_VersionString +
-                            " from " +
-                            app_BuiltDate +
-                            "." +
-                            Environment.NewLine +
-                            Environment.NewLine +
-                            "This build is intended for testing purposes only."
-                            , "Unreleased Build",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
                     }
                 }
             }
