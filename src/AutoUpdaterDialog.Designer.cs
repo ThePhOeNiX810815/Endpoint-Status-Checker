@@ -46,7 +46,7 @@
             this.lbl_Title.Name = "lbl_Title";
             this.lbl_Title.Size = new System.Drawing.Size(439, 41);
             this.lbl_Title.TabIndex = 0;
-            this.lbl_Title.Text = "Endpoint Status Checker AutoUpdate";
+            this.lbl_Title.Text = "<AppName> AutoUpdate";
             this.lbl_Title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lbl_Version
@@ -74,8 +74,8 @@
             // lbl_Progress
             // 
             this.lbl_Progress.BackColor = System.Drawing.Color.Transparent;
-            this.lbl_Progress.Font = new System.Drawing.Font("Comic Sans MS", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Progress.ForeColor = System.Drawing.Color.PaleGreen;
+            this.lbl_Progress.Font = new System.Drawing.Font("Comic Sans MS", 15.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Progress.ForeColor = System.Drawing.Color.Yellow;
             this.lbl_Progress.Location = new System.Drawing.Point(12, 203);
             this.lbl_Progress.Name = "lbl_Progress";
             this.lbl_Progress.Size = new System.Drawing.Size(439, 31);

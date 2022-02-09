@@ -163,10 +163,12 @@ namespace EndpointChecker
         public static long http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
 
         // AUTO UPDATE VARIABLES
+        public static Version app_AutoUpdate_SkipVersion = new Version(Settings.Default.AutoUpdate_SkipVersion);
         public static bool app_AutoUpdate = false;
         public static Version app_LatestPackageVersion = new Version();
         public static string app_LatestPackageLink = string.Empty;
         public static string app_LatestPackageDate = string.Empty;
+        public static string app_LatestPackageReleaseNotes_RTF = string.Empty;
 
         /// <summary>
         /// The main entry point for the application.
@@ -398,29 +400,26 @@ namespace EndpointChecker
                     app_LatestPackageLink = app_LatestPackageInfo[0];
                     app_LatestPackageDate = app_LatestPackageInfo[1];
 
-                    if (app_LatestPackageVersion > app_Version)
-                    {
-                        DialogResult updateDialogResult = MessageBox.Show(
-                                "New Version available:" +
-                                Environment.NewLine +
-                                Environment.NewLine +
-                                Environment.NewLine +
-                                "Version: " +
-                                GetVersionString(app_LatestPackageVersion, true, false) +
-                                Environment.NewLine +
-                                "Released: " +
-                                app_LatestPackageDate +
-                                Environment.NewLine +
-                                Environment.NewLine +
-                                Environment.NewLine +
-                                "Do you want to apply update now ?",
-                            "Update available",
-                            MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Question);
+                    // GET LATEST VERSION RELEASE NOTES
+                    app_LatestPackageReleaseNotes_RTF =
+                        updateWC
+                        .DownloadString(
+                            "https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/release_notes.rtf");
 
-                        if (updateDialogResult == DialogResult.Yes)
+                    if (app_LatestPackageVersion > app_Version &&
+                        app_LatestPackageVersion > app_AutoUpdate_SkipVersion)
+                    {
+                        // SHOW NEW VERSION DIALOG
+                        NewVersionDialog newVersionDialog = new NewVersionDialog();
+                        newVersionDialog.ShowDialog();
+
+                        if (newVersionDialog.updateNow)
                         {
                             app_AutoUpdate = true;
+                        }
+                        else if (newVersionDialog.updateSkip)
+                        {
+                            Settings.Default.AutoUpdate_SkipVersion = app_LatestPackageVersion.ToString();
                         }
                     }
                 }

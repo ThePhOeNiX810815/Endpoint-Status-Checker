@@ -16,6 +16,9 @@ namespace EndpointChecker
 {
     public partial class SpeedTestDialog : Form
     {
+        // MAXIMUM NUMBER OF TESTS SERVERS
+        public int maxTestServersCount = 50;
+
         public enum TestServerSelectionMode
         {
             AllServers = 0,
@@ -28,6 +31,10 @@ namespace EndpointChecker
         public SpeedTestDialog()
         {
             InitializeComponent();
+
+            // SET DOUBLE BUFFER
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
         }
 
         public void Btn_SpeedTest_Refresh_Click(object sender, EventArgs e)
@@ -105,7 +112,8 @@ namespace EndpointChecker
                             IEnumerable<Server> servers = SelectServers(
                                                                         speedTestSettings,
                                                                         currentCountry_RegionInfo,
-                                                                        speedTestClient);
+                                                                        speedTestClient,
+                                                                        maxTestServersCount);
 
                             if (servers.Count() > 0)
                             {
@@ -310,7 +318,8 @@ namespace EndpointChecker
         public IEnumerable<Server> SelectServers(
             Settings settings,
             RegionInfo regionInfo_CurrentCountry,
-            SpeedTestClient client)
+            SpeedTestClient client,
+            int testServersCount)
         {
             List<Server> serversList = settings.Servers.ToList();
             List<Server> filteredServersList = new List<Server>();
@@ -332,7 +341,7 @@ namespace EndpointChecker
                     }
                 }
             }
-            if (testServerSelectionMode == TestServerSelectionMode.OnlyServersFromCurrentCountry)
+            else if (testServerSelectionMode == TestServerSelectionMode.OnlyServersFromCurrentCountry)
             {
                 foreach (Server serverItem in serversList)
                 {
@@ -349,12 +358,12 @@ namespace EndpointChecker
                     }
                 }
             }
-            if (testServerSelectionMode == TestServerSelectionMode.AllServers)
+            else if (testServerSelectionMode == TestServerSelectionMode.AllServers)
             {
-                filteredServersList = settings.Servers.Take(30).ToList();
+                filteredServersList = settings.Servers.ToList();
             }
 
-            foreach (var server in filteredServersList)
+            foreach (var server in filteredServersList.Take(testServersCount))
             {
                 server.Latency = client.TestServerLatency(server);
 

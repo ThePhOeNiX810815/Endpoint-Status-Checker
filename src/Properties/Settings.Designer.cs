@@ -971,5 +971,17 @@ namespace EndpointChecker.Properties {
                 this["Config_ScanOnStartup"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.0.0.0")]
+        public string AutoUpdate_SkipVersion {
+            get {
+                return ((string)(this["AutoUpdate_SkipVersion"]));
+            }
+            set {
+                this["AutoUpdate_SkipVersion"] = value;
+            }
+        }
     }
 }

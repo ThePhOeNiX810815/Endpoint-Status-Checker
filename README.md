@@ -13,7 +13,9 @@ Checks pre-defined list of network EndPoints on various conditions:
 - tray status icon and notifications
 
 You can easily decompile the app, it's not obfuscated.
+
 This piece of software is safe to use on your host, ignore any false positives.
+
 Application have inteligent AutoUpdate method, using GitHub packages.
 
 # Requirements

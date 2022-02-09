@@ -102,6 +102,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net" />
@@ -155,6 +156,12 @@
     <Compile Include="FeatureRequestDialog.Designer.cs">
       <DependentUpon>FeatureRequestDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="NewVersionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewVersionDialog.Designer.cs">
+      <DependentUpon>NewVersionDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpeedTestDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -190,6 +197,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FeatureRequestDialog.resx">
       <DependentUpon>FeatureRequestDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewVersionDialog.resx">
+      <DependentUpon>NewVersionDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -251,6 +261,7 @@
     <Content Include="Images\location.png" />
     <Content Include="Images\main.png" />
     <Content Include="Images\microsoft.png" />
+    <Content Include="Images\newUpdateLogo.png" />
     <Content Include="Images\norton.png" />
     <Content Include="Images\openGraph.png" />
     <Content Include="Images\password.png" />
@@ -312,7 +323,7 @@
     <Content Include="Images\wmiClass.png" />
     <Content Include="Images\wmiProperty.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />  
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

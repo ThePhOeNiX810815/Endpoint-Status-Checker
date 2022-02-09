@@ -31,7 +31,7 @@ namespace EndpointChecker
         {
             List<Property> reportItems = new List<Property>();
 
-            reportItems.Add(new Property { ItemName = "Application Version", ItemValue = Program.app_ApplicationName + " v" + Program.app_Version });
+            reportItems.Add(new Property { ItemName = "Application Version", ItemValue = Program.app_ApplicationName + " v" + Program.app_VersionString });
             reportItems.Add(new Property { ItemName = "Date / Time", ItemValue = DateTime.Now.ToString("dd.MM.yyyy HH:mm") });
             reportItems.Add(new Property { ItemName = "Improvement Description", ItemValue = user_Comment });
 
