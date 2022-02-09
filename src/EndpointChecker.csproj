@@ -89,10 +89,10 @@
       <HintPath>packages\NSpeedTest.1.0\lib\net45\NSpeedTest.dll</HintPath>
     </Reference>
     <Reference Include="Spire.License, Version=1.4.0.40, Culture=neutral, PublicKeyToken=b1144360237c8b3f, processorArchitecture=MSIL">
-      <HintPath>packages\FreeSpire.XLS.12.1.0\lib\net40\Spire.License.dll</HintPath>
+      <HintPath>packages\FreeSpire.PDF.8.2.0\lib\net40\Spire.License.dll</HintPath>
     </Reference>
-    <Reference Include="Spire.Pdf, Version=8.1.7.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <HintPath>packages\FreeSpire.XLS.12.1.0\lib\net40\Spire.Pdf.dll</HintPath>
+    <Reference Include="Spire.Pdf, Version=8.2.2.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>packages\FreeSpire.PDF.8.2.0\lib\net40\Spire.Pdf.dll</HintPath>
     </Reference>
     <Reference Include="Spire.XLS, Version=12.1.11.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
       <HintPath>packages\FreeSpire.XLS.12.1.0\lib\net40\Spire.XLS.dll</HintPath>
@@ -265,6 +265,7 @@
     <Content Include="Images\norton.png" />
     <Content Include="Images\openGraph.png" />
     <Content Include="Images\password.png" />
+    <Content Include="Images\progressWheel_GreenDots.gif" />
     <Content Include="Images\rails.png" />
     <Content Include="Images\robot.jpg" />
     <Content Include="Images\splash_Background.jpg" />

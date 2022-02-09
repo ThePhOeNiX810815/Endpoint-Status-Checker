@@ -52,7 +52,7 @@ Application is using following libraries:
 - DocumentFormat.OpenXml (2.15.0)
 - ExcelNumberFormat (1.1.0)
 - FastMember (1.3.0) (newer version available, but not for target framework version)
-- FreeSpire.PDF (7.8.9)
+- FreeSpire.PDF (8.2.0)
 - FreeSpire.XLS (12.1.0)
 - HtmlAgilityPack (1.11.42)
 - IPAddressRange (4.2.0)
