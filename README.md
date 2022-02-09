@@ -14,6 +14,7 @@ Checks pre-defined list of network EndPoints on various conditions:
 
 You can easily decompile the app, it's not obfuscated.
 This piece of software is safe to use on your host, ignore any false positives.
+Application have inteligent AutoUpdate method, using GitHub packages.
 
 # Requirements
 - .NET Framework 4.5 or later
@@ -56,6 +57,7 @@ Application is using following libraries:
 - Nager.PublicSuffix (2.2.2)
 - Newtonsoft.Json (13.0.1)
 - NSpeedTest (1.0.0) (newer version available, but not for target framework version)
+- System.IO.Compression (4.3.0)
 - System.Net.Http (4.3.4)
 - WhoisClient.NET (1.0.2) (newer version available, but not for target framework version)
 - WindowsAPICodePack-Core (1.1.2)
