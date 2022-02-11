@@ -253,6 +253,7 @@
     <Content Include="Images\generator.png" />
     <Content Include="Images\GitHubLogo.png" />
     <Content Include="Images\GitLabLogo.png" />
+    <Content Include="Images\goLogo.png" />
     <Content Include="Images\google.png" />
     <Content Include="Images\itnetwork_logo_text.png" />
     <Content Include="Images\linkStatus_Invalid.png" />

@@ -425,38 +425,41 @@ namespace EndpointChecker
 
         public void SaveConfiguration()
         {
-            if (lv_Endpoints.Visible)
+            ThreadSafeInvoke((Action)(() =>
             {
-                Settings.Default.Config_EnableAutomaticRefresh = cb_AutomaticRefresh.Checked;
-                Settings.Default.Config_EnableContinuousRefresh = cb_ContinuousRefresh.Checked;
-                Settings.Default.Config_AutoAdjustRefreshInterval = cb_RefreshAutoSet.Checked;
-                Settings.Default.Config_AutomaticRefreshIntervalSeconds = num_RefreshInterval.Value;
-                Settings.Default.Config_PingTimeoutSeconds = num_PingTimeout.Value;
-                Settings.Default.Config_HTTP_RequestTimeoutSeconds = num_HTTPRequestTimeout.Value;
-                Settings.Default.Config_FTP_RequestTimeoutSeconds = num_FTPRequestTimeout.Value;
-                Settings.Default.Config_EnableTrayNotificationsOnError = cb_TrayBalloonNotify.Checked;
-                Settings.Default.Config_AllowAutoRedirect = cb_AllowAutoRedirect.Checked;
-                Settings.Default.Config_ValidateSSLCertificate = cb_ValidateSSLCertificate.Checked;
-                Settings.Default.Config_EndpointsStatusExportDirectory = statusExport_Directory;
-                Settings.Default.Config_ValidationMethod = comboBox_Validate.SelectedIndex;
-                Settings.Default.Config_ParallelThreadsCount = num_ParallelThreadsCount.Value;
-                Settings.Default.Config_ResolveNetworkShares = cb_ResolveNetworkShares.Checked;
-                Settings.Default.Config_ExportEndpointsStatus_XLSX = cb_ExportEndpointsStatus_XLSX.Checked;
-                Settings.Default.Config_ExportEndpointsStatus_JSON = cb_ExportEndpointsStatus_JSON.Checked;
-                Settings.Default.Config_ExportEndpointsStatus_XML = cb_ExportEndpointsStatus_XML.Checked;
-                Settings.Default.Config_ExportEndpointsStatus_HTML = cb_ExportEndpointsStatus_HTML.Checked;
-                Settings.Default.Config_ResolvePageMetaInfo = cb_ResolvePageMetaInfo.Checked;
-                Settings.Default.Config_RemoveURLParameters = cb_RemoveURLParameters.Checked;
-                Settings.Default.Config_ResolvePageLinks = cb_ResolvePageLinks.Checked;
-                Settings.Default.Config_SaveResponse = cb_SaveResponse.Checked;
-                Settings.Default.VirusTotal_API_Key = apiKey_VirusTotal;
-                Settings.Default.GoogleMaps_API_Key = apiKey_GoogleMaps;
-                Settings.Default.Config_Executable_VNCViewer = appExecutable_VNC;
-                Settings.Default.Config_Executable_Putty = appExecutable_Putty;
-                Settings.Default.Config_ScanOnStartup = cb_RefreshOnStartup.Checked;
-                Settings.Default.HasSavedConfiguration = true;
-                Settings.Default.Save();
-            }
+                if (lv_Endpoints.Visible)
+                {
+                    Settings.Default.Config_EnableAutomaticRefresh = cb_AutomaticRefresh.Checked;
+                    Settings.Default.Config_EnableContinuousRefresh = cb_ContinuousRefresh.Checked;
+                    Settings.Default.Config_AutoAdjustRefreshInterval = cb_RefreshAutoSet.Checked;
+                    Settings.Default.Config_AutomaticRefreshIntervalSeconds = num_RefreshInterval.Value;
+                    Settings.Default.Config_PingTimeoutSeconds = num_PingTimeout.Value;
+                    Settings.Default.Config_HTTP_RequestTimeoutSeconds = num_HTTPRequestTimeout.Value;
+                    Settings.Default.Config_FTP_RequestTimeoutSeconds = num_FTPRequestTimeout.Value;
+                    Settings.Default.Config_EnableTrayNotificationsOnError = cb_TrayBalloonNotify.Checked;
+                    Settings.Default.Config_AllowAutoRedirect = cb_AllowAutoRedirect.Checked;
+                    Settings.Default.Config_ValidateSSLCertificate = cb_ValidateSSLCertificate.Checked;
+                    Settings.Default.Config_EndpointsStatusExportDirectory = statusExport_Directory;
+                    Settings.Default.Config_ValidationMethod = comboBox_Validate.SelectedIndex;
+                    Settings.Default.Config_ParallelThreadsCount = num_ParallelThreadsCount.Value;
+                    Settings.Default.Config_ResolveNetworkShares = cb_ResolveNetworkShares.Checked;
+                    Settings.Default.Config_ExportEndpointsStatus_XLSX = cb_ExportEndpointsStatus_XLSX.Checked;
+                    Settings.Default.Config_ExportEndpointsStatus_JSON = cb_ExportEndpointsStatus_JSON.Checked;
+                    Settings.Default.Config_ExportEndpointsStatus_XML = cb_ExportEndpointsStatus_XML.Checked;
+                    Settings.Default.Config_ExportEndpointsStatus_HTML = cb_ExportEndpointsStatus_HTML.Checked;
+                    Settings.Default.Config_ResolvePageMetaInfo = cb_ResolvePageMetaInfo.Checked;
+                    Settings.Default.Config_RemoveURLParameters = cb_RemoveURLParameters.Checked;
+                    Settings.Default.Config_ResolvePageLinks = cb_ResolvePageLinks.Checked;
+                    Settings.Default.Config_SaveResponse = cb_SaveResponse.Checked;
+                    Settings.Default.VirusTotal_API_Key = apiKey_VirusTotal;
+                    Settings.Default.GoogleMaps_API_Key = apiKey_GoogleMaps;
+                    Settings.Default.Config_Executable_VNCViewer = appExecutable_VNC;
+                    Settings.Default.Config_Executable_Putty = appExecutable_Putty;
+                    Settings.Default.Config_ScanOnStartup = cb_RefreshOnStartup.Checked;
+                    Settings.Default.HasSavedConfiguration = true;
+                    Settings.Default.Save();
+                }
+            }));
         }
 
         public void ListEndpoints(ListViewRefreshMethod refreshMethod)
@@ -593,7 +596,7 @@ namespace EndpointChecker
                     {
                         // RESTORE TOPITEM
                         if (lv_Endpoints_TopItemIndex < lv_Endpoints.Items.Count)
-                        {                            
+                        {
                             lv_Endpoints.TopItem = lv_Endpoints.Items[lv_Endpoints_TopItemIndex];
                         }
 
@@ -761,7 +764,7 @@ namespace EndpointChecker
 
                                 // REQUEST PARAMETERS
                                 string httpWebRequest_Method = WebRequestMethods.Http.Get;
-                                Version httpWebRequest_ProtocolVersion = HttpVersion.Version11;                                
+                                Version httpWebRequest_ProtocolVersion = HttpVersion.Version11;
                                 Guid httpWebRequest_ApplicationGUID = Guid.NewGuid();
                                 RequestCachePolicy httpWebRequest_CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
                                 CookieContainer httpWebRequest_CookieContainer = new CookieContainer(300);
@@ -3606,52 +3609,56 @@ namespace EndpointChecker
 
         public void SaveListViewColumnsWidthAndOrder()
         {
-            // RESTORE ALL COLUMNS BEFORE SAVE [PROTOCOL VALIDATION MODE] 
-            comboBox_Validate.SelectedIndex = 0;
+            ThreadSafeInvoke((Action)(() =>
+            {
+                // RESTORE ALL COLUMNS BEFORE SAVE [PROTOCOL VALIDATION MODE]
+                if (comboBox_Validate.SelectedIndex == 0)
+                {
+                    // SAVE COLUMNS WIDTH
+                    Settings.Default.ListView_ColWidth_Service = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointName)].Width;
+                    Settings.Default.ListView_ColWidth_Protocol = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Protocol)].Width;
+                    Settings.Default.ListView_ColWidth_Port = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Port)].Width;
+                    Settings.Default.ListView_ColWidth_Endpoint = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointURL)].Width;
+                    Settings.Default.ListView_ColWidth_IPAddress = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_IPAddress)].Width;
+                    Settings.Default.ListView_ColWidth_ResponseTime = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_ResponseTime)].Width;
+                    Settings.Default.ListView_ColWidth_Code = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Code)].Width;
+                    Settings.Default.ListView_ColWidth_Message = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Message)].Width;
+                    Settings.Default.ListView_ColWidth_LastSeenOnline = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_LastSeenOnline)].Width;
+                    Settings.Default.ListView_ColWidth_MACAddress = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_MACAddress)].Width;
+                    Settings.Default.ListView_ColWidth_PingTime = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_PingTime)].Width;
+                    Settings.Default.ListView_ColWidth_Server = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Server)].Width;
+                    Settings.Default.ListView_ColWidth_UserName = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_UserName)].Width;
+                    Settings.Default.ListView_ColWidth_NetworkShares = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_NetworkShares)].Width;
+                    Settings.Default.ListView_ColWidth_DNSName = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_DNSName)].Width;
+                    Settings.Default.ListView_ColWidth_ContentLenght = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPContentLenght)].Width;
+                    Settings.Default.ListView_ColWidth_ContentType = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPContentType)].Width;
+                    Settings.Default.ListView_ColWidth_Expires = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPExpires)].Width;
+                    Settings.Default.ListView_ColWidth_ETag = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPETag)].Width;
 
-            // SAVE COLUMNS WIDTH
-            Settings.Default.ListView_ColWidth_Service = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointName)].Width;
-            Settings.Default.ListView_ColWidth_Protocol = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Protocol)].Width;
-            Settings.Default.ListView_ColWidth_Port = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Port)].Width;
-            Settings.Default.ListView_ColWidth_Endpoint = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointURL)].Width;
-            Settings.Default.ListView_ColWidth_IPAddress = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_IPAddress)].Width;
-            Settings.Default.ListView_ColWidth_ResponseTime = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_ResponseTime)].Width;
-            Settings.Default.ListView_ColWidth_Code = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Code)].Width;
-            Settings.Default.ListView_ColWidth_Message = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Message)].Width;
-            Settings.Default.ListView_ColWidth_LastSeenOnline = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_LastSeenOnline)].Width;
-            Settings.Default.ListView_ColWidth_MACAddress = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_MACAddress)].Width;
-            Settings.Default.ListView_ColWidth_PingTime = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_PingTime)].Width;
-            Settings.Default.ListView_ColWidth_Server = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Server)].Width;
-            Settings.Default.ListView_ColWidth_UserName = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_UserName)].Width;
-            Settings.Default.ListView_ColWidth_NetworkShares = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_NetworkShares)].Width;
-            Settings.Default.ListView_ColWidth_DNSName = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_DNSName)].Width;
-            Settings.Default.ListView_ColWidth_ContentLenght = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPContentLenght)].Width;
-            Settings.Default.ListView_ColWidth_ContentType = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPContentType)].Width;
-            Settings.Default.ListView_ColWidth_Expires = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPExpires)].Width;
-            Settings.Default.ListView_ColWidth_ETag = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPETag)].Width;
+                    // SAVE COLUMNS DISPLAY INDEX [ORDER]
+                    Settings.Default.ListView_DisplayIndex_Service = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointName)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_Protocol = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Protocol)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_Port = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Port)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_Endpoint = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointURL)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_IPAddress = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_IPAddress)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_ResponseTime = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_ResponseTime)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_Code = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Code)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_Message = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Message)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_LastSeenOnline = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_LastSeenOnline)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_MACAddress = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_MACAddress)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_PingTime = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_PingTime)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_Server = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Server)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_UserName = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_UserName)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_NetworkShares = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_NetworkShares)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_DNSName = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_DNSName)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_ContentLenght = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPContentLenght)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_ContentType = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPContentType)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_Expires = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPExpires)].DisplayIndex;
+                    Settings.Default.ListView_DisplayIndex_ETag = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPETag)].DisplayIndex;
 
-            // SAVE COLUMNS DISPLAY INDEX [ORDER]
-            Settings.Default.ListView_DisplayIndex_Service = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointName)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_Protocol = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Protocol)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_Port = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Port)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_Endpoint = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointURL)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_IPAddress = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_IPAddress)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_ResponseTime = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_ResponseTime)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_Code = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Code)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_Message = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Message)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_LastSeenOnline = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_LastSeenOnline)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_MACAddress = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_MACAddress)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_PingTime = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_PingTime)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_Server = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Server)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_UserName = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_UserName)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_NetworkShares = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_NetworkShares)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_DNSName = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_DNSName)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_ContentLenght = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPContentLenght)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_ContentType = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPContentType)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_Expires = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPExpires)].DisplayIndex;
-            Settings.Default.ListView_DisplayIndex_ETag = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPETag)].DisplayIndex;
-
-            Settings.Default.Save();
+                    Settings.Default.Save();
+                }
+            }));
         }
 
         public void RestoreListViewColumnsWidthAndOrder()

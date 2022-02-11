@@ -33,7 +33,6 @@
             this.lbl_SpeedTest_Distance = new System.Windows.Forms.Label();
             this.lbl_SpeedTest_HostedBy = new System.Windows.Forms.Label();
             this.lbl_SpeedTest_TestServer = new System.Windows.Forms.Label();
-            this.btn_SpeedTest_Refresh = new System.Windows.Forms.Button();
             this.pb_SpeedTestProgress = new System.Windows.Forms.PictureBox();
             this.lbl_SpeedTest_CurrentCountry = new System.Windows.Forms.Label();
             this.rtb_SpeedTest_LogConsole = new System.Windows.Forms.RichTextBox();
@@ -54,7 +53,9 @@
             this.lbl_SpeedTest_Distance_Value = new System.Windows.Forms.Label();
             this.lbl_SpeedTest_HostedBy_Value = new System.Windows.Forms.Label();
             this.btn_SpeedTest_GetServers = new System.Windows.Forms.Button();
+            this.pb_GO = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pb_SpeedTestProgress)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_GO)).BeginInit();
             this.SuspendLayout();
             // 
             // lbl_SpeedTest_Latency
@@ -105,29 +106,12 @@
             this.lbl_SpeedTest_TestServer.Text = "Test Server";
             this.lbl_SpeedTest_TestServer.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btn_SpeedTest_Refresh
-            // 
-            this.btn_SpeedTest_Refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btn_SpeedTest_Refresh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btn_SpeedTest_Refresh.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_SpeedTest_Refresh.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btn_SpeedTest_Refresh.Font = new System.Drawing.Font("Gadugi", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_SpeedTest_Refresh.ForeColor = System.Drawing.Color.Yellow;
-            this.btn_SpeedTest_Refresh.Location = new System.Drawing.Point(321, 414);
-            this.btn_SpeedTest_Refresh.Name = "btn_SpeedTest_Refresh";
-            this.btn_SpeedTest_Refresh.Size = new System.Drawing.Size(48, 48);
-            this.btn_SpeedTest_Refresh.TabIndex = 69;
-            this.btn_SpeedTest_Refresh.Text = "GO !";
-            this.btn_SpeedTest_Refresh.UseVisualStyleBackColor = false;
-            this.btn_SpeedTest_Refresh.Visible = false;
-            this.btn_SpeedTest_Refresh.Click += new System.EventHandler(this.Btn_SpeedTest_Refresh_Click);
-            // 
             // pb_SpeedTestProgress
             // 
             this.pb_SpeedTestProgress.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pb_SpeedTestProgress.BackColor = System.Drawing.Color.Transparent;
             this.pb_SpeedTestProgress.Image = global::EndpointChecker.Properties.Resources.progressWheel_GreenDots;
-            this.pb_SpeedTestProgress.Location = new System.Drawing.Point(285, 441);
+            this.pb_SpeedTestProgress.Location = new System.Drawing.Point(284, 441);
             this.pb_SpeedTestProgress.Name = "pb_SpeedTestProgress";
             this.pb_SpeedTestProgress.Size = new System.Drawing.Size(120, 120);
             this.pb_SpeedTestProgress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -167,7 +151,7 @@
             this.lbl_SpeedTest_Mbps_Download_Label.BackColor = System.Drawing.Color.Silver;
             this.lbl_SpeedTest_Mbps_Download_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbl_SpeedTest_Mbps_Download_Label.ForeColor = System.Drawing.Color.Black;
-            this.lbl_SpeedTest_Mbps_Download_Label.Location = new System.Drawing.Point(34, 598);
+            this.lbl_SpeedTest_Mbps_Download_Label.Location = new System.Drawing.Point(33, 598);
             this.lbl_SpeedTest_Mbps_Download_Label.Name = "lbl_SpeedTest_Mbps_Download_Label";
             this.lbl_SpeedTest_Mbps_Download_Label.Size = new System.Drawing.Size(210, 28);
             this.lbl_SpeedTest_Mbps_Download_Label.TabIndex = 81;
@@ -179,7 +163,7 @@
             this.lbl_SpeedTest_Mbps_Upload_Label.BackColor = System.Drawing.Color.Silver;
             this.lbl_SpeedTest_Mbps_Upload_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbl_SpeedTest_Mbps_Upload_Label.ForeColor = System.Drawing.Color.Black;
-            this.lbl_SpeedTest_Mbps_Upload_Label.Location = new System.Drawing.Point(445, 598);
+            this.lbl_SpeedTest_Mbps_Upload_Label.Location = new System.Drawing.Point(444, 598);
             this.lbl_SpeedTest_Mbps_Upload_Label.Name = "lbl_SpeedTest_Mbps_Upload_Label";
             this.lbl_SpeedTest_Mbps_Upload_Label.Size = new System.Drawing.Size(210, 28);
             this.lbl_SpeedTest_Mbps_Upload_Label.TabIndex = 82;
@@ -192,7 +176,7 @@
             this.lbl_SpeedTest_Download_Label.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_Download_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbl_SpeedTest_Download_Label.ForeColor = System.Drawing.Color.Silver;
-            this.lbl_SpeedTest_Download_Label.Location = new System.Drawing.Point(38, 378);
+            this.lbl_SpeedTest_Download_Label.Location = new System.Drawing.Point(37, 378);
             this.lbl_SpeedTest_Download_Label.Name = "lbl_SpeedTest_Download_Label";
             this.lbl_SpeedTest_Download_Label.Size = new System.Drawing.Size(206, 26);
             this.lbl_SpeedTest_Download_Label.TabIndex = 83;
@@ -206,7 +190,7 @@
             this.lbl_SpeedTest_Upload_Label.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_Upload_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbl_SpeedTest_Upload_Label.ForeColor = System.Drawing.Color.Silver;
-            this.lbl_SpeedTest_Upload_Label.Location = new System.Drawing.Point(449, 378);
+            this.lbl_SpeedTest_Upload_Label.Location = new System.Drawing.Point(448, 378);
             this.lbl_SpeedTest_Upload_Label.Name = "lbl_SpeedTest_Upload_Label";
             this.lbl_SpeedTest_Upload_Label.Size = new System.Drawing.Size(206, 26);
             this.lbl_SpeedTest_Upload_Label.TabIndex = 84;
@@ -266,7 +250,7 @@
             this.lbl_SpeedTest_ExternalIP.Name = "lbl_SpeedTest_ExternalIP";
             this.lbl_SpeedTest_ExternalIP.Size = new System.Drawing.Size(134, 25);
             this.lbl_SpeedTest_ExternalIP.TabIndex = 93;
-            this.lbl_SpeedTest_ExternalIP.Text = "External Public IP";
+            this.lbl_SpeedTest_ExternalIP.Text = "Public IP / ISP";
             this.lbl_SpeedTest_ExternalIP.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // aGauge_DownloadSpeed
@@ -278,7 +262,7 @@
             this.aGauge_DownloadSpeed.BaseArcSweep = 270;
             this.aGauge_DownloadSpeed.BaseArcWidth = 2;
             this.aGauge_DownloadSpeed.Center = new System.Drawing.Point(100, 100);
-            this.aGauge_DownloadSpeed.Location = new System.Drawing.Point(38, 414);
+            this.aGauge_DownloadSpeed.Location = new System.Drawing.Point(37, 414);
             this.aGauge_DownloadSpeed.MaxValue = 50F;
             this.aGauge_DownloadSpeed.MinValue = 0F;
             this.aGauge_DownloadSpeed.Name = "aGauge_DownloadSpeed";
@@ -320,7 +304,7 @@
             this.aGauge_UploadSpeed.BaseArcSweep = 270;
             this.aGauge_UploadSpeed.BaseArcWidth = 2;
             this.aGauge_UploadSpeed.Center = new System.Drawing.Point(100, 100);
-            this.aGauge_UploadSpeed.Location = new System.Drawing.Point(449, 414);
+            this.aGauge_UploadSpeed.Location = new System.Drawing.Point(448, 414);
             this.aGauge_UploadSpeed.MaxValue = 50F;
             this.aGauge_UploadSpeed.MinValue = 0F;
             this.aGauge_UploadSpeed.Name = "aGauge_UploadSpeed";
@@ -359,6 +343,7 @@
             this.cb_SpeedTest_TestServer.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_SpeedTest_TestServer.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cb_SpeedTest_TestServer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_SpeedTest_TestServer.Enabled = false;
             this.cb_SpeedTest_TestServer.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold);
             this.cb_SpeedTest_TestServer.FormattingEnabled = true;
             this.cb_SpeedTest_TestServer.Location = new System.Drawing.Point(147, 64);
@@ -384,6 +369,7 @@
             // lbl_SpeedTest_CurrentCountry_Value
             // 
             this.lbl_SpeedTest_CurrentCountry_Value.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lbl_SpeedTest_CurrentCountry_Value.BackColor = System.Drawing.Color.DimGray;
             this.lbl_SpeedTest_CurrentCountry_Value.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_CurrentCountry_Value.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_SpeedTest_CurrentCountry_Value.Location = new System.Drawing.Point(148, 36);
@@ -434,15 +420,30 @@
             this.btn_SpeedTest_GetServers.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_SpeedTest_GetServers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btn_SpeedTest_GetServers.Font = new System.Drawing.Font("Gadugi", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_SpeedTest_GetServers.ForeColor = System.Drawing.Color.Aqua;
-            this.btn_SpeedTest_GetServers.Location = new System.Drawing.Point(281, 378);
+            this.btn_SpeedTest_GetServers.ForeColor = System.Drawing.Color.DeepSkyBlue;
+            this.btn_SpeedTest_GetServers.Location = new System.Drawing.Point(265, 378);
             this.btn_SpeedTest_GetServers.Name = "btn_SpeedTest_GetServers";
-            this.btn_SpeedTest_GetServers.Size = new System.Drawing.Size(129, 26);
+            this.btn_SpeedTest_GetServers.Size = new System.Drawing.Size(161, 26);
             this.btn_SpeedTest_GetServers.TabIndex = 104;
             this.btn_SpeedTest_GetServers.Text = "GET SERVERS";
             this.btn_SpeedTest_GetServers.UseVisualStyleBackColor = false;
             this.btn_SpeedTest_GetServers.Visible = false;
             this.btn_SpeedTest_GetServers.Click += new System.EventHandler(this.btn_SpeedTest_GetServers_Click);
+            // 
+            // pb_GO
+            // 
+            this.pb_GO.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pb_GO.BackColor = System.Drawing.Color.Transparent;
+            this.pb_GO.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pb_GO.Image = global::EndpointChecker.Properties.Resources.goLogo;
+            this.pb_GO.Location = new System.Drawing.Point(312, 469);
+            this.pb_GO.Name = "pb_GO";
+            this.pb_GO.Size = new System.Drawing.Size(64, 64);
+            this.pb_GO.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_GO.TabIndex = 105;
+            this.pb_GO.TabStop = false;
+            this.pb_GO.Visible = false;
+            this.pb_GO.Click += new System.EventHandler(this.pb_GO_Click);
             // 
             // SpeedTestDialog
             // 
@@ -450,6 +451,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DimGray;
             this.ClientSize = new System.Drawing.Size(691, 633);
+            this.Controls.Add(this.pb_GO);
             this.Controls.Add(this.btn_SpeedTest_GetServers);
             this.Controls.Add(this.lbl_SpeedTest_ExternalIP_Value);
             this.Controls.Add(this.lbl_SpeedTest_CurrentCountry_Value);
@@ -472,7 +474,6 @@
             this.Controls.Add(this.lbl_SpeedTest_Distance);
             this.Controls.Add(this.lbl_SpeedTest_HostedBy);
             this.Controls.Add(this.lbl_SpeedTest_TestServer);
-            this.Controls.Add(this.btn_SpeedTest_Refresh);
             this.Controls.Add(this.pb_SpeedTestProgress);
             this.Controls.Add(this.rtb_SpeedTest_LogConsole);
             this.DoubleBuffered = true;
@@ -485,8 +486,8 @@
             this.Text = "SpeedTest";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SpeedTestDialog_FormClosing);
-            this.Shown += new System.EventHandler(this.SpeedTestDialog_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.pb_SpeedTestProgress)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_GO)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -497,7 +498,6 @@
         public System.Windows.Forms.Label lbl_SpeedTest_Distance;
         public System.Windows.Forms.Label lbl_SpeedTest_HostedBy;
         public System.Windows.Forms.Label lbl_SpeedTest_TestServer;
-        public System.Windows.Forms.Button btn_SpeedTest_Refresh;
         public System.Windows.Forms.PictureBox pb_SpeedTestProgress;
         public System.Windows.Forms.Label lbl_SpeedTest_CurrentCountry;
         public System.Windows.Forms.RichTextBox rtb_SpeedTest_LogConsole;
@@ -518,5 +518,6 @@
         public System.Windows.Forms.Label lbl_SpeedTest_Distance_Value;
         public System.Windows.Forms.Label lbl_SpeedTest_HostedBy_Value;
         public System.Windows.Forms.Button btn_SpeedTest_GetServers;
+        public System.Windows.Forms.PictureBox pb_GO;
     }
 }
