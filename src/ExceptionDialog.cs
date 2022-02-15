@@ -169,17 +169,17 @@ namespace EndpointChecker
                     smtp.Port = 25;
                     smtp.Send(mailMessage);
 
-                    ThreadSafeInvoke((Action)(() =>
+                    ThreadSafeInvoke(() =>
                     {
                         // SET STATUS CONTROLS
                         lbl_Status.Text = "Error report has been successfully sent";
                         pb_Status.Image = Resources.Success;
-                    }));
+                    });
                 }
             }
             catch (Exception ex)
             {
-                ThreadSafeInvoke((Action)(() =>
+                ThreadSafeInvoke(() =>
                 {
                     // SET STATUS CONTROLS
                     lbl_Status.Text = "There was an error sending details report";
@@ -195,16 +195,16 @@ namespace EndpointChecker
                         Program.app_ApplicationName + " v" + Program.app_VersionString,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
-                }));
+                });
             }
 
             Thread.Sleep(3000);
 
-            ThreadSafeInvoke((Action)(() =>
+            ThreadSafeInvoke(() =>
             {
                 // CLOSE PROGRAM
                 Application.Exit();
-            }));
+            });
         }
 
         public void CreateScreenshot()
@@ -342,7 +342,7 @@ namespace EndpointChecker
             string user_EMail = tb_UserEMailAddress.Text.TrimStart().TrimEnd();
             string user_Comment = tb_OptionalComment.Text.TrimStart().TrimEnd();
 
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 // SEND E-MAIL REPORT
                 SendNotificationMail(
@@ -351,7 +351,7 @@ namespace EndpointChecker
                     attachScreenshot,
                     user_EMail,
                     user_Comment);
-            }));
+            });
         }
 
         public static bool IsMailAddressValid(string mailAddress)

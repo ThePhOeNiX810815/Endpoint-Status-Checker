@@ -159,6 +159,7 @@ namespace EndpointChecker
             Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
 
             // SET DOUBLE BUFFER
+            DoubleBuffered = true;
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
@@ -166,10 +167,10 @@ namespace EndpointChecker
             ThreadPool.SetMinThreads(100, 200);
 
             // GET LOCAL DNS AND GATEWAY SERVERS IP AND MAC ADDRESSES [ON BACKGROUND]
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 GetLocalDNSAndGWAddresses(out localDNSAndGWIPAddresses, out localDNSAndGWMACAddresses);
-            }));
+            });
 
             // ASSIGN RESIZED IMAGES TO ENDPOINT LIST CONTEXT MENU STRIP ITEMS
             toolStripMenuItem_AdminBrowse.Image = ResizeImage(Resources.browse_Admin_Share, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Width, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Height);
@@ -425,7 +426,7 @@ namespace EndpointChecker
 
         public void SaveConfiguration()
         {
-            ThreadSafeInvoke((Action)(() =>
+            ThreadSafeInvoke(() =>
             {
                 if (lv_Endpoints.Visible)
                 {
@@ -459,7 +460,7 @@ namespace EndpointChecker
                     Settings.Default.HasSavedConfiguration = true;
                     Settings.Default.Save();
                 }
-            }));
+            });
         }
 
         public void ListEndpoints(ListViewRefreshMethod refreshMethod)
@@ -703,7 +704,7 @@ namespace EndpointChecker
                         DNSName = new string[] { status_NotAvailable },
                         ResponseTime = status_NotAvailable,
                         ResponseCode = status_NotAvailable,
-                        ResponseMessage = GetEnumDescription(EndpointStatus.NOTCHECKED),
+                        ResponseMessage = GetEnumDescriptionString(EndpointStatus.NOTCHECKED),
                         LastSeenOnline = endpointItem.LastSeenOnline,
                         PingRoundtripTime = status_NotAvailable,
                         ServerID = status_NotAvailable,
@@ -737,7 +738,7 @@ namespace EndpointChecker
                     if (endpointsList_Disabled.Contains(endpoint.Name))
                     {
                         // ENDPOINT IS DISBALED, DON'T CHECK
-                        endpoint.ResponseMessage = GetEnumDescription(EndpointStatus.DISABLED);
+                        endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.DISABLED);
                     }
                     else
                     {
@@ -1293,7 +1294,7 @@ namespace EndpointChecker
                                 {
                                     if (validationMethod == ValidationMethod.Ping)
                                     {
-                                        endpoint.ResponseMessage = GetEnumDescription(EndpointStatus.PINGCHECK);
+                                        endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
                                     }
 
                                     string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 3);
@@ -1328,7 +1329,7 @@ namespace EndpointChecker
                     if (BW_GetStatus.CancellationPending)
                     {
                         endpoint.ResponseCode = status_NotAvailable;
-                        endpoint.ResponseMessage = GetEnumDescription(EndpointStatus.TERMINATED);
+                        endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.TERMINATED);
                     }
                     else
                     {
@@ -1356,13 +1357,13 @@ namespace EndpointChecker
             {
                 // ADJUST AUTO REFRESH INTERVAL BY LAST PROGRESS DURATION TIME (+ 1 MINUTE RESERVE]
                 decimal durationTime_List_Minutes = (durationTime_List / 60000);
-                ThreadSafeInvoke((Action)(() =>
+                ThreadSafeInvoke(() =>
                 {
                     if (num_RefreshInterval.Value < durationTime_List_Minutes + 1)
                     {
                         num_RefreshInterval.Value = durationTime_List_Minutes + 1;
                     }
-                }));
+                });
             }
 
             // UPDATE ENDPOINTS LIST
@@ -2122,13 +2123,13 @@ namespace EndpointChecker
             }
 
             // SET STATUS LABEL TEXT AND COLOR
-            ThreadSafeInvoke((Action)(() =>
+            ThreadSafeInvoke(() =>
             {
                 Application.DoEvents();
                 lbl_ProgressCount.ForeColor = statusColor;
                 lbl_ProgressCount.Text = statusMessage;
                 Application.DoEvents();
-            }));
+            });
         }
 
         public void btn_Refresh_Click(object sender, EventArgs e)
@@ -2237,17 +2238,17 @@ namespace EndpointChecker
             }
         }
 
-        public static int GetStatusImageIndex(string statusCode, string pingTime, string statusMessage)
+        public int GetStatusImageIndex(string statusCode, string pingTime, string statusMessage)
         {
             if (statusCode == status_NotAvailable)
             {
-                if (statusMessage == GetEnumDescription(EndpointStatus.NOTCHECKED) ||
-                    statusMessage == GetEnumDescription(EndpointStatus.TERMINATED))
+                if (statusMessage == GetEnumDescriptionString(EndpointStatus.NOTCHECKED) ||
+                    statusMessage == GetEnumDescriptionString(EndpointStatus.TERMINATED))
                 {
                     // NOT CHECKED / TERMINATED
                     return 3;
                 }
-                else if (statusMessage == GetEnumDescription(EndpointStatus.DISABLED))
+                else if (statusMessage == GetEnumDescriptionString(EndpointStatus.DISABLED))
                 {
                     // DISABLED
                     return 6;
@@ -2256,7 +2257,7 @@ namespace EndpointChecker
 
             if (validationMethod == ValidationMethod.Protocol)
             {
-                if (statusMessage == GetEnumDescription(EndpointStatus.PINGCHECK))
+                if (statusMessage == GetEnumDescriptionString(EndpointStatus.PINGCHECK))
                 {
                     // PING CHECK ONLY
                     return 11;
@@ -2960,7 +2961,7 @@ namespace EndpointChecker
                         endpointsStatusExport_HTTP_WorkSheet.SheetView.FreezeColumns(1);
                         endpointsStatusExport_HTTP_WorkSheet.RangeUsed().SetAutoFilter();
                         endpointsStatusExport_HTTP_WorkSheet.Rows().AdjustToContents();
-                        endpointsStatusExport_HTTP_WorkSheet.Columns().AdjustToContents((double)10, (double)70);
+                        endpointsStatusExport_HTTP_WorkSheet.Columns().AdjustToContents(10, (double)70);
                         endpointsStatusExport_HTTP_WorkSheet.CellsUsed().SetDataType(XLDataType.Text);
                         endpointsStatusExport_HTTP_WorkSheet.Row(1).CellsUsed().Style.Fill.BackgroundColor = XLColor.CoolGrey;
                         endpointsStatusExport_HTTP_WorkSheet.CellsUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
@@ -2973,7 +2974,7 @@ namespace EndpointChecker
                         endpointsStatusExport_FTP_WorkSheet.SheetView.FreezeColumns(1);
                         endpointsStatusExport_FTP_WorkSheet.RangeUsed().SetAutoFilter();
                         endpointsStatusExport_FTP_WorkSheet.Rows().AdjustToContents();
-                        endpointsStatusExport_FTP_WorkSheet.Columns().AdjustToContents((double)10, (double)70);
+                        endpointsStatusExport_FTP_WorkSheet.Columns().AdjustToContents(10, (double)70);
                         endpointsStatusExport_FTP_WorkSheet.CellsUsed().SetDataType(XLDataType.Text);
                         endpointsStatusExport_FTP_WorkSheet.Row(1).CellsUsed().Style.Fill.BackgroundColor = XLColor.CoolGrey;
                         endpointsStatusExport_FTP_WorkSheet.CellsUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
@@ -3256,13 +3257,13 @@ namespace EndpointChecker
         {
             if (statusCode == status_NotAvailable)
             {
-                if (statusMessage == GetEnumDescription(EndpointStatus.TERMINATED))
+                if (statusMessage == GetEnumDescriptionString(EndpointStatus.TERMINATED))
                 {
                     // TERMINATED
                     return Color.LightSkyBlue;
                 }
-                else if (statusMessage == GetEnumDescription(EndpointStatus.NOTCHECKED) ||
-                         statusMessage == GetEnumDescription(EndpointStatus.DISABLED))
+                else if (statusMessage == GetEnumDescriptionString(EndpointStatus.NOTCHECKED) ||
+                         statusMessage == GetEnumDescriptionString(EndpointStatus.DISABLED))
                 {
                     // DISABLED / NOT CHECKED
                     return Color.Gray;
@@ -3271,7 +3272,7 @@ namespace EndpointChecker
 
             if (validationMethod == ValidationMethod.Protocol)
             {
-                if (statusMessage == GetEnumDescription(EndpointStatus.PINGCHECK))
+                if (statusMessage == GetEnumDescriptionString(EndpointStatus.PINGCHECK))
                 {
                     // NOT CHECKED
                     return Color.LightGray;
@@ -3609,7 +3610,7 @@ namespace EndpointChecker
 
         public void SaveListViewColumnsWidthAndOrder()
         {
-            ThreadSafeInvoke((Action)(() =>
+            ThreadSafeInvoke(() =>
             {
                 // RESTORE ALL COLUMNS BEFORE SAVE [PROTOCOL VALIDATION MODE]
                 if (comboBox_Validate.SelectedIndex == 0)
@@ -3658,7 +3659,7 @@ namespace EndpointChecker
 
                     Settings.Default.Save();
                 }
-            }));
+            });
         }
 
         public void RestoreListViewColumnsWidthAndOrder()
@@ -3737,7 +3738,7 @@ namespace EndpointChecker
 
         public void LoadEndpointReferences()
         {
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 // CLEAR ENDPOINTS CHECK LIST
                 endpointsList.Clear();
@@ -3799,7 +3800,7 @@ namespace EndpointChecker
                                 IPAddress = new string[] { status_NotAvailable },
                                 ResponseTime = status_NotAvailable,
                                 ResponseCode = status_NotAvailable,
-                                ResponseMessage = GetEnumDescription(EndpointStatus.NOTCHECKED),
+                                ResponseMessage = GetEnumDescriptionString(EndpointStatus.NOTCHECKED),
                                 LastSeenOnline = status_NotAvailable,
                                 PingRoundtripTime = status_NotAvailable,
                                 ServerID = status_NotAvailable,
@@ -4078,22 +4079,22 @@ namespace EndpointChecker
                 RestoreDisabledItemsList();
 
                 // LIST ENDPOINTS
-                ThreadSafeInvoke((Action)(() =>
+                ThreadSafeInvoke(() =>
                 {
                     ListEndpoints(ListViewRefreshMethod.CurrentState);
 
                     RefreshTrayIcon();
-                }));
+                });
 
                 // REFRESH
                 if (app_ScanOnStartup)
                 {
-                    ThreadSafeInvoke((Action)(() =>
+                    ThreadSafeInvoke(() =>
                     {
                         btn_Refresh_Click(this, null);
-                    }));
+                    });
                 }
-            }));
+            });
         }
 
         public void SaveLastSeenOnlineList()
@@ -4493,21 +4494,31 @@ namespace EndpointChecker
             {
             }
         }
-
-        public static string GetEnumDescription(Enum value)
+        public string GetEnumDescriptionString(Enum enumValue)
         {
-            FieldInfo fi = value.GetType().GetField(value.ToString());
+            FieldInfo field = enumValue.GetType().GetField(enumValue.ToString());
 
-            DescriptionAttribute[] attributes =
-                (DescriptionAttribute[])fi.GetCustomAttributes(
-                typeof(DescriptionAttribute),
-                false);
+            DescriptionAttribute attribute
+                    = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute))
+                        as DescriptionAttribute;
 
-            if (attributes != null &&
-                attributes.Length > 0)
-                return attributes[0].Description;
-            else
-                return value.ToString();
+            return attribute == null ? enumValue.ToString() : attribute.Description;
+        }
+
+        public static int GetEnumByDescriptionString(string description, Type enumType)
+        {
+            foreach (var field in enumType.GetFields())
+            {
+                DescriptionAttribute attribute
+                    = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                if (attribute == null)
+                    continue;
+                if (attribute.Description == description)
+                {
+                    return (int)field.GetValue(null);
+                }
+            }
+            return 0;
         }
 
         public void lv_Endpoints_MouseClick(object sender, MouseEventArgs e)
@@ -4858,8 +4869,8 @@ namespace EndpointChecker
             int destY = 0;
 
             float nPercent = 0;
-            float nPercentW = ((float)Width / (float)sourceWidth);
-            float nPercentH = ((float)Height / (float)sourceHeight);
+            float nPercentW = (Width / (float)sourceWidth);
+            float nPercentH = (Height / (float)sourceHeight);
 
             if (nPercentH < nPercentW)
             {

@@ -594,7 +594,7 @@ namespace EndpointChecker
         {
             string fallbackGoogleResolveURL = "http://www.google.com/s2/favicons?domain=";
 
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(websiteURL + "/favicon.ico");
                 httpWebRequest.Method = WebRequestMethods.Http.Get;
@@ -626,7 +626,7 @@ namespace EndpointChecker
                         GC.Collect();
                     }
                 }
-            }));
+            });
         }
 
         public void traceRoute_RouteNodeFound(object sender, VRK.Net.RouteNodeFoundEventArgs e)
@@ -639,10 +639,10 @@ namespace EndpointChecker
                 item.SubItems.Add(e.Node.RoundTripTime);
                 item.ToolTipText = "Mouse doubleclick to open in browser [HTTP]";
 
-                ThreadSafeInvoke((Action)(() =>
+                ThreadSafeInvoke(() =>
                 {
                     lv_RouteList.Items.Add(item);
-                }));
+                });
             }
         }
 
@@ -653,7 +653,7 @@ namespace EndpointChecker
             traceRoute.HostNameOrAddress = cb_IPAddress.GetItemText(cb_IPAddress.SelectedItem);
             lv_RouteList.Items.Clear();
 
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 try
                 {
@@ -663,16 +663,16 @@ namespace EndpointChecker
                 {
                     traceRoute_Done(this, null);
                 }
-            }));
+            });
         }
 
         public void traceRoute_Done(object sender, EventArgs e)
         {
-            ThreadSafeInvoke((Action)(() =>
+            ThreadSafeInvoke(() =>
             {
                 btn_TraceRoute_Refresh.Enabled = true;
                 pb_TraceRouteProgress.Visible = false;
-            }));
+            });
         }
 
         public void lv_RouteList_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -776,7 +776,7 @@ namespace EndpointChecker
 
         public void TIMER_PingRefresh_Tick(object sender, EventArgs e)
         {
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 try
                 {
@@ -784,17 +784,17 @@ namespace EndpointChecker
 
                     if (!string.IsNullOrEmpty(pingRoundtripTime))
                     {
-                        ThreadSafeInvoke((Action)(() =>
+                        ThreadSafeInvoke(() =>
                         {
                             tb_PingTime.Text = pingRoundtripTime;
                             tb_PingTime.Text += " (1s refresh)";
-                        }));
+                        });
                     }
                 }
                 catch
                 {
                 }
-            }));
+            });
         }
 
         public void GetComputerInformationByWMI()
@@ -867,10 +867,10 @@ namespace EndpointChecker
 
                     if (classNode.Nodes.Count > 0)
                     {
-                        ThreadSafeInvoke((Action)(() =>
+                        ThreadSafeInvoke(() =>
                         {
                             treeView_ComputerInfo.Nodes.Add(classNode);
-                        }));
+                        });
                     }
                 }
                 catch
@@ -878,11 +878,11 @@ namespace EndpointChecker
                 }
             }
 
-            ThreadSafeInvoke((Action)(() =>
+            ThreadSafeInvoke(() =>
             {
                 btn_WMIInfo_Refresh.Enabled = true;
                 pb_WMIInfoProgress.Visible = false;
-            }));
+            });
         }
 
         public void btn_WMIInfo_Refresh_Click(object sender, EventArgs e)
@@ -894,7 +894,7 @@ namespace EndpointChecker
             btn_WMIInfo_Refresh.Enabled = false;
             pb_WMIInfoProgress.Visible = true;
 
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 wmiConnectionScope.Path = new ManagementPath(@"\\" + ipAddress + @"\root\CIMV2");
 
@@ -919,10 +919,10 @@ namespace EndpointChecker
                 }
                 catch (Exception ex)
                 {
-                    ThreadSafeInvoke((Action)(() =>
+                    ThreadSafeInvoke(() =>
                     {
                         lbl_WMI_Exception.Text = ex.Message.Split('(')[0].TrimStart().TrimEnd();
-                    }));
+                    });
                 }
 
                 if (wmiConnectionScope.IsConnected)
@@ -933,14 +933,14 @@ namespace EndpointChecker
                 else
                 {
                     // NOT CONNECTED - SHOW ERROR MESSAGE
-                    ThreadSafeInvoke((Action)(() =>
+                    ThreadSafeInvoke(() =>
                     {
                         lbl_WMI_Exception.Visible = true;
                         btn_WMIInfo_Refresh.Enabled = true;
                         pb_WMIInfoProgress.Visible = false;
-                    }));
+                    });
                 }
-            }));
+            });
         }
 
         public void btn_Ports_Refresh_Click(object sender, EventArgs e)
@@ -956,10 +956,10 @@ namespace EndpointChecker
         {
             string ipAddress = string.Empty;
 
-            ThreadSafeInvoke((Action)(() =>
+            ThreadSafeInvoke(() =>
             {
                 ipAddress = cb_IPAddress.GetItemText(cb_IPAddress.SelectedItem);
-            }));
+            });
 
             Parallel.ForEach(portsList, portItem =>
             {
@@ -985,7 +985,7 @@ namespace EndpointChecker
                     }
                 }
 
-                ThreadSafeInvoke((Action)(() =>
+                ThreadSafeInvoke(() =>
                 {
                     lv_Ports.BeginUpdate();
 
@@ -995,7 +995,7 @@ namespace EndpointChecker
                         portItem.Value));
 
                     lv_Ports.EndUpdate();
-                }));
+                });
             });
         }
 
@@ -1031,7 +1031,7 @@ namespace EndpointChecker
 
         public void GetWhoIsInfo()
         {
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 string registrableDomainName = new Uri(_selectedEndpoint.ResponseAddress).Host;
                 string whoISserver_ServerAddress = string.Empty;
@@ -1070,7 +1070,7 @@ namespace EndpointChecker
 
                 if (!string.IsNullOrEmpty(whoISserver_RAWresponse))
                 {
-                    ThreadSafeInvoke((Action)(() =>
+                    ThreadSafeInvoke(() =>
                     {
                         tb_WhoIs_RegistrableDomain.Text = registrableDomainName;
                         tb_WhoIs_Server.Text = whoISserver_ServerAddress;
@@ -1080,9 +1080,9 @@ namespace EndpointChecker
                         pb_WhoIsProgress.Visible = false;
 
                         tabControl.TabPages.Add(tabPage_WhoIs);
-                    }));
+                    });
                 }
-            }));
+            });
         }
 
         public void GetPageCategoryListFromHTMLMeta()
@@ -1123,7 +1123,7 @@ namespace EndpointChecker
 
             string macAddressVendor = Program.status_NotAvailable;
 
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 if (macAddress != Program.status_NotAvailable)
                 {
@@ -1198,7 +1198,7 @@ namespace EndpointChecker
 
                                                         if (vendorImage != null)
                                                         {
-                                                            ThreadSafeInvoke((Action)(() =>
+                                                            ThreadSafeInvoke(() =>
                                                             {
                                                                 pb_Vendor.Image = CheckerMainForm.ResizeImage(vendorImage, 23, 23);
 
@@ -1216,7 +1216,7 @@ namespace EndpointChecker
                                                                                 result.domain +
                                                                                 ")");
                                                                 }
-                                                            }));
+                                                            });
 
                                                             break;
                                                         }
@@ -1255,19 +1255,19 @@ namespace EndpointChecker
                     }
                 }
 
-                ThreadSafeInvoke((Action)(() =>
+                ThreadSafeInvoke(() =>
                 {
                     tb_MACVendor.Text = macAddressVendor;
                     pb_MACVendorProgress.Visible = false;
-                }));
-            }));
+                });
+            });
         }
 
         public void GetIPGeoInfo(string ipAddress)
         {
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
-                ThreadSafeInvoke((Action)(() =>
+                ThreadSafeInvoke(() =>
                 {
                     bool showTab = false;
 
@@ -1365,8 +1365,8 @@ namespace EndpointChecker
                         // REMOVE GEO INFO TAB PAGE [IF PRESENT]
                         tabControl.TabPages.Remove(tabPage_GeoLocation);
                     }
-                }));
-            }));
+                });
+            });
         }
 
         public Bitmap GetCountryFlagByCode(string countryCode)
@@ -1716,7 +1716,7 @@ namespace EndpointChecker
         {
             virusTotal_ScanResult = null;
 
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 try
                 {
@@ -1729,11 +1729,11 @@ namespace EndpointChecker
 
                     if (virusTotal_ScanResult.ResponseCode == VirusTotalNET.ResponseCodes.UrlScanResponseCode.Queued)
                     {
-                        ThreadSafeInvoke((Action)(() =>
+                        ThreadSafeInvoke(() =>
                         {
                             lbl_VirusTotal_Status.ForeColor = Color.DarkGreen;
                             lbl_VirusTotal_Status.Text = virusTotal_ScanResultTask.Result.VerboseMsg;
-                        }));
+                        });
                     }
                     else
                     {
@@ -1744,7 +1744,7 @@ namespace EndpointChecker
                 {
                     if (!vtException.GetType().IsAssignableFrom(typeof(VirusTotalNET.Exceptions.InvalidResourceException)) && retry <= maxRetryCount)
                     {
-                        ThreadSafeInvoke((Action)(() =>
+                        ThreadSafeInvoke(() =>
                         {
                             lbl_VirusTotal_Status.ForeColor = Color.MediumVioletRed;
 
@@ -1768,7 +1768,7 @@ namespace EndpointChecker
                             {
                                 lbl_VirusTotal_Status.Text += " [Retry " + retry + "]";
                             }
-                        }));
+                        });
 
                         retry++;
 
@@ -1777,13 +1777,13 @@ namespace EndpointChecker
                     }
                     else
                     {
-                        ThreadSafeInvoke((Action)(() =>
+                        ThreadSafeInvoke(() =>
                         {
                             tabControl.TabPages.Remove(tabPage_VirusTotal);
-                        }));
+                        });
                     }
                 }
-            }));
+            });
         }
 
         public void tb_VirusTotal_Permalink_MouseClick(object sender, MouseEventArgs e)
@@ -1822,7 +1822,7 @@ namespace EndpointChecker
                 {
                     virusTotal_ScanResult = null;
 
-                    ThreadSafeInvoke((Action)(() =>
+                    ThreadSafeInvoke(() =>
                     {
                         if (virusTotalReport.Scans.Count > 0)
                         {
@@ -1875,14 +1875,14 @@ namespace EndpointChecker
                                 lv_VirusTotal.Items.Add(scanResultItem);
                             }
                         }
-                    }));
+                    });
                 }
                 else
                 {
-                    ThreadSafeInvoke((Action)(() =>
+                    ThreadSafeInvoke(() =>
                     {
                         lbl_VirusTotal_Status.Text = "Waiting for Scan Report ...";
-                    }));
+                    });
                 }
             }
             catch
@@ -1923,7 +1923,7 @@ namespace EndpointChecker
             pb_PageLinks_ValidatingProgress.Visible = true;
             pb_PageLinks_CommonLinksStatus.Visible = false;
 
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 // CHEKED LINKS LIST [ITEM1: STATUS, ITEM2: LINK TYPE, ITEM3: LINK ADDRESS
                 List<Tuple<string, string, string>> checkedLinksList = new List<Tuple<string, string, string>>();
@@ -1988,7 +1988,7 @@ namespace EndpointChecker
                     Application.DoEvents();
                 }
 
-                ThreadSafeInvoke((Action)(() =>
+                ThreadSafeInvoke(() =>
                 {
                     // UPDATE LIST
                     lv_PageLinks.BeginUpdate();
@@ -2044,8 +2044,8 @@ namespace EndpointChecker
 
                         pb_PageLinks_CommonLinksStatus.Visible = true;
                     }
-                }));
-            }));
+                });
+            });
         }
 
         public void lv_CategoryList_ItemActivate(object sender, EventArgs e)

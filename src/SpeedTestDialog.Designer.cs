@@ -54,6 +54,8 @@
             this.lbl_SpeedTest_HostedBy_Value = new System.Windows.Forms.Label();
             this.btn_SpeedTest_GetServers = new System.Windows.Forms.Button();
             this.pb_GO = new System.Windows.Forms.PictureBox();
+            this.pBar_Upload = new EndpointChecker.ProgressBar_Red();
+            this.pBar_Download = new EndpointChecker.ProgressBar_Green();
             ((System.ComponentModel.ISupportInitialize)(this.pb_SpeedTestProgress)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GO)).BeginInit();
             this.SuspendLayout();
@@ -445,6 +447,28 @@
             this.pb_GO.Visible = false;
             this.pb_GO.Click += new System.EventHandler(this.pb_GO_Click);
             // 
+            // pBar_Upload
+            // 
+            this.pBar_Upload.Location = new System.Drawing.Point(444, 598);
+            this.pBar_Upload.MarqueeAnimationSpeed = 20;
+            this.pBar_Upload.Name = "pBar_Upload";
+            this.pBar_Upload.Size = new System.Drawing.Size(210, 28);
+            this.pBar_Upload.Step = 1;
+            this.pBar_Upload.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.pBar_Upload.TabIndex = 107;
+            this.pBar_Upload.Visible = false;
+            // 
+            // pBar_Download
+            // 
+            this.pBar_Download.Location = new System.Drawing.Point(33, 598);
+            this.pBar_Download.MarqueeAnimationSpeed = 20;
+            this.pBar_Download.Name = "pBar_Download";
+            this.pBar_Download.Size = new System.Drawing.Size(210, 28);
+            this.pBar_Download.Step = 1;
+            this.pBar_Download.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.pBar_Download.TabIndex = 106;
+            this.pBar_Download.Visible = false;
+            // 
             // SpeedTestDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -458,13 +482,9 @@
             this.Controls.Add(this.lbl_SpeedTest_Latency_Value);
             this.Controls.Add(this.lbl_SpeedTest_Distance_Value);
             this.Controls.Add(this.lbl_SpeedTest_HostedBy_Value);
-            this.Controls.Add(this.lbl_SpeedTest_Mbps_Upload_Label);
             this.Controls.Add(this.cb_SpeedTest_TestServer);
-            this.Controls.Add(this.lbl_SpeedTest_Mbps_Download_Label);
             this.Controls.Add(this.lbl_SpeedTest_Download_Label);
             this.Controls.Add(this.lbl_SpeedTest_Upload_Label);
-            this.Controls.Add(this.aGauge_UploadSpeed);
-            this.Controls.Add(this.aGauge_DownloadSpeed);
             this.Controls.Add(this.lbl_SpeedTest_ExternalIP);
             this.Controls.Add(this.rb_CurrentCountryServersOnly);
             this.Controls.Add(this.rb_AllServersExceptCurrCountry);
@@ -476,6 +496,12 @@
             this.Controls.Add(this.lbl_SpeedTest_TestServer);
             this.Controls.Add(this.pb_SpeedTestProgress);
             this.Controls.Add(this.rtb_SpeedTest_LogConsole);
+            this.Controls.Add(this.pBar_Upload);
+            this.Controls.Add(this.pBar_Download);
+            this.Controls.Add(this.lbl_SpeedTest_Mbps_Download_Label);
+            this.Controls.Add(this.lbl_SpeedTest_Mbps_Upload_Label);
+            this.Controls.Add(this.aGauge_UploadSpeed);
+            this.Controls.Add(this.aGauge_DownloadSpeed);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -519,5 +545,7 @@
         public System.Windows.Forms.Label lbl_SpeedTest_HostedBy_Value;
         public System.Windows.Forms.Button btn_SpeedTest_GetServers;
         public System.Windows.Forms.PictureBox pb_GO;
+        public ProgressBar_Green pBar_Download;
+        public ProgressBar_Red pBar_Upload;
     }
 }

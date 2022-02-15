@@ -15,6 +15,7 @@ namespace EndpointChecker
             InitializeComponent();
 
             // SET DOUBLE BUFFER
+            DoubleBuffered = true;
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 

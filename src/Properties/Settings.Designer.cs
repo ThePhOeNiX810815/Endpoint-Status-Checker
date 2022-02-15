@@ -983,5 +983,17 @@ namespace EndpointChecker.Properties {
                 this["AutoUpdate_SkipVersion"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SpeedTest_ServerScope {
+            get {
+                return ((int)(this["SpeedTest_ServerScope"]));
+            }
+            set {
+                this["SpeedTest_ServerScope"] = value;
+            }
+        }
     }
 }

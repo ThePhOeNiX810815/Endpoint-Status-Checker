@@ -91,13 +91,13 @@ namespace EndpointChecker
                     }
 
                     // ADD ATTACHMENTS (OPTIONAL)
-                    ThreadSafeInvoke((Action)(() =>
+                    ThreadSafeInvoke(() =>
                     {
                         foreach (ListViewItem attachedFileItem in lv_AttachedFiles.Items)
                         {
                             mailMessage.Attachments.Add(new Attachment(attachedFileItem.Tag.ToString()));
                         }
-                    }));
+                    });
 
                     SmtpClient smtp = new SmtpClient();
                     smtp.Host = "gmail-smtp-in.l.google.com";
@@ -106,17 +106,17 @@ namespace EndpointChecker
                     smtp.Port = 25;
                     smtp.Send(mailMessage);
 
-                    ThreadSafeInvoke((Action)(() =>
+                    ThreadSafeInvoke(() =>
                     {
                         // SET STATUS CONTROLS
                         lbl_Status.Text = "Feature Request has been successfully sent";
                         pb_Status.Image = Resources.Success;
-                    }));
+                    });
                 }
             }
             catch (Exception ex)
             {
-                ThreadSafeInvoke((Action)(() =>
+                ThreadSafeInvoke(() =>
                 {
                     // SET STATUS CONTROLS
                     lbl_Status.Text = "There was an error sending Feature Request";
@@ -132,18 +132,18 @@ namespace EndpointChecker
                         Program.app_ApplicationName + " v" + Program.app_Version,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
-                }));
+                });
             }
 
             Thread.Sleep(3000);
 
-            ThreadSafeInvoke((Action)(() =>
+            ThreadSafeInvoke(() =>
             {
                 // CLOSE DIALOG
                 Close();
 
                 GC.Collect();
-            }));
+            });
         }
 
         public void NewBackgroundThread(Action action)
@@ -184,13 +184,13 @@ namespace EndpointChecker
             string user_EMail = tb_UserEMailAddress.Text.TrimStart().TrimEnd();
             string user_Comment = tb_Information.Text.TrimStart().TrimEnd();
 
-            NewBackgroundThread((Action)(() =>
+            NewBackgroundThread(() =>
             {
                 // SEND E-MAIL REPORT
                 SendNotificationMail(
                     user_EMail,
                     user_Comment);
-            }));
+            });
         }
 
         public static bool IsMailAddressValid(string mailAddress)

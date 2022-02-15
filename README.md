@@ -53,7 +53,7 @@ Application is using following libraries:
 - ExcelNumberFormat (1.1.0)
 - FastMember (1.3.0) (newer version available, but not for target framework version)
 - FreeSpire.PDF (8.2.0)
-- FreeSpire.XLS (12.1.0)
+- FreeSpire.XLS (12.2.0)
 - HtmlAgilityPack (1.11.42)
 - IPAddressRange (4.2.0)
 - Nager.PublicSuffix (2.2.2)
