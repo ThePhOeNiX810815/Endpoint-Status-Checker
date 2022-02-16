@@ -231,7 +231,7 @@
       <Value Profile="(Default)">14</Value>
     </Setting>
     <Setting Name="VirusTotal_API_Key" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">8ce0dda3e2e732fb4c6fc947a03dd892acc0993da101e54ab03589413598002b</Value>
     </Setting>
     <Setting Name="Config_HTTP_Sec_CH_UserAgent" Type="System.String" Scope="User">
       <Value Profile="(Default)">"(Not(A:Brand";v="8", "Chromium";v="99", "Google Chrome";v="99"</Value>

@@ -1,5 +1,4 @@
-﻿using EndpointChecker.Properties;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using NSpeedTest;
 using NSpeedTest.Models;
 using System;
@@ -19,6 +18,8 @@ namespace EndpointChecker
 {
     public partial class SpeedTestDialog : Form
     {
+        // 
+
         // MAXIMUM NUMBER OF TESTS SERVERS
         public static int maxTestServersCount = 50;
 
@@ -26,11 +27,11 @@ namespace EndpointChecker
         public static string clientISP = status_NotAvailable;
 
         public static int testTakesCount = 10;
-        public static int testRetryCount = 3;
+        public static int testRetryCount = 5;
 
-        // SPEED TEST SERVER INSTANCE
+        // SPEED TEST SERVER / SETTINGS
         public static SpeedTestClient speedTestClient = new SpeedTestClient();
-        public static NSpeedTest.Models.Settings speedTestSettings = new NSpeedTest.Models.Settings();
+        public static Settings speedTestSettings = new Settings();
 
         public static List<Server> testServersList = new List<Server>();
         public enum TestServerSelectionMode
@@ -59,9 +60,6 @@ namespace EndpointChecker
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
-            // RESTORE PREFERRED SERVER SCOPE (IF SAVED)
-            RestoreServerScopePreferredSetting();          
-
             // SET CONTROLS CLEAN STATE
             SetControlsCleanState();
 
@@ -71,7 +69,7 @@ namespace EndpointChecker
             {
                 try
                 {
-                    // SPEED TEST CLIENT SETTINGS
+                    // GET SPEEDTEST SETTINGS
                     speedTestSettings = speedTestClient.GetSettings();
 
                     ThreadSafeInvoke(() =>
@@ -86,8 +84,8 @@ namespace EndpointChecker
                         lbl_SpeedTest_ExternalIP_Value.BackColor = Color.PaleGreen;
                         lbl_SpeedTest_ExternalIP_Value.Text = clientIP + " (" + clientISP + ")";
 
-                        // GET SERVERS
-                        btn_SpeedTest_GetServers_Click(this, null);
+                        // RESTORE PREFERRED SERVER SCOPE (IF SAVED)
+                        RestoreServerScopePreferredSetting();
                     });
                 }
                 catch (Exception exception)
@@ -208,8 +206,8 @@ namespace EndpointChecker
                                         "km, latency: " + bestServer.Latency +
                                         "ms" +
                                         Environment.NewLine,
-                                    Color.White,
-                                    false);
+                                    Color.DeepSkyBlue,
+                                    true);
 
             return bestServer;
         }
@@ -223,7 +221,7 @@ namespace EndpointChecker
                     SpeedTest_AppendTextToLogBox(
                                         rtb_SpeedTest_LogConsole,
                                              Environment.NewLine +
-                                             "Testing download speed by " +
+                                             "Testing Download Speed by " +
                                              GetStringCorrectEncoding(targetServer.Sponsor) +
                                              " (" +
                                              GetStringCorrectEncoding(targetServer.Name) +
@@ -238,9 +236,11 @@ namespace EndpointChecker
 
                     SpeedTest_AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
-                                downloadSpeed + " Mbps (" + testTakesCount + " takes)",
+                                "Average Download Speed (" +
+                                +testTakesCount + " takes): " +
+                                downloadSpeed + " Mbps",
                             Color.Black,
-                            false);
+                            true);
 
                     // SET CONTROLS FOR DOWNLOAD
                     ThreadSafeInvoke(() =>
@@ -299,10 +299,12 @@ namespace EndpointChecker
                     int uploadSpeed = GetUploadSpeed(targetServer);
 
                     SpeedTest_AppendTextToLogBox(
-                                                 rtb_SpeedTest_LogConsole,
-                                                 uploadSpeed + " Mbps (" + testTakesCount + " takes)",
-                                                 Color.Black,
-                                                 false);
+                           rtb_SpeedTest_LogConsole,
+                               "Average Upload Speed (" +
+                               +testTakesCount + " takes): " +
+                               uploadSpeed + " Mbps",
+                           Color.Black,
+                           true);
 
                     // SET CONTROLS FOR UPLOAD
                     ThreadSafeInvoke(() =>
@@ -378,6 +380,7 @@ namespace EndpointChecker
 
         public int GetDownloadSpeed(Server targetServer)
         {
+            int currentRetryCount = 0;
             int downloadSpeed = 0;
             int progressStepValue = pBar_Download.Maximum / testTakesCount;
 
@@ -386,14 +389,49 @@ namespace EndpointChecker
                 pBar_Download.Visible = true;
             });
 
-            for (int i = 1; i < testTakesCount; i++)
+            for (int i = 1; i <= testTakesCount; i++)
             {
-                ThreadSafeInvoke(() =>
+                try
                 {
-                    pBar_Download.Value += progressStepValue;
-                });
+                    int currentDownloadSpeed = (int)Math.Round(speedTestClient.TestDownloadSpeed(targetServer, speedTestSettings.Download.ThreadsPerUrl) / 1024, 2);
+                    downloadSpeed += currentDownloadSpeed;
+                    currentRetryCount = 0;
 
-                downloadSpeed += (int)Math.Round(speedTestClient.TestDownloadSpeed(targetServer, speedTestSettings.Download.ThreadsPerUrl) / 1024, testRetryCount);
+                    ThreadSafeInvoke(() =>
+                    {
+                        pBar_Download.Value += progressStepValue;
+                        Application.DoEvents();
+                    });
+
+                    SpeedTest_AppendTextToLogBox(
+                           rtb_SpeedTest_LogConsole,
+                               "Take " +
+                               +i + " -> Speed: " +
+                               currentDownloadSpeed + " Mbps",
+                           Color.DarkGray,
+                           false);
+
+                    Application.DoEvents();
+                }
+                catch (Exception eX)
+                {
+                    if (currentRetryCount <= testRetryCount)
+                    {
+                        SpeedTest_AppendTextToLogBox(
+                          rtb_SpeedTest_LogConsole,
+                              "ERROR: " +
+                              BuildExceptionMessage(eX),
+                          Color.Red,
+                          false);
+
+                        currentRetryCount++;
+                        i--;
+                    }
+                    else
+                    {
+                        throw eX;
+                    }
+                }
             }
 
             return (downloadSpeed / testTakesCount);
@@ -401,6 +439,7 @@ namespace EndpointChecker
 
         public int GetUploadSpeed(Server targetServer)
         {
+            int currentRetryCount = 0;
             int uploadSpeed = 0;
             int progressStepValue = pBar_Upload.Maximum / testTakesCount;
 
@@ -409,21 +448,56 @@ namespace EndpointChecker
                 pBar_Upload.Visible = true;
             });
 
-            for (int i = 1; i < testTakesCount; i++)
+            for (int i = 1; i <= testTakesCount; i++)
             {
-                ThreadSafeInvoke(() =>
+                try
                 {
-                    pBar_Upload.Value += progressStepValue;
-                });
+                    int currentUploadSpeed = (int)Math.Round(speedTestClient.TestUploadSpeed(targetServer, speedTestSettings.Upload.ThreadsPerUrl) / 1024, 2);
+                    uploadSpeed += currentUploadSpeed;
+                    currentRetryCount = 0;
 
-                uploadSpeed += (int)Math.Round(speedTestClient.TestUploadSpeed(targetServer, speedTestSettings.Upload.ThreadsPerUrl) / 1024, testRetryCount);
+                    ThreadSafeInvoke(() =>
+                    {
+                        pBar_Upload.Value += progressStepValue;
+                        Application.DoEvents();
+                    });
+
+                    SpeedTest_AppendTextToLogBox(
+                           rtb_SpeedTest_LogConsole,
+                               "Take " +
+                               +i + " -> Speed: " +
+                               currentUploadSpeed + " Mbps",
+                           Color.DarkGray,
+                           false);
+
+                    Application.DoEvents();
+                }
+                catch (Exception eX)
+                {
+                    if (currentRetryCount <= testRetryCount)
+                    {
+                        SpeedTest_AppendTextToLogBox(
+                          rtb_SpeedTest_LogConsole,
+                              "ERROR:" +
+                              BuildExceptionMessage(eX),
+                          Color.Red,
+                          false);
+
+                        currentRetryCount++;
+                        i--;
+                    }
+                    else
+                    {
+                        throw eX;
+                    }
+                }
             }
 
             return (uploadSpeed / testTakesCount);
         }
 
         public IEnumerable<Server> GetServers(
-            NSpeedTest.Models.Settings settings,
+            Settings settings,
             RegionInfo regionInfo_CurrentCountry,
             SpeedTestClient client,
             int testServersCount)
@@ -493,7 +567,7 @@ namespace EndpointChecker
                                 "km, latency: " +
                                 server.Latency + "ms",
                             Color.White,
-                            false);
+                            true);
             }
 
             return filteredServersList;
@@ -560,13 +634,20 @@ namespace EndpointChecker
                 ThreadSafeInvoke(() =>
                 {
                     lbl_SpeedTest_CurrentCountry_Value.BackColor = Color.BlanchedAlmond;
-                    lbl_SpeedTest_CurrentCountry_Value.Text = regionInfo.DisplayName;
+                    lbl_SpeedTest_CurrentCountry_Value.Text =
+                        regionInfo.DisplayName +
+                        " (" +
+                        regionInfo.TwoLetterISORegionName +
+                        ")";
                 });
 
                 SpeedTest_AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
-                                "Current country: " +
+                                "Current Country: " +
                                 regionInfo.DisplayName +
+                                Environment.NewLine +
+                                "Country Code: " +
+                                regionInfo.TwoLetterISORegionName +
                                 Environment.NewLine,
                             Color.Yellow,
                             true);
@@ -724,9 +805,6 @@ namespace EndpointChecker
                                 Color.Black,
                                 true);
 
-                        SpeedTestClient speedTestClient = new SpeedTestClient();
-                        NSpeedTest.Models.Settings speedTestSettings = speedTestClient.GetSettings();
-
                         IEnumerable<Server> servers = GetServers(
                                                                  speedTestSettings,
                                                                  currentCountry_RegionInfo,
@@ -873,12 +951,16 @@ namespace EndpointChecker
 
         public static string BuildExceptionMessage(Exception eX)
         {
-            string exceptionMessage = eX.Message;
+            string exceptionMessage =
+                Environment.NewLine +
+                eX.Message;
 
             if (eX.InnerException != null &&
                 !eX.InnerException.Message.Contains(eX.Message))
             {
-                exceptionMessage += ":" + Environment.NewLine + eX.InnerException.Message;
+                exceptionMessage +=
+                    Environment.NewLine +
+                    eX.InnerException.Message;
             }
 
             return exceptionMessage;

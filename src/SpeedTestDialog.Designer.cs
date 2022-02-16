@@ -138,8 +138,8 @@
             this.rtb_SpeedTest_LogConsole.BackColor = System.Drawing.Color.DimGray;
             this.rtb_SpeedTest_LogConsole.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.rtb_SpeedTest_LogConsole.DetectUrls = false;
-            this.rtb_SpeedTest_LogConsole.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.rtb_SpeedTest_LogConsole.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.rtb_SpeedTest_LogConsole.Font = new System.Drawing.Font("Comic Sans MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtb_SpeedTest_LogConsole.ForeColor = System.Drawing.Color.Black;
             this.rtb_SpeedTest_LogConsole.Location = new System.Drawing.Point(7, 209);
             this.rtb_SpeedTest_LogConsole.Name = "rtb_SpeedTest_LogConsole";
             this.rtb_SpeedTest_LogConsole.ReadOnly = true;
@@ -203,14 +203,12 @@
             // 
             this.rb_AllServers.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.rb_AllServers.AutoSize = true;
-            this.rb_AllServers.Checked = true;
             this.rb_AllServers.Cursor = System.Windows.Forms.Cursors.Hand;
             this.rb_AllServers.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold);
             this.rb_AllServers.Location = new System.Drawing.Point(7, 183);
             this.rb_AllServers.Name = "rb_AllServers";
             this.rb_AllServers.Size = new System.Drawing.Size(188, 22);
             this.rb_AllServers.TabIndex = 90;
-            this.rb_AllServers.TabStop = true;
             this.rb_AllServers.Text = "Servers from All Countries";
             this.rb_AllServers.UseVisualStyleBackColor = true;
             this.rb_AllServers.CheckedChanged += new System.EventHandler(this.rb_AllServers_CheckedChanged);
