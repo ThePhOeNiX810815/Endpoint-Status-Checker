@@ -92,6 +92,33 @@
             this.lbl_Port = new System.Windows.Forms.Label();
             this.lbl_Protocol = new System.Windows.Forms.Label();
             this.lbl_EndpointName = new System.Windows.Forms.Label();
+            this.tabPage_GeoLocation = new System.Windows.Forms.TabPage();
+            this.tb_GeoLocation_IP = new System.Windows.Forms.TextBox();
+            this.pb_GeoLocation_CountryFlag = new System.Windows.Forms.PictureBox();
+            this.pb_GeoLocationProgress = new System.Windows.Forms.PictureBox();
+            this.tb_GeoLocation_ISP = new System.Windows.Forms.TextBox();
+            this.lbl_GeoLocation_ISP = new System.Windows.Forms.Label();
+            this.tb_GeoLocation_Longitude = new System.Windows.Forms.TextBox();
+            this.lbl_GeoLocation_Longitude = new System.Windows.Forms.Label();
+            this.tb_GeoLocation_Latitude = new System.Windows.Forms.TextBox();
+            this.lbl_GeoLocation_Latitude = new System.Windows.Forms.Label();
+            this.tb_GeoLocation_TimeZone = new System.Windows.Forms.TextBox();
+            this.lbl_GeoLocation_TimeZone = new System.Windows.Forms.Label();
+            this.tb_GeoLocation_ZipCode = new System.Windows.Forms.TextBox();
+            this.lbl_GeoLocation_ZipCode = new System.Windows.Forms.Label();
+            this.tb_GeoLocation_City = new System.Windows.Forms.TextBox();
+            this.lbl_GeoLocation_City = new System.Windows.Forms.Label();
+            this.tb_GeoLocation_RegionName = new System.Windows.Forms.TextBox();
+            this.lbl_GeoLocation_RegionName = new System.Windows.Forms.Label();
+            this.tb_GeoLocation_CountryName = new System.Windows.Forms.TextBox();
+            this.tb_GeoLocation_AS = new System.Windows.Forms.TextBox();
+            this.lbl_GeoLocation_CountryName = new System.Windows.Forms.Label();
+            this.tb_GeoLocation_ORG = new System.Windows.Forms.TextBox();
+            this.lbl_GeoLocation_IP = new System.Windows.Forms.Label();
+            this.lbl_GeoLocation_ORG = new System.Windows.Forms.Label();
+            this.pb_GeoLocation_Map = new System.Windows.Forms.PictureBox();
+            this.lbl_GeoLocation_AS = new System.Windows.Forms.Label();
+            this.imageList_Tabs = new System.Windows.Forms.ImageList(this.components);
             this.tabPage_VirusTotal = new System.Windows.Forms.TabPage();
             this.pb_VirusTotal_Status = new System.Windows.Forms.PictureBox();
             this.tb_VirusTotal_ScanDateTime = new System.Windows.Forms.TextBox();
@@ -104,7 +131,6 @@
             this.lv_VirusTotal = new System.Windows.Forms.ListView();
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.imageList_Tabs = new System.Windows.Forms.ImageList(this.components);
             this.tabPage_WhoIs = new System.Windows.Forms.TabPage();
             this.tb_WhoIs_RegistrableDomain = new System.Windows.Forms.TextBox();
             this.lbl_WhoIs_RegistrableDomain = new System.Windows.Forms.Label();
@@ -137,32 +163,6 @@
             this.serviceHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btn_Ports_Refresh = new System.Windows.Forms.Button();
             this.pb_PortsProgress = new System.Windows.Forms.PictureBox();
-            this.tabPage_GeoLocation = new System.Windows.Forms.TabPage();
-            this.tb_GeoLocation_IP = new System.Windows.Forms.TextBox();
-            this.pb_GeoLocation_CountryFlag = new System.Windows.Forms.PictureBox();
-            this.pb_GeoLocationProgress = new System.Windows.Forms.PictureBox();
-            this.tb_GeoLocation_ISP = new System.Windows.Forms.TextBox();
-            this.lbl_GeoLocation_ISP = new System.Windows.Forms.Label();
-            this.tb_GeoLocation_Longitude = new System.Windows.Forms.TextBox();
-            this.lbl_GeoLocation_Longitude = new System.Windows.Forms.Label();
-            this.tb_GeoLocation_Latitude = new System.Windows.Forms.TextBox();
-            this.lbl_GeoLocation_Latitude = new System.Windows.Forms.Label();
-            this.tb_GeoLocation_TimeZone = new System.Windows.Forms.TextBox();
-            this.lbl_GeoLocation_TimeZone = new System.Windows.Forms.Label();
-            this.tb_GeoLocation_ZipCode = new System.Windows.Forms.TextBox();
-            this.lbl_GeoLocation_ZipCode = new System.Windows.Forms.Label();
-            this.tb_GeoLocation_City = new System.Windows.Forms.TextBox();
-            this.lbl_GeoLocation_City = new System.Windows.Forms.Label();
-            this.tb_GeoLocation_RegionName = new System.Windows.Forms.TextBox();
-            this.lbl_GeoLocation_RegionName = new System.Windows.Forms.Label();
-            this.tb_GeoLocation_CountryName = new System.Windows.Forms.TextBox();
-            this.tb_GeoLocation_AS = new System.Windows.Forms.TextBox();
-            this.lbl_GeoLocation_CountryName = new System.Windows.Forms.Label();
-            this.tb_GeoLocation_ORG = new System.Windows.Forms.TextBox();
-            this.lbl_GeoLocation_IP = new System.Windows.Forms.Label();
-            this.lbl_GeoLocation_ORG = new System.Windows.Forms.Label();
-            this.pb_GeoLocation_Map = new System.Windows.Forms.PictureBox();
-            this.lbl_GeoLocation_AS = new System.Windows.Forms.Label();
             this.tabPage_FTPInfo = new System.Windows.Forms.TabPage();
             this.tb_FTPInfo_BannerMessage = new System.Windows.Forms.TextBox();
             this.lbl_FTPInfo_BannerMessage = new System.Windows.Forms.Label();
@@ -236,6 +236,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_PingRefresh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Favicon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_StatusIcon)).BeginInit();
+            this.tabPage_GeoLocation.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocation_CountryFlag)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocationProgress)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocation_Map)).BeginInit();
             this.tabPage_VirusTotal.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotal_Status)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotalRefresh)).BeginInit();
@@ -248,10 +252,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_WMIInfoProgress)).BeginInit();
             this.tabPage_Ports.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_PortsProgress)).BeginInit();
-            this.tabPage_GeoLocation.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocation_CountryFlag)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocationProgress)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocation_Map)).BeginInit();
             this.tabPage_FTPInfo.SuspendLayout();
             this.tabPage_HTTPInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_HTTPInfo_WeakETag)).BeginInit();
@@ -1075,6 +1075,360 @@
             this.lbl_EndpointName.Text = "Endpoint Name";
             this.lbl_EndpointName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // tabPage_GeoLocation
+            // 
+            this.tabPage_GeoLocation.BackColor = System.Drawing.Color.Silver;
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_IP);
+            this.tabPage_GeoLocation.Controls.Add(this.pb_GeoLocation_CountryFlag);
+            this.tabPage_GeoLocation.Controls.Add(this.pb_GeoLocationProgress);
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_ISP);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_ISP);
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_Longitude);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_Longitude);
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_Latitude);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_Latitude);
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_TimeZone);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_TimeZone);
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_ZipCode);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_ZipCode);
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_City);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_City);
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_RegionName);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_RegionName);
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_CountryName);
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_AS);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_CountryName);
+            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_ORG);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_IP);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_ORG);
+            this.tabPage_GeoLocation.Controls.Add(this.pb_GeoLocation_Map);
+            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_AS);
+            this.tabPage_GeoLocation.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tabPage_GeoLocation.Location = new System.Drawing.Point(4, 23);
+            this.tabPage_GeoLocation.Name = "tabPage_GeoLocation";
+            this.tabPage_GeoLocation.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_GeoLocation.Size = new System.Drawing.Size(783, 397);
+            this.tabPage_GeoLocation.TabIndex = 10;
+            this.tabPage_GeoLocation.Text = "Geo Info";
+            // 
+            // tb_GeoLocation_IP
+            // 
+            this.tb_GeoLocation_IP.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_IP.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_IP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_IP.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_IP.Location = new System.Drawing.Point(557, 9);
+            this.tb_GeoLocation_IP.Multiline = true;
+            this.tb_GeoLocation_IP.Name = "tb_GeoLocation_IP";
+            this.tb_GeoLocation_IP.ReadOnly = true;
+            this.tb_GeoLocation_IP.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_IP.TabIndex = 65;
+            // 
+            // pb_GeoLocation_CountryFlag
+            // 
+            this.pb_GeoLocation_CountryFlag.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pb_GeoLocation_CountryFlag.Location = new System.Drawing.Point(365, 9);
+            this.pb_GeoLocation_CountryFlag.Name = "pb_GeoLocation_CountryFlag";
+            this.pb_GeoLocation_CountryFlag.Size = new System.Drawing.Size(64, 64);
+            this.pb_GeoLocation_CountryFlag.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_GeoLocation_CountryFlag.TabIndex = 64;
+            this.pb_GeoLocation_CountryFlag.TabStop = false;
+            this.pb_GeoLocation_CountryFlag.Visible = false;
+            // 
+            // pb_GeoLocationProgress
+            // 
+            this.pb_GeoLocationProgress.BackColor = System.Drawing.Color.Transparent;
+            this.pb_GeoLocationProgress.Image = ((System.Drawing.Image)(resources.GetObject("pb_GeoLocationProgress.Image")));
+            this.pb_GeoLocationProgress.Location = new System.Drawing.Point(178, 144);
+            this.pb_GeoLocationProgress.Name = "pb_GeoLocationProgress";
+            this.pb_GeoLocationProgress.Size = new System.Drawing.Size(79, 79);
+            this.pb_GeoLocationProgress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_GeoLocationProgress.TabIndex = 63;
+            this.pb_GeoLocationProgress.TabStop = false;
+            // 
+            // tb_GeoLocation_ISP
+            // 
+            this.tb_GeoLocation_ISP.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_ISP.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_ISP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_ISP.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_ISP.Location = new System.Drawing.Point(557, 279);
+            this.tb_GeoLocation_ISP.Multiline = true;
+            this.tb_GeoLocation_ISP.Name = "tb_GeoLocation_ISP";
+            this.tb_GeoLocation_ISP.ReadOnly = true;
+            this.tb_GeoLocation_ISP.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_ISP.TabIndex = 60;
+            // 
+            // lbl_GeoLocation_ISP
+            // 
+            this.lbl_GeoLocation_ISP.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_ISP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_ISP.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_ISP.Location = new System.Drawing.Point(450, 279);
+            this.lbl_GeoLocation_ISP.Name = "lbl_GeoLocation_ISP";
+            this.lbl_GeoLocation_ISP.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_ISP.TabIndex = 59;
+            this.lbl_GeoLocation_ISP.Text = "ISP";
+            this.lbl_GeoLocation_ISP.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_GeoLocation_Longitude
+            // 
+            this.tb_GeoLocation_Longitude.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_Longitude.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_Longitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_Longitude.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_Longitude.Location = new System.Drawing.Point(557, 244);
+            this.tb_GeoLocation_Longitude.Multiline = true;
+            this.tb_GeoLocation_Longitude.Name = "tb_GeoLocation_Longitude";
+            this.tb_GeoLocation_Longitude.ReadOnly = true;
+            this.tb_GeoLocation_Longitude.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_Longitude.TabIndex = 58;
+            // 
+            // lbl_GeoLocation_Longitude
+            // 
+            this.lbl_GeoLocation_Longitude.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_Longitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_Longitude.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_Longitude.Location = new System.Drawing.Point(450, 244);
+            this.lbl_GeoLocation_Longitude.Name = "lbl_GeoLocation_Longitude";
+            this.lbl_GeoLocation_Longitude.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_Longitude.TabIndex = 57;
+            this.lbl_GeoLocation_Longitude.Text = "Longitude";
+            this.lbl_GeoLocation_Longitude.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_GeoLocation_Latitude
+            // 
+            this.tb_GeoLocation_Latitude.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_Latitude.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_Latitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_Latitude.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_Latitude.Location = new System.Drawing.Point(557, 210);
+            this.tb_GeoLocation_Latitude.Multiline = true;
+            this.tb_GeoLocation_Latitude.Name = "tb_GeoLocation_Latitude";
+            this.tb_GeoLocation_Latitude.ReadOnly = true;
+            this.tb_GeoLocation_Latitude.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_Latitude.TabIndex = 56;
+            // 
+            // lbl_GeoLocation_Latitude
+            // 
+            this.lbl_GeoLocation_Latitude.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_Latitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_Latitude.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_Latitude.Location = new System.Drawing.Point(450, 210);
+            this.lbl_GeoLocation_Latitude.Name = "lbl_GeoLocation_Latitude";
+            this.lbl_GeoLocation_Latitude.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_Latitude.TabIndex = 55;
+            this.lbl_GeoLocation_Latitude.Text = "Latitude";
+            this.lbl_GeoLocation_Latitude.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_GeoLocation_TimeZone
+            // 
+            this.tb_GeoLocation_TimeZone.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_TimeZone.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_TimeZone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_TimeZone.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_TimeZone.Location = new System.Drawing.Point(557, 176);
+            this.tb_GeoLocation_TimeZone.Multiline = true;
+            this.tb_GeoLocation_TimeZone.Name = "tb_GeoLocation_TimeZone";
+            this.tb_GeoLocation_TimeZone.ReadOnly = true;
+            this.tb_GeoLocation_TimeZone.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_TimeZone.TabIndex = 54;
+            // 
+            // lbl_GeoLocation_TimeZone
+            // 
+            this.lbl_GeoLocation_TimeZone.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_TimeZone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_TimeZone.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_TimeZone.Location = new System.Drawing.Point(450, 176);
+            this.lbl_GeoLocation_TimeZone.Name = "lbl_GeoLocation_TimeZone";
+            this.lbl_GeoLocation_TimeZone.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_TimeZone.TabIndex = 53;
+            this.lbl_GeoLocation_TimeZone.Text = "Time Zone";
+            this.lbl_GeoLocation_TimeZone.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_GeoLocation_ZipCode
+            // 
+            this.tb_GeoLocation_ZipCode.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_ZipCode.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_ZipCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_ZipCode.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_ZipCode.Location = new System.Drawing.Point(557, 143);
+            this.tb_GeoLocation_ZipCode.Multiline = true;
+            this.tb_GeoLocation_ZipCode.Name = "tb_GeoLocation_ZipCode";
+            this.tb_GeoLocation_ZipCode.ReadOnly = true;
+            this.tb_GeoLocation_ZipCode.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_ZipCode.TabIndex = 52;
+            // 
+            // lbl_GeoLocation_ZipCode
+            // 
+            this.lbl_GeoLocation_ZipCode.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_ZipCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_ZipCode.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_ZipCode.Location = new System.Drawing.Point(450, 143);
+            this.lbl_GeoLocation_ZipCode.Name = "lbl_GeoLocation_ZipCode";
+            this.lbl_GeoLocation_ZipCode.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_ZipCode.TabIndex = 51;
+            this.lbl_GeoLocation_ZipCode.Text = "ZIP Code";
+            this.lbl_GeoLocation_ZipCode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_GeoLocation_City
+            // 
+            this.tb_GeoLocation_City.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_City.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_City.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_City.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_City.Location = new System.Drawing.Point(557, 109);
+            this.tb_GeoLocation_City.Multiline = true;
+            this.tb_GeoLocation_City.Name = "tb_GeoLocation_City";
+            this.tb_GeoLocation_City.ReadOnly = true;
+            this.tb_GeoLocation_City.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_City.TabIndex = 50;
+            // 
+            // lbl_GeoLocation_City
+            // 
+            this.lbl_GeoLocation_City.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_City.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_City.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_City.Location = new System.Drawing.Point(450, 109);
+            this.lbl_GeoLocation_City.Name = "lbl_GeoLocation_City";
+            this.lbl_GeoLocation_City.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_City.TabIndex = 49;
+            this.lbl_GeoLocation_City.Text = "City";
+            this.lbl_GeoLocation_City.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_GeoLocation_RegionName
+            // 
+            this.tb_GeoLocation_RegionName.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_RegionName.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_RegionName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_RegionName.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_RegionName.Location = new System.Drawing.Point(557, 75);
+            this.tb_GeoLocation_RegionName.Multiline = true;
+            this.tb_GeoLocation_RegionName.Name = "tb_GeoLocation_RegionName";
+            this.tb_GeoLocation_RegionName.ReadOnly = true;
+            this.tb_GeoLocation_RegionName.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_RegionName.TabIndex = 48;
+            // 
+            // lbl_GeoLocation_RegionName
+            // 
+            this.lbl_GeoLocation_RegionName.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_RegionName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_RegionName.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_RegionName.Location = new System.Drawing.Point(450, 75);
+            this.lbl_GeoLocation_RegionName.Name = "lbl_GeoLocation_RegionName";
+            this.lbl_GeoLocation_RegionName.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_RegionName.TabIndex = 47;
+            this.lbl_GeoLocation_RegionName.Text = "Region";
+            this.lbl_GeoLocation_RegionName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_GeoLocation_CountryName
+            // 
+            this.tb_GeoLocation_CountryName.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_CountryName.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_CountryName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_CountryName.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_CountryName.Location = new System.Drawing.Point(557, 42);
+            this.tb_GeoLocation_CountryName.Multiline = true;
+            this.tb_GeoLocation_CountryName.Name = "tb_GeoLocation_CountryName";
+            this.tb_GeoLocation_CountryName.ReadOnly = true;
+            this.tb_GeoLocation_CountryName.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_CountryName.TabIndex = 44;
+            // 
+            // tb_GeoLocation_AS
+            // 
+            this.tb_GeoLocation_AS.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_AS.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_AS.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_AS.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_AS.Location = new System.Drawing.Point(557, 347);
+            this.tb_GeoLocation_AS.Multiline = true;
+            this.tb_GeoLocation_AS.Name = "tb_GeoLocation_AS";
+            this.tb_GeoLocation_AS.ReadOnly = true;
+            this.tb_GeoLocation_AS.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_AS.TabIndex = 46;
+            // 
+            // lbl_GeoLocation_CountryName
+            // 
+            this.lbl_GeoLocation_CountryName.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_CountryName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_CountryName.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_CountryName.Location = new System.Drawing.Point(450, 42);
+            this.lbl_GeoLocation_CountryName.Name = "lbl_GeoLocation_CountryName";
+            this.lbl_GeoLocation_CountryName.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_CountryName.TabIndex = 43;
+            this.lbl_GeoLocation_CountryName.Text = "Country";
+            this.lbl_GeoLocation_CountryName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tb_GeoLocation_ORG
+            // 
+            this.tb_GeoLocation_ORG.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tb_GeoLocation_ORG.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_GeoLocation_ORG.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_GeoLocation_ORG.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_GeoLocation_ORG.Location = new System.Drawing.Point(557, 313);
+            this.tb_GeoLocation_ORG.Multiline = true;
+            this.tb_GeoLocation_ORG.Name = "tb_GeoLocation_ORG";
+            this.tb_GeoLocation_ORG.ReadOnly = true;
+            this.tb_GeoLocation_ORG.Size = new System.Drawing.Size(217, 23);
+            this.tb_GeoLocation_ORG.TabIndex = 42;
+            // 
+            // lbl_GeoLocation_IP
+            // 
+            this.lbl_GeoLocation_IP.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_IP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_IP.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_IP.Location = new System.Drawing.Point(450, 9);
+            this.lbl_GeoLocation_IP.Name = "lbl_GeoLocation_IP";
+            this.lbl_GeoLocation_IP.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_IP.TabIndex = 39;
+            this.lbl_GeoLocation_IP.Text = "IP Address";
+            this.lbl_GeoLocation_IP.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_GeoLocation_ORG
+            // 
+            this.lbl_GeoLocation_ORG.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_ORG.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_ORG.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_ORG.Location = new System.Drawing.Point(450, 313);
+            this.lbl_GeoLocation_ORG.Name = "lbl_GeoLocation_ORG";
+            this.lbl_GeoLocation_ORG.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_ORG.TabIndex = 41;
+            this.lbl_GeoLocation_ORG.Text = "Organization";
+            this.lbl_GeoLocation_ORG.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // pb_GeoLocation_Map
+            // 
+            this.pb_GeoLocation_Map.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pb_GeoLocation_Map.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pb_GeoLocation_Map.Location = new System.Drawing.Point(11, 9);
+            this.pb_GeoLocation_Map.Name = "pb_GeoLocation_Map";
+            this.pb_GeoLocation_Map.Size = new System.Drawing.Size(418, 361);
+            this.pb_GeoLocation_Map.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_GeoLocation_Map.TabIndex = 0;
+            this.pb_GeoLocation_Map.TabStop = false;
+            this.pb_GeoLocation_Map.Visible = false;
+            this.pb_GeoLocation_Map.Click += new System.EventHandler(this.pb_GeoLocation_Map_Click);
+            // 
+            // lbl_GeoLocation_AS
+            // 
+            this.lbl_GeoLocation_AS.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lbl_GeoLocation_AS.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_GeoLocation_AS.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_GeoLocation_AS.Location = new System.Drawing.Point(450, 347);
+            this.lbl_GeoLocation_AS.Name = "lbl_GeoLocation_AS";
+            this.lbl_GeoLocation_AS.Size = new System.Drawing.Size(94, 23);
+            this.lbl_GeoLocation_AS.TabIndex = 45;
+            this.lbl_GeoLocation_AS.Text = "AS";
+            this.lbl_GeoLocation_AS.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // imageList_Tabs
+            // 
+            this.imageList_Tabs.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.imageList_Tabs.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList_Tabs.TransparentColor = System.Drawing.Color.Transparent;
+            // 
             // tabPage_VirusTotal
             // 
             this.tabPage_VirusTotal.BackColor = System.Drawing.Color.Silver;
@@ -1232,12 +1586,6 @@
             // 
             this.columnHeader16.Text = "Status";
             this.columnHeader16.Width = 380;
-            // 
-            // imageList_Tabs
-            // 
-            this.imageList_Tabs.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.imageList_Tabs.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList_Tabs.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // tabPage_WhoIs
             // 
@@ -1536,7 +1884,6 @@
             this.treeView_ComputerInfo.ImageIndex = 6;
             this.treeView_ComputerInfo.ImageList = this.imageList_ListViewIcons_20pix;
             this.treeView_ComputerInfo.Indent = 25;
-            this.treeView_ComputerInfo.LineColor = System.Drawing.Color.Empty;
             this.treeView_ComputerInfo.Location = new System.Drawing.Point(11, 9);
             this.treeView_ComputerInfo.Name = "treeView_ComputerInfo";
             this.treeView_ComputerInfo.SelectedImageIndex = 6;
@@ -1622,354 +1969,6 @@
             this.pb_PortsProgress.TabIndex = 8;
             this.pb_PortsProgress.TabStop = false;
             this.pb_PortsProgress.Visible = false;
-            // 
-            // tabPage_GeoLocation
-            // 
-            this.tabPage_GeoLocation.BackColor = System.Drawing.Color.Silver;
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_IP);
-            this.tabPage_GeoLocation.Controls.Add(this.pb_GeoLocation_CountryFlag);
-            this.tabPage_GeoLocation.Controls.Add(this.pb_GeoLocationProgress);
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_ISP);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_ISP);
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_Longitude);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_Longitude);
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_Latitude);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_Latitude);
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_TimeZone);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_TimeZone);
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_ZipCode);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_ZipCode);
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_City);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_City);
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_RegionName);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_RegionName);
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_CountryName);
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_AS);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_CountryName);
-            this.tabPage_GeoLocation.Controls.Add(this.tb_GeoLocation_ORG);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_IP);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_ORG);
-            this.tabPage_GeoLocation.Controls.Add(this.pb_GeoLocation_Map);
-            this.tabPage_GeoLocation.Controls.Add(this.lbl_GeoLocation_AS);
-            this.tabPage_GeoLocation.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tabPage_GeoLocation.Location = new System.Drawing.Point(4, 42);
-            this.tabPage_GeoLocation.Name = "tabPage_GeoLocation";
-            this.tabPage_GeoLocation.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_GeoLocation.Size = new System.Drawing.Size(783, 378);
-            this.tabPage_GeoLocation.TabIndex = 10;
-            this.tabPage_GeoLocation.Text = "Geo Info";
-            // 
-            // tb_GeoLocation_IP
-            // 
-            this.tb_GeoLocation_IP.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_IP.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_IP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_IP.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_IP.Location = new System.Drawing.Point(557, 9);
-            this.tb_GeoLocation_IP.Multiline = true;
-            this.tb_GeoLocation_IP.Name = "tb_GeoLocation_IP";
-            this.tb_GeoLocation_IP.ReadOnly = true;
-            this.tb_GeoLocation_IP.Size = new System.Drawing.Size(217, 23);
-            this.tb_GeoLocation_IP.TabIndex = 65;
-            // 
-            // pb_GeoLocation_CountryFlag
-            // 
-            this.pb_GeoLocation_CountryFlag.Cursor = System.Windows.Forms.Cursors.Default;
-            this.pb_GeoLocation_CountryFlag.Location = new System.Drawing.Point(365, 9);
-            this.pb_GeoLocation_CountryFlag.Name = "pb_GeoLocation_CountryFlag";
-            this.pb_GeoLocation_CountryFlag.Size = new System.Drawing.Size(64, 64);
-            this.pb_GeoLocation_CountryFlag.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_GeoLocation_CountryFlag.TabIndex = 64;
-            this.pb_GeoLocation_CountryFlag.TabStop = false;
-            this.pb_GeoLocation_CountryFlag.Visible = false;
-            // 
-            // pb_GeoLocationProgress
-            // 
-            this.pb_GeoLocationProgress.BackColor = System.Drawing.Color.Transparent;
-            this.pb_GeoLocationProgress.Image = ((System.Drawing.Image)(resources.GetObject("pb_GeoLocationProgress.Image")));
-            this.pb_GeoLocationProgress.Location = new System.Drawing.Point(178, 144);
-            this.pb_GeoLocationProgress.Name = "pb_GeoLocationProgress";
-            this.pb_GeoLocationProgress.Size = new System.Drawing.Size(79, 79);
-            this.pb_GeoLocationProgress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_GeoLocationProgress.TabIndex = 63;
-            this.pb_GeoLocationProgress.TabStop = false;
-            // 
-            // tb_GeoLocation_ISP
-            // 
-            this.tb_GeoLocation_ISP.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_ISP.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_ISP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_ISP.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_ISP.Location = new System.Drawing.Point(557, 225);
-            this.tb_GeoLocation_ISP.Multiline = true;
-            this.tb_GeoLocation_ISP.Name = "tb_GeoLocation_ISP";
-            this.tb_GeoLocation_ISP.ReadOnly = true;
-            this.tb_GeoLocation_ISP.Size = new System.Drawing.Size(217, 23);
-            this.tb_GeoLocation_ISP.TabIndex = 60;
-            // 
-            // lbl_GeoLocation_ISP
-            // 
-            this.lbl_GeoLocation_ISP.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_ISP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_ISP.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_ISP.Location = new System.Drawing.Point(450, 225);
-            this.lbl_GeoLocation_ISP.Name = "lbl_GeoLocation_ISP";
-            this.lbl_GeoLocation_ISP.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_ISP.TabIndex = 59;
-            this.lbl_GeoLocation_ISP.Text = "ISP";
-            this.lbl_GeoLocation_ISP.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_GeoLocation_Longitude
-            // 
-            this.tb_GeoLocation_Longitude.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_Longitude.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_Longitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_Longitude.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_Longitude.Location = new System.Drawing.Point(557, 198);
-            this.tb_GeoLocation_Longitude.Multiline = true;
-            this.tb_GeoLocation_Longitude.Name = "tb_GeoLocation_Longitude";
-            this.tb_GeoLocation_Longitude.ReadOnly = true;
-            this.tb_GeoLocation_Longitude.Size = new System.Drawing.Size(217, 23);
-            this.tb_GeoLocation_Longitude.TabIndex = 58;
-            // 
-            // lbl_GeoLocation_Longitude
-            // 
-            this.lbl_GeoLocation_Longitude.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_Longitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_Longitude.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_Longitude.Location = new System.Drawing.Point(450, 198);
-            this.lbl_GeoLocation_Longitude.Name = "lbl_GeoLocation_Longitude";
-            this.lbl_GeoLocation_Longitude.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_Longitude.TabIndex = 57;
-            this.lbl_GeoLocation_Longitude.Text = "Longitude";
-            this.lbl_GeoLocation_Longitude.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_GeoLocation_Latitude
-            // 
-            this.tb_GeoLocation_Latitude.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_Latitude.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_Latitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_Latitude.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_Latitude.Location = new System.Drawing.Point(557, 171);
-            this.tb_GeoLocation_Latitude.Multiline = true;
-            this.tb_GeoLocation_Latitude.Name = "tb_GeoLocation_Latitude";
-            this.tb_GeoLocation_Latitude.ReadOnly = true;
-            this.tb_GeoLocation_Latitude.Size = new System.Drawing.Size(217, 23);
-            this.tb_GeoLocation_Latitude.TabIndex = 56;
-            // 
-            // lbl_GeoLocation_Latitude
-            // 
-            this.lbl_GeoLocation_Latitude.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_Latitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_Latitude.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_Latitude.Location = new System.Drawing.Point(450, 171);
-            this.lbl_GeoLocation_Latitude.Name = "lbl_GeoLocation_Latitude";
-            this.lbl_GeoLocation_Latitude.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_Latitude.TabIndex = 55;
-            this.lbl_GeoLocation_Latitude.Text = "Latitude";
-            this.lbl_GeoLocation_Latitude.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_GeoLocation_TimeZone
-            // 
-            this.tb_GeoLocation_TimeZone.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_TimeZone.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_TimeZone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_TimeZone.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_TimeZone.Location = new System.Drawing.Point(557, 144);
-            this.tb_GeoLocation_TimeZone.Multiline = true;
-            this.tb_GeoLocation_TimeZone.Name = "tb_GeoLocation_TimeZone";
-            this.tb_GeoLocation_TimeZone.ReadOnly = true;
-            this.tb_GeoLocation_TimeZone.Size = new System.Drawing.Size(217, 23);
-            this.tb_GeoLocation_TimeZone.TabIndex = 54;
-            // 
-            // lbl_GeoLocation_TimeZone
-            // 
-            this.lbl_GeoLocation_TimeZone.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_TimeZone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_TimeZone.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_TimeZone.Location = new System.Drawing.Point(450, 144);
-            this.lbl_GeoLocation_TimeZone.Name = "lbl_GeoLocation_TimeZone";
-            this.lbl_GeoLocation_TimeZone.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_TimeZone.TabIndex = 53;
-            this.lbl_GeoLocation_TimeZone.Text = "Time Zone";
-            this.lbl_GeoLocation_TimeZone.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_GeoLocation_ZipCode
-            // 
-            this.tb_GeoLocation_ZipCode.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_ZipCode.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_ZipCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_ZipCode.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_ZipCode.Location = new System.Drawing.Point(557, 117);
-            this.tb_GeoLocation_ZipCode.Multiline = true;
-            this.tb_GeoLocation_ZipCode.Name = "tb_GeoLocation_ZipCode";
-            this.tb_GeoLocation_ZipCode.ReadOnly = true;
-            this.tb_GeoLocation_ZipCode.Size = new System.Drawing.Size(217, 23);
-            this.tb_GeoLocation_ZipCode.TabIndex = 52;
-            // 
-            // lbl_GeoLocation_ZipCode
-            // 
-            this.lbl_GeoLocation_ZipCode.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_ZipCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_ZipCode.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_ZipCode.Location = new System.Drawing.Point(450, 117);
-            this.lbl_GeoLocation_ZipCode.Name = "lbl_GeoLocation_ZipCode";
-            this.lbl_GeoLocation_ZipCode.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_ZipCode.TabIndex = 51;
-            this.lbl_GeoLocation_ZipCode.Text = "ZIP Code";
-            this.lbl_GeoLocation_ZipCode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_GeoLocation_City
-            // 
-            this.tb_GeoLocation_City.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_City.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_City.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_City.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_City.Location = new System.Drawing.Point(557, 90);
-            this.tb_GeoLocation_City.Multiline = true;
-            this.tb_GeoLocation_City.Name = "tb_GeoLocation_City";
-            this.tb_GeoLocation_City.ReadOnly = true;
-            this.tb_GeoLocation_City.Size = new System.Drawing.Size(217, 23);
-            this.tb_GeoLocation_City.TabIndex = 50;
-            // 
-            // lbl_GeoLocation_City
-            // 
-            this.lbl_GeoLocation_City.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_City.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_City.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_City.Location = new System.Drawing.Point(450, 90);
-            this.lbl_GeoLocation_City.Name = "lbl_GeoLocation_City";
-            this.lbl_GeoLocation_City.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_City.TabIndex = 49;
-            this.lbl_GeoLocation_City.Text = "City";
-            this.lbl_GeoLocation_City.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_GeoLocation_RegionName
-            // 
-            this.tb_GeoLocation_RegionName.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_RegionName.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_RegionName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_RegionName.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_RegionName.Location = new System.Drawing.Point(557, 63);
-            this.tb_GeoLocation_RegionName.Multiline = true;
-            this.tb_GeoLocation_RegionName.Name = "tb_GeoLocation_RegionName";
-            this.tb_GeoLocation_RegionName.ReadOnly = true;
-            this.tb_GeoLocation_RegionName.Size = new System.Drawing.Size(217, 23);
-            this.tb_GeoLocation_RegionName.TabIndex = 48;
-            // 
-            // lbl_GeoLocation_RegionName
-            // 
-            this.lbl_GeoLocation_RegionName.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_RegionName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_RegionName.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_RegionName.Location = new System.Drawing.Point(450, 63);
-            this.lbl_GeoLocation_RegionName.Name = "lbl_GeoLocation_RegionName";
-            this.lbl_GeoLocation_RegionName.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_RegionName.TabIndex = 47;
-            this.lbl_GeoLocation_RegionName.Text = "Region";
-            this.lbl_GeoLocation_RegionName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_GeoLocation_CountryName
-            // 
-            this.tb_GeoLocation_CountryName.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_CountryName.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_CountryName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_CountryName.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_CountryName.Location = new System.Drawing.Point(557, 36);
-            this.tb_GeoLocation_CountryName.Multiline = true;
-            this.tb_GeoLocation_CountryName.Name = "tb_GeoLocation_CountryName";
-            this.tb_GeoLocation_CountryName.ReadOnly = true;
-            this.tb_GeoLocation_CountryName.Size = new System.Drawing.Size(217, 23);
-            this.tb_GeoLocation_CountryName.TabIndex = 44;
-            // 
-            // tb_GeoLocation_AS
-            // 
-            this.tb_GeoLocation_AS.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_AS.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_AS.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_AS.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_AS.Location = new System.Drawing.Point(557, 279);
-            this.tb_GeoLocation_AS.Multiline = true;
-            this.tb_GeoLocation_AS.Name = "tb_GeoLocation_AS";
-            this.tb_GeoLocation_AS.ReadOnly = true;
-            this.tb_GeoLocation_AS.Size = new System.Drawing.Size(217, 48);
-            this.tb_GeoLocation_AS.TabIndex = 46;
-            // 
-            // lbl_GeoLocation_CountryName
-            // 
-            this.lbl_GeoLocation_CountryName.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_CountryName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_CountryName.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_CountryName.Location = new System.Drawing.Point(450, 36);
-            this.lbl_GeoLocation_CountryName.Name = "lbl_GeoLocation_CountryName";
-            this.lbl_GeoLocation_CountryName.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_CountryName.TabIndex = 43;
-            this.lbl_GeoLocation_CountryName.Text = "Country";
-            this.lbl_GeoLocation_CountryName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // tb_GeoLocation_ORG
-            // 
-            this.tb_GeoLocation_ORG.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tb_GeoLocation_ORG.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_GeoLocation_ORG.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_GeoLocation_ORG.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_GeoLocation_ORG.Location = new System.Drawing.Point(557, 252);
-            this.tb_GeoLocation_ORG.Multiline = true;
-            this.tb_GeoLocation_ORG.Name = "tb_GeoLocation_ORG";
-            this.tb_GeoLocation_ORG.ReadOnly = true;
-            this.tb_GeoLocation_ORG.Size = new System.Drawing.Size(217, 23);
-            this.tb_GeoLocation_ORG.TabIndex = 42;
-            // 
-            // lbl_GeoLocation_IP
-            // 
-            this.lbl_GeoLocation_IP.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_IP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_IP.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_IP.Location = new System.Drawing.Point(450, 9);
-            this.lbl_GeoLocation_IP.Name = "lbl_GeoLocation_IP";
-            this.lbl_GeoLocation_IP.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_IP.TabIndex = 39;
-            this.lbl_GeoLocation_IP.Text = "IP Address";
-            this.lbl_GeoLocation_IP.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // lbl_GeoLocation_ORG
-            // 
-            this.lbl_GeoLocation_ORG.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_ORG.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_ORG.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_ORG.Location = new System.Drawing.Point(450, 252);
-            this.lbl_GeoLocation_ORG.Name = "lbl_GeoLocation_ORG";
-            this.lbl_GeoLocation_ORG.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_ORG.TabIndex = 41;
-            this.lbl_GeoLocation_ORG.Text = "Organization";
-            this.lbl_GeoLocation_ORG.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // pb_GeoLocation_Map
-            // 
-            this.pb_GeoLocation_Map.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pb_GeoLocation_Map.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_GeoLocation_Map.Location = new System.Drawing.Point(11, 9);
-            this.pb_GeoLocation_Map.Name = "pb_GeoLocation_Map";
-            this.pb_GeoLocation_Map.Size = new System.Drawing.Size(418, 358);
-            this.pb_GeoLocation_Map.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_GeoLocation_Map.TabIndex = 0;
-            this.pb_GeoLocation_Map.TabStop = false;
-            this.pb_GeoLocation_Map.Visible = false;
-            this.pb_GeoLocation_Map.Click += new System.EventHandler(this.pb_GeoLocation_Map_Click);
-            // 
-            // lbl_GeoLocation_AS
-            // 
-            this.lbl_GeoLocation_AS.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lbl_GeoLocation_AS.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_GeoLocation_AS.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_GeoLocation_AS.Location = new System.Drawing.Point(450, 279);
-            this.lbl_GeoLocation_AS.Name = "lbl_GeoLocation_AS";
-            this.lbl_GeoLocation_AS.Size = new System.Drawing.Size(94, 23);
-            this.lbl_GeoLocation_AS.TabIndex = 45;
-            this.lbl_GeoLocation_AS.Text = "AS";
-            this.lbl_GeoLocation_AS.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tabPage_FTPInfo
             // 
@@ -2736,6 +2735,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_PingRefresh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Favicon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_StatusIcon)).EndInit();
+            this.tabPage_GeoLocation.ResumeLayout(false);
+            this.tabPage_GeoLocation.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocation_CountryFlag)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocationProgress)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocation_Map)).EndInit();
             this.tabPage_VirusTotal.ResumeLayout(false);
             this.tabPage_VirusTotal.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_VirusTotal_Status)).EndInit();
@@ -2750,11 +2754,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_WMIInfoProgress)).EndInit();
             this.tabPage_Ports.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pb_PortsProgress)).EndInit();
-            this.tabPage_GeoLocation.ResumeLayout(false);
-            this.tabPage_GeoLocation.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocation_CountryFlag)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocationProgress)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_GeoLocation_Map)).EndInit();
             this.tabPage_FTPInfo.ResumeLayout(false);
             this.tabPage_FTPInfo.PerformLayout();
             this.tabPage_HTTPInfo.ResumeLayout(false);

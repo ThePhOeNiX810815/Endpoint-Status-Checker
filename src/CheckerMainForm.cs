@@ -793,11 +793,14 @@ namespace EndpointChecker
                                         {
                                             HttpWebResponse _httpWebResponse = wEX.Response as HttpWebResponse;
 
-                                            string locationHeaderValue = _httpWebResponse.Headers.Get("Location");
-
-                                            if (!string.IsNullOrEmpty(locationHeaderValue))
+                                            if (_httpWebResponse != null &&
+                                                _httpWebResponse.Headers != null &&
+                                                _httpWebResponse.Headers.Count > 0 &&
+                                                _httpWebResponse.Headers.AllKeys.Contains("Location") &&
+                                                !string.IsNullOrEmpty(_httpWebResponse.Headers["Location"].First().ToString()))
                                             {
-                                                autoRedirect_Current++;
+                                                // GET 'LOCATION' HEADER VALUE
+                                                string locationHeaderValue = _httpWebResponse.GetResponseHeader("Location");
 
                                                 // IF IS RELATIVE PATH
                                                 if (Uri.IsWellFormedUriString(locationHeaderValue, UriKind.Relative))
@@ -814,7 +817,15 @@ namespace EndpointChecker
                                                     autoRedirect_Enable,
                                                     removeURLParameters);
 
+                                                // INCERASE REDIR COUNTER
+                                                autoRedirect_Current++;
+
+                                                // GET RESPONSE FROM 'LOCATION'
                                                 httpWebResponse = GetHTTPWebResponse(httpWebRequest_Redirected, 3);
+                                            }
+                                            else
+                                            {
+                                                throw (wEX);
                                             }
                                         }
                                     }
@@ -5302,6 +5313,18 @@ namespace EndpointChecker
                 }
             }
         }
+
+        public static string NotAvailable_IfNullorEmpty(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return status_NotAvailable;
+            }
+            else
+            {
+                return input;
+            }
+        }
     }
 
     public class ListViewItemComparer : IComparer
@@ -5488,5 +5511,50 @@ namespace EndpointChecker
         Directory = 0x09,
         Tree = 0x0a,
         Ndscontainer = 0x0b
+    }
+
+    public class IP_API_JSON_Response
+    {
+        [JsonProperty("status")]
+        public string Service_Status { get; set; }
+
+        [JsonProperty("country")]
+        public string Country_Name { get; set; }
+
+        [JsonProperty("countryCode")]
+        public string Country_Code { get; set; }
+
+        [JsonProperty("region")]
+        public string Region_Code { get; set; }
+
+        [JsonProperty("regionName")]
+        public string Region_Name { get; set; }
+
+        [JsonProperty("city")]
+        public string City { get; set; }
+
+        [JsonProperty("zip")]
+        public string City_ZIP_Code { get; set; }
+
+        [JsonProperty("lat")]
+        public string Geo_Lat { get; set; }
+
+        [JsonProperty("lon")]
+        public string Geo_Lon { get; set; }
+
+        [JsonProperty("timezone")]
+        public string TimeZone { get; set; }
+
+        [JsonProperty("isp")]
+        public string ISP { get; set; }
+
+        [JsonProperty("org")]
+        public string ISP_ORG { get; set; }
+
+        [JsonProperty("as")]
+        public string ISP_AS { get; set; }
+
+        [JsonProperty("query")]
+        public string Service_Query { get; set; }
     }
 }
