@@ -129,7 +129,7 @@
             this.lbl_SpeedTest_CurrentCountry.Name = "lbl_SpeedTest_CurrentCountry";
             this.lbl_SpeedTest_CurrentCountry.Size = new System.Drawing.Size(134, 25);
             this.lbl_SpeedTest_CurrentCountry.TabIndex = 88;
-            this.lbl_SpeedTest_CurrentCountry.Text = "Current Country";
+            this.lbl_SpeedTest_CurrentCountry.Text = "City / Country";
             this.lbl_SpeedTest_CurrentCountry.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // rtb_SpeedTest_LogConsole
@@ -351,7 +351,7 @@
             this.cb_SpeedTest_TestServer.Name = "cb_SpeedTest_TestServer";
             this.cb_SpeedTest_TestServer.Size = new System.Drawing.Size(537, 27);
             this.cb_SpeedTest_TestServer.TabIndex = 97;
-            this.cb_SpeedTest_TestServer.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.comboBox1_DrawItem);
+            this.cb_SpeedTest_TestServer.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cb_SpeedTest_TestServer_DrawItem);
             this.cb_SpeedTest_TestServer.SelectedIndexChanged += new System.EventHandler(this.cb_SpeedTest_TestServer_SelectedIndexChanged);
             // 
             // lbl_SpeedTest_ExternalIP_Value

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Security.Permissions;
@@ -18,9 +17,7 @@ namespace EndpointChecker
 {
     public partial class SpeedTestDialog : Form
     {
-        // 
-
-        // MAXIMUM NUMBER OF TESTS SERVERS
+        // MAXIMUM NUMBER OF TESTS SERVERS [API HARD-LIMITED TO 10, BUT NO ONE KNOWS...]
         public static int maxTestServersCount = 50;
 
         public static string clientIP = status_NotAvailable;
@@ -32,6 +29,9 @@ namespace EndpointChecker
         // SPEED TEST SERVER / SETTINGS
         public static SpeedTestClient speedTestClient = new SpeedTestClient();
         public static Settings speedTestSettings = new Settings();
+
+        // IP INFO API RESPONSE
+        IP_API_JSON_Response ipInfo;
 
         public static List<Server> testServersList = new List<Server>();
         public enum TestServerSelectionMode
@@ -97,7 +97,7 @@ namespace EndpointChecker
                         btn_SpeedTest_GetServers.Enabled = false;
                     });
 
-                    SpeedTest_AppendTextToLogBox(
+                    AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
                                 "ERROR: " +
                                 BuildExceptionMessage(exception) +
@@ -162,9 +162,22 @@ namespace EndpointChecker
 
         public void SetServerDetails(Server targetServer)
         {
-            lbl_SpeedTest_HostedBy_Value.Text = targetServer.Sponsor;
-            lbl_SpeedTest_Distance_Value.Text = (int)targetServer.Distance / 1000 + " km";
             lbl_SpeedTest_Latency_Value.Text = targetServer.Latency + " ms";
+            lbl_SpeedTest_HostedBy_Value.Text = GetStringCorrectEncoding(targetServer.Sponsor);
+            lbl_SpeedTest_Distance_Value.Text =
+                (int)targetServer.Distance / 1000 +
+                " km (from '" +
+                GetStringCorrectEncoding(
+                    ipInfo.City +
+                    "/" +
+                    ipInfo.Country_Name) +
+                "' to '" +
+                GetStringCorrectEncoding(
+                    targetServer.Name +
+                    "/" +
+                    targetServer.Country) +
+                "')";
+
 
             lbl_SpeedTest_HostedBy_Value.BackColor = Color.LightSkyBlue;
             lbl_SpeedTest_Distance_Value.BackColor = Color.LightSkyBlue;
@@ -185,7 +198,7 @@ namespace EndpointChecker
 
         public Server BestServerByLatency()
         {
-            SpeedTest_AppendTextToLogBox(
+            AppendTextToLogBox(
                                          rtb_SpeedTest_LogConsole,
                                          Environment.NewLine +
                                          "Selecting best server by latency ...",
@@ -194,7 +207,7 @@ namespace EndpointChecker
 
             Server bestServer = testServersList.OrderBy(x => x.Latency).First();
 
-            SpeedTest_AppendTextToLogBox(
+            AppendTextToLogBox(
                                     rtb_SpeedTest_LogConsole,
                                         "Hosted by '" +
                                         GetStringCorrectEncoding(bestServer.Sponsor) +
@@ -218,7 +231,7 @@ namespace EndpointChecker
             {
                 try
                 {
-                    SpeedTest_AppendTextToLogBox(
+                    AppendTextToLogBox(
                                         rtb_SpeedTest_LogConsole,
                                              Environment.NewLine +
                                              "Testing Download Speed by " +
@@ -234,7 +247,7 @@ namespace EndpointChecker
                     // TEST DOWNLOAD SPEED
                     int downloadSpeed = GetDownloadSpeed(targetServer);
 
-                    SpeedTest_AppendTextToLogBox(
+                    AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
                                 "Average Download Speed (" +
                                 +testTakesCount + " takes): " +
@@ -282,7 +295,7 @@ namespace EndpointChecker
                         Application.DoEvents();
                     });
 
-                    SpeedTest_AppendTextToLogBox(
+                    AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
                                Environment.NewLine +
                                "Testing upload speed by " +
@@ -298,7 +311,7 @@ namespace EndpointChecker
                     // TEST UPLOAD SPEED
                     int uploadSpeed = GetUploadSpeed(targetServer);
 
-                    SpeedTest_AppendTextToLogBox(
+                    AppendTextToLogBox(
                            rtb_SpeedTest_LogConsole,
                                "Average Upload Speed (" +
                                +testTakesCount + " takes): " +
@@ -346,7 +359,7 @@ namespace EndpointChecker
                         Application.DoEvents();
                     });
 
-                    SpeedTest_AppendTextToLogBox(
+                    AppendTextToLogBox(
                                                  rtb_SpeedTest_LogConsole,
                                                  Environment.NewLine,
                                                  Color.Black,
@@ -354,7 +367,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    SpeedTest_AppendTextToLogBox(
+                    AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
                                 Environment.NewLine +
                                 "ERROR: " +
@@ -403,7 +416,7 @@ namespace EndpointChecker
                         Application.DoEvents();
                     });
 
-                    SpeedTest_AppendTextToLogBox(
+                    AppendTextToLogBox(
                            rtb_SpeedTest_LogConsole,
                                "Take " +
                                +i + " -> Speed: " +
@@ -417,7 +430,7 @@ namespace EndpointChecker
                 {
                     if (currentRetryCount <= testRetryCount)
                     {
-                        SpeedTest_AppendTextToLogBox(
+                        AppendTextToLogBox(
                           rtb_SpeedTest_LogConsole,
                               "ERROR: " +
                               BuildExceptionMessage(eX),
@@ -462,7 +475,7 @@ namespace EndpointChecker
                         Application.DoEvents();
                     });
 
-                    SpeedTest_AppendTextToLogBox(
+                    AppendTextToLogBox(
                            rtb_SpeedTest_LogConsole,
                                "Take " +
                                +i + " -> Speed: " +
@@ -476,7 +489,7 @@ namespace EndpointChecker
                 {
                     if (currentRetryCount <= testRetryCount)
                     {
-                        SpeedTest_AppendTextToLogBox(
+                        AppendTextToLogBox(
                           rtb_SpeedTest_LogConsole,
                               "ERROR:" +
                               BuildExceptionMessage(eX),
@@ -496,13 +509,9 @@ namespace EndpointChecker
             return (uploadSpeed / testTakesCount);
         }
 
-        public IEnumerable<Server> GetServers(
-            Settings settings,
-            RegionInfo regionInfo_CurrentCountry,
-            SpeedTestClient client,
-            int testServersCount)
+        public IEnumerable<Server> GetServers()
         {
-            List<Server> serversList = settings.Servers.ToList();
+            List<Server> serversList = speedTestSettings.Servers.ToList();
             List<Server> filteredServersList = new List<Server>();
 
             if (testServerSelectionMode == TestServerSelectionMode.AllServersExceptCurrentCountry)
@@ -510,13 +519,8 @@ namespace EndpointChecker
                 foreach (Server serverItem in serversList)
                 {
                     if (
-                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.DisplayName.ToLower())) &&
-                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.EnglishName.ToLower())) &&
-                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.Name.ToLower())) &&
-                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.NativeName.ToLower())) &&
-                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.TwoLetterISORegionName.ToLower())) &&
-                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.ThreeLetterISORegionName.ToLower())) &&
-                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.ThreeLetterWindowsRegionName.ToLower())))
+                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Name.ToLower())) &&
+                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Code.ToLower())))
                     {
                         if (filteredServersList.Count <= maxTestServersCount)
                         {
@@ -530,13 +534,8 @@ namespace EndpointChecker
                 foreach (Server serverItem in serversList)
                 {
                     if (
-                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.DisplayName.ToLower())) ||
-                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.EnglishName.ToLower())) ||
-                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.Name.ToLower())) ||
-                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.NativeName.ToLower())) ||
-                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.TwoLetterISORegionName.ToLower())) ||
-                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.ThreeLetterISORegionName.ToLower())) ||
-                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(regionInfo_CurrentCountry.ThreeLetterWindowsRegionName.ToLower())))
+                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Name.ToLower())) ||
+                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Code.ToLower())))
                     {
                         if (filteredServersList.Count <= maxTestServersCount)
                         {
@@ -550,11 +549,11 @@ namespace EndpointChecker
                 filteredServersList = serversList.Take(maxTestServersCount).ToList();
             }
 
-            foreach (var server in filteredServersList.Take(testServersCount))
+            foreach (var server in filteredServersList.Take(maxTestServersCount))
             {
-                server.Latency = client.TestServerLatency(server);
+                server.Latency = speedTestClient.TestServerLatency(server);
 
-                SpeedTest_AppendTextToLogBox(
+                AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
                                 "Hosted by '" +
                                 GetStringCorrectEncoding(server.Sponsor) +
@@ -573,7 +572,7 @@ namespace EndpointChecker
             return filteredServersList;
         }
 
-        public void SpeedTest_AppendTextToLogBox(RichTextBox logBox, string resultLine, Color textColor, bool boldText)
+        public void AppendTextToLogBox(RichTextBox logBox, string resultLine, Color textColor, bool boldText)
         {
             // INVOKE DELEGATE ->> 
             ThreadSafeInvoke(() =>
@@ -614,47 +613,78 @@ namespace EndpointChecker
             return Encoding.UTF8.GetString(encodedBytes);
         }
 
-        public RegionInfo SpeedTest_GetUserCountry(string ipAddress)
+        public void GetUserCountry(string ipAddress)
         {
-            RegionInfo regionInfo = null;
-
             try
             {
-                SpeedTest_AppendTextToLogBox(
+                AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
-                                "Getting current country name [by 'http://ipinfo.io'] ...",
+                                "Getting GeoLocation IP Info [by 'http://ip-api.com'] ...",
                             Color.Black,
                             true);
 
                 // GET IP INFO / COUNTRY
-                string info = new WebClient().DownloadString("http://ipinfo.io/" + ipAddress);
-                IpInfo ipInfo = JsonConvert.DeserializeObject<IpInfo>(info);
-                regionInfo = new RegionInfo(ipInfo.Country);
+                string info = new WebClient().DownloadString("http://ip-api.com/json");
+                ipInfo = JsonConvert.DeserializeObject<IP_API_JSON_Response>(info);
+
+                if (ipInfo.Service_Status != "success")
+                {
+                    throw new Exception("GeoLocation IP Info API returned status: " + ipInfo.Service_Status);
+                }
 
                 ThreadSafeInvoke(() =>
                 {
                     lbl_SpeedTest_CurrentCountry_Value.BackColor = Color.BlanchedAlmond;
                     lbl_SpeedTest_CurrentCountry_Value.Text =
-                        regionInfo.DisplayName +
-                        " (" +
-                        regionInfo.TwoLetterISORegionName +
-                        ")";
+                        ipInfo.Region_Name +
+                        "/" +
+                        ipInfo.Country_Name;
                 });
 
-                SpeedTest_AppendTextToLogBox(
+                AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
-                                "Current Country: " +
-                                regionInfo.DisplayName +
+                                "Country: " +
+                                ipInfo.Country_Name +
                                 Environment.NewLine +
                                 "Country Code: " +
-                                regionInfo.TwoLetterISORegionName +
+                                ipInfo.Country_Code +
+                                Environment.NewLine +
+                                "Region: " +
+                                ipInfo.Region_Code +
+                                Environment.NewLine +
+                                "Region Name: " +
+                                ipInfo.Region_Name +
+                                Environment.NewLine +
+                                "City: " +
+                                ipInfo.City +
+                                Environment.NewLine +
+                                "ZIP Code: " +
+                                ipInfo.City_ZIP_Code +
+                                Environment.NewLine +
+                                "GEO Latitude: " +
+                                ipInfo.Geo_Lat +
+                                Environment.NewLine +
+                                "GEO Longitude: " +
+                                ipInfo.Geo_Lon +
+                                Environment.NewLine +
+                                "Time Zone: " +
+                                ipInfo.TimeZone +
+                                Environment.NewLine +
+                                "ISP: " +
+                                ipInfo.ISP +
+                                Environment.NewLine +
+                                "ISP Organization: " +
+                                ipInfo.ISP_ORG +
+                                Environment.NewLine +
+                                "ISP AS: " +
+                                ipInfo.ISP_AS +
                                 Environment.NewLine,
                             Color.Yellow,
                             true);
             }
             catch (Exception exception)
             {
-                SpeedTest_AppendTextToLogBox(
+                AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
                                 Environment.NewLine +
                                 "ERROR: " +
@@ -668,8 +698,6 @@ namespace EndpointChecker
                     SetProgessState(false);
                 });
             }
-
-            return regionInfo;
         }
 
         public void NewBackgroundThread(Action action)
@@ -752,37 +780,6 @@ namespace EndpointChecker
             }
         }
 
-        public void comboBox1_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            // By using Sender, one method could handle multiple ComboBoxes
-            ComboBox cbx = (ComboBox)sender;
-            if (cbx != null)
-            {
-                // Always draw the background
-                e.DrawBackground();
-
-                // Drawing one of the items?
-                if (e.Index >= 0)
-                {
-                    // Set the string alignment.  Choices are Center, Near and Far
-                    StringFormat sf = new StringFormat();
-                    sf.LineAlignment = StringAlignment.Center;
-                    sf.Alignment = StringAlignment.Center;
-
-                    // Set the Brush to ComboBox ForeColor to maintain any ComboBox color settings
-                    // Assumes Brush is solid
-                    Brush brush = new SolidBrush(cbx.ForeColor);
-
-                    // If drawing highlighted selection, change brush
-                    if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
-                        brush = SystemBrushes.HighlightText;
-
-                    // Draw the string
-                    e.Graphics.DrawString(cbx.Items[e.Index].ToString(), lbl_SpeedTest_ExternalIP.Font, brush, e.Bounds, sf);
-                }
-            }
-        }
-
         public void btn_SpeedTest_GetServers_Click(object sender, EventArgs e)
         {
             SetControlsCleanState();
@@ -793,23 +790,19 @@ namespace EndpointChecker
 
             NewBackgroundThread(() =>
             {
-                RegionInfo currentCountry_RegionInfo = SpeedTest_GetUserCountry(clientIP);
+                GetUserCountry(clientIP);
 
-                if (currentCountry_RegionInfo != null)
+                if (ipInfo != null)
                 {
                     try
                     {
-                        SpeedTest_AppendTextToLogBox(
+                        AppendTextToLogBox(
                                 rtb_SpeedTest_LogConsole,
                                     "Getting test servers list [from 'https://www.speedtest.net'] ...",
                                 Color.Black,
                                 true);
 
-                        IEnumerable<Server> servers = GetServers(
-                                                                 speedTestSettings,
-                                                                 currentCountry_RegionInfo,
-                                                                 speedTestClient,
-                                                                 maxTestServersCount);
+                        IEnumerable<Server> servers = GetServers();
 
                         foreach (Server testServer in servers)
                         {
@@ -837,7 +830,7 @@ namespace EndpointChecker
                         }
                         else
                         {
-                            SpeedTest_AppendTextToLogBox(
+                            AppendTextToLogBox(
                                                          rtb_SpeedTest_LogConsole,
                                                              "Not any test Server available" +
                                                              Environment.NewLine,
@@ -849,7 +842,7 @@ namespace EndpointChecker
                     {
                         SetProgessState(false);
 
-                        SpeedTest_AppendTextToLogBox(
+                        AppendTextToLogBox(
                                 rtb_SpeedTest_LogConsole,
                                     "ERROR: " +
                                     BuildExceptionMessage(exception) +
@@ -964,6 +957,37 @@ namespace EndpointChecker
             }
 
             return exceptionMessage;
+        }
+
+        public void cb_SpeedTest_TestServer_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            // By using Sender, one method could handle multiple ComboBoxes
+            ComboBox cbx = (ComboBox)sender;
+            if (cbx != null)
+            {
+                // Always draw the background
+                e.DrawBackground();
+
+                // Drawing one of the items?
+                if (e.Index >= 0)
+                {
+                    // Set the string alignment.  Choices are Center, Near and Far
+                    StringFormat sf = new StringFormat();
+                    sf.LineAlignment = StringAlignment.Center;
+                    sf.Alignment = StringAlignment.Center;
+
+                    // Set the Brush to ComboBox ForeColor to maintain any ComboBox color settings
+                    // Assumes Brush is solid
+                    Brush brush = new SolidBrush(cbx.ForeColor);
+
+                    // If drawing highlighted selection, change brush
+                    if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                        brush = SystemBrushes.HighlightText;
+
+                    // Draw the string
+                    e.Graphics.DrawString(cbx.Items[e.Index].ToString(), lbl_SpeedTest_ExternalIP.Font, brush, e.Bounds, sf);
+                }
+            }
         }
     }
 

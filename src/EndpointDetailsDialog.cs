@@ -14,12 +14,12 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 using VirusTotalNET;
 using VirusTotalNET.Objects;
 using VirusTotalNET.Results;
 using Whois.NET;
 using Whois.NET.Internal;
+using static EndpointChecker.CheckerMainForm;
 
 namespace EndpointChecker
 {
@@ -165,11 +165,11 @@ namespace EndpointChecker
             InitializeComponent();
 
             // COMMON EXCEPTION HANDLERS
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CheckerMainForm.UnhandledExceptionHandler);
-            Application.ThreadException += new ThreadExceptionEventHandler(CheckerMainForm.ThreadExceptionHandler);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
 
             // HIDE PROTOCOL SPECIFIC FIELDS FROM 'MAIN INFO' TAB, IF VALIDATION METHOD IS 'PING ONLY'
-            if (CheckerMainForm.validationMethod == CheckerMainForm.ValidationMethod.Ping)
+            if (validationMethod == ValidationMethod.Ping)
             {
                 lbl_StatusCode.Visible = false;
                 pb_StatusIcon.Visible = false;
@@ -179,22 +179,22 @@ namespace EndpointChecker
             }
 
             // ADD RESIZED [16x16] IMAGES TO TAB CONTROL IMAGE LIST
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.browse_FTP, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.browse_HTTP, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.browse_Share, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.pingHop, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.requestHeaderProperty, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.responseHeaderProperty, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.information, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.wmi, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.port, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.whoIs, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.geoLocation, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.ssl, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.virusTotal, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.category, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.link_16x16, 16, 16));
-            imageList_Tabs.Images.Add(CheckerMainForm.ResizeImage(Properties.Resources.main, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.browse_FTP, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.browse_HTTP, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.browse_Share, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.pingHop, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.requestHeaderProperty, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.responseHeaderProperty, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.information, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.wmi, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.port, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.whoIs, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.geoLocation, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.ssl, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.virusTotal, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.category, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.link_16x16, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.main, 16, 16));
 
             // ASSIGN IMAGES TO TABS
             tabPage_FTPInfo.ImageIndex = 0;
@@ -215,13 +215,13 @@ namespace EndpointChecker
             tabPage_MainInfo.ImageIndex = 15;
 
             // ASSIGN RESIZED IMAGES TO BUTTONS PICTURE BOX CONTROLS
-            pb_Browse_WindowsExplorer.Image = CheckerMainForm.ResizeImage(Properties.Resources.browse_Share, pb_Browse_WindowsExplorer.Width, pb_Browse_WindowsExplorer.Height);
-            pb_AdminBrowse_WindowsExplorer.Image = CheckerMainForm.ResizeImage(Properties.Resources.browse_Admin_Share, pb_AdminBrowse_WindowsExplorer.Width, pb_AdminBrowse_WindowsExplorer.Height);
-            pb_FTP.Image = CheckerMainForm.ResizeImage(Properties.Resources.browse_FTP, pb_FTP.Width, pb_FTP.Height);
-            pb_HTTP.Image = CheckerMainForm.ResizeImage(Properties.Resources.browse_HTTP, pb_HTTP.Width, pb_HTTP.Height);
-            pb_RDP.Image = CheckerMainForm.ResizeImage(Properties.Resources.connect_RDP, pb_RDP.Width, pb_RDP.Height);
-            pb_VNC.Image = CheckerMainForm.ResizeImage(Properties.Resources.connect_VNC, pb_VNC.Width, pb_VNC.Height);
-            pb_SSH.Image = CheckerMainForm.ResizeImage(Properties.Resources.ssh_2, pb_SSH.Width, pb_SSH.Height);
+            pb_Browse_WindowsExplorer.Image = ResizeImage(Properties.Resources.browse_Share, pb_Browse_WindowsExplorer.Width, pb_Browse_WindowsExplorer.Height);
+            pb_AdminBrowse_WindowsExplorer.Image = ResizeImage(Properties.Resources.browse_Admin_Share, pb_AdminBrowse_WindowsExplorer.Width, pb_AdminBrowse_WindowsExplorer.Height);
+            pb_FTP.Image = ResizeImage(Properties.Resources.browse_FTP, pb_FTP.Width, pb_FTP.Height);
+            pb_HTTP.Image = ResizeImage(Properties.Resources.browse_HTTP, pb_HTTP.Width, pb_HTTP.Height);
+            pb_RDP.Image = ResizeImage(Properties.Resources.connect_RDP, pb_RDP.Width, pb_RDP.Height);
+            pb_VNC.Image = ResizeImage(Properties.Resources.connect_VNC, pb_VNC.Width, pb_VNC.Height);
+            pb_SSH.Image = ResizeImage(Properties.Resources.ssh_2, pb_SSH.Width, pb_SSH.Height);
 
             _selectedEndpoint = selectedEndpoint;
             _selectedEndpointIcon = selectedEndpointImage;
@@ -279,7 +279,7 @@ namespace EndpointChecker
 
             // SET TABS [PROTOCOL SPECIFIC]
             if (_selectedEndpoint.Protocol.ToLower() == Uri.UriSchemeFtp &&
-                CheckerMainForm.validationMethod != CheckerMainForm.ValidationMethod.Ping)
+                validationMethod != ValidationMethod.Ping)
             {
                 // ADD FTP TAB PAGE
                 if (_selectedEndpoint.FTPBannerMessage != Program.status_NotAvailable ||
@@ -298,7 +298,7 @@ namespace EndpointChecker
             else if (_selectedEndpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
                      _selectedEndpoint.Protocol.ToLower() == Uri.UriSchemeHttps)
             {
-                if (CheckerMainForm.validationMethod != CheckerMainForm.ValidationMethod.Ping)
+                if (validationMethod != ValidationMethod.Ping)
                 {
                     // HTTP REQUEST HEADERS
                     if (_selectedEndpoint.HTTPRequestHeaders.PropertyItem.Count > 0)
@@ -337,13 +337,13 @@ namespace EndpointChecker
                     tb_PageInfo_HTMLTitle.Text = _selectedEndpoint.HTMLTitle;
                     tb_PageInfo_HTMLDescription.Text = _selectedEndpoint.HTMLDescription;
                     tb_PageInfo_Author.Text = _selectedEndpoint.HTMLAuthor;
-                    tb_PageInfo_HTMLEncoding.Text = CheckerMainForm.GetEncodingName(_selectedEndpoint.HTMLencoding);
+                    tb_PageInfo_HTMLEncoding.Text = GetEncodingName(_selectedEndpoint.HTMLencoding);
                     tb_PageInfo_ContentLanguage.Text = _selectedEndpoint.HTMLContentLanguage;
 
                     // SET THEME COLOR CONTROLS
                     if (_selectedEndpoint.HTMLThemeColor != Color.Empty)
                     {
-                        tb_PageInfo_ThemeColor.Text = CheckerMainForm.GetKnownColorNameString(_selectedEndpoint.HTMLThemeColor);
+                        tb_PageInfo_ThemeColor.Text = GetKnownColorNameString(_selectedEndpoint.HTMLThemeColor);
                         pb_PageInfo_ThemeColor.BackColor = _selectedEndpoint.HTMLThemeColor;
                         pb_PageInfo_ThemeColor.Visible = true;
                     }
@@ -474,7 +474,7 @@ namespace EndpointChecker
                     tb_HTTPInfo_ServerName.Text = _selectedEndpoint.ServerID;
                     tb_HTTPInfo_AutoRedirects.Text = _selectedEndpoint.HTTPautoRedirects;
                     tb_HTTPInfo_ContentType.Text = _selectedEndpoint.HTTPcontentType;
-                    tb_HTTPInfo_Encoding.Text = CheckerMainForm.GetEncodingName(_selectedEndpoint.HTTPencoding);
+                    tb_HTTPInfo_Encoding.Text = GetEncodingName(_selectedEndpoint.HTTPencoding);
                     tb_HTTPInfo_ContentLenght.Text = _selectedEndpoint.HTTPcontentLenght;
                     tb_HTTPInfo_Expires.Text = _selectedEndpoint.HTTPexpires;
                     tb_HTTPInfo_ETag.Text = _selectedEndpoint.HTTPetag.TrimStart('W').TrimStart('/').TrimStart('"').TrimEnd('"');
@@ -606,7 +606,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    httpWebResponse = CheckerMainForm.GetHTTPWebResponse(httpWebRequest, 5);
+                    httpWebResponse = GetHTTPWebResponse(httpWebRequest, 5);
                     Stream stream = httpWebResponse.GetResponseStream();
                     pb_Favicon.Image = new Bitmap(stream);
                 }
@@ -683,7 +683,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    CheckerMainForm.StartBackgroundProcess(
+                    StartBackgroundProcess(
                                                  address,
                                                  null,
                                                  null,
@@ -691,7 +691,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    CheckerMainForm.ExceptionNotifier(exception);
+                    ExceptionNotifier(exception);
                 }
             }
         }
@@ -704,7 +704,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    CheckerMainForm.StartBackgroundProcess(
+                    StartBackgroundProcess(
                                                  share,
                                                  null,
                                                  _selectedEndpoint.LoginName,
@@ -712,14 +712,14 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    CheckerMainForm.ExceptionNotifier(exception);
+                    ExceptionNotifier(exception);
                 }
             }
         }
 
         public void pb_Browse_WindowsExplorer_MouseClick(object sender, MouseEventArgs e)
         {
-            CheckerMainForm.BrowseEndpoint_WindowsExplorer(
+            BrowseEndpoint_WindowsExplorer(
                 new Uri(_selectedEndpoint.ResponseAddress).Host,
                 _selectedEndpoint.LoginName,
                 _selectedEndpoint.LoginPass);
@@ -727,7 +727,7 @@ namespace EndpointChecker
 
         public void pb_AdminBrowse_WindowsExplorer_MouseClick(object sender, MouseEventArgs e)
         {
-            CheckerMainForm.BrowseEndpoint_WindowsExplorer(
+            BrowseEndpoint_WindowsExplorer(
                 new Uri(_selectedEndpoint.ResponseAddress).Host + @"\C$",
                 _selectedEndpoint.LoginName,
                 _selectedEndpoint.LoginPass);
@@ -735,24 +735,24 @@ namespace EndpointChecker
 
         public void pb_RDP_MouseClick(object sender, MouseEventArgs e)
         {
-            CheckerMainForm.ConnectEndpoint_RDP(
+            ConnectEndpoint_RDP(
                 new Uri(_selectedEndpoint.ResponseAddress).Host);
         }
 
         public void pb_VNC_MouseClick(object sender, MouseEventArgs e)
         {
-            CheckerMainForm.ConnectEndpoint_VNC(
+            ConnectEndpoint_VNC(
                 new Uri(_selectedEndpoint.ResponseAddress).Host);
         }
 
         public void pb_HTTP_MouseClick(object sender, MouseEventArgs e)
         {
-            CheckerMainForm.OpenEndpoint_HTTP(_selectedEndpoint);
+            OpenEndpoint_HTTP(_selectedEndpoint);
         }
 
         public void pb_FTP_MouseClick(object sender, MouseEventArgs e)
         {
-            CheckerMainForm.OpenEndpoint_FTP(_selectedEndpoint);
+            OpenEndpoint_FTP(_selectedEndpoint);
         }
 
         public void pb_PingRefresh_Click(object sender, EventArgs e)
@@ -780,7 +780,7 @@ namespace EndpointChecker
             {
                 try
                 {
-                    string pingRoundtripTime = CheckerMainForm.GetPingTime(new Uri(_selectedEndpoint.ResponseAddress).Host, _pingTimeout, 3);
+                    string pingRoundtripTime = GetPingTime(new Uri(_selectedEndpoint.ResponseAddress).Host, _pingTimeout, 3);
 
                     if (!string.IsNullOrEmpty(pingRoundtripTime))
                     {
@@ -903,7 +903,7 @@ namespace EndpointChecker
                 wmiConnectionScope.Options.Authentication = AuthenticationLevel.Default;
                 wmiConnectionScope.Options.EnablePrivileges = true;
 
-                if (!CheckerMainForm.IsLocalHost(new Uri(_selectedEndpoint.ResponseAddress).Host) &&
+                if (!IsLocalHost(new Uri(_selectedEndpoint.ResponseAddress).Host) &&
                     _selectedEndpoint.LoginName != Program.status_NotAvailable &&
                     _selectedEndpoint.LoginPass != Program.status_NotAvailable)
                 {
@@ -1137,7 +1137,7 @@ namespace EndpointChecker
 
                     try
                     {
-                        httpWebResponse = CheckerMainForm.GetHTTPWebResponse(httpWebRequest, 5);
+                        httpWebResponse = GetHTTPWebResponse(httpWebRequest, 5);
 
                         if (httpWebResponse != null &&
                             httpWebResponse.StatusCode == HttpStatusCode.OK)
@@ -1175,7 +1175,7 @@ namespace EndpointChecker
 
                                     try
                                     {
-                                        httpWebResponse = CheckerMainForm.GetHTTPWebResponse(httpWebRequest, 5);
+                                        httpWebResponse = GetHTTPWebResponse(httpWebRequest, 5);
 
                                         if (httpWebResponse != null &&
                                             httpWebResponse.StatusCode == HttpStatusCode.OK)
@@ -1200,7 +1200,7 @@ namespace EndpointChecker
                                                         {
                                                             ThreadSafeInvoke(() =>
                                                             {
-                                                                pb_Vendor.Image = CheckerMainForm.ResizeImage(vendorImage, 23, 23);
+                                                                pb_Vendor.Image = ResizeImage(vendorImage, 23, 23);
 
                                                                 // CLICK HANDLER FOR VENDOR WEB PAGE
                                                                 if (!string.IsNullOrEmpty(result.domain))
@@ -1275,32 +1275,20 @@ namespace EndpointChecker
                     {
                         try
                         {
-                            XmlDocument doc = new XmlDocument();
-                            doc.Load("http://ip-api.com/xml/" + ipAddress);
+                            string info = new WebClient().DownloadString("http://ip-api.com/json");
+                            IP_API_JSON_Response ipInfo = JsonConvert.DeserializeObject<IP_API_JSON_Response>(info);
 
-                            if (!string.IsNullOrEmpty(doc.DocumentElement.ChildNodes[0].InnerText) &&
-                                doc.DocumentElement.ChildNodes[0].InnerText == "success" &&
-                                !string.IsNullOrEmpty(doc.DocumentElement.ChildNodes[7].InnerText) &&
-                                !string.IsNullOrEmpty(doc.DocumentElement.ChildNodes[8].InnerText) &&
-                                doc.DocumentElement.ChildNodes[7].InnerText != "0" &&
-                                doc.DocumentElement.ChildNodes[8].InnerText != "0")
+                            if (ipInfo.Service_Status == "success")
                             {
-                                Bitmap mapTile = GetImageFromGoogleMapsAPI(
-                                    doc.DocumentElement.ChildNodes[7].InnerText,
-                                    doc.DocumentElement.ChildNodes[8].InnerText);
+                                Bitmap mapTile = GetImageFromGoogleMapsAPI(ipInfo.Geo_Lat, ipInfo.Geo_Lon);
 
                                 if (mapTile != null)
                                 {
-                                    // LAT, LON
-                                    tb_GeoLocation_Latitude.Text = doc.DocumentElement.ChildNodes[7].InnerText.TrimStart().TrimEnd();
-                                    tb_GeoLocation_Longitude.Text = doc.DocumentElement.ChildNodes[8].InnerText.TrimStart().TrimEnd();
-
                                     // MAP TILE
                                     pb_GeoLocation_Map.Image = mapTile;
 
                                     // GET COUNTRY FLAG
-                                    Bitmap countryFlag = GetCountryFlagByCode(
-                                    doc.DocumentElement.ChildNodes[2].InnerText);
+                                    Bitmap countryFlag = GetCountryFlagByCode(ipInfo.Country_Code);
 
                                     if (countryFlag != null)
                                     {
@@ -1312,32 +1300,17 @@ namespace EndpointChecker
                                         pb_GeoLocation_CountryFlag.Visible = false;
                                     }
 
-                                    // OTHER PROPERTIES
-                                    tb_GeoLocation_ISP.Text = DefaultIfNullorEmpty(doc.DocumentElement.ChildNodes[10].InnerText.TrimStart().TrimEnd());
-                                    tb_GeoLocation_AS.Text = DefaultIfNullorEmpty(doc.DocumentElement.ChildNodes[12].InnerText.TrimStart().TrimEnd());
-
-                                    if (!string.IsNullOrEmpty(tb_GeoLocation_ORG.Text))
-                                    {
-                                        tb_GeoLocation_AS.Text = tb_GeoLocation_AS.Text.Replace(tb_GeoLocation_ORG.Text, string.Empty).TrimStart().TrimEnd();
-                                    }
-
-                                    tb_GeoLocation_RegionName.Text = DefaultIfNullorEmpty(doc.DocumentElement.ChildNodes[4].InnerText);
-                                    tb_GeoLocation_TimeZone.Text = DefaultIfNullorEmpty(doc.DocumentElement.ChildNodes[9].InnerText);
-                                    tb_GeoLocation_ZipCode.Text = DefaultIfNullorEmpty(doc.DocumentElement.ChildNodes[6].InnerText);
-                                    tb_GeoLocation_City.Text = DefaultIfNullorEmpty(doc.DocumentElement.ChildNodes[5].InnerText);
-                                    tb_GeoLocation_ORG.Text = DefaultIfNullorEmpty(doc.DocumentElement.ChildNodes[11].InnerText);
-                                    tb_GeoLocation_CountryName.Text = DefaultIfNullorEmpty(doc.DocumentElement.ChildNodes[1].InnerText);
-                                    tb_GeoLocation_RegionName.Text = DefaultIfNullorEmpty(doc.DocumentElement.ChildNodes[4].InnerText);
-
-                                    if (!string.IsNullOrEmpty(doc.DocumentElement.ChildNodes[2].InnerText))
-                                    {
-                                        tb_GeoLocation_CountryName.Text += " (" + doc.DocumentElement.ChildNodes[2].InnerText + ")";
-                                    }
-
-                                    if (!string.IsNullOrEmpty(doc.DocumentElement.ChildNodes[3].InnerText))
-                                    {
-                                        tb_GeoLocation_RegionName.Text += " (" + doc.DocumentElement.ChildNodes[3].InnerText + ")";
-                                    }
+                                    tb_GeoLocation_Latitude.Text = ipInfo.Geo_Lat;
+                                    tb_GeoLocation_Longitude.Text = ipInfo.Geo_Lon;
+                                    tb_GeoLocation_ISP.Text = NotAvailable_IfNullorEmpty(ipInfo.ISP);
+                                    tb_GeoLocation_AS.Text = NotAvailable_IfNullorEmpty(ipInfo.ISP_AS.Replace(ipInfo.ISP, string.Empty).TrimEnd());
+                                    tb_GeoLocation_RegionName.Text = NotAvailable_IfNullorEmpty(ipInfo.Region_Name);
+                                    tb_GeoLocation_TimeZone.Text = NotAvailable_IfNullorEmpty(ipInfo.TimeZone);
+                                    tb_GeoLocation_ZipCode.Text = NotAvailable_IfNullorEmpty(ipInfo.City_ZIP_Code);
+                                    tb_GeoLocation_City.Text = NotAvailable_IfNullorEmpty(ipInfo.City);
+                                    tb_GeoLocation_ORG.Text = NotAvailable_IfNullorEmpty(ipInfo.ISP_ORG);
+                                    tb_GeoLocation_CountryName.Text = NotAvailable_IfNullorEmpty(ipInfo.Country_Name + "(" + ipInfo.Country_Code + ")");
+                                    tb_GeoLocation_RegionName.Text = NotAvailable_IfNullorEmpty(ipInfo.Region_Name + "(" + ipInfo.Region_Code + ")");
 
                                     tb_GeoLocation_IP.Text = cb_IPAddress.GetItemText(cb_IPAddress.SelectedItem);
                                     pb_GeoLocationProgress.Visible = false;
@@ -1384,7 +1357,7 @@ namespace EndpointChecker
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
-                httpWebResponse = CheckerMainForm.GetHTTPWebResponse(httpWebRequest, 5);
+                httpWebResponse = GetHTTPWebResponse(httpWebRequest, 5);
 
                 if (httpWebResponse != null &&
                     httpWebResponse.StatusCode == HttpStatusCode.OK)
@@ -1435,7 +1408,7 @@ namespace EndpointChecker
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
-                httpWebResponse = CheckerMainForm.GetHTTPWebResponse(httpWebRequest, 5);
+                httpWebResponse = GetHTTPWebResponse(httpWebRequest, 5);
 
                 if (httpWebResponse != null &&
                     httpWebResponse.StatusCode == HttpStatusCode.OK)
@@ -1487,23 +1460,11 @@ namespace EndpointChecker
             }
         }
 
-        public static string DefaultIfNullorEmpty(string input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return Program.status_NotAvailable;
-            }
-            else
-            {
-                return input;
-            }
-        }
-
         public void pb_GeoLocation_Map_Click(object sender, EventArgs e)
         {
             try
             {
-                CheckerMainForm.StartBackgroundProcess(
+                StartBackgroundProcess(
                     "https://www.google.com/maps/@?api=1&map_action=map&center=" +
                     tb_GeoLocation_Latitude.Text +
                     "," +
@@ -1517,7 +1478,7 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                CheckerMainForm.ExceptionNotifier(exception);
+                ExceptionNotifier(exception);
             }
         }
 
@@ -1621,7 +1582,7 @@ namespace EndpointChecker
                 httpWebRequest.Timeout = 5000;
                 httpWebRequest.ReadWriteTimeout = 5000;
 
-                httpWebResponse = CheckerMainForm.GetHTTPWebResponse(httpWebRequest, 5);
+                httpWebResponse = GetHTTPWebResponse(httpWebRequest, 5);
 
                 if (httpWebResponse != null &&
                     httpWebResponse.StatusCode == HttpStatusCode.OK)
@@ -1654,7 +1615,7 @@ namespace EndpointChecker
             {
                 try
                 {
-                    CheckerMainForm.StartBackgroundProcess(
+                    StartBackgroundProcess(
                                                  macVendorWebPage,
                                                  null,
                                                  null,
@@ -1662,7 +1623,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    CheckerMainForm.ExceptionNotifier(exception);
+                    ExceptionNotifier(exception);
                 }
             }
         }
@@ -1677,7 +1638,7 @@ namespace EndpointChecker
                 {
                     if (File.Exists(Program.appConfigFile))
                     {
-                        CheckerMainForm.BrowseEndpoint(
+                        BrowseEndpoint(
                         Program.appConfigFile,
                         null,
                         null,
@@ -1788,7 +1749,7 @@ namespace EndpointChecker
 
         public void tb_VirusTotal_Permalink_MouseClick(object sender, MouseEventArgs e)
         {
-            CheckerMainForm.BrowseEndpoint(
+            BrowseEndpoint(
                 tb_VirusTotal_Permalink.Text,
                 null,
                 null,
@@ -1898,7 +1859,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    CheckerMainForm.StartBackgroundProcess(
+                    StartBackgroundProcess(
                                                  address,
                                                  null,
                                                  null,
@@ -1906,7 +1867,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    CheckerMainForm.ExceptionNotifier(exception);
+                    ExceptionNotifier(exception);
                 }
             }
         }
@@ -1947,7 +1908,7 @@ namespace EndpointChecker
                             httpWebRequest.AllowAutoRedirect = true;
                             httpWebRequest.ProtocolVersion = HttpVersion.Version11;
 
-                            httpWebResponse = CheckerMainForm.GetHTTPWebResponse(httpWebRequest, 5);
+                            httpWebResponse = GetHTTPWebResponse(httpWebRequest, 5);
 
                             linkStatus = "VALID";
                         }
@@ -2054,7 +2015,7 @@ namespace EndpointChecker
 
             foreach (ListViewItem selectedItem in selectedItems)
             {
-                CheckerMainForm.BrowseEndpoint(
+                BrowseEndpoint(
                     "https://www.google.com/search?source=hp&q=" +
                     selectedItem.Text + "&oq=" +
                     selectedItem.Text,
@@ -2066,21 +2027,21 @@ namespace EndpointChecker
 
         public void pb_ShowPassword_MouseDown(object sender, MouseEventArgs e)
         {
-            CheckerMainForm.TextBox_SetPasswordVisibilty(
+            TextBox_SetPasswordVisibilty(
                 tb_UserPassword,
                 true);
         }
 
         public void pb_ShowPassword_MouseUp(object sender, MouseEventArgs e)
         {
-            CheckerMainForm.TextBox_SetPasswordVisibilty(
+            TextBox_SetPasswordVisibilty(
                 tb_UserPassword,
                 false);
         }
 
         public void tb_UserPassword_TextChanged(object sender, EventArgs e)
         {
-            CheckerMainForm.TextBox_SetPasswordVisibilty(
+            TextBox_SetPasswordVisibilty(
                 tb_UserPassword,
                 tb_UserPassword.Text == Program.status_NotAvailable);
 
@@ -2090,13 +2051,13 @@ namespace EndpointChecker
 
         public void pb_SSH_MouseClick(object sender, MouseEventArgs e)
         {
-            CheckerMainForm.ConnectEndpoint_Putty(
+            ConnectEndpoint_Putty(
                 new Uri(_selectedEndpoint.ResponseAddress).Host);
         }
 
         public void rtb_WhoIsInfo_LinkClicked(object sender, LinkClickedEventArgs e)
         {
-            CheckerMainForm.BrowseEndpoint(
+            BrowseEndpoint(
                     e.LinkText,
                     null,
                     null,
@@ -2125,33 +2086,5 @@ namespace EndpointChecker
         public string name { get; set; }
         public string domain { get; set; }
         public string logo { get; set; }
-    }
-
-    public class IpInfo
-    {
-
-        [JsonProperty("ip")]
-        public string Ip { get; set; }
-
-        [JsonProperty("hostname")]
-        public string Hostname { get; set; }
-
-        [JsonProperty("city")]
-        public string City { get; set; }
-
-        [JsonProperty("region")]
-        public string Region { get; set; }
-
-        [JsonProperty("country")]
-        public string Country { get; set; }
-
-        [JsonProperty("loc")]
-        public string Loc { get; set; }
-
-        [JsonProperty("org")]
-        public string Org { get; set; }
-
-        [JsonProperty("postal")]
-        public string Postal { get; set; }
     }
 }
