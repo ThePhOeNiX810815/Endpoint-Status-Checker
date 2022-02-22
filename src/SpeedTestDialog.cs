@@ -11,6 +11,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using static EndpointChecker.CheckerMainForm;
 using static EndpointChecker.Program;
 
 namespace EndpointChecker
@@ -30,17 +31,20 @@ namespace EndpointChecker
         public static SpeedTestClient speedTestClient = new SpeedTestClient();
         public static Settings speedTestSettings = new Settings();
 
+        // TARGET TEST SERVER
+        public static Server targetServer = new Server();
+
         // IP INFO API RESPONSE
         IP_API_JSON_Response ipInfo;
 
         public static List<Server> testServersList = new List<Server>();
         public enum TestServerSelectionMode
         {
-            [Description("AllServers")]
+            [Description("All Servers")]
             AllServers = 0,
-            [Description("AllServersExceptCurrentCountry")]
+            [Description("All Servers except Current Country")]
             AllServersExceptCurrentCountry = 1,
-            [Description("OnlyServersFromCurrentCountry")]
+            [Description("Only Servers from Current Country")]
             OnlyServersFromCurrentCountry = 2
         }
 
@@ -140,27 +144,23 @@ namespace EndpointChecker
             }
         }
 
-        public Server GetSelectedServer()
+        public void GetSelectedServer()
         {
             SetAGaugeControlsCleanState();
-
-            Server selectedServer;
 
             if (cb_SpeedTest_TestServer.SelectedIndex == 0)
             {
                 // FIND BEST SERVER (BY LATENCY)
-                selectedServer = BestServerByLatency();
+                targetServer = BestServerByLatency();
             }
             else
             {
                 // SPECIFIC SERVER
-                selectedServer = testServersList[cb_SpeedTest_TestServer.SelectedIndex - 1];
+                targetServer = testServersList[cb_SpeedTest_TestServer.SelectedIndex - 1];
             }
-
-            return selectedServer;
         }
 
-        public void SetServerDetails(Server targetServer)
+        public void SetServerDetails()
         {
             lbl_SpeedTest_Latency_Value.Text = targetServer.Latency + " ms";
             lbl_SpeedTest_HostedBy_Value.Text = GetStringCorrectEncoding(targetServer.Sponsor);
@@ -201,7 +201,7 @@ namespace EndpointChecker
             AppendTextToLogBox(
                                          rtb_SpeedTest_LogConsole,
                                          Environment.NewLine +
-                                         "Selecting best server by latency ...",
+                                         "Selecting Best Server by Latency ...",
                                          Color.Black,
                                          true);
 
@@ -225,12 +225,43 @@ namespace EndpointChecker
             return bestServer;
         }
 
-        public void SpeedTestToServer(Server targetServer)
+        public void SpeedTestToServer()
         {
             NewBackgroundThread(() =>
             {
                 try
                 {
+                    AppendTextToLogBox(
+                            rtb_SpeedTest_LogConsole,
+                               Environment.NewLine +
+                               "Testing Server Latency Time: " +
+                               GetStringCorrectEncoding(targetServer.Sponsor) +
+                               " (" +
+                               GetStringCorrectEncoding(targetServer.Name) +
+                               "/" +
+                               GetStringCorrectEncoding(targetServer.Country) +
+                               ")",
+                            Color.LightSkyBlue,
+                            true);
+
+                    int latencyTime = TestServerLatency();
+
+                    AppendTextToLogBox(
+                                       rtb_SpeedTest_LogConsole,
+                                           "Average Server Latency (" +
+                                           +testTakesCount + " takes): " +
+                                           latencyTime + " ms",
+                                       Color.Black,
+                                       true);
+
+                    // SET CONTROLS FOR LATENCY
+                    ThreadSafeInvoke(() =>
+                    {
+                        lbl_SpeedTest_Latency_Value.Text = latencyTime + " ms";
+
+                        Application.DoEvents();
+                    });
+
                     AppendTextToLogBox(
                                         rtb_SpeedTest_LogConsole,
                                              Environment.NewLine +
@@ -245,7 +276,7 @@ namespace EndpointChecker
                                         true);
 
                     // TEST DOWNLOAD SPEED
-                    int downloadSpeed = GetDownloadSpeed(targetServer);
+                    int downloadSpeed = TestServerDownloadSpeed();
 
                     AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
@@ -298,7 +329,7 @@ namespace EndpointChecker
                     AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
                                Environment.NewLine +
-                               "Testing upload speed by " +
+                               "Testing Upload Speed by " +
                                GetStringCorrectEncoding(targetServer.Sponsor) +
                                " (" +
                                GetStringCorrectEncoding(targetServer.Name) +
@@ -309,7 +340,7 @@ namespace EndpointChecker
                             true);
 
                     // TEST UPLOAD SPEED
-                    int uploadSpeed = GetUploadSpeed(targetServer);
+                    int uploadSpeed = TestServerUploadSpeed();
 
                     AppendTextToLogBox(
                            rtb_SpeedTest_LogConsole,
@@ -391,7 +422,54 @@ namespace EndpointChecker
             });
         }
 
-        public int GetDownloadSpeed(Server targetServer)
+        public int TestServerLatency()
+        {
+            int currentRetryCount = 0;
+            int latencyTime = 0;
+
+            for (int i = 1; i <= testTakesCount; i++)
+            {
+                try
+                {
+                    int currentlatencyTime = speedTestClient.TestServerLatency(targetServer);
+                    latencyTime += currentlatencyTime;
+                    currentRetryCount = 0;
+
+                    AppendTextToLogBox(
+                           rtb_SpeedTest_LogConsole,
+                               "Take " +
+                               +i + " -> Latency (Ping Response Time): " +
+                               currentlatencyTime + " ms",
+                           Color.DarkGray,
+                           false);
+
+                    Application.DoEvents();
+                }
+                catch (Exception eX)
+                {
+                    if (currentRetryCount <= testRetryCount)
+                    {
+                        AppendTextToLogBox(
+                          rtb_SpeedTest_LogConsole,
+                              "ERROR: " +
+                              BuildExceptionMessage(eX),
+                          Color.Red,
+                          false);
+
+                        currentRetryCount++;
+                        i--;
+                    }
+                    else
+                    {
+                        throw eX;
+                    }
+                }
+            }
+
+            return latencyTime / testTakesCount;
+        }
+
+        public int TestServerDownloadSpeed()
         {
             int currentRetryCount = 0;
             int downloadSpeed = 0;
@@ -450,7 +528,7 @@ namespace EndpointChecker
             return (downloadSpeed / testTakesCount);
         }
 
-        public int GetUploadSpeed(Server targetServer)
+        public int TestServerUploadSpeed()
         {
             int currentRetryCount = 0;
             int uploadSpeed = 0;
@@ -636,7 +714,7 @@ namespace EndpointChecker
                 {
                     lbl_SpeedTest_CurrentCountry_Value.BackColor = Color.BlanchedAlmond;
                     lbl_SpeedTest_CurrentCountry_Value.Text =
-                        ipInfo.Region_Name +
+                        ipInfo.City +
                         "/" +
                         ipInfo.Country_Name;
                 });
@@ -832,7 +910,9 @@ namespace EndpointChecker
                         {
                             AppendTextToLogBox(
                                                          rtb_SpeedTest_LogConsole,
-                                                             "Not any test Server available" +
+                                                             "Not any test Server available (" +
+                                                             GetEnumDescriptionString(testServerSelectionMode) +
+                                                             ")" +
                                                              Environment.NewLine,
                                                          Color.Red,
                                                          true);
@@ -916,7 +996,7 @@ namespace EndpointChecker
                 rb_AllServers.Enabled = !inProgress;
                 rb_AllServersExceptCurrCountry.Enabled = !inProgress;
                 rb_CurrentCountryServersOnly.Enabled = !inProgress;
-                cb_SpeedTest_TestServer.Enabled = !inProgress;
+                cb_SpeedTest_TestServer.Enabled = !inProgress && testServersList.Count > 1;
                 btn_SpeedTest_GetServers.Visible = !inProgress;
                 pb_SpeedTestProgress.Visible = inProgress;
 
@@ -929,17 +1009,20 @@ namespace EndpointChecker
 
         public void cb_SpeedTest_TestServer_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (testServersList.Count() > 0)
+            SetAGaugeControlsCleanState();
+
+            if (testServersList.Count() > 1)
             {
-                SetAGaugeControlsCleanState();
-                SetServerDetails(GetSelectedServer());
+                GetSelectedServer();
+                SetServerDetails();
             }
         }
 
         public void pb_GO_Click(object sender, EventArgs e)
         {
             SetProgessState(true);
-            SpeedTestToServer(GetSelectedServer());
+            GetSelectedServer();
+            SpeedTestToServer();
         }
 
         public static string BuildExceptionMessage(Exception eX)
@@ -978,7 +1061,7 @@ namespace EndpointChecker
 
                     // Set the Brush to ComboBox ForeColor to maintain any ComboBox color settings
                     // Assumes Brush is solid
-                    Brush brush = new SolidBrush(cbx.ForeColor);
+                    Brush brush = new SolidBrush(Color.LightGreen);
 
                     // If drawing highlighted selection, change brush
                     if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)

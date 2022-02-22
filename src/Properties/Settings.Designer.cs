@@ -995,5 +995,17 @@ namespace EndpointChecker.Properties {
                 this["SpeedTest_ServerScope"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Config_ShowSplashScreen {
+            get {
+                return ((bool)(this["Config_ShowSplashScreen"]));
+            }
+            set {
+                this["Config_ShowSplashScreen"] = value;
+            }
+        }
     }
 }

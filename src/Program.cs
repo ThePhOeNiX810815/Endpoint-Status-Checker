@@ -102,6 +102,7 @@ namespace EndpointChecker
             Environment.OSVersion.Version.Build.ToString();
 
         public static bool app_ScanOnStartup = Settings.Default.Config_ScanOnStartup;
+        public static bool app_ShowSplashScreen = Settings.Default.Config_ShowSplashScreen;
         public static string app_ApplicationName = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductName;
         public static string app_ApplicationExecutableName = AppDomain.CurrentDomain.FriendlyName;
         public static string app_CurrentWorkingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -268,8 +269,11 @@ namespace EndpointChecker
                         }
                         else
                         {
-                            // SHOW SPLASH SCREEN
-                            Application.Run(new SplashScreen());
+                            if (app_ShowSplashScreen)
+                            {
+                                // SHOW SPLASH SCREEN
+                                Application.Run(new SplashScreen());
+                            }
 
                             // RUN NEW APPLICATION INSTANCE
                             Application.Run(new CheckerMainForm());

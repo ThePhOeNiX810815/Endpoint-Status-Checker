@@ -4571,7 +4571,7 @@ namespace EndpointChecker
             {
             }
         }
-        public string GetEnumDescriptionString(Enum enumValue)
+        public static string GetEnumDescriptionString(Enum enumValue)
         {
             FieldInfo field = enumValue.GetType().GetField(enumValue.ToString());
 
