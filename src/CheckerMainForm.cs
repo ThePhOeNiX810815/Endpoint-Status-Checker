@@ -1420,7 +1420,6 @@ namespace EndpointChecker
             httpWebRequest.ProtocolVersion = httpWebRequest_ProtocolVersion;
             httpWebRequest.Date = DateTime.Now;
             httpWebRequest.MaximumAutomaticRedirections = maximumAutomaticRedirections;
-            httpWebRequest.Host = endpointURI.Host;
             httpWebRequest.Referer = endpointURI.AbsoluteUri;
 
             // CUSTOM HEADERS
@@ -1811,8 +1810,7 @@ namespace EndpointChecker
 
         public static HttpWebResponse GetHTTPWebResponse(HttpWebRequest httpWebRequest, int maxRetryCount, int retryCount = 0)
         {
-            HttpWebResponse webResponse = null;
-
+            HttpWebResponse webResponse;
             try
             {
                 webResponse = (HttpWebResponse)httpWebRequest.GetResponse();
