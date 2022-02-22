@@ -25,3 +25,5 @@ IT Network CZ|https://www.itnetwork.cz
 GitHUB|https://github.com
 GitLAB|https://gitlab.com
 SoftPedia|https://www.softpedia.com
+
+PortQuiz Custom Port Test|http://portquiz.net:666
