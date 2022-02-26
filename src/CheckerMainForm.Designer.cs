@@ -817,7 +817,7 @@
             this.btn_UncheckAll.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_UncheckAll.Enabled = false;
             this.btn_UncheckAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_UncheckAll.Image = global::EndpointChecker.Properties.Resources.minus;
+            this.btn_UncheckAll.Image = global::EndpointChecker.Properties.Resources.minus.ToBitmap();
             this.btn_UncheckAll.Location = new System.Drawing.Point(8, 69);
             this.btn_UncheckAll.Name = "btn_UncheckAll";
             this.btn_UncheckAll.Size = new System.Drawing.Size(40, 40);
@@ -832,7 +832,7 @@
             this.btn_CheckAll.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_CheckAll.Enabled = false;
             this.btn_CheckAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_CheckAll.Image = global::EndpointChecker.Properties.Resources.plus;
+            this.btn_CheckAll.Image = global::EndpointChecker.Properties.Resources.plus.ToBitmap();
             this.btn_CheckAll.Location = new System.Drawing.Point(8, 27);
             this.btn_CheckAll.Name = "btn_CheckAll";
             this.btn_CheckAll.Size = new System.Drawing.Size(40, 40);
@@ -859,7 +859,7 @@
             this.btn_CheckAllErrors.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_CheckAllErrors.Enabled = false;
             this.btn_CheckAllErrors.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_CheckAllErrors.Image = global::EndpointChecker.Properties.Resources.error;
+            this.btn_CheckAllErrors.Image = global::EndpointChecker.Properties.Resources.error.ToBitmap();
             this.btn_CheckAllErrors.Location = new System.Drawing.Point(95, 69);
             this.btn_CheckAllErrors.Name = "btn_CheckAllErrors";
             this.btn_CheckAllErrors.Size = new System.Drawing.Size(40, 40);
@@ -886,7 +886,7 @@
             this.btn_CheckAllAvailable.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_CheckAllAvailable.Enabled = false;
             this.btn_CheckAllAvailable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_CheckAllAvailable.Image = global::EndpointChecker.Properties.Resources.passed;
+            this.btn_CheckAllAvailable.Image = global::EndpointChecker.Properties.Resources.passed.ToBitmap();
             this.btn_CheckAllAvailable.Location = new System.Drawing.Point(96, 27);
             this.btn_CheckAllAvailable.Name = "btn_CheckAllAvailable";
             this.btn_CheckAllAvailable.Size = new System.Drawing.Size(40, 40);
@@ -1215,7 +1215,7 @@
             this.btn_Terminate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_Terminate.Enabled = false;
             this.btn_Terminate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Terminate.Image = global::EndpointChecker.Properties.Resources.notAvailable;
+            this.btn_Terminate.Image = global::EndpointChecker.Properties.Resources.notAvailable.ToBitmap();
             this.btn_Terminate.Location = new System.Drawing.Point(1005, 370);
             this.btn_Terminate.Name = "btn_Terminate";
             this.btn_Terminate.Size = new System.Drawing.Size(40, 40);
@@ -1230,7 +1230,7 @@
             this.btn_Refresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_Refresh.Enabled = false;
             this.btn_Refresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Refresh.Image = global::EndpointChecker.Properties.Resources.refresh;
+            this.btn_Refresh.Image = global::EndpointChecker.Properties.Resources.refresh.ToBitmap();
             this.btn_Refresh.Location = new System.Drawing.Point(1005, 310);
             this.btn_Refresh.Name = "btn_Refresh";
             this.btn_Refresh.Size = new System.Drawing.Size(40, 40);

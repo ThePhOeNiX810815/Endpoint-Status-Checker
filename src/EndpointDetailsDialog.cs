@@ -185,7 +185,7 @@ namespace EndpointChecker
             imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.pingHop, 16, 16));
             imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.requestHeaderProperty, 16, 16));
             imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.responseHeaderProperty, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.information, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.information.ToBitmap(), 16, 16));
             imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.wmi, 16, 16));
             imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.port, 16, 16));
             imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.whoIs, 16, 16));
@@ -769,7 +769,7 @@ namespace EndpointChecker
                 // STOP
                 TIMER_PingRefresh.Stop();
                 TIMER_PingRefresh.Enabled = false;
-                pb_PingRefresh.Image = Properties.Resources.refresh;
+                pb_PingRefresh.Image = Properties.Resources.refresh.ToBitmap();
                 tb_PingTime.Text = _selectedEndpoint.PingRoundtripTime;
             }
         }
