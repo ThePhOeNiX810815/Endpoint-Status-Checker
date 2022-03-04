@@ -104,13 +104,13 @@ namespace EndpointChecker
             ", Build " +
             Environment.OSVersion.Version.Build.ToString();
 
-        public static bool app_ScanOnStartup = Settings.Default.Config_ScanOnStartup;
-        public static bool app_ShowSplashScreen = Settings.Default.Config_ShowSplashScreen;
-        public static string app_ApplicationName = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductName;
+        public static bool app_ScanOnStartup;
+        public static bool app_ShowSplashScreen;
+        public static string app_ApplicationName = FileVersionInfo.GetVersionInfo(app_Assembly.Location).ProductName;
         public static string app_ApplicationExecutableName = AppDomain.CurrentDomain.FriendlyName;
         public static string app_CurrentWorkingDir = Path.GetDirectoryName(app_Assembly.Location);
         public static string app_BuiltDate = RetrieveLinkerTimestamp();
-        public static string app_Copyright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).LegalCopyright;
+        public static string app_Copyright = FileVersionInfo.GetVersionInfo(app_Assembly.Location).LegalCopyright;
         public static string app_Title = app_ApplicationName + " v" + app_VersionString;
 
         // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES
@@ -123,18 +123,18 @@ namespace EndpointChecker
         public static string endpointDefinitonsFile = "EndpointChecker_EndpointsList.txt";
 
         // GOOGLE MAPS API KEY & ZOOM FACTOR
-        public static string apiKey_GoogleMaps = Settings.Default.GoogleMaps_API_Key;
-        public static int googleMapsZoomFactor = Settings.Default.GoogleMaps_API_ZoomFactor;
+        public static string apiKey_GoogleMaps;
+        public static int googleMapsZoomFactor;
 
         // SYSTEM MEMORY SIZE STRING
         public static string systemMemorySize;
 
         // VIRUSTOTAL API KEY
-        public static string apiKey_VirusTotal = Settings.Default.VirusTotal_API_Key;
+        public static string apiKey_VirusTotal;
 
         // HTTP CLIENT USER-AGENT STRINGS
-        public static string http_UserAgent = Settings.Default.Config_HTTP_UserAgent;
-        public static string http_Sec_CH_UserAgent = Settings.Default.Config_HTTP_Sec_CH_UserAgent;
+        public static string http_UserAgent;
+        public static string http_Sec_CH_UserAgent;
 
         // STRING FORMAT FOR 'NOT AVAILABLE' STATUS
         public static string status_NotAvailable = "N/A";
@@ -164,12 +164,12 @@ namespace EndpointChecker
         public static string statusExport_HTMLFile_FTPPage = "EndpointsStatus_FTP.html";
 
         // MAXIMUM LENGHT OF HTTP RESPONSE TO READ
-        public static long http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
+        public static long http_SaveResponse_MaxLenght_Bytes;
 
         // AUTO UPDATE VARIABLES
-        public static Version app_AutoUpdate_SkipVersion = new Version(Settings.Default.AutoUpdate_SkipVersion);
+        public static Version app_AutoUpdate_SkipVersion;
         public static bool app_AutoUpdate = false;
-        public static Version app_LatestPackageVersion = new Version();
+        public static Version app_LatestPackageVersion = new Version(0, 0, 0, 0);
         public static string app_LatestPackageLink = string.Empty;
         public static string app_LatestPackageDate = string.Empty;
         public static string app_LatestPackageReleaseNotes_RTF = string.Empty;
@@ -180,6 +180,25 @@ namespace EndpointChecker
         [STAThread]
         static void Main(string[] args)
         {
+            if (Settings.Default.UpgradeRequired)
+            {
+                // UPGRADE SETTINGS FROM PREVIOUS VERSION
+                Settings.Default.Upgrade();
+                Settings.Default.UpgradeRequired = false;
+                Settings.Default.Save();
+            }
+
+            // GET SETTINGS
+            app_ScanOnStartup = Settings.Default.Config_ScanOnStartup;
+            app_ShowSplashScreen = Settings.Default.Config_ShowSplashScreen;
+            apiKey_GoogleMaps = Settings.Default.GoogleMaps_API_Key;
+            googleMapsZoomFactor = Settings.Default.GoogleMaps_API_ZoomFactor;
+            apiKey_VirusTotal = Settings.Default.VirusTotal_API_Key;
+            http_UserAgent = Settings.Default.Config_HTTP_UserAgent;
+            http_Sec_CH_UserAgent = Settings.Default.Config_HTTP_Sec_CH_UserAgent;
+            http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
+            app_AutoUpdate_SkipVersion = new Version(Settings.Default.AutoUpdate_SkipVersion);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
@@ -228,6 +247,7 @@ namespace EndpointChecker
                              RequiredLibraryExists("DocumentFormat.OpenXml.dll") &&
                              RequiredLibraryExists("ExcelNumberFormat.dll") &&
                              RequiredLibraryExists("FastMember.dll") &&
+                             RequiredLibraryExists("Flurl.dll") &&
                              RequiredLibraryExists("HtmlAgilityPack.dll") &&
                              RequiredLibraryExists("IPAddressRange.dll") &&
                              RequiredLibraryExists("Microsoft.WindowsAPICodePack.dll") &&
@@ -246,7 +266,7 @@ namespace EndpointChecker
 
                         if (app_AutoUpdate)
                         {
-                            string currentExecutable = Assembly.GetEntryAssembly().Location;
+                            string currentExecutable = app_Assembly.Location;
                             string updaterExecutable = Path.Combine(Path.GetTempPath(), "EndpointChecker_AutoUpdater.exe");
 
                             // COPY UPDATER TO TEMP DIRECORY

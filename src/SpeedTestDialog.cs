@@ -56,8 +56,8 @@ namespace EndpointChecker
             InitializeComponent();
 
             // COMMON EXCEPTION HANDLERS
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CheckerMainForm.UnhandledExceptionHandler);
-            Application.ThreadException += new ThreadExceptionEventHandler(CheckerMainForm.ThreadExceptionHandler);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
 
             // SET DOUBLE BUFFER
             DoubleBuffered = true;
@@ -1042,10 +1042,15 @@ namespace EndpointChecker
 
         public static string BuildExceptionMessage(Exception eX)
         {
-            string exceptionMessage = "==================";
+            string exceptionMessage = Environment.NewLine;
+
+            exceptionMessage += "==================";
             exceptionMessage += Environment.NewLine;
+
+            // EX 'MESSAGE'
             exceptionMessage += eX.Message;
 
+            // EX 'INNER EXCEPTION MESSAGE' [IF NOT THE SAME AS 'MESSAGE']
             if (eX.InnerException != null &&
                 !eX.InnerException.Message.Contains(eX.Message))
             {

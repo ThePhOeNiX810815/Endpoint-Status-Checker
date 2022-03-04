@@ -1275,7 +1275,7 @@ namespace EndpointChecker
                     {
                         try
                         {
-                            string info = new WebClient().DownloadString("http://ip-api.com/json");
+                            string info = new WebClient().DownloadString("http://ip-api.com/json/" + ipAddress);
                             IP_API_JSON_Response ipInfo = JsonConvert.DeserializeObject<IP_API_JSON_Response>(info);
 
                             if (ipInfo.Service_Status == "success")

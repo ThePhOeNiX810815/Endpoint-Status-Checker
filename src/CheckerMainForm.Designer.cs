@@ -358,7 +358,7 @@
             this.num_RefreshInterval.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_RefreshInterval.Enabled = false;
             this.num_RefreshInterval.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_RefreshInterval.Location = new System.Drawing.Point(150, 308);
+            this.num_RefreshInterval.Location = new System.Drawing.Point(150, 307);
             this.num_RefreshInterval.Maximum = new decimal(new int[] {
             1440,
             0,
@@ -386,7 +386,7 @@
             this.lbl_TimerIntervalMinutesText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_TimerIntervalMinutesText.Enabled = false;
             this.lbl_TimerIntervalMinutesText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_TimerIntervalMinutesText.Location = new System.Drawing.Point(201, 310);
+            this.lbl_TimerIntervalMinutesText.Location = new System.Drawing.Point(201, 309);
             this.lbl_TimerIntervalMinutesText.Name = "lbl_TimerIntervalMinutesText";
             this.lbl_TimerIntervalMinutesText.Size = new System.Drawing.Size(52, 15);
             this.lbl_TimerIntervalMinutesText.TabIndex = 4;
@@ -473,7 +473,7 @@
             this.lbl_RequestTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_RequestTimeoutSecondsText.Enabled = false;
             this.lbl_RequestTimeoutSecondsText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_RequestTimeoutSecondsText.Location = new System.Drawing.Point(201, 366);
+            this.lbl_RequestTimeoutSecondsText.Location = new System.Drawing.Point(201, 365);
             this.lbl_RequestTimeoutSecondsText.Name = "lbl_RequestTimeoutSecondsText";
             this.lbl_RequestTimeoutSecondsText.Size = new System.Drawing.Size(50, 15);
             this.lbl_RequestTimeoutSecondsText.TabIndex = 9;
@@ -486,7 +486,7 @@
             this.num_HTTPRequestTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_HTTPRequestTimeout.Enabled = false;
             this.num_HTTPRequestTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_HTTPRequestTimeout.Location = new System.Drawing.Point(150, 364);
+            this.num_HTTPRequestTimeout.Location = new System.Drawing.Point(150, 363);
             this.num_HTTPRequestTimeout.Maximum = new decimal(new int[] {
             60,
             0,
@@ -586,7 +586,7 @@
             this.num_FTPRequestTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_FTPRequestTimeout.Enabled = false;
             this.num_FTPRequestTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_FTPRequestTimeout.Location = new System.Drawing.Point(150, 392);
+            this.num_FTPRequestTimeout.Location = new System.Drawing.Point(150, 391);
             this.num_FTPRequestTimeout.Maximum = new decimal(new int[] {
             60,
             0,
@@ -626,7 +626,7 @@
             this.lbl_FTPRequestTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_FTPRequestTimeoutSecondsText.Enabled = false;
             this.lbl_FTPRequestTimeoutSecondsText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_FTPRequestTimeoutSecondsText.Location = new System.Drawing.Point(201, 394);
+            this.lbl_FTPRequestTimeoutSecondsText.Location = new System.Drawing.Point(201, 393);
             this.lbl_FTPRequestTimeoutSecondsText.Name = "lbl_FTPRequestTimeoutSecondsText";
             this.lbl_FTPRequestTimeoutSecondsText.Size = new System.Drawing.Size(50, 15);
             this.lbl_FTPRequestTimeoutSecondsText.TabIndex = 23;
@@ -669,7 +669,7 @@
             this.num_ParallelThreadsCount.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_ParallelThreadsCount.Enabled = false;
             this.num_ParallelThreadsCount.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_ParallelThreadsCount.Location = new System.Drawing.Point(150, 420);
+            this.num_ParallelThreadsCount.Location = new System.Drawing.Point(150, 419);
             this.num_ParallelThreadsCount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -1041,7 +1041,7 @@
             this.num_PingTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_PingTimeout.Enabled = false;
             this.num_PingTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_PingTimeout.Location = new System.Drawing.Point(150, 336);
+            this.num_PingTimeout.Location = new System.Drawing.Point(150, 335);
             this.num_PingTimeout.Maximum = new decimal(new int[] {
             30,
             0,
@@ -1081,7 +1081,7 @@
             this.lbl_PingTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_PingTimeoutSecondsText.Enabled = false;
             this.lbl_PingTimeoutSecondsText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_PingTimeoutSecondsText.Location = new System.Drawing.Point(201, 338);
+            this.lbl_PingTimeoutSecondsText.Location = new System.Drawing.Point(201, 337);
             this.lbl_PingTimeoutSecondsText.Name = "lbl_PingTimeoutSecondsText";
             this.lbl_PingTimeoutSecondsText.Size = new System.Drawing.Size(50, 15);
             this.lbl_PingTimeoutSecondsText.TabIndex = 46;
@@ -1093,7 +1093,7 @@
             this.lbl_Validate.AutoSize = true;
             this.lbl_Validate.Enabled = false;
             this.lbl_Validate.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Validate.Location = new System.Drawing.Point(10, 450);
+            this.lbl_Validate.Location = new System.Drawing.Point(10, 452);
             this.lbl_Validate.Name = "lbl_Validate";
             this.lbl_Validate.Size = new System.Drawing.Size(108, 15);
             this.lbl_Validate.TabIndex = 48;
@@ -1317,9 +1317,9 @@
             this.lbl_LastUpdate_Label.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_LastUpdate_Label.Location = new System.Drawing.Point(10, 481);
             this.lbl_LastUpdate_Label.Name = "lbl_LastUpdate_Label";
-            this.lbl_LastUpdate_Label.Size = new System.Drawing.Size(78, 15);
+            this.lbl_LastUpdate_Label.Size = new System.Drawing.Size(102, 15);
             this.lbl_LastUpdate_Label.TabIndex = 51;
-            this.lbl_LastUpdate_Label.Text = "LAST UPDATE";
+            this.lbl_LastUpdate_Label.Text = "LAST LIST UPDATE";
             this.lbl_LastUpdate_Label.Visible = false;
             // 
             // lbl_LastUpdate
@@ -1486,7 +1486,7 @@
             this.pb_FeatureRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_FeatureRequest.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_FeatureRequest.Image = ((System.Drawing.Image)(resources.GetObject("pb_FeatureRequest.Image")));
-            this.pb_FeatureRequest.Location = new System.Drawing.Point(908, 481);
+            this.pb_FeatureRequest.Location = new System.Drawing.Point(906, 481);
             this.pb_FeatureRequest.Name = "pb_FeatureRequest";
             this.pb_FeatureRequest.Size = new System.Drawing.Size(32, 32);
             this.pb_FeatureRequest.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1505,7 +1505,7 @@
             this.pb_GitHub.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_GitHub.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_GitHub.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitHub.Image")));
-            this.pb_GitHub.Location = new System.Drawing.Point(933, 483);
+            this.pb_GitHub.Location = new System.Drawing.Point(931, 483);
             this.pb_GitHub.Name = "pb_GitHub";
             this.pb_GitHub.Size = new System.Drawing.Size(53, 30);
             this.pb_GitHub.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1570,7 +1570,7 @@
             this.tb_ListFilter.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tb_ListFilter.Enabled = false;
             this.tb_ListFilter.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_ListFilter.Location = new System.Drawing.Point(150, 280);
+            this.tb_ListFilter.Location = new System.Drawing.Point(150, 279);
             this.tb_ListFilter.Multiline = true;
             this.tb_ListFilter.Name = "tb_ListFilter";
             this.tb_ListFilter.Size = new System.Drawing.Size(136, 22);
@@ -1584,7 +1584,7 @@
             this.pb_ListFilterClear.BackColor = System.Drawing.Color.Transparent;
             this.pb_ListFilterClear.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_ListFilterClear.Image = global::EndpointChecker.Properties.Resources.close;
-            this.pb_ListFilterClear.Location = new System.Drawing.Point(284, 280);
+            this.pb_ListFilterClear.Location = new System.Drawing.Point(284, 279);
             this.pb_ListFilterClear.Name = "pb_ListFilterClear";
             this.pb_ListFilterClear.Size = new System.Drawing.Size(22, 22);
             this.pb_ListFilterClear.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
