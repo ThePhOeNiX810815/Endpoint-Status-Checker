@@ -890,7 +890,7 @@ namespace EndpointChecker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
-            "Chrome/99.100.4844.17 Safari/537.36")]
+            "Chrome/100.0.4896.20 Safari/537.36")]
         public string Config_HTTP_UserAgent {
             get {
                 return ((string)(this["Config_HTTP_UserAgent"]));
@@ -950,7 +950,7 @@ namespace EndpointChecker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\"(Not(A:Brand\";v=\"8\", \"Chromium\";v=\"99\", \"Google Chrome\";v=\"99\"")]
+        [global::System.Configuration.DefaultSettingValueAttribute("\"(Not(A:Brand\";v=\"8\", \"Chromium\";v=\"100\", \"Google Chrome\";v=\"100\"")]
         public string Config_HTTP_Sec_CH_UserAgent {
             get {
                 return ((string)(this["Config_HTTP_Sec_CH_UserAgent"]));
@@ -1005,6 +1005,18 @@ namespace EndpointChecker.Properties {
             }
             set {
                 this["Config_ShowSplashScreen"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ListView_Filter {
+            get {
+                return ((string)(this["ListView_Filter"]));
+            }
+            set {
+                this["ListView_Filter"] = value;
             }
         }
     }

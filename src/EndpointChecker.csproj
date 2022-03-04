@@ -276,6 +276,7 @@
     <Content Include="Images\rails.png" />
     <Content Include="Images\robot.jpg" />
     <Content Include="Images\splash_Background.jpg" />
+    <Content Include="Images\splash_Background_2.jpg" />
     <Content Include="Images\splash_Circle.gif" />
     <Content Include="Images\ssh 2.png" />
     <Content Include="Images\ssh.png" />

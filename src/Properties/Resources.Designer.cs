@@ -71,12 +71,12 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap appError {
+        internal static System.Drawing.Icon appError {
             get {
                 object obj = ResourceManager.GetObject("appError", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -96,6 +96,16 @@ namespace EndpointChecker.Properties {
         internal static System.Drawing.Bitmap appLink {
             get {
                 object obj = ResourceManager.GetObject("appLink", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap appWebPage {
+            get {
+                object obj = ResourceManager.GetObject("appWebPage", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -281,6 +291,16 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon disabled1 {
+            get {
+                object obj = ResourceManager.GetObject("disabled1", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap eMailEnvelope {
@@ -291,22 +311,22 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap endpointsList {
+        internal static System.Drawing.Icon endpointsList {
             get {
                 object obj = ResourceManager.GetObject("endpointsList", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap error {
+        internal static System.Drawing.Icon error {
             get {
                 object obj = ResourceManager.GetObject("error", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -383,6 +403,26 @@ namespace EndpointChecker.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GitHubLogo {
+            get {
+                object obj = ResourceManager.GetObject("GitHubLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GitLabLogo {
+            get {
+                object obj = ResourceManager.GetObject("GitLabLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap goLogo {
             get {
                 object obj = ResourceManager.GetObject("goLogo", resourceCulture);
@@ -411,12 +451,12 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap information {
+        internal static System.Drawing.Icon information {
             get {
                 object obj = ResourceManager.GetObject("information", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -571,12 +611,12 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap minus {
+        internal static System.Drawing.Icon minus {
             get {
                 object obj = ResourceManager.GetObject("minus", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -631,12 +671,12 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap notAvailable {
+        internal static System.Drawing.Icon notAvailable {
             get {
                 object obj = ResourceManager.GetObject("notAvailable", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -646,6 +686,16 @@ namespace EndpointChecker.Properties {
         internal static System.Drawing.Icon notKnown {
             get {
                 object obj = ResourceManager.GetObject("notKnown", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon notKnown1 {
+            get {
+                object obj = ResourceManager.GetObject("notKnown1", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -661,12 +711,12 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap passed {
+        internal static System.Drawing.Icon passed {
             get {
                 object obj = ResourceManager.GetObject("passed", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -691,12 +741,12 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap plus {
+        internal static System.Drawing.Icon plus {
             get {
                 object obj = ResourceManager.GetObject("plus", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -731,6 +781,16 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon radioactive1 {
+            get {
+                object obj = ResourceManager.GetObject("radioactive1", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap rails {
@@ -741,12 +801,12 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap refresh {
+        internal static System.Drawing.Icon refresh {
             get {
                 object obj = ResourceManager.GetObject("refresh", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -783,6 +843,46 @@ namespace EndpointChecker.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap splash_Background {
+            get {
+                object obj = ResourceManager.GetObject("splash_Background", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap splash_Background_2 {
+            get {
+                object obj = ResourceManager.GetObject("splash_Background_2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap splash_Circle {
+            get {
+                object obj = ResourceManager.GetObject("splash_Circle", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ssh {
+            get {
+                object obj = ResourceManager.GetObject("ssh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ssh_2 {
             get {
                 object obj = ResourceManager.GetObject("ssh_2", resourceCulture);
@@ -801,21 +901,21 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap star {
+        internal static System.Drawing.Icon star {
             get {
                 object obj = ResourceManager.GetObject("star", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap star2 {
+        internal static System.Drawing.Bitmap star1 {
             get {
-                object obj = ResourceManager.GetObject("star2", resourceCulture);
+                object obj = ResourceManager.GetObject("star1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -916,6 +1016,16 @@ namespace EndpointChecker.Properties {
         internal static System.Drawing.Icon warning {
             get {
                 object obj = ResourceManager.GetObject("warning", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon warning1 {
+            get {
+                object obj = ResourceManager.GetObject("warning1", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

@@ -164,7 +164,22 @@ namespace EndpointChecker
         {
             lbl_SpeedTest_Latency_Value.Text = targetServer.Latency + " ms";
             lbl_SpeedTest_HostedBy_Value.Text = GetStringCorrectEncoding(targetServer.Sponsor);
-            lbl_SpeedTest_Distance_Value.Text =
+
+            if (ipInfo.Country_Name == targetServer.Country &&
+                ipInfo.City == targetServer.Name)
+            {
+                // NO DISTANCE, SAME CITY/COUNTRY
+                lbl_SpeedTest_Distance_Value.Text =
+                    "Right Here (" +
+                    ipInfo.City +
+                    "/" +
+                    ipInfo.Country_Name +
+                    ")";
+            }
+            else
+            {
+                // CONCRETE DISTANCE
+                lbl_SpeedTest_Distance_Value.Text =
                 (int)targetServer.Distance / 1000 +
                 " km (from '" +
                 GetStringCorrectEncoding(
@@ -177,7 +192,7 @@ namespace EndpointChecker
                     "/" +
                     targetServer.Country) +
                 "')";
-
+            }
 
             lbl_SpeedTest_HostedBy_Value.BackColor = Color.LightSkyBlue;
             lbl_SpeedTest_Distance_Value.BackColor = Color.LightSkyBlue;
@@ -272,7 +287,7 @@ namespace EndpointChecker
                                              "/" +
                                              GetStringCorrectEncoding(targetServer.Country) +
                                              ")",
-                                        Color.LimeGreen,
+                                        Color.LightGreen,
                                         true);
 
                     // TEST DOWNLOAD SPEED
@@ -336,7 +351,7 @@ namespace EndpointChecker
                                "/" +
                                GetStringCorrectEncoding(targetServer.Country) +
                                ")",
-                            Color.Red,
+                            Color.LightPink,
                             true);
 
                     // TEST UPLOAD SPEED
@@ -1027,17 +1042,19 @@ namespace EndpointChecker
 
         public static string BuildExceptionMessage(Exception eX)
         {
-            string exceptionMessage =
-                Environment.NewLine +
-                eX.Message;
+            string exceptionMessage = "==================";
+            exceptionMessage += Environment.NewLine;
+            exceptionMessage += eX.Message;
 
             if (eX.InnerException != null &&
                 !eX.InnerException.Message.Contains(eX.Message))
             {
-                exceptionMessage +=
-                    Environment.NewLine +
-                    eX.InnerException.Message;
+                exceptionMessage += Environment.NewLine;
+                exceptionMessage += eX.InnerException.Message;
             }
+
+            exceptionMessage += Environment.NewLine;
+            exceptionMessage += "==================";
 
             return exceptionMessage;
         }
