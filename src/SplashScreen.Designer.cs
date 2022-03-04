@@ -99,12 +99,12 @@ namespace EndpointChecker
             // 
             // lbl_ReleaseType
             // 
-            this.lbl_ReleaseType.BackColor = System.Drawing.Color.Silver;
+            this.lbl_ReleaseType.BackColor = System.Drawing.Color.LightGray;
             this.lbl_ReleaseType.Font = new System.Drawing.Font("Cambria", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_ReleaseType.ForeColor = System.Drawing.Color.Black;
-            this.lbl_ReleaseType.Location = new System.Drawing.Point(232, 155);
+            this.lbl_ReleaseType.Location = new System.Drawing.Point(201, 155);
             this.lbl_ReleaseType.Name = "lbl_ReleaseType";
-            this.lbl_ReleaseType.Size = new System.Drawing.Size(191, 25);
+            this.lbl_ReleaseType.Size = new System.Drawing.Size(252, 25);
             this.lbl_ReleaseType.TabIndex = 5;
             this.lbl_ReleaseType.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lbl_ReleaseType.Visible = false;

@@ -641,6 +641,8 @@ namespace EndpointChecker
 
         public void bw_GetStatus_DoWork(object sender, DoWorkEventArgs e)
         {
+            SetProgressStatus(0, 0, "Initializing process ...", Color.DarkOrchid);
+
             // WORKING VARIABLES
             ConcurrentBag<EndpointDefinition> updatedEndpointsList = new ConcurrentBag<EndpointDefinition>();
             bool autoRedirect_Enable = cb_AllowAutoRedirect.Checked;
@@ -757,9 +759,11 @@ namespace EndpointChecker
                             {
                                 // INCREMENT PROGRESS COUNTER
                                 Interlocked.Increment(ref endpointsCount_Current);
+                                Application.DoEvents();
 
                                 // SET PROGRESS STATUS LABEL
                                 SetProgressStatus(endpointsCount_Enabled, endpointsCount_Current);
+                                Application.DoEvents();
 
                                 // CREATE STOPWATCH FOR ITEM CHECK DURATION [FOR 'EXPORT' PURPOSE]
                                 Stopwatch sw_ItemProgress = new Stopwatch();
@@ -860,22 +864,27 @@ namespace EndpointChecker
                                         if (validateSSLCertificate &&
                                             httpWebRequest.ServicePoint.Certificate != null)
                                         {
-                                            X509Certificate2 sslCert2 = new X509Certificate2(httpWebRequest.ServicePoint.Certificate);
+                                            try
+                                            {
+                                                X509Certificate2 sslCert2 = new X509Certificate2(httpWebRequest.ServicePoint.Certificate);
 
-                                            endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Archived", ItemValue = sslCert2.Archived.ToString() });
-                                            endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Has Private Key", ItemValue = sslCert2.HasPrivateKey.ToString() });
-                                            endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid To", ItemValue = sslCert2.NotAfter.ToString() });
-                                            endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid From", ItemValue = sslCert2.NotBefore.ToString() });
-                                            endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Version", ItemValue = sslCert2.Version.ToString() });
+                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Archived", ItemValue = sslCert2.Archived.ToString() });
+                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Has Private Key", ItemValue = sslCert2.HasPrivateKey.ToString() });
+                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid To", ItemValue = sslCert2.NotAfter.ToString() });
+                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid From", ItemValue = sslCert2.NotBefore.ToString() });
+                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Version", ItemValue = sslCert2.Version.ToString() });
+                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Public Key", ItemValue = sslCert2.GetPublicKeyString() });
 
-                                            if (sslCert2.PublicKey != null && !string.IsNullOrEmpty(sslCert2.PublicKey.ToString())) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Public Key", ItemValue = sslCert2.PublicKey.ToString() }); };
-                                            if (sslCert2.PrivateKey != null && !string.IsNullOrEmpty(sslCert2.PrivateKey.ToString())) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Private Key", ItemValue = sslCert2.PrivateKey.ToString() }); };
-                                            if (!string.IsNullOrEmpty(sslCert2.SignatureAlgorithm.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Signature Algorithm", ItemValue = sslCert2.SignatureAlgorithm.FriendlyName }); };
-                                            if (!string.IsNullOrEmpty(sslCert2.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Friendly Name", ItemValue = sslCert2.FriendlyName }); };
-                                            if (!string.IsNullOrEmpty(sslCert2.Issuer)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Issuer Name", ItemValue = sslCert2.Issuer }); };
-                                            if (!string.IsNullOrEmpty(sslCert2.SerialNumber)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Serial Number", ItemValue = sslCert2.SerialNumber }); };
-                                            if (!string.IsNullOrEmpty(sslCert2.Subject)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Subject", ItemValue = sslCert2.Subject }); };
-                                            if (!string.IsNullOrEmpty(sslCert2.Thumbprint)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Thumbprint", ItemValue = sslCert2.Thumbprint }); };
+                                                if (!string.IsNullOrEmpty(sslCert2.SignatureAlgorithm.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Signature Algorithm", ItemValue = sslCert2.SignatureAlgorithm.FriendlyName }); };
+                                                if (!string.IsNullOrEmpty(sslCert2.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Friendly Name", ItemValue = sslCert2.FriendlyName }); };
+                                                if (!string.IsNullOrEmpty(sslCert2.Issuer)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Issuer Name", ItemValue = sslCert2.Issuer }); };
+                                                if (!string.IsNullOrEmpty(sslCert2.SerialNumber)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Serial Number", ItemValue = sslCert2.SerialNumber }); };
+                                                if (!string.IsNullOrEmpty(sslCert2.Subject)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Subject", ItemValue = sslCert2.Subject }); };
+                                                if (!string.IsNullOrEmpty(sslCert2.Thumbprint)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Thumbprint", ItemValue = sslCert2.Thumbprint }); };
+                                            }
+                                            catch
+                                            {
+                                            }
                                         }
 
                                         responseURI = httpWebResponse.ResponseUri;
@@ -1310,7 +1319,6 @@ namespace EndpointChecker
 
                                 // SET PROGRESS STATUS LABEL
                                 SetProgressStatus(endpointsCount_Enabled, endpointsCount_Current);
-
                                 Application.DoEvents();
 
                                 GC.Collect();
@@ -5366,14 +5374,6 @@ namespace EndpointChecker
 
         public void CheckerMainForm_Shown(object sender, EventArgs e)
         {
-            if (Settings.Default.UpgradeRequired)
-            {
-                // UPGRADE SETTINGS FROM PREVIOUS VERSION
-                Settings.Default.Upgrade();
-                Settings.Default.UpgradeRequired = false;
-                Settings.Default.Save();
-            }
-
             // LOAD VALIDATION METHOD TYPES AND SELECT DEFAULT [PROTOCOL]
             comboBox_Validate.DataSource = Enum.GetValues(typeof(ValidationMethod));
             comboBox_Validate.SelectedIndex = 0;

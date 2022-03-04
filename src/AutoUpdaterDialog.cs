@@ -7,8 +7,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
+using static EndpointChecker.CheckerMainForm;
 using static EndpointChecker.Program;
 
 namespace EndpointChecker
@@ -19,9 +21,14 @@ namespace EndpointChecker
         static string tempPackageZIPfileName = Path.GetFileName(new Uri(app_LatestPackageLink).AbsolutePath);
         static string tempPackageFolderName = string.Empty;
 
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public AutoUpdaterDialog()
         {
             InitializeComponent();
+
+            // COMMON EXCEPTION HANDLERS
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
 
             // SET DOUBLE BUFFER
             DoubleBuffered = true;

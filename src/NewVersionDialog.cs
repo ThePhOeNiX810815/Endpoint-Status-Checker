@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Security.Permissions;
+using System.Threading;
 using System.Windows.Forms;
+using static EndpointChecker.CheckerMainForm;
 using static EndpointChecker.Program;
 
 namespace EndpointChecker
@@ -10,9 +13,14 @@ namespace EndpointChecker
         public bool updateNow { get; set; }
         public bool updateSkip { get; set; }
 
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public NewVersionDialog()
         {
             InitializeComponent();
+
+            // COMMON EXCEPTION HANDLERS
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
 
             // SET DOUBLE BUFFER
             DoubleBuffered = true;

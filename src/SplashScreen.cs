@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Security.Permissions;
+using System.Threading;
 using System.Windows.Forms;
+using static EndpointChecker.CheckerMainForm;
 using static EndpointChecker.Program;
 
 namespace EndpointChecker
@@ -13,6 +15,10 @@ namespace EndpointChecker
         {
             InitializeComponent();
 
+            // COMMON EXCEPTION HANDLERS
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
+
             // SET DOUBLE BUFFER
             DoubleBuffered = true;
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
@@ -21,7 +27,7 @@ namespace EndpointChecker
             // SET INFORMATION LABELS
             lbl_Name.Text = app_ApplicationName;
             lbl_Version.Text = "Version ";
-            lbl_Build.Text = "Build " + app_BuiltDate;
+            lbl_Build.Text = "Built " + app_BuiltDate;
             lbl_Copyright.Text = app_Copyright;
 
             // SET VERSION LABEL
@@ -37,20 +43,28 @@ namespace EndpointChecker
             // SET RELEASE TYPE LABEL
             if (!app_IsOriginalSignedExecutable)
             {
-                lbl_ReleaseType.Text = "Custom Build";
+                lbl_ReleaseType.Text = "CUSTOM BUILD";
                 lbl_ReleaseType.ForeColor = Color.Red;
                 lbl_ReleaseType.Visible = true;
             }
-            if (app_LatestPackageVersion < app_Version)
+            else if (app_LatestPackageVersion > new Version(0, 0, 0, 0))
             {
-                lbl_ReleaseType.Text = "Unreleased Build";
-                lbl_ReleaseType.ForeColor = Color.DeepPink;
-                lbl_ReleaseType.Visible = true;
-            }
-            else if (app_Version.Build != 0)
-            {
-                lbl_ReleaseType.Text = "Pre-Release Build";
-                lbl_ReleaseType.ForeColor = Color.DodgerBlue;
+                if (app_LatestPackageVersion < app_Version)
+                {
+                    lbl_ReleaseType.Text = "UNRELEASED BUILD";
+                    lbl_ReleaseType.ForeColor = Color.DarkViolet;
+                }
+                else if (app_Version.Build != 0)
+                {
+                    lbl_ReleaseType.Text = "Pre-Release Version";
+                    lbl_ReleaseType.ForeColor = Color.Blue;
+                }
+                else
+                {
+                    lbl_ReleaseType.Text = "Release Version";
+                    lbl_ReleaseType.ForeColor = Color.Green;
+                }
+
                 lbl_ReleaseType.Visible = true;
             }
 
