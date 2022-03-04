@@ -150,6 +150,12 @@ namespace EndpointChecker
         // INSTALLED .NET FRAMEWORK VERSION
         DotNetFramework_Version dotNetFramework_LatestInstalledVersion;
 
+        // ENDPOINT DETAILS DIALOG INSTANCE
+        EndpointDetailsDialog dialog_EndpointDetails = null;
+
+        // SPEEDTEST DIALOG INSTANCE
+        SpeedTestDialog dialog_SpeedTest = null;
+
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public CheckerMainForm()
         {
@@ -204,9 +210,6 @@ namespace EndpointChecker
 
             // LOAD 'LAST SEEN ONLINE' LIST
             RestoreLastSeenOnlineList();
-
-            // LOAD ENDPOINT REFERENCES
-            LoadEndpointReferences();
         }
 
         public void SetControlsTooltips()
@@ -652,6 +655,7 @@ namespace EndpointChecker
             int pingTimeout = (int)num_PingTimeout.Value * 1000;
             int httpRequestTimeout = (int)num_HTTPRequestTimeout.Value * 1000;
             int ftpRequestTimeout = (int)num_FTPRequestTimeout.Value * 1000;
+
             int endpointsCount_Current = 0;
             int endpointsCount_Enabled =
                 endpointsList.Where(
@@ -661,16 +665,6 @@ namespace EndpointChecker
 
             // FLUSH LOCAL DNS CACHE
             DnsFlushResolverCache();
-
-            if (validateSSLCertificate)
-            {   // VALIDATE SERVER CERTIFICATE [HTTPS]
-                ServicePointManager.ServerCertificateValidationCallback = null;
-            }
-            else
-            {
-                // BYPASS SERVER CERTIFICATE VALIDATION
-                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            }
 
             // ALLOWED SECURITY PROTOCOLS
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)0x30 |
@@ -775,11 +769,15 @@ namespace EndpointChecker
                                     (endpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
                                      endpoint.Protocol.ToLower() == Uri.UriSchemeHttps))
                                 {
+                                    // MANUAL AUTO-REDIRECT SWITCH [BY 'LOCATION' HEADER OF '301' OR '302' RESPONSE CODE]
+                                    bool autoRedirect_Followed = false;
+
                                     // HTTP OR HTTPS PROTOCOL SCHEME
                                     HttpWebResponse httpWebResponse = null;
 
-                                    int autoRedirect_Max = 10;
-                                    int autoRedirect_Current = 0;
+                                    // START STOPWATCH FOR ITEM CHECK DURATION
+                                    sw_ItemProgress.Start();
+                                    Application.DoEvents();
 
                                     try
                                     {
@@ -787,67 +785,68 @@ namespace EndpointChecker
                                         HttpWebRequest httpWebRequest = PrepareHTTPWebRequest(
                                             endpoint,
                                             endpointURI,
-                                            autoRedirect_Max,
                                             httpRequestTimeout,
                                             autoRedirect_Enable,
-                                            removeURLParameters);
+                                            removeURLParameters,
+                                            validateSSLCertificate);
 
-                                        // START STOPWATCH FOR ITEM CHECK DURATION
-                                        sw_ItemProgress.Start();
-                                        Application.DoEvents();
-
-                                        if (autoRedirect_Enable &&
-                                            autoRedirect_Current <= autoRedirect_Max)
+                                        try
                                         {
-                                            try
+                                            // TRY TO GET RESPONSE
+                                            httpWebResponse = GetHTTPWebResponse(httpWebRequest, 3);
+
+                                            // HANDLE POSSIBLE REDIRECT [301, 302]
+                                            if (autoRedirect_Enable &&
+                                                ((int)httpWebResponse.StatusCode == 301 ||
+                                                 (int)httpWebResponse.StatusCode == 302))
                                             {
-                                                // TRY TO GET RESPONSE AND HANDLE POSSIBLE REDIRECT
-                                                httpWebResponse = GetHTTPWebResponse(httpWebRequest, 3);
-                                            }
-                                            catch (WebException wEX)
-                                            {
-                                                HttpWebResponse _httpWebResponse = wEX.Response as HttpWebResponse;
-
-                                                if (_httpWebResponse != null &&
-                                                    _httpWebResponse.Headers != null &&
-                                                    _httpWebResponse.Headers.Count > 0 &&
-                                                    _httpWebResponse.Headers.AllKeys.Contains("Location") &&
-                                                    !string.IsNullOrEmpty(_httpWebResponse.Headers["Location"].First().ToString()))
-                                                {
-                                                    // GET 'LOCATION' HEADER VALUE
-                                                    string locationHeaderValue = _httpWebResponse.GetResponseHeader("Location");
-
-                                                    // IF IS RELATIVE PATH
-                                                    if (Uri.IsWellFormedUriString(locationHeaderValue, UriKind.Relative))
-                                                    {
-                                                        locationHeaderValue = Url.Combine(_httpWebResponse.ResponseUri.AbsoluteUri, locationHeaderValue);
-                                                    }
-
-                                                    // PREPARE WEBREQUEST
-                                                    HttpWebRequest httpWebRequest_Redirected = PrepareHTTPWebRequest(
-                                                        endpoint,
-                                                        new Uri(locationHeaderValue),
-                                                        autoRedirect_Max,
-                                                        httpRequestTimeout,
-                                                        autoRedirect_Enable,
-                                                        removeURLParameters);
-
-                                                    // INCERASE REDIR COUNTER
-                                                    autoRedirect_Current++;
-
-                                                    // GET RESPONSE FROM 'LOCATION'
-                                                    httpWebResponse = GetHTTPWebResponse(httpWebRequest_Redirected, 3);
-                                                }
-                                                else
-                                                {
-                                                    throw (wEX);
-                                                }
+                                                throw new WebException(
+                                                    "HTTP Response Code: " + (int)httpWebResponse.StatusCode,
+                                                    null,
+                                                    WebExceptionStatus.UnknownError,
+                                                    httpWebResponse);
                                             }
                                         }
-                                        else
+                                        catch (WebException wEX)
                                         {
-                                            // GET RESPONSE
-                                            httpWebResponse = GetHTTPWebResponse(httpWebRequest, 3);
+                                            HttpWebResponse _httpWebResponse = wEX.Response as HttpWebResponse;
+
+                                            // IF RESULT CODE IS '301' OR '302', DO A SECOND CALL ON 'LOCATION'
+                                            if (autoRedirect_Enable &&
+                                                _httpWebResponse != null &&
+                                                ((int)_httpWebResponse.StatusCode == 301 ||
+                                                 (int)_httpWebResponse.StatusCode == 302) &&
+                                                _httpWebResponse.Headers.AllKeys.Contains("Location") &&
+                                                !string.IsNullOrEmpty(_httpWebResponse.GetResponseHeader("Location")))
+                                            {
+                                                // GET 'LOCATION' HEADER VALUE
+                                                string locationHeaderValue = _httpWebResponse.GetResponseHeader("Location");
+
+                                                // IF IS RELATIVE PATH
+                                                if (Uri.IsWellFormedUriString(locationHeaderValue, UriKind.Relative))
+                                                {
+                                                    locationHeaderValue = Url.Combine(_httpWebResponse.ResponseUri.AbsoluteUri, locationHeaderValue);
+                                                }
+
+                                                // PREPARE WEBREQUEST
+                                                HttpWebRequest httpWebRequest_Redirected = PrepareHTTPWebRequest(
+                                                    endpoint,
+                                                    new Uri(locationHeaderValue),
+                                                    httpRequestTimeout,
+                                                    autoRedirect_Enable,
+                                                    removeURLParameters,
+                                                    validateSSLCertificate,
+                                                    _httpWebResponse.Cookies);
+
+                                                autoRedirect_Followed = true;
+
+                                                // GET RESPONSE FROM 'LOCATION'
+                                                httpWebResponse = GetHTTPWebResponse(httpWebRequest_Redirected, 3);
+                                            }
+                                            else
+                                            {
+                                                throw (wEX);
+                                            }
                                         }
 
                                         // STOP STOPWATCH FOR ITEM CHECK DURATION
@@ -913,7 +912,7 @@ namespace EndpointChecker
                                             if (endpointURI.Scheme != responseURI.Scheme ||
                                                 endpointURI.Port != responseURI.Port ||
                                                 endpointURI.Host != responseURI.Host ||
-                                                autoRedirect_Current > 0)
+                                                autoRedirect_Followed)
                                             {
                                                 endpoint.ResponseMessage += " (Redirected from \"" + endpointURI.AbsoluteUri + "\")";
                                             }
@@ -1297,7 +1296,7 @@ namespace EndpointChecker
                                             endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
                                         }
 
-                                        string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 3);
+                                        string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 1);
 
                                         if (!string.IsNullOrEmpty(pingRoundtripTime))
                                         {
@@ -1399,17 +1398,17 @@ namespace EndpointChecker
         public HttpWebRequest PrepareHTTPWebRequest(
             EndpointDefinition endpoint,
             Uri endpointURI,
-            int maximumAutomaticRedirections,
             int httpRequestTimeout,
             bool allowAutoRedirect,
-            bool removeURLParameters)
+            bool removeURLParameters,
+            bool validateSSLCertificate,
+            CookieCollection cookies = null)
         {
             // REQUEST PARAMETERS
             string httpWebRequest_Method = WebRequestMethods.Http.Get;
             Version httpWebRequest_ProtocolVersion = HttpVersion.Version11;
             Guid httpWebRequest_ApplicationGUID = Guid.NewGuid();
             RequestCachePolicy httpWebRequest_CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-            CookieContainer httpWebRequest_CookieContainer = new CookieContainer(300);
             DecompressionMethods httpWebRequest_DecompressionMethods =
                 DecompressionMethods.GZip |
                 DecompressionMethods.Deflate |
@@ -1419,6 +1418,13 @@ namespace EndpointChecker
             {
                 // REMOVE URL PARAMETERS [IF ANY PRESENT]
                 endpointURI.RemoveQuery();
+            }
+
+            // COOKIE CONTAINER
+            CookieContainer httpWebRequest_CookieContainer = new CookieContainer(300);
+            if (cookies != null)
+            {
+                httpWebRequest_CookieContainer.Add(cookies);
             }
 
             // CREATE REQUEST
@@ -1435,8 +1441,17 @@ namespace EndpointChecker
             httpWebRequest.AutomaticDecompression = httpWebRequest_DecompressionMethods;
             httpWebRequest.ProtocolVersion = httpWebRequest_ProtocolVersion;
             httpWebRequest.Date = DateTime.Now;
-            httpWebRequest.MaximumAutomaticRedirections = maximumAutomaticRedirections;
-            httpWebRequest.Referer = endpointURI.AbsoluteUri;
+            httpWebRequest.MaximumAutomaticRedirections = 10;
+
+            if (validateSSLCertificate)
+            {   // VALIDATE SERVER CERTIFICATE [HTTPS]
+                httpWebRequest.ServerCertificateValidationCallback = null;
+            }
+            else
+            {
+                // BYPASS SERVER CERTIFICATE VALIDATION
+                httpWebRequest.ServerCertificateValidationCallback = delegate { return true; };
+            }
 
             // CUSTOM HEADERS
             WebHeaderCollection requestHeadersCollection = new WebHeaderCollection();
@@ -1487,6 +1502,8 @@ namespace EndpointChecker
 
         public void GetHTTPWebHeaders(List<Property> propertyItemCollection, WebHeaderCollection headerCollection)
         {
+            propertyItemCollection.Clear();
+
             if (headerCollection != null &&
                 headerCollection.Count > 0)
             {
@@ -1827,6 +1844,7 @@ namespace EndpointChecker
         public static HttpWebResponse GetHTTPWebResponse(HttpWebRequest httpWebRequest, int maxRetryCount, int retryCount = 0)
         {
             HttpWebResponse webResponse;
+
             try
             {
                 webResponse = (HttpWebResponse)httpWebRequest.GetResponse();
@@ -2690,26 +2708,6 @@ namespace EndpointChecker
             }
         }
 
-        public void Form1_Shown(object sender, EventArgs e)
-        {
-            if (Settings.Default.UpgradeRequired)
-            {
-                // UPGRADE SETTINGS FROM PREVIOUS VERSION
-                Settings.Default.Upgrade();
-                Settings.Default.UpgradeRequired = false;
-                Settings.Default.Save();
-            }
-
-            // LOAD VALIDATION METHOD TYPES AND SELECT DEFAULT [PROTOCOL]
-            comboBox_Validate.DataSource = Enum.GetValues(typeof(ValidationMethod));
-            comboBox_Validate.SelectedIndex = 0;
-
-            RestoreListViewColumnsWidthAndOrder();
-            RestoreWindowSizeAndPosition();
-            LoadConfiguration();
-            Application.DoEvents();
-        }
-
         public void btn_CheckAll_Click(object sender, EventArgs e)
         {
             SetCheckButtons(false);
@@ -3037,7 +3035,7 @@ namespace EndpointChecker
                         endpointsStatusExport_Summary_WorkSheet.Cell("D9").SetValue("FTP Request Timeout");
                         endpointsStatusExport_Summary_WorkSheet.Cell("E9").SetValue(ftpRequestTimeout + " " + GetFormattedValueCountString(ftpRequestTimeout, "second"));
                         endpointsStatusExport_Summary_WorkSheet.Cell("D10").SetValue("Supported Security Protocols [HTTPS]");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E10").SetValue("SSL 3.0, TLS 1.0, TLS 1.1, TLS 1.2");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E10").SetValue("SSL 3.0, TLS 1.0, TLS 1.1, TLS 1.2, TLS 1.3");
                         endpointsStatusExport_Summary_WorkSheet.Cell("D11").SetValue("Server Certificate Validation [HTTPS]");
                         endpointsStatusExport_Summary_WorkSheet.Cell("E11").SetValue(sslCertificateValidation);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D12").SetValue("Auto Redirection [HTTP]");
@@ -3448,7 +3446,9 @@ namespace EndpointChecker
             onClose = true;
 
             // DISABLE FORM CLOSE WHILE ASYNC WORKER IS IN PROGRESS
-            if (BW_GetStatus.IsBusy)
+            if (BW_GetStatus.IsBusy ||
+                dialog_EndpointDetails != null ||
+                dialog_SpeedTest != null)
             {
                 // CANCEL ACTUAL CLOSE EVENT
                 e.Cancel = true;
@@ -4653,7 +4653,7 @@ namespace EndpointChecker
 
         public void toolStripMenuItem_Details_Click(object sender, EventArgs e)
         {
-            EndpointDetailsDialog endpointDetailsDialog = new EndpointDetailsDialog(
+            dialog_EndpointDetails = new EndpointDetailsDialog(
                 (int)num_PingTimeout.Value * 1000,
                 lv_Endpoints_SelectedEndpoint,
                 imageList_Icons_32pix
@@ -4662,7 +4662,13 @@ namespace EndpointChecker
                             lv_Endpoints_SelectedEndpoint.PingRoundtripTime,
                             lv_Endpoints_SelectedEndpoint.ResponseMessage)]);
 
-            endpointDetailsDialog.ShowDialog();
+            dialog_EndpointDetails.ShowDialog();
+            dialog_EndpointDetails = null;
+
+            if (onClose)
+            {
+                Application.Exit();
+            }
         }
 
         private void toolStripMenuItem_AdminBrowse_Click(object sender, EventArgs e)
@@ -5093,8 +5099,14 @@ namespace EndpointChecker
 
         public void Btn_SpeedTest_MouseClick(object sender, MouseEventArgs e)
         {
-            SpeedTestDialog speedTestDialog = new SpeedTestDialog();
-            speedTestDialog.ShowDialog();
+            dialog_SpeedTest = new SpeedTestDialog();
+            dialog_SpeedTest.ShowDialog();
+            dialog_SpeedTest = null;
+
+            if (onClose)
+            {
+                Application.Exit();
+            }
         }
 
         enum MatchType
@@ -5350,6 +5362,26 @@ namespace EndpointChecker
             {
                 return input;
             }
+        }
+
+        public void CheckerMainForm_Shown(object sender, EventArgs e)
+        {
+            if (Settings.Default.UpgradeRequired)
+            {
+                // UPGRADE SETTINGS FROM PREVIOUS VERSION
+                Settings.Default.Upgrade();
+                Settings.Default.UpgradeRequired = false;
+                Settings.Default.Save();
+            }
+
+            // LOAD VALIDATION METHOD TYPES AND SELECT DEFAULT [PROTOCOL]
+            comboBox_Validate.DataSource = Enum.GetValues(typeof(ValidationMethod));
+            comboBox_Validate.SelectedIndex = 0;
+
+            RestoreListViewColumnsWidthAndOrder();
+            RestoreWindowSizeAndPosition();
+            LoadConfiguration();
+            LoadEndpointReferences();
         }
     }
 

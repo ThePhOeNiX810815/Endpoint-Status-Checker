@@ -8,6 +8,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -91,8 +92,10 @@ namespace EndpointChecker
         }
 
         // APPLICATION SPECIFICATION
-        public static Version app_Version = Assembly.GetExecutingAssembly().GetName().Version;
+        public static Assembly app_Assembly = Assembly.GetExecutingAssembly();
+        public static Version app_Version = app_Assembly.GetName().Version;
         public static string app_VersionString = GetVersionString(app_Version, true, false);
+        public static bool app_IsOriginalSignedExecutable = IsOriginalSignedExecutable();
 
         public static string os_VersionString =
             (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion", "ProductName", null) +
@@ -105,7 +108,7 @@ namespace EndpointChecker
         public static bool app_ShowSplashScreen = Settings.Default.Config_ShowSplashScreen;
         public static string app_ApplicationName = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductName;
         public static string app_ApplicationExecutableName = AppDomain.CurrentDomain.FriendlyName;
-        public static string app_CurrentWorkingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public static string app_CurrentWorkingDir = Path.GetDirectoryName(app_Assembly.Location);
         public static string app_BuiltDate = RetrieveLinkerTimestamp();
         public static string app_Copyright = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).LegalCopyright;
         public static string app_Title = app_ApplicationName + " v" + app_VersionString;
@@ -213,7 +216,7 @@ namespace EndpointChecker
                     if (!createdNew)
                     {
                         // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, RESTORE WINDOW
-                        IntPtr wdwIntPtr = FindWindow(null, app_ApplicationName);
+                        IntPtr wdwIntPtr = FindWindow(null, app_Title);
                         Windowplacement placement = new Windowplacement();
 
                         GetWindowPlacement(wdwIntPtr, ref placement);
@@ -431,6 +434,28 @@ namespace EndpointChecker
             catch
             {
             }
+        }
+
+        public static bool IsOriginalSignedExecutable()
+        {
+            bool isOriginalSignedExecutable = false;
+
+            try
+            {
+                // GET SIGNING CERT
+                X509Certificate app_Certificate = X509Certificate.CreateFromSignedFile(app_Assembly.Location);
+
+                // VALIDATE SIGNING CERT
+                isOriginalSignedExecutable =
+                    app_Certificate.GetSerialNumberString().Equals("4C0D5A65225EE4A0") &&
+                    app_Certificate.Issuer.Equals("CN=Peter Machaj Root CA") &&
+                    app_Certificate.Subject.Equals("CN=Peter Machaj");
+            }
+            catch
+            {
+            }
+
+            return isOriginalSignedExecutable;
         }
     }
 }

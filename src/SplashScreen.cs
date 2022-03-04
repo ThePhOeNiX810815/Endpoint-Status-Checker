@@ -35,10 +35,16 @@ namespace EndpointChecker
             }
 
             // SET RELEASE TYPE LABEL
+            if (!app_IsOriginalSignedExecutable)
+            {
+                lbl_ReleaseType.Text = "Custom Build";
+                lbl_ReleaseType.ForeColor = Color.Red;
+                lbl_ReleaseType.Visible = true;
+            }
             if (app_LatestPackageVersion < app_Version)
             {
                 lbl_ReleaseType.Text = "Unreleased Build";
-                lbl_ReleaseType.ForeColor = Color.Red;
+                lbl_ReleaseType.ForeColor = Color.DeepPink;
                 lbl_ReleaseType.Visible = true;
             }
             else if (app_Version.Build != 0)
