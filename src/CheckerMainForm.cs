@@ -194,6 +194,7 @@ namespace EndpointChecker
             // ASSIGN RESIZED IMAGES TO TRAY CONTEXT MENU STRIP ITEMS
             tray_Exit.Image = ResizeImage(Resources.error.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_Refresh.Image = ResizeImage(Resources.refresh.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
+            tray_SpeedTest.Image = ResizeImage(Resources.speedTest.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
 
             // SET VERSION / BUILD LABELS
             Text = app_Title;
@@ -677,6 +678,16 @@ namespace EndpointChecker
 
             ServicePointManager.Expect100Continue = true;
 
+            if (validateSSLCertificate)
+            {   // VALIDATE SERVER CERTIFICATE [HTTPS]
+                ServicePointManager.ServerCertificateValidationCallback = null;
+            }
+            else
+            {
+                // BYPASS SERVER CERTIFICATE VALIDATION
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            }
+
             // ADJUST THREADS COUNT SETTING BY ENABLED ITEMS COUNT [IF LESS]
             if (endpointsCount_Enabled > 0 &&
                 endpointsCount_Enabled < threadsCount)
@@ -773,10 +784,11 @@ namespace EndpointChecker
                                     (endpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
                                      endpoint.Protocol.ToLower() == Uri.UriSchemeHttps))
                                 {
-                                    // MANUAL AUTO-REDIRECT SWITCH [BY 'LOCATION' HEADER OF '301' OR '302' RESPONSE CODE]
+                                    // AUTO-REDIRECT SWITCH [BY 'LOCATION' HEADER OF '3xx' RESPONSE CODE]
                                     bool autoRedirect_Followed = false;
 
                                     // HTTP OR HTTPS PROTOCOL SCHEME
+                                    HttpWebRequest httpWebRequest = null;
                                     HttpWebResponse httpWebResponse = null;
 
                                     // START STOPWATCH FOR ITEM CHECK DURATION
@@ -786,7 +798,7 @@ namespace EndpointChecker
                                     try
                                     {
                                         // PREPARE WEBREQUEST
-                                        HttpWebRequest httpWebRequest = PrepareHTTPWebRequest(
+                                        httpWebRequest = PrepareHTTPWebRequest(
                                             endpoint,
                                             endpointURI,
                                             httpRequestTimeout,
@@ -799,10 +811,8 @@ namespace EndpointChecker
                                             // TRY TO GET RESPONSE
                                             httpWebResponse = GetHTTPWebResponse(httpWebRequest, 3);
 
-                                            // HANDLE POSSIBLE REDIRECT [301, 302]
-                                            if (autoRedirect_Enable &&
-                                                ((int)httpWebResponse.StatusCode == 301 ||
-                                                 (int)httpWebResponse.StatusCode == 302))
+                                            // HANDLE POSSIBLE REDIRECT [3xx]
+                                            if (autoRedirect_Enable && ((int)httpWebResponse.StatusCode).ToString().StartsWith("3"))
                                             {
                                                 throw new WebException(
                                                     "HTTP Response Code: " + (int)httpWebResponse.StatusCode,
@@ -815,11 +825,10 @@ namespace EndpointChecker
                                         {
                                             HttpWebResponse _httpWebResponse = wEX.Response as HttpWebResponse;
 
-                                            // IF RESULT CODE IS '301' OR '302', DO A SECOND CALL ON 'LOCATION'
+                                            // IF RESULT CODE IS '3xx', DO A SECOND CALL ON 'LOCATION'
                                             if (autoRedirect_Enable &&
                                                 _httpWebResponse != null &&
-                                                ((int)_httpWebResponse.StatusCode == 301 ||
-                                                 (int)_httpWebResponse.StatusCode == 302) &&
+                                                ((int)_httpWebResponse.StatusCode).ToString().StartsWith("3") &&
                                                 _httpWebResponse.Headers.AllKeys.Contains("Location") &&
                                                 !string.IsNullOrEmpty(_httpWebResponse.GetResponseHeader("Location")))
                                             {
@@ -861,31 +870,7 @@ namespace EndpointChecker
                                         GetHTTPWebHeaders(endpoint.HTTPResponseHeaders.PropertyItem, httpWebResponse.Headers);
 
                                         // GET SSL INFO
-                                        if (validateSSLCertificate &&
-                                            httpWebRequest.ServicePoint.Certificate != null)
-                                        {
-                                            try
-                                            {
-                                                X509Certificate2 sslCert2 = new X509Certificate2(httpWebRequest.ServicePoint.Certificate);
-
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Archived", ItemValue = sslCert2.Archived.ToString() });
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Has Private Key", ItemValue = sslCert2.HasPrivateKey.ToString() });
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid To", ItemValue = sslCert2.NotAfter.ToString() });
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid From", ItemValue = sslCert2.NotBefore.ToString() });
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Version", ItemValue = sslCert2.Version.ToString() });
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Public Key", ItemValue = sslCert2.GetPublicKeyString() });
-
-                                                if (!string.IsNullOrEmpty(sslCert2.SignatureAlgorithm.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Signature Algorithm", ItemValue = sslCert2.SignatureAlgorithm.FriendlyName }); };
-                                                if (!string.IsNullOrEmpty(sslCert2.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Friendly Name", ItemValue = sslCert2.FriendlyName }); };
-                                                if (!string.IsNullOrEmpty(sslCert2.Issuer)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Issuer Name", ItemValue = sslCert2.Issuer }); };
-                                                if (!string.IsNullOrEmpty(sslCert2.SerialNumber)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Serial Number", ItemValue = sslCert2.SerialNumber }); };
-                                                if (!string.IsNullOrEmpty(sslCert2.Subject)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Subject", ItemValue = sslCert2.Subject }); };
-                                                if (!string.IsNullOrEmpty(sslCert2.Thumbprint)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Thumbprint", ItemValue = sslCert2.Thumbprint }); };
-                                            }
-                                            catch
-                                            {
-                                            }
-                                        }
+                                        GetSSLCertificateInfo(httpWebRequest, endpoint);
 
                                         responseURI = httpWebResponse.ResponseUri;
                                         endpoint.Port = responseURI.Port.ToString();
@@ -1067,6 +1052,9 @@ namespace EndpointChecker
 
                                             // GET RESPONSE HEADERS
                                             GetHTTPWebHeaders(endpoint.HTTPResponseHeaders.PropertyItem, httpWebResponse.Headers);
+
+                                            // GET SSL INFO
+                                            GetSSLCertificateInfo(httpWebRequest, endpoint);
                                         }
                                         else
                                         {
@@ -1316,12 +1304,6 @@ namespace EndpointChecker
                                     {
                                     }
                                 }
-
-                                // SET PROGRESS STATUS LABEL
-                                SetProgressStatus(endpointsCount_Enabled, endpointsCount_Current);
-                                Application.DoEvents();
-
-                                GC.Collect();
                             }
                         }
 
@@ -1400,7 +1382,36 @@ namespace EndpointChecker
                                   saveResponse.ToString()
                                   );
 
+            // GARBAGE COLLECTOR
             GC.Collect();
+        }
+
+        public void GetSSLCertificateInfo(HttpWebRequest httpWebRequest, EndpointDefinition endpoint)
+        {
+            if (httpWebRequest.ServicePoint.Certificate != null)
+            {
+                try
+                {
+                    X509Certificate2 sslCert2 = new X509Certificate2(httpWebRequest.ServicePoint.Certificate);
+
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Archived", ItemValue = sslCert2.Archived.ToString() });
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Has Private Key", ItemValue = sslCert2.HasPrivateKey.ToString() });
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid To", ItemValue = sslCert2.NotAfter.ToString() });
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid From", ItemValue = sslCert2.NotBefore.ToString() });
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Version", ItemValue = sslCert2.Version.ToString() });
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Public Key", ItemValue = sslCert2.GetPublicKeyString() });
+
+                    if (!string.IsNullOrEmpty(sslCert2.SignatureAlgorithm.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Signature Algorithm", ItemValue = sslCert2.SignatureAlgorithm.FriendlyName }); };
+                    if (!string.IsNullOrEmpty(sslCert2.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Friendly Name", ItemValue = sslCert2.FriendlyName }); };
+                    if (!string.IsNullOrEmpty(sslCert2.Issuer)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Issuer Name", ItemValue = sslCert2.Issuer }); };
+                    if (!string.IsNullOrEmpty(sslCert2.SerialNumber)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Serial Number", ItemValue = sslCert2.SerialNumber }); };
+                    if (!string.IsNullOrEmpty(sslCert2.Subject)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Subject", ItemValue = sslCert2.Subject }); };
+                    if (!string.IsNullOrEmpty(sslCert2.Thumbprint)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Thumbprint", ItemValue = sslCert2.Thumbprint }); };
+                }
+                catch
+                {
+                }
+            }
         }
 
         public HttpWebRequest PrepareHTTPWebRequest(
@@ -1440,6 +1451,7 @@ namespace EndpointChecker
             httpWebRequest.Method = httpWebRequest_Method;
             httpWebRequest.UserAgent = http_UserAgent;
             httpWebRequest.Accept = "*/*";
+            httpWebRequest.Accept = "*/*";
             httpWebRequest.Timeout = httpRequestTimeout;
             httpWebRequest.ReadWriteTimeout = httpRequestTimeout;
             httpWebRequest.AllowAutoRedirect = allowAutoRedirect;
@@ -1449,23 +1461,13 @@ namespace EndpointChecker
             httpWebRequest.AutomaticDecompression = httpWebRequest_DecompressionMethods;
             httpWebRequest.ProtocolVersion = httpWebRequest_ProtocolVersion;
             httpWebRequest.Date = DateTime.Now;
-            httpWebRequest.MaximumAutomaticRedirections = 10;
-
-            if (validateSSLCertificate)
-            {   // VALIDATE SERVER CERTIFICATE [HTTPS]
-                httpWebRequest.ServerCertificateValidationCallback = null;
-            }
-            else
-            {
-                // BYPASS SERVER CERTIFICATE VALIDATION
-                httpWebRequest.ServerCertificateValidationCallback = delegate { return true; };
-            }
+            httpWebRequest.MaximumAutomaticRedirections = 20;
 
             // CUSTOM HEADERS
             WebHeaderCollection requestHeadersCollection = new WebHeaderCollection();
             requestHeadersCollection.Add("EndpointStatusChecker-Token", httpWebRequest_ApplicationGUID.ToString());
-            requestHeadersCollection.Add("Accept-Encoding", "*");
-            requestHeadersCollection.Add("Accept-Language", "*");
+            requestHeadersCollection.Add("Accept-Encoding", "gzip, deflate, br");
+            requestHeadersCollection.Add("Accept-Language", "*;*");
             requestHeadersCollection.Add("Cache-Control", "max-age=0");
             requestHeadersCollection.Add("DNT", "1");
             requestHeadersCollection.Add("Authority", endpointURI.Authority);
@@ -2330,6 +2332,7 @@ namespace EndpointChecker
             lbl_ParallelThreadsCount.Enabled = !inProgress && !locked;
             tray_Separator.Visible = !inProgress && !locked;
             tray_Refresh.Visible = !inProgress && !locked;
+            tray_SpeedTest.Visible = !inProgress && !locked && dialog_SpeedTest == null;
             btn_BrowseExportDir.Enabled = !inProgress && !locked;
             btn_SpeedTest.Enabled = !inProgress && !locked;
             lbl_Refresh.Enabled = !inProgress && !locked;
@@ -2683,7 +2686,7 @@ namespace EndpointChecker
 
         public void tray_Exit_Click(object sender, EventArgs e)
         {
-            Close();
+            Application.Exit();
         }
 
         public void tray_Refresh_Click(object sender, EventArgs e)
@@ -3121,13 +3124,28 @@ namespace EndpointChecker
                             endpointsStatusExport_FTP_WorkSheet.Delete();
                         }
 
-                        // UNLOCK XLSX
-                        CloseFileStream(definitonsStatusExport_XLSX_FileStream);
+                        try
+                        {
+                            // UNLOCK XLSX
+                            CloseFileStream(definitonsStatusExport_XLSX_FileStream);
 
-                        // SAVE XLSX
-                        Application.DoEvents();
-                        endpointsStatusExport_WorkBook.SaveAs(Path.Combine(statusExport_Directory, statusExport_XLSFile), new SaveOptions { ValidatePackage = true });
-                        Application.DoEvents();
+                            // SAVE XLSX
+                            Application.DoEvents();
+                            endpointsStatusExport_WorkBook.SaveAs(Path.Combine(statusExport_Directory, statusExport_XLSFile), new SaveOptions { ValidatePackage = true });
+                            Application.DoEvents();
+                        }
+                        catch (Exception ex)
+                        {
+                            // ERROR
+                            MessageBox.Show(
+                                "There was an error saving HTML Export:" +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                ex.Message,
+                                "Error Saving HTML Export",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                        }
 
                         if (cb_ExportEndpointsStatus_HTML.Checked)
                         {
@@ -5107,6 +5125,8 @@ namespace EndpointChecker
 
         public void Btn_SpeedTest_MouseClick(object sender, MouseEventArgs e)
         {
+            tray_SpeedTest.Visible = false;
+
             dialog_SpeedTest = new SpeedTestDialog();
             dialog_SpeedTest.ShowDialog();
             dialog_SpeedTest = null;
@@ -5115,6 +5135,8 @@ namespace EndpointChecker
             {
                 Application.Exit();
             }
+
+            tray_SpeedTest.Visible = true;
         }
 
         enum MatchType
@@ -5382,6 +5404,14 @@ namespace EndpointChecker
             RestoreWindowSizeAndPosition();
             LoadConfiguration();
             LoadEndpointReferences();
+        }
+
+        public void tray_SpeedTest_Click(object sender, EventArgs e)
+        {
+            if (btn_SpeedTest.Enabled)
+            {
+                Btn_SpeedTest_MouseClick(this, null);
+            }
         }
     }
 

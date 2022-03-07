@@ -59,6 +59,7 @@
             this.lbl_NoEndpoints = new System.Windows.Forms.Label();
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.trayContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tray_SpeedTest = new System.Windows.Forms.ToolStripMenuItem();
             this.tray_Refresh = new System.Windows.Forms.ToolStripMenuItem();
             this.tray_Separator = new System.Windows.Forms.ToolStripSeparator();
             this.tray_Exit = new System.Windows.Forms.ToolStripMenuItem();
@@ -421,32 +422,41 @@
             // 
             this.trayContextMenu.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trayContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tray_SpeedTest,
             this.tray_Refresh,
             this.tray_Separator,
             this.tray_Exit});
             this.trayContextMenu.Name = "tray_contextMenu";
             this.trayContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.trayContextMenu.Size = new System.Drawing.Size(119, 54);
+            this.trayContextMenu.Size = new System.Drawing.Size(175, 76);
+            // 
+            // tray_SpeedTest
+            // 
+            this.tray_SpeedTest.Name = "tray_SpeedTest";
+            this.tray_SpeedTest.Size = new System.Drawing.Size(174, 22);
+            this.tray_SpeedTest.Text = "SpeedTest";
+            this.tray_SpeedTest.Visible = false;
+            this.tray_SpeedTest.Click += new System.EventHandler(this.tray_SpeedTest_Click);
             // 
             // tray_Refresh
             // 
             this.tray_Refresh.Name = "tray_Refresh";
-            this.tray_Refresh.Size = new System.Drawing.Size(118, 22);
-            this.tray_Refresh.Text = "Refresh";
+            this.tray_Refresh.Size = new System.Drawing.Size(174, 22);
+            this.tray_Refresh.Text = "Refresh List";
             this.tray_Refresh.Visible = false;
             this.tray_Refresh.Click += new System.EventHandler(this.tray_Refresh_Click);
             // 
             // tray_Separator
             // 
             this.tray_Separator.Name = "tray_Separator";
-            this.tray_Separator.Size = new System.Drawing.Size(115, 6);
+            this.tray_Separator.Size = new System.Drawing.Size(171, 6);
             this.tray_Separator.Visible = false;
             // 
             // tray_Exit
             // 
             this.tray_Exit.Name = "tray_Exit";
-            this.tray_Exit.Size = new System.Drawing.Size(118, 22);
-            this.tray_Exit.Text = "Close";
+            this.tray_Exit.Size = new System.Drawing.Size(174, 22);
+            this.tray_Exit.Text = "Close Application";
             this.tray_Exit.Click += new System.EventHandler(this.tray_Exit_Click);
             // 
             // cb_TrayBalloonNotify
@@ -1401,7 +1411,7 @@
             this.cb_RemoveURLParameters.Name = "cb_RemoveURLParameters";
             this.cb_RemoveURLParameters.Size = new System.Drawing.Size(207, 19);
             this.cb_RemoveURLParameters.TabIndex = 56;
-            this.cb_RemoveURLParameters.Text = "Remove URL Parameters";
+            this.cb_RemoveURLParameters.Text = "Remove URL Query (if present)";
             this.cb_RemoveURLParameters.UseVisualStyleBackColor = true;
             this.cb_RemoveURLParameters.CheckedChanged += new System.EventHandler(this.cb_RemoveURLParameters_CheckedChanged);
             // 
@@ -1816,6 +1826,7 @@
         public System.Windows.Forms.PictureBox pb_ListFilterClear;
         public System.Windows.Forms.CheckBox cb_RefreshOnStartup;
         public System.Windows.Forms.PictureBox pb_SoftPedia;
+        public System.Windows.Forms.ToolStripMenuItem tray_SpeedTest;
     }
 }
 
