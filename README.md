@@ -34,6 +34,7 @@ on application main window and send your Feature Request or Improvement, or crea
 # Compiling From Source Code
 
 Just open the solution in Visual Studio and click the (re)build button.
+Application source is Visual Studio 2022 solution.
 
 # Public API Keys Used
 
