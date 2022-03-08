@@ -11,6 +11,15 @@ ftp://mcaris.net
 ftp://www.image-bound.com
 ftp://www.osboxes.org/vmware-images
 
+HTTPBIN ->> HTTP Bin Basic Auth Test (unauthorized)|http://httpbin.org/basic-auth/auth/test
+HTTPBIN ->> HTTP Bin Basic Auth Test (authorized)|http://auth:test@httpbin.org/basic-auth/auth/test
+HTTPBIN ->> HTTPS Bin Basic Auth Test (unauthorized)|https://httpbin.org/basic-auth/auth/test
+HTTPBIN ->> HTTPS Bin Basic Auth Test (authorized)|https://auth:test@httpbin.org/basic-auth/auth/test
+HTTPBIN ->> HTTP Cookies Test|http://httpbin.org/cookies
+HTTPBIN ->> HTTP Anything Test|http://httpbin.org/anything
+HTTPBIN ->> HTTPS Cookies Test|https://httpbin.org/cookies
+HTTPBIN ->> HTTPS Anything Test|https://httpbin.org/anything
+
 http://104.238.99.164/
 http://107.6.169.62/
 http://109.71.69.12/

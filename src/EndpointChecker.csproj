@@ -265,6 +265,7 @@
     <Content Include="Images\linkStatus_Invalid.png" />
     <Content Include="Images\linkStatus_Valid.png" />
     <Content Include="Images\link_16x16.png" />
+    <Content Include="Images\loading-colorful.gif" />
     <Content Include="Images\location.png" />
     <Content Include="Images\main.png" />
     <Content Include="Images\microsoft.png" />

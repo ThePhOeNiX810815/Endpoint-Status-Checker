@@ -401,6 +401,8 @@ namespace EndpointChecker
                     cb_RemoveURLParameters.Checked = Settings.Default.Config_RemoveURLParameters;
                     cb_ResolvePageLinks.Checked = Settings.Default.Config_ResolvePageLinks;
                     cb_SaveResponse.Checked = Settings.Default.Config_SaveResponse;
+                    cb_DNSAndMACLookupOnHost.Checked = Settings.Default.Config_DNSAndMACLookupOnHost;
+                    cb_PingHost.Checked = Settings.Default.Config_PingHost;
 
                     cb_RefreshOnStartup.Checked = app_ScanOnStartup;
 
@@ -458,6 +460,8 @@ namespace EndpointChecker
                     Settings.Default.Config_ResolvePageMetaInfo = cb_ResolvePageMetaInfo.Checked;
                     Settings.Default.Config_RemoveURLParameters = cb_RemoveURLParameters.Checked;
                     Settings.Default.Config_ResolvePageLinks = cb_ResolvePageLinks.Checked;
+                    Settings.Default.Config_DNSAndMACLookupOnHost = cb_DNSAndMACLookupOnHost.Checked;
+                    Settings.Default.Config_PingHost = cb_PingHost.Checked;
                     Settings.Default.Config_SaveResponse = cb_SaveResponse.Checked;
                     Settings.Default.VirusTotal_API_Key = apiKey_VirusTotal;
                     Settings.Default.GoogleMaps_API_Key = apiKey_GoogleMaps;
@@ -642,7 +646,7 @@ namespace EndpointChecker
 
         public void bw_GetStatus_DoWork(object sender, DoWorkEventArgs e)
         {
-            SetProgressStatus(0, 0, "Initializing process ...", Color.DarkOrchid);
+            SetProgressStatus(0, 0, "Initializing Endpoints Status refresh ...", Color.DarkOrchid);
 
             // WORKING VARIABLES
             ConcurrentBag<EndpointDefinition> updatedEndpointsList = new ConcurrentBag<EndpointDefinition>();
@@ -654,6 +658,8 @@ namespace EndpointChecker
             bool removeURLParameters = cb_RemoveURLParameters.Checked;
             bool resolvePageLinks = cb_ResolvePageLinks.Checked;
             bool saveResponse = cb_SaveResponse.Checked;
+            bool pingHost = cb_PingHost.Checked;
+            bool dnsLookupOnHost = cb_DNSAndMACLookupOnHost.Checked;
             int threadsCount = (int)num_ParallelThreadsCount.Value;
             int pingTimeout = (int)num_PingTimeout.Value * 1000;
             int httpRequestTimeout = (int)num_HTTPRequestTimeout.Value * 1000;
@@ -770,6 +776,7 @@ namespace EndpointChecker
                             {
                                 // INCREMENT PROGRESS COUNTER
                                 Interlocked.Increment(ref endpointsCount_Current);
+
                                 Application.DoEvents();
 
                                 // SET PROGRESS STATUS LABEL
@@ -1203,70 +1210,6 @@ namespace EndpointChecker
                                 {
                                     try
                                     {
-                                        List<string> endpointIPAddressesStringList = new List<string>();
-                                        List<string> endpointDNSNamesStringList = new List<string>();
-                                        List<string> endpointMACAddressStringList = new List<string>();
-
-                                        // RESOLVE IP ADDRESS(ES)
-                                        foreach (IPAddress endpointIPAddress in Dns.GetHostAddresses(responseURI.Host))
-                                        {
-                                            if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
-                                            {
-                                                endpointIPAddressesStringList.Add(endpointIPAddress.ToString());
-
-                                                try
-                                                {
-                                                    // RESOLVE DNS NAME(S)
-                                                    IPHostEntry hostEntry = Dns.GetHostEntry(endpointIPAddress);
-                                                    endpointDNSNamesStringList.Add(hostEntry.HostName);
-                                                }
-                                                catch
-                                                {
-                                                }
-
-                                                try
-                                                {
-                                                    // RESOLVE MAC ADDRESS(ES)
-                                                    string macAddress = GetMACAddress(endpointIPAddress);
-
-                                                    // IF ENDPOINT IP ADDRESS IS NOT LOCAL OR
-                                                    // RESOLVED MAC IS NOT MAC ADDRESS OF ANY DNS SERVER OR DEFAULT GATEWAY
-                                                    if (!string.IsNullOrEmpty(macAddress) &&
-                                                       (!localDNSAndGWMACAddresses.Contains(macAddress) ||
-                                                        localDNSAndGWIPAddresses.Contains(endpointIPAddress.ToString())))
-                                                    {
-                                                        endpointMACAddressStringList.Add(macAddress);
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                }
-                                            }
-                                        }
-
-                                        // SORT IP ADDRESS(ES) LIST
-                                        if (endpointIPAddressesStringList.Count > 0)
-                                        {
-                                            endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
-                                        }
-
-                                        // SORT DNS NAME(S) LIST
-                                        if (endpointDNSNamesStringList.Count > 0)
-                                        {
-                                            endpoint.DNSName = endpointDNSNamesStringList.ToArray();
-                                        }
-                                        else if (!Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
-                                        {
-                                            // ORIGINAL URL IS NOT IP ADDRESS, GET HOSTNAME
-                                            endpoint.DNSName = new string[] { responseURI.Host };
-                                        }
-
-                                        // SORT MAC ADDRESS(ES) LIST
-                                        if (endpointMACAddressStringList.Count > 0)
-                                        {
-                                            endpoint.MACAddress = endpointMACAddressStringList.ToArray();
-                                        }
-
                                         // RESOLVE NETWORK SHARES
                                         if (resolveNetworkShares)
                                         {
@@ -1275,6 +1218,85 @@ namespace EndpointChecker
                                             {
                                                 netSharesList.Sort();
                                                 endpoint.NetworkShare = netSharesList.ToArray();
+                                            }
+                                        }
+
+                                        // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, BY REGEX]
+                                        if (Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
+                                        {
+                                            // IS IP ADDRESS
+                                            endpoint.IPAddress = new string[] { responseURI.Host };
+                                        }
+                                        else
+                                        {
+                                            // IS DNS NAME
+                                            endpoint.DNSName = new string[] { responseURI.Host };
+                                        }
+
+                                        // DNS / MAC LOOKUP
+                                        if (dnsLookupOnHost)
+                                        {
+                                            List<string> endpointIPAddressesStringList = new List<string>();
+                                            List<string> endpointDNSNamesStringList = new List<string>();
+                                            List<string> endpointMACAddressStringList = new List<string>();
+
+                                            foreach (IPAddress endpointIPAddress in Dns.GetHostAddresses(responseURI.Host))
+                                            {
+                                                if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
+                                                {
+                                                    endpointIPAddressesStringList.Add(endpointIPAddress.ToString());
+
+                                                    try
+                                                    {
+                                                        // RESOLVE DNS NAME(S)
+                                                        IPHostEntry hostEntry = Dns.GetHostEntry(endpointIPAddress);
+                                                        endpointDNSNamesStringList.Add(hostEntry.HostName);
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
+
+                                                    try
+                                                    {
+                                                        // RESOLVE MAC ADDRESS(ES)
+                                                        string macAddress = GetMACAddress(endpointIPAddress);
+
+                                                        // IF ENDPOINT IP ADDRESS IS NOT LOCAL OR
+                                                        // RESOLVED MAC IS NOT MAC ADDRESS OF ANY DNS SERVER OR DEFAULT GATEWAY
+                                                        if (!string.IsNullOrEmpty(macAddress) &&
+                                                           (!localDNSAndGWMACAddresses.Contains(macAddress) ||
+                                                            localDNSAndGWIPAddresses.Contains(endpointIPAddress.ToString())))
+                                                        {
+                                                            endpointMACAddressStringList.Add(macAddress);
+                                                        }
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
+                                                }
+                                            }
+
+                                            // SORT IP ADDRESS(ES) LIST
+                                            if (endpointIPAddressesStringList.Count > 0)
+                                            {
+                                                endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
+                                            }
+
+                                            // SORT DNS NAME(S) LIST
+                                            if (endpointDNSNamesStringList.Count > 0)
+                                            {
+                                                endpoint.DNSName = endpointDNSNamesStringList.ToArray();
+                                            }
+                                            else if (!Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
+                                            {
+                                                // ORIGINAL URL IS NOT IP ADDRESS, GET HOSTNAME
+                                                endpoint.DNSName = new string[] { responseURI.Host };
+                                            }
+
+                                            // SORT MAC ADDRESS(ES) LIST
+                                            if (endpointMACAddressStringList.Count > 0)
+                                            {
+                                                endpoint.MACAddress = endpointMACAddressStringList.ToArray();
                                             }
                                         }
                                     }
@@ -1288,22 +1310,29 @@ namespace EndpointChecker
                                     // PING HOST
                                     try
                                     {
-                                        if (validationMethod == ValidationMethod.Ping)
+                                        if (validationMethod == ValidationMethod.Ping || pingHost)
                                         {
-                                            endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
-                                        }
+                                            if (validationMethod == ValidationMethod.Ping)
+                                            {
+                                                endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
+                                            }
 
-                                        string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 1);
+                                            string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 1);
 
-                                        if (!string.IsNullOrEmpty(pingRoundtripTime))
-                                        {
-                                            endpoint.PingRoundtripTime = pingRoundtripTime;
+                                            if (!string.IsNullOrEmpty(pingRoundtripTime))
+                                            {
+                                                endpoint.PingRoundtripTime = pingRoundtripTime;
+                                            }
                                         }
                                     }
                                     catch
                                     {
                                     }
                                 }
+
+                                // SET PROGRESS STATUS LABEL
+                                SetProgressStatus(endpointsCount_Enabled, endpointsCount_Current);
+                                Application.DoEvents();
                             }
                         }
 
@@ -1379,7 +1408,9 @@ namespace EndpointChecker
                                   threadsCount.ToString(),
                                   resolveNetworkShares.ToString(),
                                   resolvePageMetaInfo.ToString(),
-                                  saveResponse.ToString()
+                                  saveResponse.ToString(),
+                                  pingHost.ToString(),
+                                  dnsLookupOnHost.ToString()
                                   );
 
             // GARBAGE COLLECTOR
@@ -1486,22 +1517,12 @@ namespace EndpointChecker
             httpWebRequest.Headers.Add(requestHeadersCollection);
 
             // SET CREDENTIALS [IF SPECIFIED]
-            string loginName = string.Empty;
-            string loginPass = string.Empty;
-
-            if (endpoint.LoginName != status_NotAvailable)
+            if (endpoint.LoginName != status_NotAvailable &&
+                !string.IsNullOrEmpty(endpoint.LoginName))
             {
-                loginName = endpoint.LoginName;
-            }
-
-            if (endpoint.LoginPass != status_NotAvailable)
-            {
-                loginPass = endpoint.LoginPass;
-            }
-
-            if (loginName != string.Empty)
-            {
-                httpWebRequest.Credentials = new NetworkCredential(loginName, loginPass);
+                httpWebRequest.Credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
+                httpWebRequest.PreAuthenticate = true;
+                httpWebRequest.AuthenticationLevel = System.Net.Security.AuthenticationLevel.MutualAuthRequested;
             }
 
             // GET REQUEST HEADERS
@@ -2307,6 +2328,8 @@ namespace EndpointChecker
             cb_TrayBalloonNotify.Enabled = !inProgress && !locked;
             cb_AllowAutoRedirect.Enabled = !inProgress && !locked;
             cb_ValidateSSLCertificate.Enabled = !inProgress && !locked;
+            cb_PingHost.Enabled = !inProgress && !locked;
+            cb_DNSAndMACLookupOnHost.Enabled = !inProgress && !locked;
             cb_RefreshAutoSet.Enabled = !inProgress && !locked;
             cb_ResolveNetworkShares.Enabled = !inProgress && !locked;
             cb_ExportEndpointsStatus_XLSX.Enabled = !inProgress && !locked;
@@ -2811,7 +2834,9 @@ namespace EndpointChecker
                                           string threadsCount,
                                           string resolveNetworkShares,
                                           string resolvePageMetaInfo,
-                                          string saveResponse
+                                          string saveResponse,
+                                          string pingHost,
+                                          string dnsLookupOnHost
             )
         {
             // GET ENABLED AND VISIBLE ENDPOINTS DEFINITIONS ITEMS LIST
@@ -3057,6 +3082,10 @@ namespace EndpointChecker
                         endpointsStatusExport_Summary_WorkSheet.Cell("E14").SetValue(resolvePageMetaInfo);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D15").SetValue("Save Response [HTTP]");
                         endpointsStatusExport_Summary_WorkSheet.Cell("E15").SetValue(saveResponse);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D16").SetValue("Ping Host");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E16").SetValue(pingHost);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D17").SetValue("DNS / MAC Lookup on Host");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E17").SetValue(dnsLookupOnHost);
 
                         // SETTINGS FOR HTTP ENDPOINTS WORKSHEET
                         endpointsStatusExport_HTTP_WorkSheet.Style
@@ -3460,6 +3489,8 @@ namespace EndpointChecker
             // DISABLE AUTOMATIC / CONTINUOUS CHECKING
             cb_AutomaticRefresh.Checked = false;
             cb_ContinuousRefresh.Checked = false;
+
+            SetProgressStatus(0, 0);
         }
 
         public void num_ParallelThreadsCount_ValueChanged(object sender, EventArgs e)
@@ -4508,6 +4539,8 @@ namespace EndpointChecker
                 ch_ResponseTime.Width = 0;
                 ch_Server.Width = 0;
                 ch_UserName.Width = 0;
+
+                cb_PingHost.Checked = true;
             }
         }
 
@@ -5412,6 +5445,21 @@ namespace EndpointChecker
             {
                 Btn_SpeedTest_MouseClick(this, null);
             }
+        }
+
+        public void cb_PingHost_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!cb_PingHost.Checked)
+            {
+                comboBox_Validate.SelectedIndex = 0;
+            }
+
+            SaveConfiguration();
+        }
+
+        public void cb_DNSLookupOnHost_CheckedChanged(object sender, EventArgs e)
+        {
+            SaveConfiguration();
         }
     }
 
