@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 using static EndpointChecker.CheckerMainForm;
 using static EndpointChecker.Program;
 
@@ -10,8 +11,16 @@ namespace EndpointChecker
 {
     public partial class NewVersionDialog : Form
     {
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION = 0x2;
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
         public bool updateNow { get; set; }
         public bool updateSkip { get; set; }
+        public bool updateInFuture { get; set; }
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public NewVersionDialog()
@@ -46,6 +55,7 @@ namespace EndpointChecker
         {
             updateNow = false;
             updateSkip = true;
+            updateInFuture = cb_FutureAutoUpdate.Checked;
 
             Close();
         }
@@ -59,6 +69,7 @@ namespace EndpointChecker
         {
             updateNow = true;
             updateSkip = false;
+            updateInFuture = cb_FutureAutoUpdate.Checked;
 
             Close();
         }
@@ -74,6 +85,15 @@ namespace EndpointChecker
             }
             catch
             {
+            }
+        }
+
+        public void Controls_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
     }

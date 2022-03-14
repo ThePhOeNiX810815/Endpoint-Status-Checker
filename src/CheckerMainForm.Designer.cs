@@ -123,7 +123,6 @@
             this.btn_Refresh = new System.Windows.Forms.Button();
             this.btn_SpeedTest = new System.Windows.Forms.Button();
             this.btn_BrowseExportDir = new System.Windows.Forms.Button();
-            this.pb_Progress = new System.Windows.Forms.PictureBox();
             this.pb_Progress_Init = new System.Windows.Forms.PictureBox();
             this.cb_ExportEndpointsStatus_HTML = new System.Windows.Forms.CheckBox();
             this.lbl_LastUpdate_Label = new System.Windows.Forms.Label();
@@ -151,6 +150,8 @@
             this.tb_ListFilter = new System.Windows.Forms.TextBox();
             this.pb_ListFilterClear = new System.Windows.Forms.PictureBox();
             this.pb_SoftPedia = new System.Windows.Forms.PictureBox();
+            this.pb_RefreshProcess = new System.Windows.Forms.PictureBox();
+            this.TIMER_ContinuousRefresh = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
@@ -159,7 +160,6 @@
             this.groupBox_EndpointSelection.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_PingTimeout)).BeginInit();
             this.lv_Endpoints_ContextMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_Progress)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Progress_Init)).BeginInit();
             this.groupBox_Export.SuspendLayout();
             this.groupBox_CommonOptions.SuspendLayout();
@@ -171,6 +171,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_AppWebPage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_SoftPedia)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).BeginInit();
             this.SuspendLayout();
             // 
             // lv_Endpoints
@@ -1282,18 +1283,6 @@
             this.btn_BrowseExportDir.UseVisualStyleBackColor = false;
             this.btn_BrowseExportDir.MouseClick += new System.Windows.Forms.MouseEventHandler(this.btn_BrowseExportDir_MouseClick);
             // 
-            // pb_Progress
-            // 
-            this.pb_Progress.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pb_Progress.Image = global::EndpointChecker.Properties.Resources.loading_colorful;
-            this.pb_Progress.Location = new System.Drawing.Point(310, 435);
-            this.pb_Progress.Name = "pb_Progress";
-            this.pb_Progress.Size = new System.Drawing.Size(467, 121);
-            this.pb_Progress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_Progress.TabIndex = 14;
-            this.pb_Progress.TabStop = false;
-            this.pb_Progress.Visible = false;
-            // 
             // pb_Progress_Init
             // 
             this.pb_Progress_Init.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -1650,12 +1639,30 @@
             this.pb_SoftPedia.TabStop = false;
             this.pb_SoftPedia.Click += new System.EventHandler(this.pb_SoftPedia_Click);
             // 
+            // pb_RefreshProcess
+            // 
+            this.pb_RefreshProcess.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.pb_RefreshProcess.Image = global::EndpointChecker.Properties.Resources.loadingProgress_Violet;
+            this.pb_RefreshProcess.Location = new System.Drawing.Point(310, 532);
+            this.pb_RefreshProcess.Name = "pb_RefreshProcess";
+            this.pb_RefreshProcess.Size = new System.Drawing.Size(467, 23);
+            this.pb_RefreshProcess.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_RefreshProcess.TabIndex = 71;
+            this.pb_RefreshProcess.TabStop = false;
+            this.pb_RefreshProcess.Visible = false;
+            // 
+            // TIMER_ContinuousRefresh
+            // 
+            this.TIMER_ContinuousRefresh.Interval = 3000;
+            this.TIMER_ContinuousRefresh.Tick += new System.EventHandler(this.TIMER_ContinuousRefresh_Tick);
+            // 
             // CheckerMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1134, 593);
+            this.Controls.Add(this.pb_RefreshProcess);
             this.Controls.Add(this.pb_SoftPedia);
             this.Controls.Add(this.pb_ListFilterClear);
             this.Controls.Add(this.tb_ListFilter);
@@ -1697,7 +1704,6 @@
             this.Controls.Add(this.num_RefreshInterval);
             this.Controls.Add(this.btn_Terminate);
             this.Controls.Add(this.lbl_ProgressCount);
-            this.Controls.Add(this.pb_Progress);
             this.Controls.Add(this.lbl_Version);
             this.Controls.Add(this.lbl_Copyright);
             this.Controls.Add(this.pb_Progress_Init);
@@ -1723,7 +1729,6 @@
             this.groupBox_EndpointSelection.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_PingTimeout)).EndInit();
             this.lv_Endpoints_ContextMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pb_Progress)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Progress_Init)).EndInit();
             this.groupBox_Export.ResumeLayout(false);
             this.groupBox_Export.PerformLayout();
@@ -1736,6 +1741,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_AppWebPage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_SoftPedia)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1806,7 +1812,6 @@
         public System.Windows.Forms.CheckBox cb_AllowAutoRedirect;
         public System.Windows.Forms.Label lbl_Copyright;
         public System.Windows.Forms.Label lbl_Version;
-        public System.Windows.Forms.PictureBox pb_Progress;
         public System.Windows.Forms.Label lbl_AutomaticRefresh;
         public System.Windows.Forms.Label lbl_FTPRequestTimeout;
         public System.Windows.Forms.CheckBox cb_RefreshAutoSet;
@@ -1863,6 +1868,8 @@
         public System.Windows.Forms.ToolStripMenuItem tray_SpeedTest;
         public System.Windows.Forms.CheckBox cb_PingHost;
         public System.Windows.Forms.CheckBox cb_DNSAndMACLookupOnHost;
+        public System.Windows.Forms.PictureBox pb_RefreshProcess;
+        public System.Windows.Forms.Timer TIMER_ContinuousRefresh;
     }
 }
 

@@ -171,27 +171,25 @@ namespace EndpointChecker
                 // NO DISTANCE, SAME CITY/COUNTRY
                 lbl_SpeedTest_Distance_Value.Text =
                     "Right Here (" +
-                    ipInfo.City +
+                    GetStringCorrectEncoding(ipInfo.City) +
                     "/" +
-                    ipInfo.Country_Name +
+                    GetStringCorrectEncoding(ipInfo.Country_Name) +
                     ")";
             }
             else
             {
                 // CONCRETE DISTANCE
                 lbl_SpeedTest_Distance_Value.Text =
-                (int)targetServer.Distance / 1000 +
-                " km (from '" +
-                GetStringCorrectEncoding(
-                    ipInfo.City +
+                    (int)targetServer.Distance / 1000 +
+                    " km (from '" +
+                    GetStringCorrectEncoding(ipInfo.City) +
                     "/" +
-                    ipInfo.Country_Name) +
-                "' to '" +
-                GetStringCorrectEncoding(
-                    targetServer.Name +
+                    GetStringCorrectEncoding(ipInfo.Country_Name) +
+                    "' to '" +
+                    GetStringCorrectEncoding(targetServer.Name) +
                     "/" +
-                    targetServer.Country) +
-                "')";
+                    GetStringCorrectEncoding(targetServer.Country) +
+                    "')";
             }
 
             lbl_SpeedTest_HostedBy_Value.BackColor = Color.LightSkyBlue;
@@ -604,7 +602,13 @@ namespace EndpointChecker
 
         public IEnumerable<Server> GetServers()
         {
+            // GET SPEEDTEST SETTINGS
+            speedTestSettings = speedTestClient.GetSettings();
+
+            // GET SERVERS LIST
             List<Server> serversList = speedTestSettings.Servers.ToList();
+
+            // TEMPORARY WORKING LIST
             List<Server> filteredServersList = new List<Server>();
 
             if (testServerSelectionMode == TestServerSelectionMode.AllServersExceptCurrentCountry)
@@ -613,12 +617,10 @@ namespace EndpointChecker
                 {
                     if (
                         !(serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Name.ToLower())) &&
-                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Code.ToLower())))
+                        !(serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Code.ToLower())) &&
+                        filteredServersList.Count <= maxTestServersCount)
                     {
-                        if (filteredServersList.Count <= maxTestServersCount)
-                        {
-                            filteredServersList.Add(serverItem);
-                        }
+                        filteredServersList.Add(serverItem);
                     }
                 }
             }
@@ -628,12 +630,10 @@ namespace EndpointChecker
                 {
                     if (
                         (serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Name.ToLower())) ||
-                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Code.ToLower())))
+                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Code.ToLower())) &&
+                        filteredServersList.Count <= maxTestServersCount)
                     {
-                        if (filteredServersList.Count <= maxTestServersCount)
-                        {
-                            filteredServersList.Add(serverItem);
-                        }
+                        filteredServersList.Add(serverItem);
                     }
                 }
             }

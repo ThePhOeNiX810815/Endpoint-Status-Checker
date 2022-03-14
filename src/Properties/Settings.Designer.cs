@@ -1043,5 +1043,17 @@ namespace EndpointChecker.Properties {
                 this["Config_DNSAndMACLookupOnHost"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoUpdate_AutoUpdateInFuture {
+            get {
+                return ((bool)(this["AutoUpdate_AutoUpdateInFuture"]));
+            }
+            set {
+                this["AutoUpdate_AutoUpdateInFuture"] = value;
+            }
+        }
     }
 }

@@ -38,6 +38,7 @@
             this.btn_RemindMeLater = new System.Windows.Forms.Button();
             this.lbl_ReleaseNotesBackground = new System.Windows.Forms.Label();
             this.rtb_ReleaseNotes = new System.Windows.Forms.RichTextBox();
+            this.cb_FutureAutoUpdate = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pb_UpdateLogo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -50,6 +51,7 @@
             this.pb_UpdateLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pb_UpdateLogo.TabIndex = 0;
             this.pb_UpdateLogo.TabStop = false;
+            this.pb_UpdateLogo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Controls_MouseDown);
             // 
             // lbl_NewVersion
             // 
@@ -63,6 +65,7 @@
             this.lbl_NewVersion.TabIndex = 1;
             this.lbl_NewVersion.Text = "A new version of <AppName> is available!";
             this.lbl_NewVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lbl_NewVersion.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Controls_MouseDown);
             // 
             // lbl_NewVersionDetail
             // 
@@ -77,6 +80,7 @@
             this.lbl_NewVersionDetail.Text = "<AppName> <UpdateVersion> is now available. You have version <AppVersion>. Would " +
     "you like to download it now ?";
             this.lbl_NewVersionDetail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lbl_NewVersionDetail.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Controls_MouseDown);
             // 
             // lbl_ReleaseNotes
             // 
@@ -90,6 +94,7 @@
             this.lbl_ReleaseNotes.TabIndex = 3;
             this.lbl_ReleaseNotes.Text = "Release Notes:";
             this.lbl_ReleaseNotes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lbl_ReleaseNotes.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Controls_MouseDown);
             // 
             // btn_SkipThisVersion
             // 
@@ -97,7 +102,7 @@
             this.btn_SkipThisVersion.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_SkipThisVersion.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btn_SkipThisVersion.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_SkipThisVersion.Location = new System.Drawing.Point(126, 490);
+            this.btn_SkipThisVersion.Location = new System.Drawing.Point(126, 497);
             this.btn_SkipThisVersion.Name = "btn_SkipThisVersion";
             this.btn_SkipThisVersion.Size = new System.Drawing.Size(180, 29);
             this.btn_SkipThisVersion.TabIndex = 5;
@@ -111,7 +116,7 @@
             this.btn_InstallUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_InstallUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btn_InstallUpdate.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_InstallUpdate.Location = new System.Drawing.Point(651, 490);
+            this.btn_InstallUpdate.Location = new System.Drawing.Point(651, 497);
             this.btn_InstallUpdate.Name = "btn_InstallUpdate";
             this.btn_InstallUpdate.Size = new System.Drawing.Size(180, 29);
             this.btn_InstallUpdate.TabIndex = 6;
@@ -125,7 +130,7 @@
             this.btn_RemindMeLater.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_RemindMeLater.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btn_RemindMeLater.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_RemindMeLater.Location = new System.Drawing.Point(455, 490);
+            this.btn_RemindMeLater.Location = new System.Drawing.Point(455, 497);
             this.btn_RemindMeLater.Name = "btn_RemindMeLater";
             this.btn_RemindMeLater.Size = new System.Drawing.Size(180, 29);
             this.btn_RemindMeLater.TabIndex = 7;
@@ -139,7 +144,7 @@
             this.lbl_ReleaseNotesBackground.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_ReleaseNotesBackground.Location = new System.Drawing.Point(126, 111);
             this.lbl_ReleaseNotesBackground.Name = "lbl_ReleaseNotesBackground";
-            this.lbl_ReleaseNotesBackground.Size = new System.Drawing.Size(705, 366);
+            this.lbl_ReleaseNotesBackground.Size = new System.Drawing.Size(705, 341);
             this.lbl_ReleaseNotesBackground.TabIndex = 8;
             // 
             // rtb_ReleaseNotes
@@ -149,20 +154,34 @@
             this.rtb_ReleaseNotes.Cursor = System.Windows.Forms.Cursors.Default;
             this.rtb_ReleaseNotes.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtb_ReleaseNotes.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.rtb_ReleaseNotes.Location = new System.Drawing.Point(156, 136);
+            this.rtb_ReleaseNotes.Location = new System.Drawing.Point(137, 122);
             this.rtb_ReleaseNotes.Name = "rtb_ReleaseNotes";
             this.rtb_ReleaseNotes.ReadOnly = true;
-            this.rtb_ReleaseNotes.Size = new System.Drawing.Size(648, 316);
+            this.rtb_ReleaseNotes.Size = new System.Drawing.Size(683, 319);
             this.rtb_ReleaseNotes.TabIndex = 9;
             this.rtb_ReleaseNotes.Text = "";
             this.rtb_ReleaseNotes.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.rtb_ReleaseNotes_LinkClicked);
+            // 
+            // cb_FutureAutoUpdate
+            // 
+            this.cb_FutureAutoUpdate.AutoSize = true;
+            this.cb_FutureAutoUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cb_FutureAutoUpdate.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_FutureAutoUpdate.ForeColor = System.Drawing.Color.White;
+            this.cb_FutureAutoUpdate.Location = new System.Drawing.Point(126, 460);
+            this.cb_FutureAutoUpdate.Name = "cb_FutureAutoUpdate";
+            this.cb_FutureAutoUpdate.Size = new System.Drawing.Size(419, 22);
+            this.cb_FutureAutoUpdate.TabIndex = 10;
+            this.cb_FutureAutoUpdate.Text = "Automatically download and install updates in the future";
+            this.cb_FutureAutoUpdate.UseVisualStyleBackColor = true;
             // 
             // NewVersionDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(843, 534);
+            this.ClientSize = new System.Drawing.Size(843, 537);
+            this.Controls.Add(this.cb_FutureAutoUpdate);
             this.Controls.Add(this.rtb_ReleaseNotes);
             this.Controls.Add(this.btn_RemindMeLater);
             this.Controls.Add(this.btn_InstallUpdate);
@@ -177,13 +196,17 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(843, 537);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(843, 537);
             this.Name = "NewVersionDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Software Update";
             this.TopMost = true;
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Controls_MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.pb_UpdateLogo)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -198,5 +221,6 @@
         public System.Windows.Forms.Button btn_RemindMeLater;
         public System.Windows.Forms.Label lbl_ReleaseNotesBackground;
         public System.Windows.Forms.RichTextBox rtb_ReleaseNotes;
+        public System.Windows.Forms.CheckBox cb_FutureAutoUpdate;
     }
 }

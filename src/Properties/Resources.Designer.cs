@@ -573,6 +573,16 @@ namespace EndpointChecker.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap loadingProgress_Violet {
+            get {
+                object obj = ResourceManager.GetObject("loadingProgress_Violet", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap loadingProgressSmall {
             get {
                 object obj = ResourceManager.GetObject("loadingProgressSmall", resourceCulture);

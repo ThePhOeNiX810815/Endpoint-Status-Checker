@@ -266,6 +266,7 @@
     <Content Include="Images\linkStatus_Valid.png" />
     <Content Include="Images\link_16x16.png" />
     <Content Include="Images\loading-colorful.gif" />
+    <Content Include="Images\loadingProgress_Violet.gif" />
     <Content Include="Images\location.png" />
     <Content Include="Images\main.png" />
     <Content Include="Images\microsoft.png" />
@@ -334,7 +335,7 @@
     <Content Include="Images\wmiClass.png" />
     <Content Include="Images\wmiProperty.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />  
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

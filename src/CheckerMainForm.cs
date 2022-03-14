@@ -175,6 +175,9 @@ namespace EndpointChecker
             ThreadPool.GetMinThreads(out minWorker, out minIOC);
             ThreadPool.SetMinThreads(100, minIOC);
 
+            // MAIN PROCESS PRIORITY
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+
             // GET LOCAL DNS AND GATEWAY SERVERS IP AND MAC ADDRESSES [ON BACKGROUND]
             NewBackgroundThread(() =>
             {
@@ -776,7 +779,6 @@ namespace EndpointChecker
                             {
                                 // INCREMENT PROGRESS COUNTER
                                 Interlocked.Increment(ref endpointsCount_Current);
-
                                 Application.DoEvents();
 
                                 // SET PROGRESS STATUS LABEL
@@ -2311,7 +2313,7 @@ namespace EndpointChecker
             btn_Terminate.Enabled = inProgress && locked;
             lbl_Terminate.Enabled = inProgress && locked;
             lbl_ProgressCount.Visible = inProgress && locked;
-            pb_Progress.Visible = inProgress && locked && lv_Endpoints.Visible;
+            pb_RefreshProcess.Visible = inProgress && locked && lv_Endpoints.Visible;
 
             // NOT VISIBLE OR ENABLED DURING PROGRESS
             SetCheckButtons(!inProgress && !locked);
@@ -2457,9 +2459,9 @@ namespace EndpointChecker
                 lbl_LastUpdate_Label.Visible = true;
 
                 // CONTINUOUS REFRESH
-                if (cb_ContinuousRefresh.Checked && btn_Refresh.Enabled)
+                if (cb_ContinuousRefresh.Checked)
                 {
-                    btn_Refresh_Click(this, null);
+                    TIMER_ContinuousRefresh.Start();
                 }
             }
             else
@@ -2544,16 +2546,50 @@ namespace EndpointChecker
                         }
                     }
 
-                    SetTrayTooltipText(Environment.NewLine +
-                                       "Refresh: " + num_RefreshInterval.Value + " " + lbl_TimerIntervalMinutesText.Text +
-                                       Environment.NewLine +
-                                       "Not Checked: " + itemsNotCheckedCount +
-                                       Environment.NewLine +
-                                       "Available: " + itemsOKCount +
-                                       Environment.NewLine +
-                                       "Warnings: " + itemsWarning.Count +
-                                       Environment.NewLine +
-                                       "Errors: " + itemsError.Count);
+                    string toolTipText = Environment.NewLine;
+
+                    if (!string.IsNullOrEmpty(lbl_LastUpdate.Text))
+                    {
+                        toolTipText += "Last Refresh: " + lbl_LastUpdate.Text;
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    if (cb_AutomaticRefresh.Checked)
+                    {
+                        toolTipText += "Auto Refresh: every " + num_RefreshInterval.Value + " " + lbl_TimerIntervalMinutesText.Text;
+                        toolTipText += Environment.NewLine;
+                    }
+                    else if (cb_ContinuousRefresh.Checked)
+                    {
+                        toolTipText += "Continuous Refresh Mode";
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    if (itemsNotCheckedCount > 0)
+                    {
+                        toolTipText += "Not Checked: " + itemsNotCheckedCount;
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    if (itemsOKCount > 0)
+                    {
+                        toolTipText += "Success: " + itemsOKCount;
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    if (itemsWarning.Count > 0)
+                    {
+                        toolTipText += "Warnings: " + itemsWarning.Count;
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    if (itemsError.Count > 0)
+                    {
+                        toolTipText += "ERRORs: " + itemsError.Count;
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    SetTrayTooltipText(toolTipText);
 
                     if (!cb_AutomaticRefresh.Checked && !cb_ContinuousRefresh.Checked)
                     {
@@ -2562,7 +2598,7 @@ namespace EndpointChecker
 
                         SetTrayTooltipText(
                                            Environment.NewLine +
-                                           "Endpoints list Automatic / Continuous Refresh Disabled");
+                                           "Endpoints List Automatic / Continuous Refresh Disabled");
                     }
                     else if (itemsError.Count > 0)
                     {
@@ -3471,24 +3507,24 @@ namespace EndpointChecker
 
             SaveConfiguration();
 
-            if (cb_ContinuousRefresh.Checked && btn_Refresh.Enabled)
+            if (cb_ContinuousRefresh.Checked)
             {
-                btn_Refresh_Click(this, null);
+                TIMER_ContinuousRefresh.Start();
             }
         }
 
         public void btn_Terminate_Click(object sender, EventArgs e)
         {
+            // DISABLE 'AUTO REFRESH' OPTIONS
+            cb_AutomaticRefresh.Checked = false;
+            cb_ContinuousRefresh.Checked = false;
+
             // DISABLE ITSELF
             btn_Terminate.Enabled = false;
             lbl_Terminate.Enabled = false;
 
             // TERMINATE WORKER
             BW_GetStatus.CancelAsync();
-
-            // DISABLE AUTOMATIC / CONTINUOUS CHECKING
-            cb_AutomaticRefresh.Checked = false;
-            cb_ContinuousRefresh.Checked = false;
 
             SetProgressStatus(0, 0);
         }
@@ -4246,6 +4282,12 @@ namespace EndpointChecker
                     {
                         btn_Refresh_Click(this, null);
                     });
+                }
+
+                // CONTINUOUS REFRESH
+                if (cb_ContinuousRefresh.Checked)
+                {
+                    TIMER_ContinuousRefresh.Start();
                 }
             });
         }
@@ -5377,6 +5419,8 @@ namespace EndpointChecker
         public void tb_ListFilter_TextChanged(object sender, EventArgs e)
         {
             ListEndpoints(ListViewRefreshMethod.CurrentState);
+
+            RefreshTrayIcon();
         }
 
         public void pb_ListFilterClear_Click(object sender, EventArgs e)
@@ -5460,6 +5504,17 @@ namespace EndpointChecker
         public void cb_DNSLookupOnHost_CheckedChanged(object sender, EventArgs e)
         {
             SaveConfiguration();
+        }
+
+        public void TIMER_ContinuousRefresh_Tick(object sender, EventArgs e)
+        {
+            if (btn_Refresh.Enabled &&
+                dialog_SpeedTest == null &&
+                dialog_EndpointDetails == null)
+            {
+                TIMER_ContinuousRefresh.Enabled = false;
+                btn_Refresh_Click(this, null);
+            }
         }
     }
 

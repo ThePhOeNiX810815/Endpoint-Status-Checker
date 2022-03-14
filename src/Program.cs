@@ -95,8 +95,7 @@ namespace EndpointChecker
         public static Assembly app_Assembly = Assembly.GetExecutingAssembly();
         public static Version app_Version = app_Assembly.GetName().Version;
         public static string app_VersionString = GetVersionString(app_Version, true, false);
-        public static bool app_IsOriginalSignedExecutable = IsOriginalSignedExecutable();
-
+        
         public static string os_VersionString =
             (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion", "ProductName", null) +
             " " +
@@ -167,12 +166,16 @@ namespace EndpointChecker
         public static long http_SaveResponse_MaxLenght_Bytes;
 
         // AUTO UPDATE VARIABLES
+        public static bool app_AutoUpdate_AutoUpdateInFuture;
         public static Version app_AutoUpdate_SkipVersion;
         public static bool app_AutoUpdate = false;
         public static Version app_LatestPackageVersion = new Version(0, 0, 0, 0);
         public static string app_LatestPackageLink = string.Empty;
         public static string app_LatestPackageDate = string.Empty;
         public static string app_LatestPackageReleaseNotes_RTF = string.Empty;
+
+        // SIGNING CERTIFICATE
+        public static bool app_IsOriginalSignedExecutable = IsOriginalSignedExecutable();
 
         /// <summary>
         /// The main entry point for the application.
@@ -198,7 +201,9 @@ namespace EndpointChecker
             http_Sec_CH_UserAgent = Settings.Default.Config_HTTP_Sec_CH_UserAgent;
             http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
             app_AutoUpdate_SkipVersion = new Version(Settings.Default.AutoUpdate_SkipVersion);
+            app_AutoUpdate_AutoUpdateInFuture = Settings.Default.AutoUpdate_AutoUpdateInFuture;
 
+            // APP SETTINGS
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
@@ -436,17 +441,31 @@ namespace EndpointChecker
                     if (app_LatestPackageVersion > app_Version &&
                         app_LatestPackageVersion > app_AutoUpdate_SkipVersion)
                     {
-                        // SHOW NEW VERSION DIALOG
-                        NewVersionDialog newVersionDialog = new NewVersionDialog();
-                        newVersionDialog.ShowDialog();
-
-                        if (newVersionDialog.updateNow)
+                        if (app_AutoUpdate_AutoUpdateInFuture)
                         {
+                            // AUTO UPDATE
                             app_AutoUpdate = true;
                         }
-                        else if (newVersionDialog.updateSkip)
+                        else
                         {
-                            Settings.Default.AutoUpdate_SkipVersion = app_LatestPackageVersion.ToString();
+                            // SHOW NEW VERSION DIALOG
+                            NewVersionDialog newVersionDialog = new NewVersionDialog();
+                            newVersionDialog.ShowDialog();
+
+                            if (newVersionDialog.updateInFuture)
+                            {
+                                Settings.Default.AutoUpdate_AutoUpdateInFuture = true;
+                                Settings.Default.Save();
+                            }
+
+                            if (newVersionDialog.updateNow)
+                            {
+                                app_AutoUpdate = true;
+                            }
+                            else if (newVersionDialog.updateSkip)
+                            {
+                                Settings.Default.AutoUpdate_SkipVersion = app_LatestPackageVersion.ToString();
+                            }
                         }
                     }
                 }
@@ -463,13 +482,13 @@ namespace EndpointChecker
             try
             {
                 // GET SIGNING CERT
-                X509Certificate app_Certificate = X509Certificate.CreateFromSignedFile(app_Assembly.Location);
+                X509Certificate2 app_SigningAuthCertificate = new X509Certificate2(X509Certificate.CreateFromSignedFile(app_Assembly.Location));
 
                 // VALIDATE SIGNING CERT
                 isOriginalSignedExecutable =
-                    app_Certificate.GetSerialNumberString().Equals("4C0D5A65225EE4A0") &&
-                    app_Certificate.Issuer.Equals("CN=Peter Machaj Root CA") &&
-                    app_Certificate.Subject.Equals("CN=Peter Machaj");
+                    app_SigningAuthCertificate.GetSerialNumberString().Equals("4C0D5A65225EE4A0") &&
+                    app_SigningAuthCertificate.Issuer.Equals("CN=Peter Machaj Root CA") &&
+                    app_SigningAuthCertificate.Subject.Equals("CN=Peter Machaj");
             }
             catch
             {

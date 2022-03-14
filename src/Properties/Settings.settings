@@ -257,5 +257,8 @@
     <Setting Name="Config_DNSAndMACLookupOnHost" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="AutoUpdate_AutoUpdateInFuture" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
