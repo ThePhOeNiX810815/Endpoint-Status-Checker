@@ -1019,5 +1019,41 @@ namespace EndpointChecker.Properties {
                 this["ListView_Filter"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Config_PingHost {
+            get {
+                return ((bool)(this["Config_PingHost"]));
+            }
+            set {
+                this["Config_PingHost"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Config_DNSAndMACLookupOnHost {
+            get {
+                return ((bool)(this["Config_DNSAndMACLookupOnHost"]));
+            }
+            set {
+                this["Config_DNSAndMACLookupOnHost"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoUpdate_AutoUpdateInFuture {
+            get {
+                return ((bool)(this["AutoUpdate_AutoUpdateInFuture"]));
+            }
+            set {
+                this["AutoUpdate_AutoUpdateInFuture"] = value;
+            }
+        }
     }
 }

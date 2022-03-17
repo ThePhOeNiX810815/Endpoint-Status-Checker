@@ -49,7 +49,6 @@ namespace EndpointChecker
             // 
             // TIMER_StartFading
             // 
-            this.TIMER_StartFading.Enabled = true;
             this.TIMER_StartFading.Interval = 5000;
             this.TIMER_StartFading.Tick += new System.EventHandler(this.TIMER_StartFading_Tick);
             // 

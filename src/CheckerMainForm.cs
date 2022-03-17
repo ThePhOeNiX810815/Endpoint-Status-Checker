@@ -175,6 +175,9 @@ namespace EndpointChecker
             ThreadPool.GetMinThreads(out minWorker, out minIOC);
             ThreadPool.SetMinThreads(100, minIOC);
 
+            // MAIN PROCESS PRIORITY
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+
             // GET LOCAL DNS AND GATEWAY SERVERS IP AND MAC ADDRESSES [ON BACKGROUND]
             NewBackgroundThread(() =>
             {
@@ -194,6 +197,7 @@ namespace EndpointChecker
             // ASSIGN RESIZED IMAGES TO TRAY CONTEXT MENU STRIP ITEMS
             tray_Exit.Image = ResizeImage(Resources.error.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_Refresh.Image = ResizeImage(Resources.refresh.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
+            tray_SpeedTest.Image = ResizeImage(Resources.speedTest.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
 
             // SET VERSION / BUILD LABELS
             Text = app_Title;
@@ -400,6 +404,8 @@ namespace EndpointChecker
                     cb_RemoveURLParameters.Checked = Settings.Default.Config_RemoveURLParameters;
                     cb_ResolvePageLinks.Checked = Settings.Default.Config_ResolvePageLinks;
                     cb_SaveResponse.Checked = Settings.Default.Config_SaveResponse;
+                    cb_DNSAndMACLookupOnHost.Checked = Settings.Default.Config_DNSAndMACLookupOnHost;
+                    cb_PingHost.Checked = Settings.Default.Config_PingHost;
 
                     cb_RefreshOnStartup.Checked = app_ScanOnStartup;
 
@@ -457,6 +463,8 @@ namespace EndpointChecker
                     Settings.Default.Config_ResolvePageMetaInfo = cb_ResolvePageMetaInfo.Checked;
                     Settings.Default.Config_RemoveURLParameters = cb_RemoveURLParameters.Checked;
                     Settings.Default.Config_ResolvePageLinks = cb_ResolvePageLinks.Checked;
+                    Settings.Default.Config_DNSAndMACLookupOnHost = cb_DNSAndMACLookupOnHost.Checked;
+                    Settings.Default.Config_PingHost = cb_PingHost.Checked;
                     Settings.Default.Config_SaveResponse = cb_SaveResponse.Checked;
                     Settings.Default.VirusTotal_API_Key = apiKey_VirusTotal;
                     Settings.Default.GoogleMaps_API_Key = apiKey_GoogleMaps;
@@ -641,7 +649,7 @@ namespace EndpointChecker
 
         public void bw_GetStatus_DoWork(object sender, DoWorkEventArgs e)
         {
-            SetProgressStatus(0, 0, "Initializing process ...", Color.DarkOrchid);
+            SetProgressStatus(0, 0, "Initializing Endpoints Status refresh ...", Color.DarkOrchid);
 
             // WORKING VARIABLES
             ConcurrentBag<EndpointDefinition> updatedEndpointsList = new ConcurrentBag<EndpointDefinition>();
@@ -653,6 +661,8 @@ namespace EndpointChecker
             bool removeURLParameters = cb_RemoveURLParameters.Checked;
             bool resolvePageLinks = cb_ResolvePageLinks.Checked;
             bool saveResponse = cb_SaveResponse.Checked;
+            bool pingHost = cb_PingHost.Checked;
+            bool dnsLookupOnHost = cb_DNSAndMACLookupOnHost.Checked;
             int threadsCount = (int)num_ParallelThreadsCount.Value;
             int pingTimeout = (int)num_PingTimeout.Value * 1000;
             int httpRequestTimeout = (int)num_HTTPRequestTimeout.Value * 1000;
@@ -676,6 +686,16 @@ namespace EndpointChecker
                                                    (SecurityProtocolType)0x3000;
 
             ServicePointManager.Expect100Continue = true;
+
+            if (validateSSLCertificate)
+            {   // VALIDATE SERVER CERTIFICATE [HTTPS]
+                ServicePointManager.ServerCertificateValidationCallback = null;
+            }
+            else
+            {
+                // BYPASS SERVER CERTIFICATE VALIDATION
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            }
 
             // ADJUST THREADS COUNT SETTING BY ENABLED ITEMS COUNT [IF LESS]
             if (endpointsCount_Enabled > 0 &&
@@ -773,10 +793,11 @@ namespace EndpointChecker
                                     (endpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
                                      endpoint.Protocol.ToLower() == Uri.UriSchemeHttps))
                                 {
-                                    // MANUAL AUTO-REDIRECT SWITCH [BY 'LOCATION' HEADER OF '301' OR '302' RESPONSE CODE]
+                                    // AUTO-REDIRECT SWITCH [BY 'LOCATION' HEADER OF '3xx' RESPONSE CODE]
                                     bool autoRedirect_Followed = false;
 
                                     // HTTP OR HTTPS PROTOCOL SCHEME
+                                    HttpWebRequest httpWebRequest = null;
                                     HttpWebResponse httpWebResponse = null;
 
                                     // START STOPWATCH FOR ITEM CHECK DURATION
@@ -786,7 +807,7 @@ namespace EndpointChecker
                                     try
                                     {
                                         // PREPARE WEBREQUEST
-                                        HttpWebRequest httpWebRequest = PrepareHTTPWebRequest(
+                                        httpWebRequest = PrepareHTTPWebRequest(
                                             endpoint,
                                             endpointURI,
                                             httpRequestTimeout,
@@ -799,10 +820,8 @@ namespace EndpointChecker
                                             // TRY TO GET RESPONSE
                                             httpWebResponse = GetHTTPWebResponse(httpWebRequest, 3);
 
-                                            // HANDLE POSSIBLE REDIRECT [301, 302]
-                                            if (autoRedirect_Enable &&
-                                                ((int)httpWebResponse.StatusCode == 301 ||
-                                                 (int)httpWebResponse.StatusCode == 302))
+                                            // HANDLE POSSIBLE REDIRECT [3xx]
+                                            if (autoRedirect_Enable && ((int)httpWebResponse.StatusCode).ToString().StartsWith("3"))
                                             {
                                                 throw new WebException(
                                                     "HTTP Response Code: " + (int)httpWebResponse.StatusCode,
@@ -815,11 +834,10 @@ namespace EndpointChecker
                                         {
                                             HttpWebResponse _httpWebResponse = wEX.Response as HttpWebResponse;
 
-                                            // IF RESULT CODE IS '301' OR '302', DO A SECOND CALL ON 'LOCATION'
+                                            // IF RESULT CODE IS '3xx', DO A SECOND CALL ON 'LOCATION'
                                             if (autoRedirect_Enable &&
                                                 _httpWebResponse != null &&
-                                                ((int)_httpWebResponse.StatusCode == 301 ||
-                                                 (int)_httpWebResponse.StatusCode == 302) &&
+                                                ((int)_httpWebResponse.StatusCode).ToString().StartsWith("3") &&
                                                 _httpWebResponse.Headers.AllKeys.Contains("Location") &&
                                                 !string.IsNullOrEmpty(_httpWebResponse.GetResponseHeader("Location")))
                                             {
@@ -861,31 +879,7 @@ namespace EndpointChecker
                                         GetHTTPWebHeaders(endpoint.HTTPResponseHeaders.PropertyItem, httpWebResponse.Headers);
 
                                         // GET SSL INFO
-                                        if (validateSSLCertificate &&
-                                            httpWebRequest.ServicePoint.Certificate != null)
-                                        {
-                                            try
-                                            {
-                                                X509Certificate2 sslCert2 = new X509Certificate2(httpWebRequest.ServicePoint.Certificate);
-
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Archived", ItemValue = sslCert2.Archived.ToString() });
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Has Private Key", ItemValue = sslCert2.HasPrivateKey.ToString() });
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid To", ItemValue = sslCert2.NotAfter.ToString() });
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid From", ItemValue = sslCert2.NotBefore.ToString() });
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Version", ItemValue = sslCert2.Version.ToString() });
-                                                endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Public Key", ItemValue = sslCert2.GetPublicKeyString() });
-
-                                                if (!string.IsNullOrEmpty(sslCert2.SignatureAlgorithm.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Signature Algorithm", ItemValue = sslCert2.SignatureAlgorithm.FriendlyName }); };
-                                                if (!string.IsNullOrEmpty(sslCert2.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Friendly Name", ItemValue = sslCert2.FriendlyName }); };
-                                                if (!string.IsNullOrEmpty(sslCert2.Issuer)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Issuer Name", ItemValue = sslCert2.Issuer }); };
-                                                if (!string.IsNullOrEmpty(sslCert2.SerialNumber)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Serial Number", ItemValue = sslCert2.SerialNumber }); };
-                                                if (!string.IsNullOrEmpty(sslCert2.Subject)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Subject", ItemValue = sslCert2.Subject }); };
-                                                if (!string.IsNullOrEmpty(sslCert2.Thumbprint)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Thumbprint", ItemValue = sslCert2.Thumbprint }); };
-                                            }
-                                            catch
-                                            {
-                                            }
-                                        }
+                                        GetSSLCertificateInfo(httpWebRequest, endpoint);
 
                                         responseURI = httpWebResponse.ResponseUri;
                                         endpoint.Port = responseURI.Port.ToString();
@@ -1067,6 +1061,9 @@ namespace EndpointChecker
 
                                             // GET RESPONSE HEADERS
                                             GetHTTPWebHeaders(endpoint.HTTPResponseHeaders.PropertyItem, httpWebResponse.Headers);
+
+                                            // GET SSL INFO
+                                            GetSSLCertificateInfo(httpWebRequest, endpoint);
                                         }
                                         else
                                         {
@@ -1215,70 +1212,6 @@ namespace EndpointChecker
                                 {
                                     try
                                     {
-                                        List<string> endpointIPAddressesStringList = new List<string>();
-                                        List<string> endpointDNSNamesStringList = new List<string>();
-                                        List<string> endpointMACAddressStringList = new List<string>();
-
-                                        // RESOLVE IP ADDRESS(ES)
-                                        foreach (IPAddress endpointIPAddress in Dns.GetHostAddresses(responseURI.Host))
-                                        {
-                                            if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
-                                            {
-                                                endpointIPAddressesStringList.Add(endpointIPAddress.ToString());
-
-                                                try
-                                                {
-                                                    // RESOLVE DNS NAME(S)
-                                                    IPHostEntry hostEntry = Dns.GetHostEntry(endpointIPAddress);
-                                                    endpointDNSNamesStringList.Add(hostEntry.HostName);
-                                                }
-                                                catch
-                                                {
-                                                }
-
-                                                try
-                                                {
-                                                    // RESOLVE MAC ADDRESS(ES)
-                                                    string macAddress = GetMACAddress(endpointIPAddress);
-
-                                                    // IF ENDPOINT IP ADDRESS IS NOT LOCAL OR
-                                                    // RESOLVED MAC IS NOT MAC ADDRESS OF ANY DNS SERVER OR DEFAULT GATEWAY
-                                                    if (!string.IsNullOrEmpty(macAddress) &&
-                                                       (!localDNSAndGWMACAddresses.Contains(macAddress) ||
-                                                        localDNSAndGWIPAddresses.Contains(endpointIPAddress.ToString())))
-                                                    {
-                                                        endpointMACAddressStringList.Add(macAddress);
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                }
-                                            }
-                                        }
-
-                                        // SORT IP ADDRESS(ES) LIST
-                                        if (endpointIPAddressesStringList.Count > 0)
-                                        {
-                                            endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
-                                        }
-
-                                        // SORT DNS NAME(S) LIST
-                                        if (endpointDNSNamesStringList.Count > 0)
-                                        {
-                                            endpoint.DNSName = endpointDNSNamesStringList.ToArray();
-                                        }
-                                        else if (!Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
-                                        {
-                                            // ORIGINAL URL IS NOT IP ADDRESS, GET HOSTNAME
-                                            endpoint.DNSName = new string[] { responseURI.Host };
-                                        }
-
-                                        // SORT MAC ADDRESS(ES) LIST
-                                        if (endpointMACAddressStringList.Count > 0)
-                                        {
-                                            endpoint.MACAddress = endpointMACAddressStringList.ToArray();
-                                        }
-
                                         // RESOLVE NETWORK SHARES
                                         if (resolveNetworkShares)
                                         {
@@ -1287,6 +1220,85 @@ namespace EndpointChecker
                                             {
                                                 netSharesList.Sort();
                                                 endpoint.NetworkShare = netSharesList.ToArray();
+                                            }
+                                        }
+
+                                        // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, BY REGEX]
+                                        if (Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
+                                        {
+                                            // IS IP ADDRESS
+                                            endpoint.IPAddress = new string[] { responseURI.Host };
+                                        }
+                                        else
+                                        {
+                                            // IS DNS NAME
+                                            endpoint.DNSName = new string[] { responseURI.Host };
+                                        }
+
+                                        // DNS / MAC LOOKUP
+                                        if (dnsLookupOnHost)
+                                        {
+                                            List<string> endpointIPAddressesStringList = new List<string>();
+                                            List<string> endpointDNSNamesStringList = new List<string>();
+                                            List<string> endpointMACAddressStringList = new List<string>();
+
+                                            foreach (IPAddress endpointIPAddress in Dns.GetHostAddresses(responseURI.Host))
+                                            {
+                                                if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
+                                                {
+                                                    endpointIPAddressesStringList.Add(endpointIPAddress.ToString());
+
+                                                    try
+                                                    {
+                                                        // RESOLVE DNS NAME(S)
+                                                        IPHostEntry hostEntry = Dns.GetHostEntry(endpointIPAddress);
+                                                        endpointDNSNamesStringList.Add(hostEntry.HostName);
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
+
+                                                    try
+                                                    {
+                                                        // RESOLVE MAC ADDRESS(ES)
+                                                        string macAddress = GetMACAddress(endpointIPAddress);
+
+                                                        // IF ENDPOINT IP ADDRESS IS NOT LOCAL OR
+                                                        // RESOLVED MAC IS NOT MAC ADDRESS OF ANY DNS SERVER OR DEFAULT GATEWAY
+                                                        if (!string.IsNullOrEmpty(macAddress) &&
+                                                           (!localDNSAndGWMACAddresses.Contains(macAddress) ||
+                                                            localDNSAndGWIPAddresses.Contains(endpointIPAddress.ToString())))
+                                                        {
+                                                            endpointMACAddressStringList.Add(macAddress);
+                                                        }
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
+                                                }
+                                            }
+
+                                            // SORT IP ADDRESS(ES) LIST
+                                            if (endpointIPAddressesStringList.Count > 0)
+                                            {
+                                                endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
+                                            }
+
+                                            // SORT DNS NAME(S) LIST
+                                            if (endpointDNSNamesStringList.Count > 0)
+                                            {
+                                                endpoint.DNSName = endpointDNSNamesStringList.ToArray();
+                                            }
+                                            else if (!Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
+                                            {
+                                                // ORIGINAL URL IS NOT IP ADDRESS, GET HOSTNAME
+                                                endpoint.DNSName = new string[] { responseURI.Host };
+                                            }
+
+                                            // SORT MAC ADDRESS(ES) LIST
+                                            if (endpointMACAddressStringList.Count > 0)
+                                            {
+                                                endpoint.MACAddress = endpointMACAddressStringList.ToArray();
                                             }
                                         }
                                     }
@@ -1300,16 +1312,19 @@ namespace EndpointChecker
                                     // PING HOST
                                     try
                                     {
-                                        if (validationMethod == ValidationMethod.Ping)
+                                        if (validationMethod == ValidationMethod.Ping || pingHost)
                                         {
-                                            endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
-                                        }
+                                            if (validationMethod == ValidationMethod.Ping)
+                                            {
+                                                endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
+                                            }
 
-                                        string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 1);
+                                            string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 1);
 
-                                        if (!string.IsNullOrEmpty(pingRoundtripTime))
-                                        {
-                                            endpoint.PingRoundtripTime = pingRoundtripTime;
+                                            if (!string.IsNullOrEmpty(pingRoundtripTime))
+                                            {
+                                                endpoint.PingRoundtripTime = pingRoundtripTime;
+                                            }
                                         }
                                     }
                                     catch
@@ -1320,8 +1335,6 @@ namespace EndpointChecker
                                 // SET PROGRESS STATUS LABEL
                                 SetProgressStatus(endpointsCount_Enabled, endpointsCount_Current);
                                 Application.DoEvents();
-
-                                GC.Collect();
                             }
                         }
 
@@ -1397,10 +1410,41 @@ namespace EndpointChecker
                                   threadsCount.ToString(),
                                   resolveNetworkShares.ToString(),
                                   resolvePageMetaInfo.ToString(),
-                                  saveResponse.ToString()
+                                  saveResponse.ToString(),
+                                  pingHost.ToString(),
+                                  dnsLookupOnHost.ToString()
                                   );
 
+            // GARBAGE COLLECTOR
             GC.Collect();
+        }
+
+        public void GetSSLCertificateInfo(HttpWebRequest httpWebRequest, EndpointDefinition endpoint)
+        {
+            if (httpWebRequest.ServicePoint.Certificate != null)
+            {
+                try
+                {
+                    X509Certificate2 sslCert2 = new X509Certificate2(httpWebRequest.ServicePoint.Certificate);
+
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Archived", ItemValue = sslCert2.Archived.ToString() });
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Has Private Key", ItemValue = sslCert2.HasPrivateKey.ToString() });
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid To", ItemValue = sslCert2.NotAfter.ToString() });
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Valid From", ItemValue = sslCert2.NotBefore.ToString() });
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Version", ItemValue = sslCert2.Version.ToString() });
+                    endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Public Key", ItemValue = sslCert2.GetPublicKeyString() });
+
+                    if (!string.IsNullOrEmpty(sslCert2.SignatureAlgorithm.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Signature Algorithm", ItemValue = sslCert2.SignatureAlgorithm.FriendlyName }); };
+                    if (!string.IsNullOrEmpty(sslCert2.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Friendly Name", ItemValue = sslCert2.FriendlyName }); };
+                    if (!string.IsNullOrEmpty(sslCert2.Issuer)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Issuer Name", ItemValue = sslCert2.Issuer }); };
+                    if (!string.IsNullOrEmpty(sslCert2.SerialNumber)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Serial Number", ItemValue = sslCert2.SerialNumber }); };
+                    if (!string.IsNullOrEmpty(sslCert2.Subject)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Subject", ItemValue = sslCert2.Subject }); };
+                    if (!string.IsNullOrEmpty(sslCert2.Thumbprint)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Thumbprint", ItemValue = sslCert2.Thumbprint }); };
+                }
+                catch
+                {
+                }
+            }
         }
 
         public HttpWebRequest PrepareHTTPWebRequest(
@@ -1440,6 +1484,7 @@ namespace EndpointChecker
             httpWebRequest.Method = httpWebRequest_Method;
             httpWebRequest.UserAgent = http_UserAgent;
             httpWebRequest.Accept = "*/*";
+            httpWebRequest.Accept = "*/*";
             httpWebRequest.Timeout = httpRequestTimeout;
             httpWebRequest.ReadWriteTimeout = httpRequestTimeout;
             httpWebRequest.AllowAutoRedirect = allowAutoRedirect;
@@ -1449,23 +1494,13 @@ namespace EndpointChecker
             httpWebRequest.AutomaticDecompression = httpWebRequest_DecompressionMethods;
             httpWebRequest.ProtocolVersion = httpWebRequest_ProtocolVersion;
             httpWebRequest.Date = DateTime.Now;
-            httpWebRequest.MaximumAutomaticRedirections = 10;
-
-            if (validateSSLCertificate)
-            {   // VALIDATE SERVER CERTIFICATE [HTTPS]
-                httpWebRequest.ServerCertificateValidationCallback = null;
-            }
-            else
-            {
-                // BYPASS SERVER CERTIFICATE VALIDATION
-                httpWebRequest.ServerCertificateValidationCallback = delegate { return true; };
-            }
+            httpWebRequest.MaximumAutomaticRedirections = 20;
 
             // CUSTOM HEADERS
             WebHeaderCollection requestHeadersCollection = new WebHeaderCollection();
             requestHeadersCollection.Add("EndpointStatusChecker-Token", httpWebRequest_ApplicationGUID.ToString());
-            requestHeadersCollection.Add("Accept-Encoding", "*");
-            requestHeadersCollection.Add("Accept-Language", "*");
+            requestHeadersCollection.Add("Accept-Encoding", "gzip, deflate, br");
+            requestHeadersCollection.Add("Accept-Language", "*;*");
             requestHeadersCollection.Add("Cache-Control", "max-age=0");
             requestHeadersCollection.Add("DNT", "1");
             requestHeadersCollection.Add("Authority", endpointURI.Authority);
@@ -1484,22 +1519,12 @@ namespace EndpointChecker
             httpWebRequest.Headers.Add(requestHeadersCollection);
 
             // SET CREDENTIALS [IF SPECIFIED]
-            string loginName = string.Empty;
-            string loginPass = string.Empty;
-
-            if (endpoint.LoginName != status_NotAvailable)
+            if (endpoint.LoginName != status_NotAvailable &&
+                !string.IsNullOrEmpty(endpoint.LoginName))
             {
-                loginName = endpoint.LoginName;
-            }
-
-            if (endpoint.LoginPass != status_NotAvailable)
-            {
-                loginPass = endpoint.LoginPass;
-            }
-
-            if (loginName != string.Empty)
-            {
-                httpWebRequest.Credentials = new NetworkCredential(loginName, loginPass);
+                httpWebRequest.Credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
+                httpWebRequest.PreAuthenticate = true;
+                httpWebRequest.AuthenticationLevel = System.Net.Security.AuthenticationLevel.MutualAuthRequested;
             }
 
             // GET REQUEST HEADERS
@@ -2288,7 +2313,7 @@ namespace EndpointChecker
             btn_Terminate.Enabled = inProgress && locked;
             lbl_Terminate.Enabled = inProgress && locked;
             lbl_ProgressCount.Visible = inProgress && locked;
-            pb_Progress.Visible = inProgress && locked && lv_Endpoints.Visible;
+            pb_RefreshProcess.Visible = inProgress && locked && lv_Endpoints.Visible;
 
             // NOT VISIBLE OR ENABLED DURING PROGRESS
             SetCheckButtons(!inProgress && !locked);
@@ -2305,6 +2330,8 @@ namespace EndpointChecker
             cb_TrayBalloonNotify.Enabled = !inProgress && !locked;
             cb_AllowAutoRedirect.Enabled = !inProgress && !locked;
             cb_ValidateSSLCertificate.Enabled = !inProgress && !locked;
+            cb_PingHost.Enabled = !inProgress && !locked;
+            cb_DNSAndMACLookupOnHost.Enabled = !inProgress && !locked;
             cb_RefreshAutoSet.Enabled = !inProgress && !locked;
             cb_ResolveNetworkShares.Enabled = !inProgress && !locked;
             cb_ExportEndpointsStatus_XLSX.Enabled = !inProgress && !locked;
@@ -2330,6 +2357,7 @@ namespace EndpointChecker
             lbl_ParallelThreadsCount.Enabled = !inProgress && !locked;
             tray_Separator.Visible = !inProgress && !locked;
             tray_Refresh.Visible = !inProgress && !locked;
+            tray_SpeedTest.Visible = !inProgress && !locked && dialog_SpeedTest == null;
             btn_BrowseExportDir.Enabled = !inProgress && !locked;
             btn_SpeedTest.Enabled = !inProgress && !locked;
             lbl_Refresh.Enabled = !inProgress && !locked;
@@ -2431,9 +2459,9 @@ namespace EndpointChecker
                 lbl_LastUpdate_Label.Visible = true;
 
                 // CONTINUOUS REFRESH
-                if (cb_ContinuousRefresh.Checked && btn_Refresh.Enabled)
+                if (cb_ContinuousRefresh.Checked)
                 {
-                    btn_Refresh_Click(this, null);
+                    TIMER_ContinuousRefresh.Start();
                 }
             }
             else
@@ -2518,16 +2546,50 @@ namespace EndpointChecker
                         }
                     }
 
-                    SetTrayTooltipText(Environment.NewLine +
-                                       "Refresh: " + num_RefreshInterval.Value + " " + lbl_TimerIntervalMinutesText.Text +
-                                       Environment.NewLine +
-                                       "Not Checked: " + itemsNotCheckedCount +
-                                       Environment.NewLine +
-                                       "Available: " + itemsOKCount +
-                                       Environment.NewLine +
-                                       "Warnings: " + itemsWarning.Count +
-                                       Environment.NewLine +
-                                       "Errors: " + itemsError.Count);
+                    string toolTipText = Environment.NewLine;
+
+                    if (!string.IsNullOrEmpty(lbl_LastUpdate.Text))
+                    {
+                        toolTipText += "Last Refresh: " + lbl_LastUpdate.Text;
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    if (cb_AutomaticRefresh.Checked)
+                    {
+                        toolTipText += "Auto Refresh: every " + num_RefreshInterval.Value + " " + lbl_TimerIntervalMinutesText.Text;
+                        toolTipText += Environment.NewLine;
+                    }
+                    else if (cb_ContinuousRefresh.Checked)
+                    {
+                        toolTipText += "Continuous Refresh Mode";
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    if (itemsNotCheckedCount > 0)
+                    {
+                        toolTipText += "Not Checked: " + itemsNotCheckedCount;
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    if (itemsOKCount > 0)
+                    {
+                        toolTipText += "Success: " + itemsOKCount;
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    if (itemsWarning.Count > 0)
+                    {
+                        toolTipText += "Warnings: " + itemsWarning.Count;
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    if (itemsError.Count > 0)
+                    {
+                        toolTipText += "ERRORs: " + itemsError.Count;
+                        toolTipText += Environment.NewLine;
+                    }
+
+                    SetTrayTooltipText(toolTipText);
 
                     if (!cb_AutomaticRefresh.Checked && !cb_ContinuousRefresh.Checked)
                     {
@@ -2536,7 +2598,7 @@ namespace EndpointChecker
 
                         SetTrayTooltipText(
                                            Environment.NewLine +
-                                           "Endpoints list Automatic / Continuous Refresh Disabled");
+                                           "Endpoints List Automatic / Continuous Refresh Disabled");
                     }
                     else if (itemsError.Count > 0)
                     {
@@ -2683,7 +2745,7 @@ namespace EndpointChecker
 
         public void tray_Exit_Click(object sender, EventArgs e)
         {
-            Close();
+            Application.Exit();
         }
 
         public void tray_Refresh_Click(object sender, EventArgs e)
@@ -2808,7 +2870,9 @@ namespace EndpointChecker
                                           string threadsCount,
                                           string resolveNetworkShares,
                                           string resolvePageMetaInfo,
-                                          string saveResponse
+                                          string saveResponse,
+                                          string pingHost,
+                                          string dnsLookupOnHost
             )
         {
             // GET ENABLED AND VISIBLE ENDPOINTS DEFINITIONS ITEMS LIST
@@ -3054,6 +3118,10 @@ namespace EndpointChecker
                         endpointsStatusExport_Summary_WorkSheet.Cell("E14").SetValue(resolvePageMetaInfo);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D15").SetValue("Save Response [HTTP]");
                         endpointsStatusExport_Summary_WorkSheet.Cell("E15").SetValue(saveResponse);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D16").SetValue("Ping Host");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E16").SetValue(pingHost);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("D17").SetValue("DNS / MAC Lookup on Host");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E17").SetValue(dnsLookupOnHost);
 
                         // SETTINGS FOR HTTP ENDPOINTS WORKSHEET
                         endpointsStatusExport_HTTP_WorkSheet.Style
@@ -3121,13 +3189,28 @@ namespace EndpointChecker
                             endpointsStatusExport_FTP_WorkSheet.Delete();
                         }
 
-                        // UNLOCK XLSX
-                        CloseFileStream(definitonsStatusExport_XLSX_FileStream);
+                        try
+                        {
+                            // UNLOCK XLSX
+                            CloseFileStream(definitonsStatusExport_XLSX_FileStream);
 
-                        // SAVE XLSX
-                        Application.DoEvents();
-                        endpointsStatusExport_WorkBook.SaveAs(Path.Combine(statusExport_Directory, statusExport_XLSFile), new SaveOptions { ValidatePackage = true });
-                        Application.DoEvents();
+                            // SAVE XLSX
+                            Application.DoEvents();
+                            endpointsStatusExport_WorkBook.SaveAs(Path.Combine(statusExport_Directory, statusExport_XLSFile), new SaveOptions { ValidatePackage = true });
+                            Application.DoEvents();
+                        }
+                        catch (Exception ex)
+                        {
+                            // ERROR
+                            MessageBox.Show(
+                                "There was an error saving HTML Export:" +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                ex.Message,
+                                "Error Saving HTML Export",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                        }
 
                         if (cb_ExportEndpointsStatus_HTML.Checked)
                         {
@@ -3424,14 +3507,18 @@ namespace EndpointChecker
 
             SaveConfiguration();
 
-            if (cb_ContinuousRefresh.Checked && btn_Refresh.Enabled)
+            if (cb_ContinuousRefresh.Checked)
             {
-                btn_Refresh_Click(this, null);
+                TIMER_ContinuousRefresh.Start();
             }
         }
 
         public void btn_Terminate_Click(object sender, EventArgs e)
         {
+            // DISABLE 'AUTO REFRESH' OPTIONS
+            cb_AutomaticRefresh.Checked = false;
+            cb_ContinuousRefresh.Checked = false;
+
             // DISABLE ITSELF
             btn_Terminate.Enabled = false;
             lbl_Terminate.Enabled = false;
@@ -3439,9 +3526,7 @@ namespace EndpointChecker
             // TERMINATE WORKER
             BW_GetStatus.CancelAsync();
 
-            // DISABLE AUTOMATIC / CONTINUOUS CHECKING
-            cb_AutomaticRefresh.Checked = false;
-            cb_ContinuousRefresh.Checked = false;
+            SetProgressStatus(0, 0);
         }
 
         public void num_ParallelThreadsCount_ValueChanged(object sender, EventArgs e)
@@ -4198,6 +4283,12 @@ namespace EndpointChecker
                         btn_Refresh_Click(this, null);
                     });
                 }
+
+                // CONTINUOUS REFRESH
+                if (cb_ContinuousRefresh.Checked)
+                {
+                    TIMER_ContinuousRefresh.Start();
+                }
             });
         }
 
@@ -4490,6 +4581,8 @@ namespace EndpointChecker
                 ch_ResponseTime.Width = 0;
                 ch_Server.Width = 0;
                 ch_UserName.Width = 0;
+
+                cb_PingHost.Checked = true;
             }
         }
 
@@ -5107,6 +5200,8 @@ namespace EndpointChecker
 
         public void Btn_SpeedTest_MouseClick(object sender, MouseEventArgs e)
         {
+            tray_SpeedTest.Visible = false;
+
             dialog_SpeedTest = new SpeedTestDialog();
             dialog_SpeedTest.ShowDialog();
             dialog_SpeedTest = null;
@@ -5115,6 +5210,8 @@ namespace EndpointChecker
             {
                 Application.Exit();
             }
+
+            tray_SpeedTest.Visible = true;
         }
 
         enum MatchType
@@ -5322,6 +5419,8 @@ namespace EndpointChecker
         public void tb_ListFilter_TextChanged(object sender, EventArgs e)
         {
             ListEndpoints(ListViewRefreshMethod.CurrentState);
+
+            RefreshTrayIcon();
         }
 
         public void pb_ListFilterClear_Click(object sender, EventArgs e)
@@ -5382,6 +5481,40 @@ namespace EndpointChecker
             RestoreWindowSizeAndPosition();
             LoadConfiguration();
             LoadEndpointReferences();
+        }
+
+        public void tray_SpeedTest_Click(object sender, EventArgs e)
+        {
+            if (btn_SpeedTest.Enabled)
+            {
+                Btn_SpeedTest_MouseClick(this, null);
+            }
+        }
+
+        public void cb_PingHost_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!cb_PingHost.Checked)
+            {
+                comboBox_Validate.SelectedIndex = 0;
+            }
+
+            SaveConfiguration();
+        }
+
+        public void cb_DNSLookupOnHost_CheckedChanged(object sender, EventArgs e)
+        {
+            SaveConfiguration();
+        }
+
+        public void TIMER_ContinuousRefresh_Tick(object sender, EventArgs e)
+        {
+            if (btn_Refresh.Enabled &&
+                dialog_SpeedTest == null &&
+                dialog_EndpointDetails == null)
+            {
+                TIMER_ContinuousRefresh.Enabled = false;
+                btn_Refresh_Click(this, null);
+            }
         }
     }
 

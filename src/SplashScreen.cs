@@ -69,6 +69,8 @@ namespace EndpointChecker
             }
 
             Opacity = 1;
+
+            TIMER_StartFading.Start();
         }
         protected override void WndProc(ref Message m)
         {

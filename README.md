@@ -24,6 +24,7 @@ Application have inteligent AutoUpdate method, using GitHub packages.
 
 # Known Issues
 App may hang or stop responding, possibly throw unhandled exception from code.
+
 All unhandled exceptions got to be automatically reported back to author. 
 
 # To-Do List
@@ -35,6 +36,8 @@ on application main window and send your Feature Request or Improvement, or crea
 
 Just open the solution in Visual Studio and click the (re)build button.
 
+Application source is Visual Studio 2022 solution.
+
 # Public API Keys Used
 
 Application is using following public APIs:
@@ -42,6 +45,7 @@ Application is using following public APIs:
 - VirusTotal (https://developers.virustotal.com/reference) (custom key must be created)
 
 All keys are FREE to use, but mind that all these free APIs works with limits.
+
 For each of these services you can set your own key (edit config file by 'CONFIG' button on main application window).
 
 # NuGet Packages Used

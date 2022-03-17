@@ -64,9 +64,9 @@
             // 
             this.pb_Progress.BackColor = System.Drawing.Color.Transparent;
             this.pb_Progress.Image = global::EndpointChecker.Properties.Resources.updater_Progress;
-            this.pb_Progress.Location = new System.Drawing.Point(181, 93);
+            this.pb_Progress.Location = new System.Drawing.Point(181, 95);
             this.pb_Progress.Name = "pb_Progress";
-            this.pb_Progress.Size = new System.Drawing.Size(100, 94);
+            this.pb_Progress.Size = new System.Drawing.Size(100, 100);
             this.pb_Progress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pb_Progress.TabIndex = 2;
             this.pb_Progress.TabStop = false;

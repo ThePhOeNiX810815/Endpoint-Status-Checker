@@ -1309,8 +1309,8 @@ namespace EndpointChecker
                                     tb_GeoLocation_ZipCode.Text = NotAvailable_IfNullorEmpty(ipInfo.City_ZIP_Code);
                                     tb_GeoLocation_City.Text = NotAvailable_IfNullorEmpty(ipInfo.City);
                                     tb_GeoLocation_ORG.Text = NotAvailable_IfNullorEmpty(ipInfo.ISP_ORG);
-                                    tb_GeoLocation_CountryName.Text = NotAvailable_IfNullorEmpty(ipInfo.Country_Name + "(" + ipInfo.Country_Code + ")");
-                                    tb_GeoLocation_RegionName.Text = NotAvailable_IfNullorEmpty(ipInfo.Region_Name + "(" + ipInfo.Region_Code + ")");
+                                    tb_GeoLocation_CountryName.Text = NotAvailable_IfNullorEmpty(ipInfo.Country_Name + " (" + ipInfo.Country_Code + ")");
+                                    tb_GeoLocation_RegionName.Text = NotAvailable_IfNullorEmpty(ipInfo.Region_Name + " (" + ipInfo.Region_Code + ")");
 
                                     tb_GeoLocation_IP.Text = cb_IPAddress.GetItemText(cb_IPAddress.SelectedItem);
                                     pb_GeoLocationProgress.Visible = false;
