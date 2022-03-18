@@ -53,7 +53,7 @@ For each of these services you can set your own key (edit config file by 'CONFIG
 Application is using following libraries:
 - AGauge (2.0.1)
 - ClosedXML (0.95.4)
-- DocumentFormat.OpenXml (2.15.0)
+- DocumentFormat.OpenXml (2.16.0)
 - ExcelNumberFormat (1.1.0)
 - FastMember (1.3.0) (a newer version available, but not for target framework version)
 - Flurl (3.0.0-pre4) (a newer version available, but not for target framework version)

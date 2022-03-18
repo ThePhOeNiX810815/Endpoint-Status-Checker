@@ -203,7 +203,7 @@
             this.ch_HTTPExpires,
             this.ch_HTTPETag});
             this.lv_Endpoints.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lv_Endpoints.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lv_Endpoints.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lv_Endpoints.FullRowSelect = true;
             this.lv_Endpoints.GridLines = true;
             this.lv_Endpoints.HideSelection = false;
@@ -334,7 +334,7 @@
             this.cb_AutomaticRefresh.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_AutomaticRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_AutomaticRefresh.Enabled = false;
-            this.cb_AutomaticRefresh.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_AutomaticRefresh.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_AutomaticRefresh.Location = new System.Drawing.Point(10, 50);
             this.cb_AutomaticRefresh.Name = "cb_AutomaticRefresh";
             this.cb_AutomaticRefresh.Size = new System.Drawing.Size(217, 19);
@@ -361,8 +361,8 @@
             this.num_RefreshInterval.BackColor = System.Drawing.Color.LightGray;
             this.num_RefreshInterval.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_RefreshInterval.Enabled = false;
-            this.num_RefreshInterval.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_RefreshInterval.Location = new System.Drawing.Point(150, 363);
+            this.num_RefreshInterval.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.num_RefreshInterval.Location = new System.Drawing.Point(158, 364);
             this.num_RefreshInterval.Maximum = new decimal(new int[] {
             1440,
             0,
@@ -374,7 +374,7 @@
             0,
             0});
             this.num_RefreshInterval.Name = "num_RefreshInterval";
-            this.num_RefreshInterval.Size = new System.Drawing.Size(47, 23);
+            this.num_RefreshInterval.Size = new System.Drawing.Size(47, 25);
             this.num_RefreshInterval.TabIndex = 3;
             this.num_RefreshInterval.Value = new decimal(new int[] {
             10,
@@ -389,10 +389,10 @@
             this.lbl_TimerIntervalMinutesText.AutoSize = true;
             this.lbl_TimerIntervalMinutesText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_TimerIntervalMinutesText.Enabled = false;
-            this.lbl_TimerIntervalMinutesText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_TimerIntervalMinutesText.Location = new System.Drawing.Point(201, 365);
+            this.lbl_TimerIntervalMinutesText.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_TimerIntervalMinutesText.Location = new System.Drawing.Point(209, 366);
             this.lbl_TimerIntervalMinutesText.Name = "lbl_TimerIntervalMinutesText";
-            this.lbl_TimerIntervalMinutesText.Size = new System.Drawing.Size(52, 15);
+            this.lbl_TimerIntervalMinutesText.Size = new System.Drawing.Size(57, 17);
             this.lbl_TimerIntervalMinutesText.TabIndex = 4;
             this.lbl_TimerIntervalMinutesText.Text = "minutes";
             // 
@@ -401,9 +401,9 @@
             this.lbl_NoEndpoints.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_NoEndpoints.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_NoEndpoints.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_NoEndpoints.ForeColor = System.Drawing.Color.DarkOrange;
-            this.lbl_NoEndpoints.Location = new System.Drawing.Point(0, 3);
+            this.lbl_NoEndpoints.Location = new System.Drawing.Point(1, 2);
             this.lbl_NoEndpoints.Name = "lbl_NoEndpoints";
             this.lbl_NoEndpoints.Size = new System.Drawing.Size(1130, 329);
             this.lbl_NoEndpoints.TabIndex = 6;
@@ -469,7 +469,7 @@
             this.cb_TrayBalloonNotify.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_TrayBalloonNotify.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_TrayBalloonNotify.Enabled = false;
-            this.cb_TrayBalloonNotify.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_TrayBalloonNotify.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_TrayBalloonNotify.Location = new System.Drawing.Point(10, 84);
             this.cb_TrayBalloonNotify.Name = "cb_TrayBalloonNotify";
             this.cb_TrayBalloonNotify.Size = new System.Drawing.Size(217, 19);
@@ -485,10 +485,10 @@
             this.lbl_RequestTimeoutSecondsText.AutoSize = true;
             this.lbl_RequestTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_RequestTimeoutSecondsText.Enabled = false;
-            this.lbl_RequestTimeoutSecondsText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_RequestTimeoutSecondsText.Location = new System.Drawing.Point(201, 421);
+            this.lbl_RequestTimeoutSecondsText.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_RequestTimeoutSecondsText.Location = new System.Drawing.Point(209, 422);
             this.lbl_RequestTimeoutSecondsText.Name = "lbl_RequestTimeoutSecondsText";
-            this.lbl_RequestTimeoutSecondsText.Size = new System.Drawing.Size(50, 15);
+            this.lbl_RequestTimeoutSecondsText.Size = new System.Drawing.Size(57, 17);
             this.lbl_RequestTimeoutSecondsText.TabIndex = 9;
             this.lbl_RequestTimeoutSecondsText.Text = "seconds";
             // 
@@ -498,8 +498,8 @@
             this.num_HTTPRequestTimeout.BackColor = System.Drawing.Color.LightGray;
             this.num_HTTPRequestTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_HTTPRequestTimeout.Enabled = false;
-            this.num_HTTPRequestTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_HTTPRequestTimeout.Location = new System.Drawing.Point(150, 419);
+            this.num_HTTPRequestTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.num_HTTPRequestTimeout.Location = new System.Drawing.Point(158, 420);
             this.num_HTTPRequestTimeout.Maximum = new decimal(new int[] {
             60,
             0,
@@ -511,7 +511,7 @@
             0,
             0});
             this.num_HTTPRequestTimeout.Name = "num_HTTPRequestTimeout";
-            this.num_HTTPRequestTimeout.Size = new System.Drawing.Size(47, 23);
+            this.num_HTTPRequestTimeout.Size = new System.Drawing.Size(47, 25);
             this.num_HTTPRequestTimeout.TabIndex = 8;
             this.num_HTTPRequestTimeout.Value = new decimal(new int[] {
             10,
@@ -525,10 +525,10 @@
             this.lbl_RequestTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_RequestTimeout.AutoSize = true;
             this.lbl_RequestTimeout.Enabled = false;
-            this.lbl_RequestTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_RequestTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_RequestTimeout.Location = new System.Drawing.Point(10, 422);
             this.lbl_RequestTimeout.Name = "lbl_RequestTimeout";
-            this.lbl_RequestTimeout.Size = new System.Drawing.Size(131, 15);
+            this.lbl_RequestTimeout.Size = new System.Drawing.Size(147, 17);
             this.lbl_RequestTimeout.TabIndex = 10;
             this.lbl_RequestTimeout.Text = "HTTP Request Timeout";
             // 
@@ -539,7 +539,7 @@
             this.cb_AllowAutoRedirect.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_AllowAutoRedirect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_AllowAutoRedirect.Enabled = false;
-            this.cb_AllowAutoRedirect.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_AllowAutoRedirect.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_AllowAutoRedirect.Location = new System.Drawing.Point(14, 16);
             this.cb_AllowAutoRedirect.Name = "cb_AllowAutoRedirect";
             this.cb_AllowAutoRedirect.Size = new System.Drawing.Size(207, 19);
@@ -585,10 +585,10 @@
             this.lbl_AutomaticRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_AutomaticRefresh.AutoSize = true;
             this.lbl_AutomaticRefresh.Enabled = false;
-            this.lbl_AutomaticRefresh.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_AutomaticRefresh.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_AutomaticRefresh.Location = new System.Drawing.Point(10, 366);
             this.lbl_AutomaticRefresh.Name = "lbl_AutomaticRefresh";
-            this.lbl_AutomaticRefresh.Size = new System.Drawing.Size(124, 15);
+            this.lbl_AutomaticRefresh.Size = new System.Drawing.Size(138, 17);
             this.lbl_AutomaticRefresh.TabIndex = 21;
             this.lbl_AutomaticRefresh.Text = "Auto Refresh Interval";
             // 
@@ -598,8 +598,8 @@
             this.num_FTPRequestTimeout.BackColor = System.Drawing.Color.LightGray;
             this.num_FTPRequestTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_FTPRequestTimeout.Enabled = false;
-            this.num_FTPRequestTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_FTPRequestTimeout.Location = new System.Drawing.Point(150, 447);
+            this.num_FTPRequestTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.num_FTPRequestTimeout.Location = new System.Drawing.Point(158, 448);
             this.num_FTPRequestTimeout.Maximum = new decimal(new int[] {
             60,
             0,
@@ -611,7 +611,7 @@
             0,
             0});
             this.num_FTPRequestTimeout.Name = "num_FTPRequestTimeout";
-            this.num_FTPRequestTimeout.Size = new System.Drawing.Size(47, 23);
+            this.num_FTPRequestTimeout.Size = new System.Drawing.Size(47, 25);
             this.num_FTPRequestTimeout.TabIndex = 22;
             this.num_FTPRequestTimeout.Value = new decimal(new int[] {
             10,
@@ -625,10 +625,10 @@
             this.lbl_FTPRequestTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_FTPRequestTimeout.AutoSize = true;
             this.lbl_FTPRequestTimeout.Enabled = false;
-            this.lbl_FTPRequestTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_FTPRequestTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_FTPRequestTimeout.Location = new System.Drawing.Point(10, 450);
             this.lbl_FTPRequestTimeout.Name = "lbl_FTPRequestTimeout";
-            this.lbl_FTPRequestTimeout.Size = new System.Drawing.Size(123, 15);
+            this.lbl_FTPRequestTimeout.Size = new System.Drawing.Size(137, 17);
             this.lbl_FTPRequestTimeout.TabIndex = 24;
             this.lbl_FTPRequestTimeout.Text = "FTP Request Timeout";
             // 
@@ -638,10 +638,10 @@
             this.lbl_FTPRequestTimeoutSecondsText.AutoSize = true;
             this.lbl_FTPRequestTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_FTPRequestTimeoutSecondsText.Enabled = false;
-            this.lbl_FTPRequestTimeoutSecondsText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_FTPRequestTimeoutSecondsText.Location = new System.Drawing.Point(201, 449);
+            this.lbl_FTPRequestTimeoutSecondsText.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_FTPRequestTimeoutSecondsText.Location = new System.Drawing.Point(209, 450);
             this.lbl_FTPRequestTimeoutSecondsText.Name = "lbl_FTPRequestTimeoutSecondsText";
-            this.lbl_FTPRequestTimeoutSecondsText.Size = new System.Drawing.Size(50, 15);
+            this.lbl_FTPRequestTimeoutSecondsText.Size = new System.Drawing.Size(57, 17);
             this.lbl_FTPRequestTimeoutSecondsText.TabIndex = 23;
             this.lbl_FTPRequestTimeoutSecondsText.Text = "seconds";
             // 
@@ -652,7 +652,7 @@
             this.cb_RefreshAutoSet.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_RefreshAutoSet.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_RefreshAutoSet.Enabled = false;
-            this.cb_RefreshAutoSet.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_RefreshAutoSet.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_RefreshAutoSet.Location = new System.Drawing.Point(10, 67);
             this.cb_RefreshAutoSet.Name = "cb_RefreshAutoSet";
             this.cb_RefreshAutoSet.Size = new System.Drawing.Size(217, 19);
@@ -666,7 +666,7 @@
             this.cb_ContinuousRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cb_ContinuousRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ContinuousRefresh.Enabled = false;
-            this.cb_ContinuousRefresh.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_ContinuousRefresh.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_ContinuousRefresh.Location = new System.Drawing.Point(10, 33);
             this.cb_ContinuousRefresh.Name = "cb_ContinuousRefresh";
             this.cb_ContinuousRefresh.Size = new System.Drawing.Size(217, 19);
@@ -681,15 +681,15 @@
             this.num_ParallelThreadsCount.BackColor = System.Drawing.Color.LightGray;
             this.num_ParallelThreadsCount.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_ParallelThreadsCount.Enabled = false;
-            this.num_ParallelThreadsCount.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_ParallelThreadsCount.Location = new System.Drawing.Point(150, 475);
+            this.num_ParallelThreadsCount.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.num_ParallelThreadsCount.Location = new System.Drawing.Point(158, 476);
             this.num_ParallelThreadsCount.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.num_ParallelThreadsCount.Name = "num_ParallelThreadsCount";
-            this.num_ParallelThreadsCount.Size = new System.Drawing.Size(47, 23);
+            this.num_ParallelThreadsCount.Size = new System.Drawing.Size(47, 25);
             this.num_ParallelThreadsCount.TabIndex = 29;
             this.num_ParallelThreadsCount.Value = new decimal(new int[] {
             50,
@@ -703,10 +703,10 @@
             this.lbl_ParallelThreadsCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_ParallelThreadsCount.AutoSize = true;
             this.lbl_ParallelThreadsCount.Enabled = false;
-            this.lbl_ParallelThreadsCount.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ParallelThreadsCount.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_ParallelThreadsCount.Location = new System.Drawing.Point(10, 478);
             this.lbl_ParallelThreadsCount.Name = "lbl_ParallelThreadsCount";
-            this.lbl_ParallelThreadsCount.Size = new System.Drawing.Size(129, 15);
+            this.lbl_ParallelThreadsCount.Size = new System.Drawing.Size(144, 17);
             this.lbl_ParallelThreadsCount.TabIndex = 30;
             this.lbl_ParallelThreadsCount.Text = "Parallel Threads Count";
             // 
@@ -715,7 +715,7 @@
             this.cb_ResolveNetworkShares.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cb_ResolveNetworkShares.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ResolveNetworkShares.Enabled = false;
-            this.cb_ResolveNetworkShares.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_ResolveNetworkShares.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_ResolveNetworkShares.Location = new System.Drawing.Point(10, 101);
             this.cb_ResolveNetworkShares.Name = "cb_ResolveNetworkShares";
             this.cb_ResolveNetworkShares.Size = new System.Drawing.Size(217, 19);
@@ -750,7 +750,7 @@
             this.cb_SaveResponse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cb_SaveResponse.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_SaveResponse.Enabled = false;
-            this.cb_SaveResponse.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_SaveResponse.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_SaveResponse.Location = new System.Drawing.Point(14, 101);
             this.cb_SaveResponse.Name = "cb_SaveResponse";
             this.cb_SaveResponse.Size = new System.Drawing.Size(207, 19);
@@ -766,7 +766,7 @@
             this.cb_ResolvePageMetaInfo.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_ResolvePageMetaInfo.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ResolvePageMetaInfo.Enabled = false;
-            this.cb_ResolvePageMetaInfo.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_ResolvePageMetaInfo.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_ResolvePageMetaInfo.Location = new System.Drawing.Point(14, 67);
             this.cb_ResolvePageMetaInfo.Name = "cb_ResolvePageMetaInfo";
             this.cb_ResolvePageMetaInfo.Size = new System.Drawing.Size(207, 19);
@@ -782,7 +782,7 @@
             this.cb_ValidateSSLCertificate.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_ValidateSSLCertificate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ValidateSSLCertificate.Enabled = false;
-            this.cb_ValidateSSLCertificate.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_ValidateSSLCertificate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_ValidateSSLCertificate.Location = new System.Drawing.Point(14, 33);
             this.cb_ValidateSSLCertificate.Name = "cb_ValidateSSLCertificate";
             this.cb_ValidateSSLCertificate.Size = new System.Drawing.Size(207, 19);
@@ -816,10 +816,10 @@
             this.lbl_CheckAllErrors.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_CheckAllErrors.AutoSize = true;
             this.lbl_CheckAllErrors.Enabled = false;
-            this.lbl_CheckAllErrors.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(139, 102);
+            this.lbl_CheckAllErrors.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(139, 101);
             this.lbl_CheckAllErrors.Name = "lbl_CheckAllErrors";
-            this.lbl_CheckAllErrors.Size = new System.Drawing.Size(49, 16);
+            this.lbl_CheckAllErrors.Size = new System.Drawing.Size(51, 17);
             this.lbl_CheckAllErrors.TabIndex = 22;
             this.lbl_CheckAllErrors.Text = "FAILED";
             // 
@@ -858,10 +858,10 @@
             this.lbl_CheckAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_CheckAll.AutoSize = true;
             this.lbl_CheckAll.Enabled = false;
-            this.lbl_CheckAll.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAll.Location = new System.Drawing.Point(51, 48);
+            this.lbl_CheckAll.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_CheckAll.Location = new System.Drawing.Point(51, 47);
             this.lbl_CheckAll.Name = "lbl_CheckAll";
-            this.lbl_CheckAll.Size = new System.Drawing.Size(27, 16);
+            this.lbl_CheckAll.Size = new System.Drawing.Size(31, 17);
             this.lbl_CheckAll.TabIndex = 21;
             this.lbl_CheckAll.Text = "ALL";
             // 
@@ -885,10 +885,10 @@
             this.lbl_UncheckAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_UncheckAll.AutoSize = true;
             this.lbl_UncheckAll.Enabled = false;
-            this.lbl_UncheckAll.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UncheckAll.Location = new System.Drawing.Point(51, 100);
+            this.lbl_UncheckAll.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_UncheckAll.Location = new System.Drawing.Point(51, 99);
             this.lbl_UncheckAll.Name = "lbl_UncheckAll";
-            this.lbl_UncheckAll.Size = new System.Drawing.Size(41, 16);
+            this.lbl_UncheckAll.Size = new System.Drawing.Size(45, 17);
             this.lbl_UncheckAll.TabIndex = 20;
             this.lbl_UncheckAll.Text = "NONE";
             // 
@@ -912,10 +912,10 @@
             this.lbl_CheckAllAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_CheckAllAvailable.AutoSize = true;
             this.lbl_CheckAllAvailable.Enabled = false;
-            this.lbl_CheckAllAvailable.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(138, 48);
+            this.lbl_CheckAllAvailable.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(138, 47);
             this.lbl_CheckAllAvailable.Name = "lbl_CheckAllAvailable";
-            this.lbl_CheckAllAvailable.Size = new System.Drawing.Size(52, 16);
+            this.lbl_CheckAllAvailable.Size = new System.Drawing.Size(55, 17);
             this.lbl_CheckAllAvailable.TabIndex = 19;
             this.lbl_CheckAllAvailable.Text = "PASSED";
             // 
@@ -924,10 +924,10 @@
             this.lbl_ConfigFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_ConfigFile.AutoSize = true;
             this.lbl_ConfigFile.Enabled = false;
-            this.lbl_ConfigFile.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ConfigFile.Location = new System.Drawing.Point(932, 501);
+            this.lbl_ConfigFile.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ConfigFile.Location = new System.Drawing.Point(932, 500);
             this.lbl_ConfigFile.Name = "lbl_ConfigFile";
-            this.lbl_ConfigFile.Size = new System.Drawing.Size(52, 16);
+            this.lbl_ConfigFile.Size = new System.Drawing.Size(56, 17);
             this.lbl_ConfigFile.TabIndex = 26;
             this.lbl_ConfigFile.Text = "CONFIG";
             // 
@@ -966,10 +966,10 @@
             this.lbl_EndpointsList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_EndpointsList.AutoSize = true;
             this.lbl_EndpointsList.Enabled = false;
-            this.lbl_EndpointsList.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_EndpointsList.Location = new System.Drawing.Point(844, 501);
+            this.lbl_EndpointsList.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_EndpointsList.Location = new System.Drawing.Point(844, 500);
             this.lbl_EndpointsList.Name = "lbl_EndpointsList";
-            this.lbl_EndpointsList.Size = new System.Drawing.Size(35, 16);
+            this.lbl_EndpointsList.Size = new System.Drawing.Size(34, 17);
             this.lbl_EndpointsList.TabIndex = 25;
             this.lbl_EndpointsList.Text = "LIST";
             // 
@@ -978,10 +978,10 @@
             this.lbl_Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_Refresh.AutoSize = true;
             this.lbl_Refresh.Enabled = false;
-            this.lbl_Refresh.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Refresh.Location = new System.Drawing.Point(1046, 373);
+            this.lbl_Refresh.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Refresh.Location = new System.Drawing.Point(1046, 372);
             this.lbl_Refresh.Name = "lbl_Refresh";
-            this.lbl_Refresh.Size = new System.Drawing.Size(58, 16);
+            this.lbl_Refresh.Size = new System.Drawing.Size(62, 17);
             this.lbl_Refresh.TabIndex = 39;
             this.lbl_Refresh.Text = "REFRESH";
             // 
@@ -990,10 +990,10 @@
             this.lbl_Terminate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_Terminate.AutoSize = true;
             this.lbl_Terminate.Enabled = false;
-            this.lbl_Terminate.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Terminate.Location = new System.Drawing.Point(1046, 427);
+            this.lbl_Terminate.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Terminate.Location = new System.Drawing.Point(1046, 426);
             this.lbl_Terminate.Name = "lbl_Terminate";
-            this.lbl_Terminate.Size = new System.Drawing.Size(78, 16);
+            this.lbl_Terminate.Size = new System.Drawing.Size(80, 17);
             this.lbl_Terminate.TabIndex = 40;
             this.lbl_Terminate.Text = "TERMINATE";
             // 
@@ -1014,10 +1014,10 @@
             this.lbl_SpeedTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_SpeedTest.AutoSize = true;
             this.lbl_SpeedTest.Enabled = false;
-            this.lbl_SpeedTest.Font = new System.Drawing.Font("Comic Sans MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest.Location = new System.Drawing.Point(1046, 502);
+            this.lbl_SpeedTest.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_SpeedTest.Location = new System.Drawing.Point(1046, 501);
             this.lbl_SpeedTest.Name = "lbl_SpeedTest";
-            this.lbl_SpeedTest.Size = new System.Drawing.Size(74, 16);
+            this.lbl_SpeedTest.Size = new System.Drawing.Size(77, 17);
             this.lbl_SpeedTest.TabIndex = 44;
             this.lbl_SpeedTest.Text = "SPEEDTEST";
             // 
@@ -1053,8 +1053,8 @@
             this.num_PingTimeout.BackColor = System.Drawing.Color.LightGray;
             this.num_PingTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_PingTimeout.Enabled = false;
-            this.num_PingTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_PingTimeout.Location = new System.Drawing.Point(150, 391);
+            this.num_PingTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.num_PingTimeout.Location = new System.Drawing.Point(158, 392);
             this.num_PingTimeout.Maximum = new decimal(new int[] {
             30,
             0,
@@ -1066,7 +1066,7 @@
             0,
             0});
             this.num_PingTimeout.Name = "num_PingTimeout";
-            this.num_PingTimeout.Size = new System.Drawing.Size(47, 23);
+            this.num_PingTimeout.Size = new System.Drawing.Size(47, 25);
             this.num_PingTimeout.TabIndex = 45;
             this.num_PingTimeout.Value = new decimal(new int[] {
             5,
@@ -1080,10 +1080,10 @@
             this.lbl_PingTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_PingTimeout.AutoSize = true;
             this.lbl_PingTimeout.Enabled = false;
-            this.lbl_PingTimeout.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_PingTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_PingTimeout.Location = new System.Drawing.Point(10, 394);
             this.lbl_PingTimeout.Name = "lbl_PingTimeout";
-            this.lbl_PingTimeout.Size = new System.Drawing.Size(79, 15);
+            this.lbl_PingTimeout.Size = new System.Drawing.Size(89, 17);
             this.lbl_PingTimeout.TabIndex = 47;
             this.lbl_PingTimeout.Text = "Ping Timeout";
             // 
@@ -1093,10 +1093,10 @@
             this.lbl_PingTimeoutSecondsText.AutoSize = true;
             this.lbl_PingTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_PingTimeoutSecondsText.Enabled = false;
-            this.lbl_PingTimeoutSecondsText.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_PingTimeoutSecondsText.Location = new System.Drawing.Point(201, 393);
+            this.lbl_PingTimeoutSecondsText.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_PingTimeoutSecondsText.Location = new System.Drawing.Point(209, 394);
             this.lbl_PingTimeoutSecondsText.Name = "lbl_PingTimeoutSecondsText";
-            this.lbl_PingTimeoutSecondsText.Size = new System.Drawing.Size(50, 15);
+            this.lbl_PingTimeoutSecondsText.Size = new System.Drawing.Size(57, 17);
             this.lbl_PingTimeoutSecondsText.TabIndex = 46;
             this.lbl_PingTimeoutSecondsText.Text = "seconds";
             // 
@@ -1105,10 +1105,10 @@
             this.lbl_Validate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_Validate.AutoSize = true;
             this.lbl_Validate.Enabled = false;
-            this.lbl_Validate.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Validate.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Validate.Location = new System.Drawing.Point(10, 509);
             this.lbl_Validate.Name = "lbl_Validate";
-            this.lbl_Validate.Size = new System.Drawing.Size(108, 15);
+            this.lbl_Validate.Size = new System.Drawing.Size(119, 17);
             this.lbl_Validate.TabIndex = 48;
             this.lbl_Validate.Text = "Validation Method";
             // 
@@ -1119,13 +1119,14 @@
             this.comboBox_Validate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.comboBox_Validate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_Validate.Enabled = false;
+            this.comboBox_Validate.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBox_Validate.FormattingEnabled = true;
             this.comboBox_Validate.Items.AddRange(new object[] {
             "Protocol",
             "Ping"});
-            this.comboBox_Validate.Location = new System.Drawing.Point(150, 505);
+            this.comboBox_Validate.Location = new System.Drawing.Point(158, 506);
             this.comboBox_Validate.Name = "comboBox_Validate";
-            this.comboBox_Validate.Size = new System.Drawing.Size(120, 23);
+            this.comboBox_Validate.Size = new System.Drawing.Size(120, 25);
             this.comboBox_Validate.TabIndex = 49;
             this.comboBox_Validate.SelectedIndexChanged += new System.EventHandler(this.comboBox_Validate_SelectedIndexChanged);
             // 
@@ -1315,10 +1316,10 @@
             // 
             this.lbl_LastUpdate_Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_LastUpdate_Label.AutoSize = true;
-            this.lbl_LastUpdate_Label.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_LastUpdate_Label.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_LastUpdate_Label.Location = new System.Drawing.Point(10, 538);
             this.lbl_LastUpdate_Label.Name = "lbl_LastUpdate_Label";
-            this.lbl_LastUpdate_Label.Size = new System.Drawing.Size(102, 15);
+            this.lbl_LastUpdate_Label.Size = new System.Drawing.Size(117, 17);
             this.lbl_LastUpdate_Label.TabIndex = 51;
             this.lbl_LastUpdate_Label.Text = "LAST LIST UPDATE";
             this.lbl_LastUpdate_Label.Visible = false;
@@ -1327,10 +1328,10 @@
             // 
             this.lbl_LastUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_LastUpdate.AutoSize = true;
-            this.lbl_LastUpdate.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LastUpdate.Location = new System.Drawing.Point(148, 536);
+            this.lbl_LastUpdate.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_LastUpdate.Location = new System.Drawing.Point(156, 537);
             this.lbl_LastUpdate.Name = "lbl_LastUpdate";
-            this.lbl_LastUpdate.Size = new System.Drawing.Size(0, 18);
+            this.lbl_LastUpdate.Size = new System.Drawing.Size(0, 17);
             this.lbl_LastUpdate.TabIndex = 52;
             this.lbl_LastUpdate.Visible = false;
             // 
@@ -1397,7 +1398,7 @@
             this.cb_RemoveURLParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cb_RemoveURLParameters.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_RemoveURLParameters.Enabled = false;
-            this.cb_RemoveURLParameters.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_RemoveURLParameters.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_RemoveURLParameters.Location = new System.Drawing.Point(14, 50);
             this.cb_RemoveURLParameters.Name = "cb_RemoveURLParameters";
             this.cb_RemoveURLParameters.Size = new System.Drawing.Size(207, 19);
@@ -1416,7 +1417,7 @@
             this.groupBox_CommonOptions.Controls.Add(this.cb_ContinuousRefresh);
             this.groupBox_CommonOptions.Controls.Add(this.cb_ResolveNetworkShares);
             this.groupBox_CommonOptions.Enabled = false;
-            this.groupBox_CommonOptions.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.groupBox_CommonOptions.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox_CommonOptions.Location = new System.Drawing.Point(310, 326);
             this.groupBox_CommonOptions.Name = "groupBox_CommonOptions";
             this.groupBox_CommonOptions.Size = new System.Drawing.Size(229, 156);
@@ -1429,7 +1430,7 @@
             this.cb_RefreshOnStartup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cb_RefreshOnStartup.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_RefreshOnStartup.Enabled = false;
-            this.cb_RefreshOnStartup.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_RefreshOnStartup.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_RefreshOnStartup.Location = new System.Drawing.Point(10, 16);
             this.cb_RefreshOnStartup.Name = "cb_RefreshOnStartup";
             this.cb_RefreshOnStartup.Size = new System.Drawing.Size(217, 19);
@@ -1442,7 +1443,7 @@
             this.cb_ResolvePageLinks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cb_ResolvePageLinks.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ResolvePageLinks.Enabled = false;
-            this.cb_ResolvePageLinks.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_ResolvePageLinks.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_ResolvePageLinks.Location = new System.Drawing.Point(14, 84);
             this.cb_ResolvePageLinks.Name = "cb_ResolvePageLinks";
             this.cb_ResolvePageLinks.Size = new System.Drawing.Size(207, 19);
@@ -1463,7 +1464,7 @@
             this.groupBox_HTTPOptions.Controls.Add(this.cb_SaveResponse);
             this.groupBox_HTTPOptions.Controls.Add(this.cb_RemoveURLParameters);
             this.groupBox_HTTPOptions.Enabled = false;
-            this.groupBox_HTTPOptions.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.groupBox_HTTPOptions.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox_HTTPOptions.Location = new System.Drawing.Point(548, 326);
             this.groupBox_HTTPOptions.Name = "groupBox_HTTPOptions";
             this.groupBox_HTTPOptions.Size = new System.Drawing.Size(229, 156);
@@ -1478,7 +1479,7 @@
             this.cb_PingHost.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_PingHost.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_PingHost.Enabled = false;
-            this.cb_PingHost.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_PingHost.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_PingHost.Location = new System.Drawing.Point(14, 118);
             this.cb_PingHost.Name = "cb_PingHost";
             this.cb_PingHost.Size = new System.Drawing.Size(207, 19);
@@ -1492,7 +1493,7 @@
             this.cb_DNSAndMACLookupOnHost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cb_DNSAndMACLookupOnHost.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_DNSAndMACLookupOnHost.Enabled = false;
-            this.cb_DNSAndMACLookupOnHost.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_DNSAndMACLookupOnHost.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_DNSAndMACLookupOnHost.Location = new System.Drawing.Point(14, 135);
             this.cb_DNSAndMACLookupOnHost.Name = "cb_DNSAndMACLookupOnHost";
             this.cb_DNSAndMACLookupOnHost.Size = new System.Drawing.Size(207, 19);
@@ -1589,10 +1590,10 @@
             this.lbl_ListFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_ListFilter.AutoSize = true;
             this.lbl_ListFilter.Enabled = false;
-            this.lbl_ListFilter.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ListFilter.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_ListFilter.Location = new System.Drawing.Point(10, 338);
             this.lbl_ListFilter.Name = "lbl_ListFilter";
-            this.lbl_ListFilter.Size = new System.Drawing.Size(115, 15);
+            this.lbl_ListFilter.Size = new System.Drawing.Size(127, 17);
             this.lbl_ListFilter.TabIndex = 66;
             this.lbl_ListFilter.Text = "Endpoints List Filter";
             // 
@@ -1602,8 +1603,8 @@
             this.tb_ListFilter.BackColor = System.Drawing.Color.LightGray;
             this.tb_ListFilter.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tb_ListFilter.Enabled = false;
-            this.tb_ListFilter.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_ListFilter.Location = new System.Drawing.Point(150, 334);
+            this.tb_ListFilter.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb_ListFilter.Location = new System.Drawing.Point(158, 335);
             this.tb_ListFilter.Multiline = true;
             this.tb_ListFilter.Name = "tb_ListFilter";
             this.tb_ListFilter.Size = new System.Drawing.Size(120, 22);
@@ -1617,7 +1618,7 @@
             this.pb_ListFilterClear.BackColor = System.Drawing.Color.Transparent;
             this.pb_ListFilterClear.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_ListFilterClear.Image = global::EndpointChecker.Properties.Resources.close;
-            this.pb_ListFilterClear.Location = new System.Drawing.Point(268, 334);
+            this.pb_ListFilterClear.Location = new System.Drawing.Point(277, 335);
             this.pb_ListFilterClear.Name = "pb_ListFilterClear";
             this.pb_ListFilterClear.Size = new System.Drawing.Size(22, 22);
             this.pb_ListFilterClear.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
