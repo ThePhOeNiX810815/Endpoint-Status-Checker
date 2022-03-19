@@ -3735,6 +3735,10 @@ namespace EndpointChecker
 
                     if (Settings.Default.FormWindow_Hidden)
                     {
+                        Hide();
+                    }
+                    else
+                    {
                         Show();
                     }
                 }
@@ -4330,7 +4334,7 @@ namespace EndpointChecker
         {
             Settings.Default.ListView_Filter = tb_ListFilter.Text;
 
-            Settings.Default.DisabledItemsList = string.Join("|", endpointsList_Disabled.Select(i => i).ToArray());
+            Settings.Default.DisabledItemsList = string.Join("|", endpointsList_Disabled.ToArray());
             Settings.Default.Save();
         }
 

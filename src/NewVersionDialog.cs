@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using static EndpointChecker.CheckerMainForm;
 using static EndpointChecker.Program;
 

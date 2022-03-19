@@ -335,7 +335,7 @@
             this.cb_AutomaticRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_AutomaticRefresh.Enabled = false;
             this.cb_AutomaticRefresh.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_AutomaticRefresh.Location = new System.Drawing.Point(10, 50);
+            this.cb_AutomaticRefresh.Location = new System.Drawing.Point(9, 50);
             this.cb_AutomaticRefresh.Name = "cb_AutomaticRefresh";
             this.cb_AutomaticRefresh.Size = new System.Drawing.Size(217, 19);
             this.cb_AutomaticRefresh.TabIndex = 2;
@@ -362,7 +362,7 @@
             this.num_RefreshInterval.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_RefreshInterval.Enabled = false;
             this.num_RefreshInterval.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_RefreshInterval.Location = new System.Drawing.Point(158, 364);
+            this.num_RefreshInterval.Location = new System.Drawing.Point(160, 364);
             this.num_RefreshInterval.Maximum = new decimal(new int[] {
             1440,
             0,
@@ -390,7 +390,7 @@
             this.lbl_TimerIntervalMinutesText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_TimerIntervalMinutesText.Enabled = false;
             this.lbl_TimerIntervalMinutesText.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_TimerIntervalMinutesText.Location = new System.Drawing.Point(209, 366);
+            this.lbl_TimerIntervalMinutesText.Location = new System.Drawing.Point(211, 366);
             this.lbl_TimerIntervalMinutesText.Name = "lbl_TimerIntervalMinutesText";
             this.lbl_TimerIntervalMinutesText.Size = new System.Drawing.Size(57, 17);
             this.lbl_TimerIntervalMinutesText.TabIndex = 4;
@@ -423,7 +423,7 @@
             // 
             // trayContextMenu
             // 
-            this.trayContextMenu.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.trayContextMenu.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trayContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tray_SpeedTest,
             this.tray_Refresh,
@@ -431,12 +431,12 @@
             this.tray_Exit});
             this.trayContextMenu.Name = "tray_contextMenu";
             this.trayContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.trayContextMenu.Size = new System.Drawing.Size(175, 76);
+            this.trayContextMenu.Size = new System.Drawing.Size(196, 82);
             // 
             // tray_SpeedTest
             // 
             this.tray_SpeedTest.Name = "tray_SpeedTest";
-            this.tray_SpeedTest.Size = new System.Drawing.Size(174, 22);
+            this.tray_SpeedTest.Size = new System.Drawing.Size(195, 24);
             this.tray_SpeedTest.Text = "SpeedTest";
             this.tray_SpeedTest.Visible = false;
             this.tray_SpeedTest.Click += new System.EventHandler(this.tray_SpeedTest_Click);
@@ -444,7 +444,7 @@
             // tray_Refresh
             // 
             this.tray_Refresh.Name = "tray_Refresh";
-            this.tray_Refresh.Size = new System.Drawing.Size(174, 22);
+            this.tray_Refresh.Size = new System.Drawing.Size(195, 24);
             this.tray_Refresh.Text = "Refresh List";
             this.tray_Refresh.Visible = false;
             this.tray_Refresh.Click += new System.EventHandler(this.tray_Refresh_Click);
@@ -452,13 +452,13 @@
             // tray_Separator
             // 
             this.tray_Separator.Name = "tray_Separator";
-            this.tray_Separator.Size = new System.Drawing.Size(171, 6);
+            this.tray_Separator.Size = new System.Drawing.Size(192, 6);
             this.tray_Separator.Visible = false;
             // 
             // tray_Exit
             // 
             this.tray_Exit.Name = "tray_Exit";
-            this.tray_Exit.Size = new System.Drawing.Size(174, 22);
+            this.tray_Exit.Size = new System.Drawing.Size(195, 24);
             this.tray_Exit.Text = "Close Application";
             this.tray_Exit.Click += new System.EventHandler(this.tray_Exit_Click);
             // 
@@ -470,12 +470,11 @@
             this.cb_TrayBalloonNotify.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_TrayBalloonNotify.Enabled = false;
             this.cb_TrayBalloonNotify.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_TrayBalloonNotify.Location = new System.Drawing.Point(10, 84);
+            this.cb_TrayBalloonNotify.Location = new System.Drawing.Point(9, 84);
             this.cb_TrayBalloonNotify.Name = "cb_TrayBalloonNotify";
             this.cb_TrayBalloonNotify.Size = new System.Drawing.Size(217, 19);
             this.cb_TrayBalloonNotify.TabIndex = 7;
             this.cb_TrayBalloonNotify.Text = "Enable Tray Notifcations (on Errors)";
-            this.cb_TrayBalloonNotify.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.cb_TrayBalloonNotify.UseVisualStyleBackColor = true;
             this.cb_TrayBalloonNotify.CheckedChanged += new System.EventHandler(this.cb_TrayBalloonNotify_CheckedChanged);
             // 
@@ -486,7 +485,7 @@
             this.lbl_RequestTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_RequestTimeoutSecondsText.Enabled = false;
             this.lbl_RequestTimeoutSecondsText.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_RequestTimeoutSecondsText.Location = new System.Drawing.Point(209, 422);
+            this.lbl_RequestTimeoutSecondsText.Location = new System.Drawing.Point(211, 422);
             this.lbl_RequestTimeoutSecondsText.Name = "lbl_RequestTimeoutSecondsText";
             this.lbl_RequestTimeoutSecondsText.Size = new System.Drawing.Size(57, 17);
             this.lbl_RequestTimeoutSecondsText.TabIndex = 9;
@@ -499,7 +498,7 @@
             this.num_HTTPRequestTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_HTTPRequestTimeout.Enabled = false;
             this.num_HTTPRequestTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_HTTPRequestTimeout.Location = new System.Drawing.Point(158, 420);
+            this.num_HTTPRequestTimeout.Location = new System.Drawing.Point(160, 420);
             this.num_HTTPRequestTimeout.Maximum = new decimal(new int[] {
             60,
             0,
@@ -540,7 +539,7 @@
             this.cb_AllowAutoRedirect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_AllowAutoRedirect.Enabled = false;
             this.cb_AllowAutoRedirect.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_AllowAutoRedirect.Location = new System.Drawing.Point(14, 16);
+            this.cb_AllowAutoRedirect.Location = new System.Drawing.Point(9, 16);
             this.cb_AllowAutoRedirect.Name = "cb_AllowAutoRedirect";
             this.cb_AllowAutoRedirect.Size = new System.Drawing.Size(207, 19);
             this.cb_AllowAutoRedirect.TabIndex = 11;
@@ -552,7 +551,7 @@
             // 
             this.lbl_Copyright.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_Copyright.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lbl_Copyright.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Copyright.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Copyright.Location = new System.Drawing.Point(5, 571);
             this.lbl_Copyright.Name = "lbl_Copyright";
             this.lbl_Copyright.Size = new System.Drawing.Size(227, 20);
@@ -562,7 +561,7 @@
             // lbl_Version
             // 
             this.lbl_Version.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_Version.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Version.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Version.Location = new System.Drawing.Point(887, 571);
             this.lbl_Version.Name = "lbl_Version";
             this.lbl_Version.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -573,7 +572,7 @@
             // lbl_ProgressCount
             // 
             this.lbl_ProgressCount.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.lbl_ProgressCount.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ProgressCount.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_ProgressCount.Location = new System.Drawing.Point(238, 559);
             this.lbl_ProgressCount.Name = "lbl_ProgressCount";
             this.lbl_ProgressCount.Size = new System.Drawing.Size(610, 30);
@@ -599,7 +598,7 @@
             this.num_FTPRequestTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_FTPRequestTimeout.Enabled = false;
             this.num_FTPRequestTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_FTPRequestTimeout.Location = new System.Drawing.Point(158, 448);
+            this.num_FTPRequestTimeout.Location = new System.Drawing.Point(160, 448);
             this.num_FTPRequestTimeout.Maximum = new decimal(new int[] {
             60,
             0,
@@ -639,7 +638,7 @@
             this.lbl_FTPRequestTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_FTPRequestTimeoutSecondsText.Enabled = false;
             this.lbl_FTPRequestTimeoutSecondsText.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_FTPRequestTimeoutSecondsText.Location = new System.Drawing.Point(209, 450);
+            this.lbl_FTPRequestTimeoutSecondsText.Location = new System.Drawing.Point(211, 450);
             this.lbl_FTPRequestTimeoutSecondsText.Name = "lbl_FTPRequestTimeoutSecondsText";
             this.lbl_FTPRequestTimeoutSecondsText.Size = new System.Drawing.Size(57, 17);
             this.lbl_FTPRequestTimeoutSecondsText.TabIndex = 23;
@@ -653,7 +652,7 @@
             this.cb_RefreshAutoSet.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_RefreshAutoSet.Enabled = false;
             this.cb_RefreshAutoSet.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_RefreshAutoSet.Location = new System.Drawing.Point(10, 67);
+            this.cb_RefreshAutoSet.Location = new System.Drawing.Point(9, 67);
             this.cb_RefreshAutoSet.Name = "cb_RefreshAutoSet";
             this.cb_RefreshAutoSet.Size = new System.Drawing.Size(217, 19);
             this.cb_RefreshAutoSet.TabIndex = 26;
@@ -667,7 +666,7 @@
             this.cb_ContinuousRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ContinuousRefresh.Enabled = false;
             this.cb_ContinuousRefresh.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ContinuousRefresh.Location = new System.Drawing.Point(10, 33);
+            this.cb_ContinuousRefresh.Location = new System.Drawing.Point(9, 33);
             this.cb_ContinuousRefresh.Name = "cb_ContinuousRefresh";
             this.cb_ContinuousRefresh.Size = new System.Drawing.Size(217, 19);
             this.cb_ContinuousRefresh.TabIndex = 27;
@@ -682,7 +681,7 @@
             this.num_ParallelThreadsCount.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_ParallelThreadsCount.Enabled = false;
             this.num_ParallelThreadsCount.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_ParallelThreadsCount.Location = new System.Drawing.Point(158, 476);
+            this.num_ParallelThreadsCount.Location = new System.Drawing.Point(160, 476);
             this.num_ParallelThreadsCount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -716,7 +715,7 @@
             this.cb_ResolveNetworkShares.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ResolveNetworkShares.Enabled = false;
             this.cb_ResolveNetworkShares.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ResolveNetworkShares.Location = new System.Drawing.Point(10, 101);
+            this.cb_ResolveNetworkShares.Location = new System.Drawing.Point(9, 101);
             this.cb_ResolveNetworkShares.Name = "cb_ResolveNetworkShares";
             this.cb_ResolveNetworkShares.Size = new System.Drawing.Size(217, 19);
             this.cb_ResolveNetworkShares.TabIndex = 31;
@@ -731,10 +730,10 @@
             this.cb_ExportEndpointsStatus_XLSX.AutoSize = true;
             this.cb_ExportEndpointsStatus_XLSX.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ExportEndpointsStatus_XLSX.Enabled = false;
-            this.cb_ExportEndpointsStatus_XLSX.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ExportEndpointsStatus_XLSX.Location = new System.Drawing.Point(42, 15);
+            this.cb_ExportEndpointsStatus_XLSX.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold);
+            this.cb_ExportEndpointsStatus_XLSX.Location = new System.Drawing.Point(10, 17);
             this.cb_ExportEndpointsStatus_XLSX.Name = "cb_ExportEndpointsStatus_XLSX";
-            this.cb_ExportEndpointsStatus_XLSX.Size = new System.Drawing.Size(52, 19);
+            this.cb_ExportEndpointsStatus_XLSX.Size = new System.Drawing.Size(52, 17);
             this.cb_ExportEndpointsStatus_XLSX.TabIndex = 32;
             this.cb_ExportEndpointsStatus_XLSX.Text = "XLSX";
             this.cb_ExportEndpointsStatus_XLSX.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -751,7 +750,7 @@
             this.cb_SaveResponse.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_SaveResponse.Enabled = false;
             this.cb_SaveResponse.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_SaveResponse.Location = new System.Drawing.Point(14, 101);
+            this.cb_SaveResponse.Location = new System.Drawing.Point(9, 101);
             this.cb_SaveResponse.Name = "cb_SaveResponse";
             this.cb_SaveResponse.Size = new System.Drawing.Size(207, 19);
             this.cb_SaveResponse.TabIndex = 35;
@@ -767,7 +766,7 @@
             this.cb_ResolvePageMetaInfo.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ResolvePageMetaInfo.Enabled = false;
             this.cb_ResolvePageMetaInfo.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ResolvePageMetaInfo.Location = new System.Drawing.Point(14, 67);
+            this.cb_ResolvePageMetaInfo.Location = new System.Drawing.Point(9, 67);
             this.cb_ResolvePageMetaInfo.Name = "cb_ResolvePageMetaInfo";
             this.cb_ResolvePageMetaInfo.Size = new System.Drawing.Size(207, 19);
             this.cb_ResolvePageMetaInfo.TabIndex = 36;
@@ -783,7 +782,7 @@
             this.cb_ValidateSSLCertificate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ValidateSSLCertificate.Enabled = false;
             this.cb_ValidateSSLCertificate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ValidateSSLCertificate.Location = new System.Drawing.Point(14, 33);
+            this.cb_ValidateSSLCertificate.Location = new System.Drawing.Point(9, 33);
             this.cb_ValidateSSLCertificate.Name = "cb_ValidateSSLCertificate";
             this.cb_ValidateSSLCertificate.Size = new System.Drawing.Size(207, 19);
             this.cb_ValidateSSLCertificate.TabIndex = 37;
@@ -803,7 +802,7 @@
             this.groupBox_EndpointSelection.Controls.Add(this.btn_CheckAllAvailable);
             this.groupBox_EndpointSelection.Controls.Add(this.lbl_CheckAllAvailable);
             this.groupBox_EndpointSelection.Enabled = false;
-            this.groupBox_EndpointSelection.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox_EndpointSelection.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold);
             this.groupBox_EndpointSelection.Location = new System.Drawing.Point(792, 326);
             this.groupBox_EndpointSelection.Name = "groupBox_EndpointSelection";
             this.groupBox_EndpointSelection.Size = new System.Drawing.Size(200, 156);
@@ -979,7 +978,7 @@
             this.lbl_Refresh.AutoSize = true;
             this.lbl_Refresh.Enabled = false;
             this.lbl_Refresh.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Refresh.Location = new System.Drawing.Point(1046, 372);
+            this.lbl_Refresh.Location = new System.Drawing.Point(1042, 372);
             this.lbl_Refresh.Name = "lbl_Refresh";
             this.lbl_Refresh.Size = new System.Drawing.Size(62, 17);
             this.lbl_Refresh.TabIndex = 39;
@@ -991,7 +990,7 @@
             this.lbl_Terminate.AutoSize = true;
             this.lbl_Terminate.Enabled = false;
             this.lbl_Terminate.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Terminate.Location = new System.Drawing.Point(1046, 426);
+            this.lbl_Terminate.Location = new System.Drawing.Point(1042, 426);
             this.lbl_Terminate.Name = "lbl_Terminate";
             this.lbl_Terminate.Size = new System.Drawing.Size(80, 17);
             this.lbl_Terminate.TabIndex = 40;
@@ -1002,10 +1001,10 @@
             this.lbl_BrowseExportDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_BrowseExportDir.AutoSize = true;
             this.lbl_BrowseExportDir.Enabled = false;
-            this.lbl_BrowseExportDir.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_BrowseExportDir.Location = new System.Drawing.Point(330, 16);
+            this.lbl_BrowseExportDir.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold);
+            this.lbl_BrowseExportDir.Location = new System.Drawing.Point(350, 17);
             this.lbl_BrowseExportDir.Name = "lbl_BrowseExportDir";
-            this.lbl_BrowseExportDir.Size = new System.Drawing.Size(85, 15);
+            this.lbl_BrowseExportDir.Size = new System.Drawing.Size(80, 13);
             this.lbl_BrowseExportDir.TabIndex = 42;
             this.lbl_BrowseExportDir.Text = "Output Folder";
             // 
@@ -1015,7 +1014,7 @@
             this.lbl_SpeedTest.AutoSize = true;
             this.lbl_SpeedTest.Enabled = false;
             this.lbl_SpeedTest.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest.Location = new System.Drawing.Point(1046, 501);
+            this.lbl_SpeedTest.Location = new System.Drawing.Point(1042, 501);
             this.lbl_SpeedTest.Name = "lbl_SpeedTest";
             this.lbl_SpeedTest.Size = new System.Drawing.Size(77, 17);
             this.lbl_SpeedTest.TabIndex = 44;
@@ -1054,7 +1053,7 @@
             this.num_PingTimeout.Cursor = System.Windows.Forms.Cursors.Hand;
             this.num_PingTimeout.Enabled = false;
             this.num_PingTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.num_PingTimeout.Location = new System.Drawing.Point(158, 392);
+            this.num_PingTimeout.Location = new System.Drawing.Point(160, 392);
             this.num_PingTimeout.Maximum = new decimal(new int[] {
             30,
             0,
@@ -1094,7 +1093,7 @@
             this.lbl_PingTimeoutSecondsText.Cursor = System.Windows.Forms.Cursors.Default;
             this.lbl_PingTimeoutSecondsText.Enabled = false;
             this.lbl_PingTimeoutSecondsText.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_PingTimeoutSecondsText.Location = new System.Drawing.Point(209, 394);
+            this.lbl_PingTimeoutSecondsText.Location = new System.Drawing.Point(211, 394);
             this.lbl_PingTimeoutSecondsText.Name = "lbl_PingTimeoutSecondsText";
             this.lbl_PingTimeoutSecondsText.Size = new System.Drawing.Size(57, 17);
             this.lbl_PingTimeoutSecondsText.TabIndex = 46;
@@ -1124,7 +1123,7 @@
             this.comboBox_Validate.Items.AddRange(new object[] {
             "Protocol",
             "Ping"});
-            this.comboBox_Validate.Location = new System.Drawing.Point(158, 506);
+            this.comboBox_Validate.Location = new System.Drawing.Point(160, 506);
             this.comboBox_Validate.Name = "comboBox_Validate";
             this.comboBox_Validate.Size = new System.Drawing.Size(120, 25);
             this.comboBox_Validate.TabIndex = 49;
@@ -1132,6 +1131,7 @@
             // 
             // lv_Endpoints_ContextMenuStrip
             // 
+            this.lv_Endpoints_ContextMenuStrip.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lv_Endpoints_ContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.lv_Endpoints_ContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_Details,
@@ -1146,79 +1146,79 @@
             this.toolStripMenuItem_SSH});
             this.lv_Endpoints_ContextMenuStrip.Name = "lv_Endpoints_ContextMenuStrip";
             this.lv_Endpoints_ContextMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.lv_Endpoints_ContextMenuStrip.Size = new System.Drawing.Size(160, 192);
+            this.lv_Endpoints_ContextMenuStrip.Size = new System.Drawing.Size(176, 208);
             // 
             // toolStripMenuItem_Details
             // 
-            this.toolStripMenuItem_Details.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.toolStripMenuItem_Details.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripMenuItem_Details.Name = "toolStripMenuItem_Details";
-            this.toolStripMenuItem_Details.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem_Details.Size = new System.Drawing.Size(175, 24);
             this.toolStripMenuItem_Details.Text = "Details";
             this.toolStripMenuItem_Details.Click += new System.EventHandler(this.toolStripMenuItem_Details_Click);
             // 
             // toolStripSeparator_2
             // 
             this.toolStripSeparator_2.Name = "toolStripSeparator_2";
-            this.toolStripSeparator_2.Size = new System.Drawing.Size(156, 6);
+            this.toolStripSeparator_2.Size = new System.Drawing.Size(172, 6);
             // 
             // toolStripMenuItem_Browse
             // 
-            this.toolStripMenuItem_Browse.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.toolStripMenuItem_Browse.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripMenuItem_Browse.Name = "toolStripMenuItem_Browse";
-            this.toolStripMenuItem_Browse.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem_Browse.Size = new System.Drawing.Size(175, 24);
             this.toolStripMenuItem_Browse.Text = "Browse";
             this.toolStripMenuItem_Browse.Click += new System.EventHandler(this.toolStripMenuItem_Browse_Click);
             // 
             // toolStripMenuItem_AdminBrowse
             // 
-            this.toolStripMenuItem_AdminBrowse.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.toolStripMenuItem_AdminBrowse.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripMenuItem_AdminBrowse.Name = "toolStripMenuItem_AdminBrowse";
-            this.toolStripMenuItem_AdminBrowse.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem_AdminBrowse.Size = new System.Drawing.Size(175, 24);
             this.toolStripMenuItem_AdminBrowse.Text = "Admin Browse";
             this.toolStripMenuItem_AdminBrowse.Click += new System.EventHandler(this.toolStripMenuItem_AdminBrowse_Click);
             // 
             // toolStripMenuItem_HTTP
             // 
-            this.toolStripMenuItem_HTTP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.toolStripMenuItem_HTTP.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripMenuItem_HTTP.Name = "toolStripMenuItem_HTTP";
-            this.toolStripMenuItem_HTTP.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem_HTTP.Size = new System.Drawing.Size(175, 24);
             this.toolStripMenuItem_HTTP.Text = "Open as HTTP";
             this.toolStripMenuItem_HTTP.Click += new System.EventHandler(this.toolStripMenuItem_HTTP_Click);
             // 
             // toolStripMenuItem_FTP
             // 
-            this.toolStripMenuItem_FTP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.toolStripMenuItem_FTP.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripMenuItem_FTP.Name = "toolStripMenuItem_FTP";
-            this.toolStripMenuItem_FTP.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem_FTP.Size = new System.Drawing.Size(175, 24);
             this.toolStripMenuItem_FTP.Text = "Open as FTP";
             this.toolStripMenuItem_FTP.Click += new System.EventHandler(this.toolStripMenuItem_FTP_Click);
             // 
             // toolStripSeparator_1
             // 
             this.toolStripSeparator_1.Name = "toolStripSeparator_1";
-            this.toolStripSeparator_1.Size = new System.Drawing.Size(156, 6);
+            this.toolStripSeparator_1.Size = new System.Drawing.Size(172, 6);
             // 
             // toolStripMenuItem_RDP
             // 
-            this.toolStripMenuItem_RDP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.toolStripMenuItem_RDP.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripMenuItem_RDP.Name = "toolStripMenuItem_RDP";
-            this.toolStripMenuItem_RDP.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem_RDP.Size = new System.Drawing.Size(175, 24);
             this.toolStripMenuItem_RDP.Text = "RDP Connect";
             this.toolStripMenuItem_RDP.Click += new System.EventHandler(this.toolStripMenuItem_RDP_Click);
             // 
             // toolStripMenuItem_VNC
             // 
-            this.toolStripMenuItem_VNC.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.toolStripMenuItem_VNC.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripMenuItem_VNC.Name = "toolStripMenuItem_VNC";
-            this.toolStripMenuItem_VNC.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem_VNC.Size = new System.Drawing.Size(175, 24);
             this.toolStripMenuItem_VNC.Text = "VNC Connect";
             this.toolStripMenuItem_VNC.Click += new System.EventHandler(this.toolStripMenuItem_VNC_Click);
             // 
             // toolStripMenuItem_SSH
             // 
-            this.toolStripMenuItem_SSH.Font = new System.Drawing.Font("Arial", 9.75F);
+            this.toolStripMenuItem_SSH.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripMenuItem_SSH.Name = "toolStripMenuItem_SSH";
-            this.toolStripMenuItem_SSH.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem_SSH.Size = new System.Drawing.Size(175, 24);
             this.toolStripMenuItem_SSH.Text = "SSH Connect";
             this.toolStripMenuItem_SSH.Click += new System.EventHandler(this.toolStripMenuItem_SSH_Click);
             // 
@@ -1230,7 +1230,7 @@
             this.btn_Terminate.Enabled = false;
             this.btn_Terminate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Terminate.Image = ((System.Drawing.Image)(resources.GetObject("btn_Terminate.Image")));
-            this.btn_Terminate.Location = new System.Drawing.Point(1005, 414);
+            this.btn_Terminate.Location = new System.Drawing.Point(1002, 414);
             this.btn_Terminate.Name = "btn_Terminate";
             this.btn_Terminate.Size = new System.Drawing.Size(40, 40);
             this.btn_Terminate.TabIndex = 28;
@@ -1245,7 +1245,7 @@
             this.btn_Refresh.Enabled = false;
             this.btn_Refresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Refresh.Image = ((System.Drawing.Image)(resources.GetObject("btn_Refresh.Image")));
-            this.btn_Refresh.Location = new System.Drawing.Point(1005, 360);
+            this.btn_Refresh.Location = new System.Drawing.Point(1002, 360);
             this.btn_Refresh.Name = "btn_Refresh";
             this.btn_Refresh.Size = new System.Drawing.Size(40, 40);
             this.btn_Refresh.TabIndex = 1;
@@ -1262,7 +1262,7 @@
             this.btn_SpeedTest.FlatAppearance.BorderSize = 2;
             this.btn_SpeedTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_SpeedTest.Image = ((System.Drawing.Image)(resources.GetObject("btn_SpeedTest.Image")));
-            this.btn_SpeedTest.Location = new System.Drawing.Point(1005, 489);
+            this.btn_SpeedTest.Location = new System.Drawing.Point(1002, 489);
             this.btn_SpeedTest.Name = "btn_SpeedTest";
             this.btn_SpeedTest.Size = new System.Drawing.Size(40, 40);
             this.btn_SpeedTest.TabIndex = 43;
@@ -1277,7 +1277,7 @@
             this.btn_BrowseExportDir.Enabled = false;
             this.btn_BrowseExportDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_BrowseExportDir.Image = global::EndpointChecker.Properties.Resources.browseFolder_16x16;
-            this.btn_BrowseExportDir.Location = new System.Drawing.Point(307, 14);
+            this.btn_BrowseExportDir.Location = new System.Drawing.Point(331, 14);
             this.btn_BrowseExportDir.Name = "btn_BrowseExportDir";
             this.btn_BrowseExportDir.Size = new System.Drawing.Size(20, 20);
             this.btn_BrowseExportDir.TabIndex = 41;
@@ -1302,10 +1302,10 @@
             this.cb_ExportEndpointsStatus_HTML.AutoSize = true;
             this.cb_ExportEndpointsStatus_HTML.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ExportEndpointsStatus_HTML.Enabled = false;
-            this.cb_ExportEndpointsStatus_HTML.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ExportEndpointsStatus_HTML.Location = new System.Drawing.Point(161, 15);
+            this.cb_ExportEndpointsStatus_HTML.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold);
+            this.cb_ExportEndpointsStatus_HTML.Location = new System.Drawing.Point(154, 17);
             this.cb_ExportEndpointsStatus_HTML.Name = "cb_ExportEndpointsStatus_HTML";
-            this.cb_ExportEndpointsStatus_HTML.Size = new System.Drawing.Size(57, 19);
+            this.cb_ExportEndpointsStatus_HTML.Size = new System.Drawing.Size(57, 17);
             this.cb_ExportEndpointsStatus_HTML.TabIndex = 50;
             this.cb_ExportEndpointsStatus_HTML.Text = "HTML";
             this.cb_ExportEndpointsStatus_HTML.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1329,7 +1329,7 @@
             this.lbl_LastUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_LastUpdate.AutoSize = true;
             this.lbl_LastUpdate.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LastUpdate.Location = new System.Drawing.Point(156, 537);
+            this.lbl_LastUpdate.Location = new System.Drawing.Point(158, 537);
             this.lbl_LastUpdate.Name = "lbl_LastUpdate";
             this.lbl_LastUpdate.Size = new System.Drawing.Size(0, 17);
             this.lbl_LastUpdate.TabIndex = 52;
@@ -1342,10 +1342,10 @@
             this.cb_ExportEndpointsStatus_JSON.AutoSize = true;
             this.cb_ExportEndpointsStatus_JSON.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ExportEndpointsStatus_JSON.Enabled = false;
-            this.cb_ExportEndpointsStatus_JSON.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ExportEndpointsStatus_JSON.Location = new System.Drawing.Point(224, 15);
+            this.cb_ExportEndpointsStatus_JSON.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold);
+            this.cb_ExportEndpointsStatus_JSON.Location = new System.Drawing.Point(231, 17);
             this.cb_ExportEndpointsStatus_JSON.Name = "cb_ExportEndpointsStatus_JSON";
-            this.cb_ExportEndpointsStatus_JSON.Size = new System.Drawing.Size(54, 19);
+            this.cb_ExportEndpointsStatus_JSON.Size = new System.Drawing.Size(54, 17);
             this.cb_ExportEndpointsStatus_JSON.TabIndex = 53;
             this.cb_ExportEndpointsStatus_JSON.Text = "JSON";
             this.cb_ExportEndpointsStatus_JSON.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1359,10 +1359,10 @@
             this.cb_ExportEndpointsStatus_XML.AutoSize = true;
             this.cb_ExportEndpointsStatus_XML.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ExportEndpointsStatus_XML.Enabled = false;
-            this.cb_ExportEndpointsStatus_XML.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ExportEndpointsStatus_XML.Location = new System.Drawing.Point(103, 15);
+            this.cb_ExportEndpointsStatus_XML.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold);
+            this.cb_ExportEndpointsStatus_XML.Location = new System.Drawing.Point(83, 17);
             this.cb_ExportEndpointsStatus_XML.Name = "cb_ExportEndpointsStatus_XML";
-            this.cb_ExportEndpointsStatus_XML.Size = new System.Drawing.Size(50, 19);
+            this.cb_ExportEndpointsStatus_XML.Size = new System.Drawing.Size(50, 17);
             this.cb_ExportEndpointsStatus_XML.TabIndex = 54;
             this.cb_ExportEndpointsStatus_XML.Text = "XML";
             this.cb_ExportEndpointsStatus_XML.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1380,7 +1380,7 @@
             this.groupBox_Export.Controls.Add(this.btn_BrowseExportDir);
             this.groupBox_Export.Controls.Add(this.lbl_BrowseExportDir);
             this.groupBox_Export.Enabled = false;
-            this.groupBox_Export.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold);
+            this.groupBox_Export.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold);
             this.groupBox_Export.Location = new System.Drawing.Point(310, 489);
             this.groupBox_Export.Name = "groupBox_Export";
             this.groupBox_Export.Size = new System.Drawing.Size(467, 40);
@@ -1399,7 +1399,7 @@
             this.cb_RemoveURLParameters.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_RemoveURLParameters.Enabled = false;
             this.cb_RemoveURLParameters.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_RemoveURLParameters.Location = new System.Drawing.Point(14, 50);
+            this.cb_RemoveURLParameters.Location = new System.Drawing.Point(9, 50);
             this.cb_RemoveURLParameters.Name = "cb_RemoveURLParameters";
             this.cb_RemoveURLParameters.Size = new System.Drawing.Size(207, 19);
             this.cb_RemoveURLParameters.TabIndex = 56;
@@ -1431,7 +1431,7 @@
             this.cb_RefreshOnStartup.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_RefreshOnStartup.Enabled = false;
             this.cb_RefreshOnStartup.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_RefreshOnStartup.Location = new System.Drawing.Point(10, 16);
+            this.cb_RefreshOnStartup.Location = new System.Drawing.Point(9, 16);
             this.cb_RefreshOnStartup.Name = "cb_RefreshOnStartup";
             this.cb_RefreshOnStartup.Size = new System.Drawing.Size(217, 19);
             this.cb_RefreshOnStartup.TabIndex = 32;
@@ -1444,7 +1444,7 @@
             this.cb_ResolvePageLinks.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ResolvePageLinks.Enabled = false;
             this.cb_ResolvePageLinks.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_ResolvePageLinks.Location = new System.Drawing.Point(14, 84);
+            this.cb_ResolvePageLinks.Location = new System.Drawing.Point(9, 84);
             this.cb_ResolvePageLinks.Name = "cb_ResolvePageLinks";
             this.cb_ResolvePageLinks.Size = new System.Drawing.Size(207, 19);
             this.cb_ResolvePageLinks.TabIndex = 59;
@@ -1480,7 +1480,7 @@
             this.cb_PingHost.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_PingHost.Enabled = false;
             this.cb_PingHost.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_PingHost.Location = new System.Drawing.Point(14, 118);
+            this.cb_PingHost.Location = new System.Drawing.Point(9, 118);
             this.cb_PingHost.Name = "cb_PingHost";
             this.cb_PingHost.Size = new System.Drawing.Size(207, 19);
             this.cb_PingHost.TabIndex = 61;
@@ -1494,7 +1494,7 @@
             this.cb_DNSAndMACLookupOnHost.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_DNSAndMACLookupOnHost.Enabled = false;
             this.cb_DNSAndMACLookupOnHost.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_DNSAndMACLookupOnHost.Location = new System.Drawing.Point(14, 135);
+            this.cb_DNSAndMACLookupOnHost.Location = new System.Drawing.Point(9, 135);
             this.cb_DNSAndMACLookupOnHost.Name = "cb_DNSAndMACLookupOnHost";
             this.cb_DNSAndMACLookupOnHost.Size = new System.Drawing.Size(207, 19);
             this.cb_DNSAndMACLookupOnHost.TabIndex = 60;
@@ -1604,7 +1604,7 @@
             this.tb_ListFilter.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tb_ListFilter.Enabled = false;
             this.tb_ListFilter.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_ListFilter.Location = new System.Drawing.Point(158, 335);
+            this.tb_ListFilter.Location = new System.Drawing.Point(160, 335);
             this.tb_ListFilter.Multiline = true;
             this.tb_ListFilter.Name = "tb_ListFilter";
             this.tb_ListFilter.Size = new System.Drawing.Size(120, 22);
@@ -1618,7 +1618,7 @@
             this.pb_ListFilterClear.BackColor = System.Drawing.Color.Transparent;
             this.pb_ListFilterClear.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_ListFilterClear.Image = global::EndpointChecker.Properties.Resources.close;
-            this.pb_ListFilterClear.Location = new System.Drawing.Point(277, 335);
+            this.pb_ListFilterClear.Location = new System.Drawing.Point(280, 335);
             this.pb_ListFilterClear.Name = "pb_ListFilterClear";
             this.pb_ListFilterClear.Size = new System.Drawing.Size(22, 22);
             this.pb_ListFilterClear.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1663,6 +1663,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1134, 593);
+            this.Controls.Add(this.groupBox_CommonOptions);
             this.Controls.Add(this.pb_RefreshProcess);
             this.Controls.Add(this.pb_SoftPedia);
             this.Controls.Add(this.pb_ListFilterClear);
@@ -1678,7 +1679,6 @@
             this.Controls.Add(this.lbl_EndpointsList);
             this.Controls.Add(this.btn_ConfigFile);
             this.Controls.Add(this.groupBox_HTTPOptions);
-            this.Controls.Add(this.groupBox_CommonOptions);
             this.Controls.Add(this.groupBox_Export);
             this.Controls.Add(this.lbl_LastUpdate);
             this.Controls.Add(this.lbl_LastUpdate_Label);

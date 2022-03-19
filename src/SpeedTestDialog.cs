@@ -144,19 +144,20 @@ namespace EndpointChecker
             }
         }
 
-        public void GetSelectedServer()
+        public void SelectServer()
         {
             SetAGaugeControlsCleanState();
 
             if (cb_SpeedTest_TestServer.SelectedIndex == 0)
             {
                 // FIND BEST SERVER (BY LATENCY)
-                targetServer = BestServerByLatency();
+                targetServer = GetBestServerByLatency();
             }
             else
             {
                 // SPECIFIC SERVER
                 targetServer = testServersList[cb_SpeedTest_TestServer.SelectedIndex - 1];
+                ListSelectedServer(targetServer);
             }
         }
 
@@ -209,7 +210,7 @@ namespace EndpointChecker
             }
         }
 
-        public Server BestServerByLatency()
+        public Server GetBestServerByLatency()
         {
             AppendTextToLogBox(
                                          rtb_SpeedTest_LogConsole,
@@ -236,6 +237,31 @@ namespace EndpointChecker
                                     true);
 
             return bestServer;
+        }
+
+        public void ListSelectedServer(Server selectedServer)
+        {
+            AppendTextToLogBox(
+                                         rtb_SpeedTest_LogConsole,
+                                         Environment.NewLine +
+                                         "User selected specific Server ...",
+                                         Color.Black,
+                                         true);
+
+            AppendTextToLogBox(
+                                    rtb_SpeedTest_LogConsole,
+                                        "Hosted by '" +
+                                        GetStringCorrectEncoding(selectedServer.Sponsor) +
+                                        "' (" +
+                                        GetStringCorrectEncoding(selectedServer.Name) +
+                                        "/" +
+                                        GetStringCorrectEncoding(selectedServer.Country) +
+                                        "), distance: " + (int)selectedServer.Distance / 1000 +
+                                        "km, latency: " + selectedServer.Latency +
+                                        "ms" +
+                                        Environment.NewLine,
+                                    Color.DeepSkyBlue,
+                                    true);
         }
 
         public void SpeedTestToServer()
@@ -309,23 +335,23 @@ namespace EndpointChecker
 
                         if (aGauge_DownloadSpeed.MaxValue > 150)
                         {
-                            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 25;
+                            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 50;
                         }
                         else if (aGauge_DownloadSpeed.MaxValue > 300)
                         {
-                            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 75;
+                            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 100;
                         }
                         else if (aGauge_DownloadSpeed.MaxValue > 500)
                         {
-                            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 125;
+                            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 150;
                         }
                         else if (aGauge_DownloadSpeed.MaxValue > 750)
                         {
-                            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 150;
+                            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 200;
                         }
                         else if (aGauge_DownloadSpeed.MaxValue > 1000)
                         {
-                            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 1175;
+                            aGauge_DownloadSpeed.ScaleLinesMajorStepValue = 250;
                         }
 
                         pBar_Download.Visible = false;
@@ -373,23 +399,23 @@ namespace EndpointChecker
 
                         if (aGauge_UploadSpeed.MaxValue > 150)
                         {
-                            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 25;
+                            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 50;
                         }
                         else if (aGauge_UploadSpeed.MaxValue > 300)
                         {
-                            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 50;
+                            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 100;
                         }
                         else if (aGauge_UploadSpeed.MaxValue > 500)
                         {
-                            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 75;
+                            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 150;
                         }
                         else if (aGauge_UploadSpeed.MaxValue > 750)
                         {
-                            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 100;
+                            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 200;
                         }
                         else if (aGauge_UploadSpeed.MaxValue > 1000)
                         {
-                            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 150;
+                            aGauge_UploadSpeed.ScaleLinesMajorStepValue = 250;
                         }
 
                         pBar_Upload.Visible = false;
@@ -644,7 +670,17 @@ namespace EndpointChecker
 
             foreach (var server in filteredServersList.Take(maxTestServersCount))
             {
-                server.Latency = speedTestClient.TestServerLatency(server);
+                for (int i = 0; i < 3; i++)
+                {
+                    int _serverLatency = speedTestClient.TestServerLatency(server);
+
+                    if (i == 0 || server.Latency > _serverLatency)
+                    {
+                        server.Latency = _serverLatency;
+                    }
+
+                    Thread.Sleep(333);
+                }
 
                 AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
@@ -1028,7 +1064,7 @@ namespace EndpointChecker
 
             if (testServersList.Count() > 1)
             {
-                GetSelectedServer();
+                SelectServer();
                 SetServerDetails();
             }
         }
@@ -1036,7 +1072,7 @@ namespace EndpointChecker
         public void pb_GO_Click(object sender, EventArgs e)
         {
             SetProgessState(true);
-            GetSelectedServer();
+            SelectServer();
             SpeedTestToServer();
         }
 
@@ -1083,14 +1119,14 @@ namespace EndpointChecker
 
                     // Set the Brush to ComboBox ForeColor to maintain any ComboBox color settings
                     // Assumes Brush is solid
-                    Brush brush = new SolidBrush(Color.LightGreen);
+                    Brush brush = new SolidBrush(Color.Yellow);
 
                     // If drawing highlighted selection, change brush
                     if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
                         brush = SystemBrushes.HighlightText;
 
                     // Draw the string
-                    e.Graphics.DrawString(cbx.Items[e.Index].ToString(), lbl_SpeedTest_ExternalIP.Font, brush, e.Bounds, sf);
+                    e.Graphics.DrawString(cbx.Items[e.Index].ToString(), new Font("Segoe UI", 10, FontStyle.Regular), brush, e.Bounds, sf);
                 }
             }
         }
