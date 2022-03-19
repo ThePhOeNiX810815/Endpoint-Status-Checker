@@ -95,7 +95,7 @@ namespace EndpointChecker
         public static Assembly app_Assembly = Assembly.GetExecutingAssembly();
         public static Version app_Version = app_Assembly.GetName().Version;
         public static string app_VersionString = GetVersionString(app_Version, true, false);
-        
+
         public static string os_VersionString =
             (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion", "ProductName", null) +
             " " +
