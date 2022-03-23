@@ -45,22 +45,22 @@
             // 
             // lbl_Title
             // 
-            this.lbl_Title.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Title.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold);
             this.lbl_Title.ForeColor = System.Drawing.Color.Red;
-            this.lbl_Title.Location = new System.Drawing.Point(22, 18);
+            this.lbl_Title.Location = new System.Drawing.Point(11, 13);
             this.lbl_Title.Name = "lbl_Title";
-            this.lbl_Title.Size = new System.Drawing.Size(396, 23);
+            this.lbl_Title.Size = new System.Drawing.Size(422, 23);
             this.lbl_Title.TabIndex = 0;
-            this.lbl_Title.Text = "Unexpected Exception occured in application";
+            this.lbl_Title.Text = "Unexpected Exception occurred in application";
             this.lbl_Title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lbl_Status
             // 
-            this.lbl_Status.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Status.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold);
             this.lbl_Status.ForeColor = System.Drawing.Color.Black;
-            this.lbl_Status.Location = new System.Drawing.Point(22, 46);
+            this.lbl_Status.Location = new System.Drawing.Point(22, 36);
             this.lbl_Status.Name = "lbl_Status";
-            this.lbl_Status.Size = new System.Drawing.Size(396, 23);
+            this.lbl_Status.Size = new System.Drawing.Size(396, 46);
             this.lbl_Status.TabIndex = 1;
             this.lbl_Status.Text = "Send error details report to development team";
             this.lbl_Status.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -68,7 +68,7 @@
             // pb_Status
             // 
             this.pb_Status.Image = global::EndpointChecker.Properties.Resources.ErrorReport;
-            this.pb_Status.Location = new System.Drawing.Point(185, 76);
+            this.pb_Status.Location = new System.Drawing.Point(185, 92);
             this.pb_Status.Name = "pb_Status";
             this.pb_Status.Size = new System.Drawing.Size(72, 72);
             this.pb_Status.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -77,8 +77,8 @@
             // 
             // lbl_UserEMailAddress
             // 
-            this.lbl_UserEMailAddress.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UserEMailAddress.Location = new System.Drawing.Point(23, 187);
+            this.lbl_UserEMailAddress.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_UserEMailAddress.Location = new System.Drawing.Point(23, 193);
             this.lbl_UserEMailAddress.Name = "lbl_UserEMailAddress";
             this.lbl_UserEMailAddress.Size = new System.Drawing.Size(395, 20);
             this.lbl_UserEMailAddress.TabIndex = 3;
@@ -89,7 +89,7 @@
             // 
             this.tb_UserEMailAddress.BackColor = System.Drawing.SystemColors.Info;
             this.tb_UserEMailAddress.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.tb_UserEMailAddress.Location = new System.Drawing.Point(26, 206);
+            this.tb_UserEMailAddress.Location = new System.Drawing.Point(26, 212);
             this.tb_UserEMailAddress.Multiline = true;
             this.tb_UserEMailAddress.Name = "tb_UserEMailAddress";
             this.tb_UserEMailAddress.Size = new System.Drawing.Size(392, 20);
@@ -101,7 +101,7 @@
             // 
             this.tb_OptionalComment.BackColor = System.Drawing.SystemColors.Info;
             this.tb_OptionalComment.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.tb_OptionalComment.Location = new System.Drawing.Point(26, 264);
+            this.tb_OptionalComment.Location = new System.Drawing.Point(26, 269);
             this.tb_OptionalComment.Multiline = true;
             this.tb_OptionalComment.Name = "tb_OptionalComment";
             this.tb_OptionalComment.Size = new System.Drawing.Size(392, 120);
@@ -111,8 +111,8 @@
             // 
             // lbl_OptionalComment
             // 
-            this.lbl_OptionalComment.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_OptionalComment.Location = new System.Drawing.Point(23, 244);
+            this.lbl_OptionalComment.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_OptionalComment.Location = new System.Drawing.Point(23, 249);
             this.lbl_OptionalComment.Name = "lbl_OptionalComment";
             this.lbl_OptionalComment.Size = new System.Drawing.Size(395, 20);
             this.lbl_OptionalComment.TabIndex = 5;
@@ -123,10 +123,10 @@
             // 
             this.btn_Send.BackColor = System.Drawing.Color.DarkGray;
             this.btn_Send.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_Send.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Send.Location = new System.Drawing.Point(149, 476);
+            this.btn_Send.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Send.Location = new System.Drawing.Point(141, 482);
             this.btn_Send.Name = "btn_Send";
-            this.btn_Send.Size = new System.Drawing.Size(142, 27);
+            this.btn_Send.Size = new System.Drawing.Size(160, 36);
             this.btn_Send.TabIndex = 7;
             this.btn_Send.Text = "Send Error Report";
             this.btn_Send.UseVisualStyleBackColor = false;
@@ -136,22 +136,22 @@
             // 
             this.cb_SystemInfo.AutoSize = true;
             this.cb_SystemInfo.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cb_SystemInfo.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_SystemInfo.Location = new System.Drawing.Point(26, 394);
+            this.cb_SystemInfo.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_SystemInfo.Location = new System.Drawing.Point(26, 399);
             this.cb_SystemInfo.Name = "cb_SystemInfo";
-            this.cb_SystemInfo.Size = new System.Drawing.Size(391, 20);
+            this.cb_SystemInfo.Size = new System.Drawing.Size(376, 24);
             this.cb_SystemInfo.TabIndex = 8;
-            this.cb_SystemInfo.Text = "Send System Information (User Info, CPU, RAM, Disk, NIC)";
+            this.cb_SystemInfo.Text = "Send System Information (User, CPU, RAM, Disk, NIC)";
             this.cb_SystemInfo.UseVisualStyleBackColor = true;
             // 
             // cb_AdditionalLogs
             // 
             this.cb_AdditionalLogs.AutoSize = true;
             this.cb_AdditionalLogs.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cb_AdditionalLogs.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_AdditionalLogs.Location = new System.Drawing.Point(26, 417);
+            this.cb_AdditionalLogs.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_AdditionalLogs.Location = new System.Drawing.Point(26, 418);
             this.cb_AdditionalLogs.Name = "cb_AdditionalLogs";
-            this.cb_AdditionalLogs.Size = new System.Drawing.Size(336, 20);
+            this.cb_AdditionalLogs.Size = new System.Drawing.Size(352, 24);
             this.cb_AdditionalLogs.TabIndex = 9;
             this.cb_AdditionalLogs.Text = "Attach Additional LOG files (System, Application)";
             this.cb_AdditionalLogs.UseVisualStyleBackColor = true;
@@ -160,10 +160,10 @@
             // 
             this.cb_AttachScreenshot.AutoSize = true;
             this.cb_AttachScreenshot.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cb_AttachScreenshot.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_AttachScreenshot.Location = new System.Drawing.Point(26, 440);
+            this.cb_AttachScreenshot.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_AttachScreenshot.Location = new System.Drawing.Point(26, 437);
             this.cb_AttachScreenshot.Name = "cb_AttachScreenshot";
-            this.cb_AttachScreenshot.Size = new System.Drawing.Size(142, 20);
+            this.cb_AttachScreenshot.Size = new System.Drawing.Size(147, 24);
             this.cb_AttachScreenshot.TabIndex = 10;
             this.cb_AttachScreenshot.Text = "Attach Screenshot";
             this.cb_AttachScreenshot.UseVisualStyleBackColor = true;
@@ -190,7 +190,7 @@
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(443, 532);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(443, 170);
+            this.MinimumSize = new System.Drawing.Size(443, 190);
             this.Name = "ExceptionDialog";
             this.Opacity = 0D;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

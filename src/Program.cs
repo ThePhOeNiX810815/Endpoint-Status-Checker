@@ -293,7 +293,7 @@ namespace EndpointChecker
                             Process.Start(startUpdater);
 
                             // CLOSE
-                            Application.Exit();
+                            Environment.Exit(1);
                         }
                         else
                         {
@@ -495,6 +495,34 @@ namespace EndpointChecker
             }
 
             return isOriginalSignedExecutable;
+        }
+
+        public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
+        {
+            ExceptionNotifier((Exception)args.ExceptionObject);
+        }
+
+        public static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs args)
+        {
+            ExceptionNotifier(args.Exception);
+        }
+        public static void ExceptionNotifier(Exception exception, string callerName = "")
+        {
+            string callingMethod = new StackTrace().GetFrame(2).GetMethod().Name;
+
+            if (!string.IsNullOrEmpty(callerName))
+            {
+                callingMethod += " [" + callerName + "]";
+            }
+
+            ExceptionDialog exDialog = new ExceptionDialog(
+                exception,
+                callingMethod,
+                exceptionReport_senderEMailAddress,
+                new List<string> { authorEmailAddress },
+                new List<string> { endpointDefinitonsFile });
+
+            exDialog.ShowDialog();
         }
     }
 }

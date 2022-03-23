@@ -128,21 +128,6 @@ namespace EndpointChecker
                     mailMessage.IsBodyHtml = true;
                     mailMessage.Priority = MailPriority.High;
 
-                    // ADD RECIPIENTS FROM LIST
-                    foreach (string recipientAddress in _recipientsAddressesList)
-                    {
-                        if (IsMailAddressValid(recipientAddress))
-                        {
-                            mailMessage.To.Add(new MailAddress(recipientAddress));
-                        }
-                    }
-
-                    // ADD USER (OPTIONAL)
-                    if (IsMailAddressValid(user_EMail))
-                    {
-                        mailMessage.To.Add(new MailAddress(user_EMail));
-                    }
-
                     // ADD SCREENSHOT (OPTIONAL)
                     if (attachScreenshot &&
                         _screenshotStream != null)
@@ -162,19 +147,20 @@ namespace EndpointChecker
                         }
                     }
 
-                    SmtpClient smtp = new SmtpClient();
-                    smtp.Host = "gmail-smtp-in.l.google.com";
-                    smtp.EnableSsl = true;
-                    smtp.UseDefaultCredentials = false;
-                    smtp.Port = 25;
-                    smtp.Send(mailMessage);
-
-                    ThreadSafeInvoke(() =>
+                    // SEND TO DEFINED RECIPIENTS
+                    foreach (string recipientAddress in _recipientsAddressesList)
                     {
-                        // SET STATUS CONTROLS
-                        lbl_Status.Text = "Error report has been successfully sent";
-                        pb_Status.Image = Resources.Success;
-                    });
+                        if (IsMailAddressValid(recipientAddress))
+                        {
+                            SendMailMessage(mailMessage, new MailAddress(recipientAddress));
+                        }
+                    }
+
+                    // SEND TO USER MAIL (OPTIONAL)
+                    if (IsMailAddressValid(user_EMail))
+                    {
+                        SendMailMessage(mailMessage, new MailAddress(user_EMail));
+                    }
                 }
             }
             catch (Exception ex)
@@ -195,16 +181,41 @@ namespace EndpointChecker
                         Program.app_ApplicationName + " v" + Program.app_VersionString,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
+
+                    Thread.Sleep(3000);
                 });
             }
-
-            Thread.Sleep(3000);
 
             ThreadSafeInvoke(() =>
             {
                 // CLOSE PROGRAM
-                Application.Exit();
+                Environment.Exit(1);
             });
+        }
+
+        public void SendMailMessage(MailMessage mailMessage, MailAddress recipientAddress)
+        {
+            mailMessage.To.Clear();
+            mailMessage.To.Add(recipientAddress);
+
+            using (SmtpClient smtpClient = new SmtpClient())
+            {
+                smtpClient.Host = "gmail-smtp-in.l.google.com";
+                smtpClient.EnableSsl = true;
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Port = 25;
+                smtpClient.Send(mailMessage);
+
+                ThreadSafeInvoke(() =>
+                {
+                    // SET STATUS CONTROLS
+                    lbl_Status.Text = "Report has been sent to '" + recipientAddress.Address + "'";
+                    pb_Status.Image = Resources.Success;
+
+                    Application.DoEvents();
+                    Thread.Sleep(3000);
+                });
+            }
         }
 
         public void CreateScreenshot()
