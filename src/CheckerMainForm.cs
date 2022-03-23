@@ -779,11 +779,9 @@ namespace EndpointChecker
                             {
                                 // INCREMENT PROGRESS COUNTER
                                 Interlocked.Increment(ref endpointsCount_Current);
-                                Application.DoEvents();
 
                                 // SET PROGRESS STATUS LABEL
                                 SetProgressStatus(endpointsCount_Enabled, endpointsCount_Current);
-                                Application.DoEvents();
 
                                 // CREATE STOPWATCH FOR ITEM CHECK DURATION [FOR 'EXPORT' PURPOSE]
                                 Stopwatch sw_ItemProgress = new Stopwatch();
@@ -802,7 +800,6 @@ namespace EndpointChecker
 
                                     // START STOPWATCH FOR ITEM CHECK DURATION
                                     sw_ItemProgress.Start();
-                                    Application.DoEvents();
 
                                     try
                                     {
@@ -812,8 +809,7 @@ namespace EndpointChecker
                                             endpointURI,
                                             httpRequestTimeout,
                                             autoRedirect_Enable,
-                                            removeURLParameters,
-                                            validateSSLCertificate);
+                                            removeURLParameters);
 
                                         try
                                         {
@@ -857,7 +853,6 @@ namespace EndpointChecker
                                                     httpRequestTimeout,
                                                     autoRedirect_Enable,
                                                     removeURLParameters,
-                                                    validateSSLCertificate,
                                                     _httpWebResponse.Cookies);
 
                                                 autoRedirect_Followed = true;
@@ -873,7 +868,6 @@ namespace EndpointChecker
 
                                         // STOP STOPWATCH FOR ITEM CHECK DURATION
                                         sw_ItemProgress.Stop();
-                                        Application.DoEvents();
 
                                         // GET RESPONSE HEADERS
                                         GetHTTPWebHeaders(endpoint.HTTPResponseHeaders.PropertyItem, httpWebResponse.Headers);
@@ -1334,7 +1328,6 @@ namespace EndpointChecker
 
                                 // SET PROGRESS STATUS LABEL
                                 SetProgressStatus(endpointsCount_Enabled, endpointsCount_Current);
-                                Application.DoEvents();
                             }
                         }
 
@@ -1453,7 +1446,6 @@ namespace EndpointChecker
             int httpRequestTimeout,
             bool allowAutoRedirect,
             bool removeURLParameters,
-            bool validateSSLCertificate,
             CookieCollection cookies = null)
         {
             // REQUEST PARAMETERS
@@ -1518,13 +1510,20 @@ namespace EndpointChecker
             requestHeadersCollection.Add("Sec-CH-UA-Platform", "\"Windows\"");
             httpWebRequest.Headers.Add(requestHeadersCollection);
 
-            // SET CREDENTIALS [IF SPECIFIED]
+            // SET CREDENTIALS
+            httpWebRequest.PreAuthenticate = true;
+            httpWebRequest.AuthenticationLevel = System.Net.Security.AuthenticationLevel.MutualAuthRequested;
+
             if (endpoint.LoginName != status_NotAvailable &&
                 !string.IsNullOrEmpty(endpoint.LoginName))
             {
+                // SPECIFIED CREDENTIALS
                 httpWebRequest.Credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
-                httpWebRequest.PreAuthenticate = true;
-                httpWebRequest.AuthenticationLevel = System.Net.Security.AuthenticationLevel.MutualAuthRequested;
+            }
+            else
+            {
+                // CURRENT WINDOWS USER CREDENTIALS
+                httpWebRequest.Credentials = CredentialCache.DefaultCredentials;
             }
 
             // GET REQUEST HEADERS
@@ -1933,23 +1932,6 @@ namespace EndpointChecker
             return contentType;
         }
 
-        public static void ExceptionNotifier(Exception exception, string callingMethod = "")
-        {
-            if (string.IsNullOrEmpty(callingMethod))
-            {
-                callingMethod = new StackTrace().GetFrame(1).GetMethod().Name;
-            }
-
-            ExceptionDialog exDialog = new ExceptionDialog(
-                exception,
-                callingMethod,
-                exceptionReport_senderEMailAddress,
-                new List<string> { authorEmailAddress },
-                new List<string> { endpointDefinitonsFile });
-
-            exDialog.ShowDialog();
-        }
-
         public Encoding GetEncoding(string valueString)
         {
             Encoding encoding = null;
@@ -2276,8 +2258,11 @@ namespace EndpointChecker
 
         public void btn_Refresh_Click(object sender, EventArgs e)
         {
-            if (!onClose &&
-                IsHandleCreated)
+            if (IsHandleCreated &&
+                !BW_GetStatus.IsBusy &&
+                !onClose &&
+                dialog_EndpointDetails == null &&
+                dialog_SpeedTest == null)
             {
                 btn_Refresh.Enabled = false;
 
@@ -2313,7 +2298,7 @@ namespace EndpointChecker
             btn_Terminate.Enabled = inProgress && locked;
             lbl_Terminate.Enabled = inProgress && locked;
             lbl_ProgressCount.Visible = inProgress && locked;
-            pb_RefreshProcess.Visible = inProgress && locked && lv_Endpoints.Visible;
+            pb_RefreshProcess.Visible = inProgress && locked;
 
             // NOT VISIBLE OR ENABLED DURING PROGRESS
             SetCheckButtons(!inProgress && !locked);
@@ -2355,9 +2340,9 @@ namespace EndpointChecker
             lbl_TimerIntervalMinutesText.Enabled = !inProgress && !locked;
             num_ParallelThreadsCount.Enabled = !inProgress && !locked;
             lbl_ParallelThreadsCount.Enabled = !inProgress && !locked;
-            tray_Separator.Visible = !inProgress && !locked;
-            tray_Refresh.Visible = !inProgress && !locked;
-            tray_SpeedTest.Visible = !inProgress && !locked && dialog_SpeedTest == null;
+            tray_Separator.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
+            tray_Refresh.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
+            tray_SpeedTest.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             btn_BrowseExportDir.Enabled = !inProgress && !locked;
             btn_SpeedTest.Enabled = !inProgress && !locked;
             lbl_Refresh.Enabled = !inProgress && !locked;
@@ -2483,7 +2468,7 @@ namespace EndpointChecker
             if (cb_AutomaticRefresh.Checked)
             {
                 cb_ContinuousRefresh.Checked = false;
-
+                btn_Refresh_Click(this, null);
                 TIMER_Refresh.Enabled = true;
             }
             else
@@ -3414,10 +3399,10 @@ namespace EndpointChecker
         public string AddRefreshCSSButtonToHTMLString(string inputHTML)
         {
             return inputHTML.Replace(
-                                    @"<html>
+                                    @"<html xmlns=""http://www.w3.org/1999/xhtml"">
   <head>
     <style type=""text/css"">table",
-                                    @"<html>
+                                    @"<html xmlns=""http://www.w3.org/1999/xhtml"">
 <INPUT TYPE=""button"" onClick=""window.location.reload()"" VALUE=""Refresh"" ID=""refreshBTN"">
   <head>
     <style type=""text/css"">
@@ -3503,6 +3488,7 @@ namespace EndpointChecker
             if (cb_ContinuousRefresh.Checked)
             {
                 cb_AutomaticRefresh.Checked = false;
+                btn_Refresh_Click(this, null);
             }
 
             SaveConfiguration();
@@ -3550,13 +3536,11 @@ namespace EndpointChecker
                 btn_Terminate_Click(this, null);
             }
 
-            // SAVE USER PREFERENCES
+            // SAVE SETTINGS
             SaveListViewColumnsWidthAndOrder();
             SaveWindowSizeAndPosition();
             SaveDisabledItemsListAndFilter();
-
-            // SAVE CONFIGURATION
-            SaveConfiguration();
+            SaveConfiguration();            
         }
 
         public void trayIcon_BalloonTipClosed(object sender, EventArgs e)
@@ -4334,7 +4318,7 @@ namespace EndpointChecker
         {
             Settings.Default.ListView_Filter = tb_ListFilter.Text;
 
-            Settings.Default.DisabledItemsList = string.Join("|", endpointsList_Disabled.ToArray());
+            Settings.Default.DisabledItemsList = string.Join("|", endpointsList_Disabled.ToList());
             Settings.Default.Save();
         }
 
@@ -4758,6 +4742,10 @@ namespace EndpointChecker
 
         public void toolStripMenuItem_Details_Click(object sender, EventArgs e)
         {
+            tray_Refresh.Visible = false;
+            tray_SpeedTest.Visible = false;
+            tray_Separator.Visible = false;
+
             dialog_EndpointDetails = new EndpointDetailsDialog(
                 (int)num_PingTimeout.Value * 1000,
                 lv_Endpoints_SelectedEndpoint,
@@ -4774,6 +4762,11 @@ namespace EndpointChecker
             {
                 Application.Exit();
             }
+
+            tray_Refresh.Visible = true;
+            tray_SpeedTest.Visible = true;
+            tray_Separator.Visible = true;
+
         }
 
         private void toolStripMenuItem_AdminBrowse_Click(object sender, EventArgs e)
@@ -5202,22 +5195,6 @@ namespace EndpointChecker
             }
         }
 
-        public void Btn_SpeedTest_MouseClick(object sender, MouseEventArgs e)
-        {
-            tray_SpeedTest.Visible = false;
-
-            dialog_SpeedTest = new SpeedTestDialog();
-            dialog_SpeedTest.ShowDialog();
-            dialog_SpeedTest = null;
-
-            if (onClose)
-            {
-                Application.Exit();
-            }
-
-            tray_SpeedTest.Visible = true;
-        }
-
         enum MatchType
         {
             NoMatch,
@@ -5332,16 +5309,6 @@ namespace EndpointChecker
             }
 
             return protocol + Uri.SchemeDelimiter + connectionString;
-        }
-
-        public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
-        {
-            ExceptionNotifier((Exception)args.ExceptionObject);
-        }
-
-        public static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs args)
-        {
-            ExceptionNotifier(args.Exception);
         }
 
         public void pb_FeatureRequest_Click(object sender, EventArgs e)
@@ -5491,7 +5458,7 @@ namespace EndpointChecker
         {
             if (btn_SpeedTest.Enabled)
             {
-                Btn_SpeedTest_MouseClick(this, null);
+                btn_SpeedTest_Click(this, null);
             }
         }
 
@@ -5519,6 +5486,26 @@ namespace EndpointChecker
                 TIMER_ContinuousRefresh.Enabled = false;
                 btn_Refresh_Click(this, null);
             }
+        }
+
+        public void btn_SpeedTest_Click(object sender, EventArgs e)
+        {
+            tray_Refresh.Visible = false;
+            tray_SpeedTest.Visible = false;
+            tray_Separator.Visible = false;
+
+            dialog_SpeedTest = new SpeedTestDialog();
+            dialog_SpeedTest.ShowDialog();
+            dialog_SpeedTest = null;
+
+            if (onClose)
+            {
+                Application.Exit();
+            }
+
+            tray_Refresh.Visible = true;
+            tray_SpeedTest.Visible = true;
+            tray_Separator.Visible = true;
         }
     }
 

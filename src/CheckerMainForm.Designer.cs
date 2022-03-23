@@ -1123,7 +1123,7 @@
             this.comboBox_Validate.Items.AddRange(new object[] {
             "Protocol",
             "Ping"});
-            this.comboBox_Validate.Location = new System.Drawing.Point(160, 506);
+            this.comboBox_Validate.Location = new System.Drawing.Point(160, 505);
             this.comboBox_Validate.Name = "comboBox_Validate";
             this.comboBox_Validate.Size = new System.Drawing.Size(120, 25);
             this.comboBox_Validate.TabIndex = 49;
@@ -1267,7 +1267,7 @@
             this.btn_SpeedTest.Size = new System.Drawing.Size(40, 40);
             this.btn_SpeedTest.TabIndex = 43;
             this.btn_SpeedTest.UseVisualStyleBackColor = false;
-            this.btn_SpeedTest.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Btn_SpeedTest_MouseClick);
+            this.btn_SpeedTest.Click += new System.EventHandler(this.btn_SpeedTest_Click);
             // 
             // btn_BrowseExportDir
             // 
@@ -1328,10 +1328,10 @@
             // 
             this.lbl_LastUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_LastUpdate.AutoSize = true;
-            this.lbl_LastUpdate.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LastUpdate.Location = new System.Drawing.Point(158, 537);
+            this.lbl_LastUpdate.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_LastUpdate.Location = new System.Drawing.Point(156, 536);
             this.lbl_LastUpdate.Name = "lbl_LastUpdate";
-            this.lbl_LastUpdate.Size = new System.Drawing.Size(0, 17);
+            this.lbl_LastUpdate.Size = new System.Drawing.Size(0, 20);
             this.lbl_LastUpdate.TabIndex = 52;
             this.lbl_LastUpdate.Visible = false;
             // 

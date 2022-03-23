@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -10,7 +9,6 @@ using System.Net;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
-using static EndpointChecker.CheckerMainForm;
 using static EndpointChecker.Program;
 
 namespace EndpointChecker
@@ -74,6 +72,7 @@ namespace EndpointChecker
                 {
                     if (Path.GetExtension(appFile) == ".exe" ||
                         Path.GetExtension(appFile) == ".dll" ||
+                        Path.GetExtension(appFile) == ".pdb" ||
                         Path.GetExtension(appFile) == ".config")
                     {
                         File.Copy(appFile, Path.Combine(app_CurrentWorkingDir, Path.GetFileName(appFile)), true);
@@ -112,23 +111,7 @@ namespace EndpointChecker
             Process.Start(startApp);
 
             // CLOSE
-            Application.Exit();
-        }
-        public static void ExceptionNotifier(Exception exception, string callingMethod = "")
-        {
-            if (string.IsNullOrEmpty(callingMethod))
-            {
-                callingMethod = new StackTrace().GetFrame(1).GetMethod().Name;
-            }
-
-            ExceptionDialog exDialog = new ExceptionDialog(
-                exception,
-                callingMethod,
-                exceptionReport_senderEMailAddress,
-                new List<string> { authorEmailAddress },
-                new List<string> { endpointDefinitonsFile });
-
-            exDialog.ShowDialog();
+            Environment.Exit(0);
         }
 
         public static void CleanTempPackageDirectory()

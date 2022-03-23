@@ -48,9 +48,9 @@
             // 
             // lbl_Title
             // 
-            this.lbl_Title.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Title.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Title.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.lbl_Title.Location = new System.Drawing.Point(22, 18);
+            this.lbl_Title.Location = new System.Drawing.Point(22, 13);
             this.lbl_Title.Name = "lbl_Title";
             this.lbl_Title.Size = new System.Drawing.Size(396, 23);
             this.lbl_Title.TabIndex = 0;
@@ -59,11 +59,11 @@
             // 
             // lbl_Status
             // 
-            this.lbl_Status.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Status.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Status.ForeColor = System.Drawing.Color.Black;
-            this.lbl_Status.Location = new System.Drawing.Point(22, 46);
+            this.lbl_Status.Location = new System.Drawing.Point(22, 36);
             this.lbl_Status.Name = "lbl_Status";
-            this.lbl_Status.Size = new System.Drawing.Size(396, 23);
+            this.lbl_Status.Size = new System.Drawing.Size(396, 46);
             this.lbl_Status.TabIndex = 1;
             this.lbl_Status.Text = "Send improvement details to development team";
             this.lbl_Status.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -71,7 +71,7 @@
             // pb_Status
             // 
             this.pb_Status.Image = global::EndpointChecker.Properties.Resources.http;
-            this.pb_Status.Location = new System.Drawing.Point(185, 76);
+            this.pb_Status.Location = new System.Drawing.Point(185, 92);
             this.pb_Status.Name = "pb_Status";
             this.pb_Status.Size = new System.Drawing.Size(72, 72);
             this.pb_Status.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -80,8 +80,8 @@
             // 
             // lbl_UserEMailAddress
             // 
-            this.lbl_UserEMailAddress.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UserEMailAddress.Location = new System.Drawing.Point(23, 187);
+            this.lbl_UserEMailAddress.Font = new System.Drawing.Font("Segoe UI", 11.25F);
+            this.lbl_UserEMailAddress.Location = new System.Drawing.Point(23, 193);
             this.lbl_UserEMailAddress.Name = "lbl_UserEMailAddress";
             this.lbl_UserEMailAddress.Size = new System.Drawing.Size(395, 20);
             this.lbl_UserEMailAddress.TabIndex = 3;
@@ -92,7 +92,7 @@
             // 
             this.tb_UserEMailAddress.BackColor = System.Drawing.SystemColors.Info;
             this.tb_UserEMailAddress.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.tb_UserEMailAddress.Location = new System.Drawing.Point(26, 206);
+            this.tb_UserEMailAddress.Location = new System.Drawing.Point(26, 212);
             this.tb_UserEMailAddress.Multiline = true;
             this.tb_UserEMailAddress.Name = "tb_UserEMailAddress";
             this.tb_UserEMailAddress.Size = new System.Drawing.Size(392, 20);
@@ -104,7 +104,7 @@
             // 
             this.tb_Information.BackColor = System.Drawing.SystemColors.Info;
             this.tb_Information.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.tb_Information.Location = new System.Drawing.Point(26, 264);
+            this.tb_Information.Location = new System.Drawing.Point(26, 269);
             this.tb_Information.Multiline = true;
             this.tb_Information.Name = "tb_Information";
             this.tb_Information.Size = new System.Drawing.Size(392, 142);
@@ -114,12 +114,12 @@
             // 
             // lbl_Information
             // 
-            this.lbl_Information.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Information.Location = new System.Drawing.Point(23, 244);
+            this.lbl_Information.Font = new System.Drawing.Font("Segoe UI", 11.25F);
+            this.lbl_Information.Location = new System.Drawing.Point(23, 249);
             this.lbl_Information.Name = "lbl_Information";
             this.lbl_Information.Size = new System.Drawing.Size(395, 20);
             this.lbl_Information.TabIndex = 5;
-            this.lbl_Information.Text = "Improvement Description";
+            this.lbl_Information.Text = "Feature Request / Improvement Description";
             this.lbl_Information.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btn_Send
@@ -127,10 +127,10 @@
             this.btn_Send.BackColor = System.Drawing.Color.DarkGray;
             this.btn_Send.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_Send.Enabled = false;
-            this.btn_Send.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Send.Location = new System.Drawing.Point(26, 480);
+            this.btn_Send.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.btn_Send.Location = new System.Drawing.Point(25, 478);
             this.btn_Send.Name = "btn_Send";
-            this.btn_Send.Size = new System.Drawing.Size(142, 27);
+            this.btn_Send.Size = new System.Drawing.Size(142, 40);
             this.btn_Send.TabIndex = 7;
             this.btn_Send.Text = "Send Message";
             this.btn_Send.UseVisualStyleBackColor = false;
@@ -140,10 +140,10 @@
             // 
             this.btn_Close.BackColor = System.Drawing.Color.DarkGray;
             this.btn_Close.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_Close.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Close.Location = new System.Drawing.Point(276, 480);
+            this.btn_Close.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.btn_Close.Location = new System.Drawing.Point(278, 478);
             this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(142, 27);
+            this.btn_Close.Size = new System.Drawing.Size(142, 40);
             this.btn_Close.TabIndex = 8;
             this.btn_Close.Text = "Close";
             this.btn_Close.UseVisualStyleBackColor = false;
@@ -157,7 +157,7 @@
             this.lv_AttachedFiles.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.lv_AttachedFiles.HideSelection = false;
             this.lv_AttachedFiles.LargeImageList = this.imageList_Attachment;
-            this.lv_AttachedFiles.Location = new System.Drawing.Point(131, 417);
+            this.lv_AttachedFiles.Location = new System.Drawing.Point(131, 416);
             this.lv_AttachedFiles.Name = "lv_AttachedFiles";
             this.lv_AttachedFiles.ShowItemToolTips = true;
             this.lv_AttachedFiles.Size = new System.Drawing.Size(287, 53);
@@ -177,10 +177,10 @@
             // 
             this.btn_AttachFiles.BackColor = System.Drawing.Color.DarkGray;
             this.btn_AttachFiles.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_AttachFiles.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.btn_AttachFiles.Location = new System.Drawing.Point(26, 417);
+            this.btn_AttachFiles.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_AttachFiles.Location = new System.Drawing.Point(25, 414);
             this.btn_AttachFiles.Name = "btn_AttachFiles";
-            this.btn_AttachFiles.Size = new System.Drawing.Size(99, 53);
+            this.btn_AttachFiles.Size = new System.Drawing.Size(99, 57);
             this.btn_AttachFiles.TabIndex = 10;
             this.btn_AttachFiles.Text = "Attach File(s) (optional)";
             this.btn_AttachFiles.UseVisualStyleBackColor = false;
@@ -214,7 +214,7 @@
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(443, 532);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(443, 170);
+            this.MinimumSize = new System.Drawing.Size(443, 190);
             this.Name = "FeatureRequestDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FeatureRequestDialog";

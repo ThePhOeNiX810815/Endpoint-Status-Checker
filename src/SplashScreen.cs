@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
-using static EndpointChecker.CheckerMainForm;
 using static EndpointChecker.Program;
 
 namespace EndpointChecker
@@ -43,7 +42,7 @@ namespace EndpointChecker
             // SET RELEASE TYPE LABEL
             if (!app_IsOriginalSignedExecutable)
             {
-                lbl_ReleaseType.Text = "CUSTOM BUILD";
+                lbl_ReleaseType.Text = "CUSTOM UNSIGNED BUILD";
                 lbl_ReleaseType.ForeColor = Color.Red;
                 lbl_ReleaseType.Visible = true;
             }
@@ -51,17 +50,17 @@ namespace EndpointChecker
             {
                 if (app_LatestPackageVersion < app_Version)
                 {
-                    lbl_ReleaseType.Text = "UNRELEASED BUILD";
+                    lbl_ReleaseType.Text = "UNRELEASED TESTING BUILD";
                     lbl_ReleaseType.ForeColor = Color.DarkViolet;
                 }
                 else if (app_Version.Build != 0)
                 {
-                    lbl_ReleaseType.Text = "Pre-Release Version";
+                    lbl_ReleaseType.Text = "PRE-RELEASE VERSION";
                     lbl_ReleaseType.ForeColor = Color.Blue;
                 }
                 else
                 {
-                    lbl_ReleaseType.Text = "Release Version";
+                    lbl_ReleaseType.Text = "RELEASE VERSION";
                     lbl_ReleaseType.ForeColor = Color.Green;
                 }
 
