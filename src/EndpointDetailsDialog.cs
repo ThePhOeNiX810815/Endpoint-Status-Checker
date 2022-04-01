@@ -692,7 +692,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(exception);
+                    ExceptionNotifier(this, exception);
                 }
             }
         }
@@ -713,7 +713,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(exception);
+                    ExceptionNotifier(this, exception);
                 }
             }
         }
@@ -1479,7 +1479,7 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(exception);
+                ExceptionNotifier(this, exception);
             }
         }
 
@@ -1624,7 +1624,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(exception);
+                    ExceptionNotifier(this, exception);
                 }
             }
         }
@@ -1868,7 +1868,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(exception);
+                    ExceptionNotifier(this, exception);
                 }
             }
         }

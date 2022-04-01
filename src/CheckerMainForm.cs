@@ -2455,7 +2455,7 @@ namespace EndpointChecker
             }
         }
 
-        public void timer_Refresh_Tick(object sender, EventArgs e)
+        public void TIMER_Refresh_Tick(object sender, EventArgs e)
         {
             if (btn_Refresh.Enabled)
             {
@@ -2468,12 +2468,17 @@ namespace EndpointChecker
             if (cb_AutomaticRefresh.Checked)
             {
                 cb_ContinuousRefresh.Checked = false;
-                btn_Refresh_Click(this, null);
-                TIMER_Refresh.Enabled = true;
+                TIMER_ContinuousRefresh.Stop();
+
+                if (endpointsList.Count > 0 && !onClose)
+                {
+                    TIMER_Refresh_Tick(this, null);
+                    TIMER_Refresh.Start();
+                }
             }
             else
             {
-                TIMER_Refresh.Enabled = false;
+                TIMER_ContinuousRefresh.Stop();
             }
 
             SaveConfiguration();
@@ -2536,23 +2541,6 @@ namespace EndpointChecker
                     if (!string.IsNullOrEmpty(lbl_LastUpdate.Text))
                     {
                         toolTipText += "Last Refresh: " + lbl_LastUpdate.Text;
-                        toolTipText += Environment.NewLine;
-                    }
-
-                    if (cb_AutomaticRefresh.Checked)
-                    {
-                        toolTipText += "Auto Refresh: every " + num_RefreshInterval.Value + " " + lbl_TimerIntervalMinutesText.Text;
-                        toolTipText += Environment.NewLine;
-                    }
-                    else if (cb_ContinuousRefresh.Checked)
-                    {
-                        toolTipText += "Continuous Refresh Mode";
-                        toolTipText += Environment.NewLine;
-                    }
-
-                    if (itemsNotCheckedCount > 0)
-                    {
-                        toolTipText += "Not Checked: " + itemsNotCheckedCount;
                         toolTipText += Environment.NewLine;
                     }
 
@@ -3331,7 +3319,7 @@ namespace EndpointChecker
                     }
                     catch (Exception exception)
                     {
-                        ExceptionNotifier(exception);
+                        ExceptionNotifier(this, exception);
                     }
                 }
             }
@@ -3488,22 +3476,31 @@ namespace EndpointChecker
             if (cb_ContinuousRefresh.Checked)
             {
                 cb_AutomaticRefresh.Checked = false;
-                btn_Refresh_Click(this, null);
+                TIMER_Refresh.Stop();
+
+                if (endpointsList.Count > 0 && !onClose)
+                {
+                    TIMER_ContinuousRefresh_Tick(this, null);
+                    TIMER_ContinuousRefresh.Start();
+                }
+            }
+            else
+            {
+                TIMER_ContinuousRefresh.Stop();
             }
 
             SaveConfiguration();
-
-            if (cb_ContinuousRefresh.Checked)
-            {
-                TIMER_ContinuousRefresh.Start();
-            }
+            RefreshTrayIcon();
         }
 
         public void btn_Terminate_Click(object sender, EventArgs e)
         {
-            // DISABLE 'AUTO REFRESH' OPTIONS
-            cb_AutomaticRefresh.Checked = false;
-            cb_ContinuousRefresh.Checked = false;
+            if (e != null)
+            {
+                // DISABLE 'AUTO REFRESH' OPTIONS
+                cb_AutomaticRefresh.Checked = false;
+                cb_ContinuousRefresh.Checked = false;
+            }
 
             // DISABLE ITSELF
             btn_Terminate.Enabled = false;
@@ -3540,7 +3537,7 @@ namespace EndpointChecker
             SaveListViewColumnsWidthAndOrder();
             SaveWindowSizeAndPosition();
             SaveDisabledItemsListAndFilter();
-            SaveConfiguration();            
+            SaveConfiguration();
         }
 
         public void trayIcon_BalloonTipClosed(object sender, EventArgs e)
@@ -4472,7 +4469,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(exception);
+                    ExceptionNotifier(this, exception);
                 }
 
                 SaveConfiguration();
@@ -4822,7 +4819,7 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(exception);
+                ExceptionNotifier(null, exception);
             }
         }
 
@@ -4838,7 +4835,7 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(exception);
+                ExceptionNotifier(null, exception);
             }
         }
 
@@ -4857,7 +4854,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(exception);
+                    ExceptionNotifier(null, exception);
                 }
             }
             else
@@ -4893,7 +4890,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(exception);
+                    ExceptionNotifier(null, exception);
                 }
             }
             else
@@ -4930,7 +4927,7 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(exception);
+                ExceptionNotifier(null, exception);
             }
         }
 

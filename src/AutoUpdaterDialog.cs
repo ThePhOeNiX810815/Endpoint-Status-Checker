@@ -19,6 +19,9 @@ namespace EndpointChecker
         static string tempPackageZIPfileName = Path.GetFileName(new Uri(app_LatestPackageLink).AbsolutePath);
         static string tempPackageFolderName = string.Empty;
 
+        // SUCCESS SWITCH
+        static bool updateSucess = false;
+
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public AutoUpdaterDialog()
         {
@@ -88,6 +91,7 @@ namespace EndpointChecker
                 pb_Progress.Image = Properties.Resources.Success;
                 lbl_Progress.ForeColor = Color.Chartreuse;
                 lbl_Progress.Text = "Update Complete";
+                updateSucess = true;
 
                 Thread.Sleep(3000);
             }
@@ -100,15 +104,18 @@ namespace EndpointChecker
 
                 Thread.Sleep(2000);
 
-                ExceptionNotifier(exception);
+                ExceptionNotifier(this, exception);
             }
         }
 
         public void bw_Update_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            // EXECUTE APPLICATION
-            ProcessStartInfo startApp = new ProcessStartInfo(Path.Combine(app_CurrentWorkingDir, app_ApplicationExecutableName));
-            Process.Start(startApp);
+            if (updateSucess)
+            {
+                // EXECUTE UPDATED APPLICATION
+                ProcessStartInfo startApp = new ProcessStartInfo(Path.Combine(app_CurrentWorkingDir, app_ApplicationExecutableName));
+                Process.Start(startApp);
+            }
 
             // CLOSE
             Environment.Exit(0);

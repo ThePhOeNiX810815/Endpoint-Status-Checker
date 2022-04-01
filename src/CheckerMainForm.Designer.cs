@@ -353,7 +353,7 @@
             // 
             this.TIMER_Refresh.Enabled = true;
             this.TIMER_Refresh.Interval = 60000;
-            this.TIMER_Refresh.Tick += new System.EventHandler(this.timer_Refresh_Tick);
+            this.TIMER_Refresh.Tick += new System.EventHandler(this.TIMER_Refresh_Tick);
             // 
             // num_RefreshInterval
             // 
@@ -1654,7 +1654,7 @@
             // 
             // TIMER_ContinuousRefresh
             // 
-            this.TIMER_ContinuousRefresh.Interval = 3000;
+            this.TIMER_ContinuousRefresh.Interval = 5000;
             this.TIMER_ContinuousRefresh.Tick += new System.EventHandler(this.TIMER_ContinuousRefresh_Tick);
             // 
             // CheckerMainForm
@@ -1712,7 +1712,7 @@
             this.Controls.Add(this.lv_Endpoints);
             this.Controls.Add(this.lbl_NoEndpoints);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(1150, 632);

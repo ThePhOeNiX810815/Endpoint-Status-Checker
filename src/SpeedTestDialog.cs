@@ -35,7 +35,7 @@ namespace EndpointChecker
         public static Server targetServer = new Server();
 
         // IP INFO API RESPONSE
-        IP_API_JSON_Response ipInfo;
+        public static IP_API_JSON_Response ipInfo;
 
         public static List<Server> testServersList = new List<Server>();
         public enum TestServerSelectionMode
@@ -166,48 +166,17 @@ namespace EndpointChecker
             lbl_SpeedTest_Latency_Value.Text = targetServer.Latency + " ms";
             lbl_SpeedTest_HostedBy_Value.Text = GetStringCorrectEncoding(targetServer.Sponsor);
 
-            if (ipInfo.Country_Name == targetServer.Country &&
-                ipInfo.City == targetServer.Name)
-            {
-                // NO DISTANCE, SAME CITY/COUNTRY
-                lbl_SpeedTest_Distance_Value.Text =
-                    "Right Here (" +
-                    GetStringCorrectEncoding(ipInfo.City) +
-                    "/" +
-                    GetStringCorrectEncoding(ipInfo.Country_Name) +
-                    ")";
-            }
-            else
-            {
-                // CONCRETE DISTANCE
-                lbl_SpeedTest_Distance_Value.Text =
-                    (int)targetServer.Distance / 1000 +
-                    " km (from '" +
-                    GetStringCorrectEncoding(ipInfo.City) +
-                    "/" +
-                    GetStringCorrectEncoding(ipInfo.Country_Name) +
-                    "' to '" +
-                    GetStringCorrectEncoding(targetServer.Name) +
-                    "/" +
-                    GetStringCorrectEncoding(targetServer.Country) +
-                    "')";
-            }
+            lbl_SpeedTest_Distance_Value.Text =
+                    FormatLocationsDistanceString(
+                        GetStringCorrectEncoding(ipInfo.Country_Name),
+                        GetStringCorrectEncoding(targetServer.Country),
+                        GetStringCorrectEncoding(ipInfo.City),
+                        GetStringCorrectEncoding(targetServer.Name),
+                        (int)targetServer.Distance / 1000);
 
             lbl_SpeedTest_HostedBy_Value.BackColor = Color.LightSkyBlue;
             lbl_SpeedTest_Distance_Value.BackColor = Color.LightSkyBlue;
-
-            if (targetServer.Latency <= 30)
-            {
-                lbl_SpeedTest_Latency_Value.BackColor = Color.Green;
-            }
-            else if (targetServer.Latency <= 60)
-            {
-                lbl_SpeedTest_Latency_Value.BackColor = Color.Orange;
-            }
-            else
-            {
-                lbl_SpeedTest_Latency_Value.BackColor = Color.Red;
-            }
+            lbl_SpeedTest_Latency_Value.BackColor = GetColorByLatencyTime(targetServer.Latency);
         }
 
         public Server GetBestServerByLatency()
@@ -223,16 +192,20 @@ namespace EndpointChecker
 
             AppendTextToLogBox(
                                     rtb_SpeedTest_LogConsole,
-                                        "Hosted by '" +
+                                        "Hosting: " +
                                         GetStringCorrectEncoding(bestServer.Sponsor) +
-                                        "' (" +
-                                        GetStringCorrectEncoding(bestServer.Name) +
-                                        "/" +
-                                        GetStringCorrectEncoding(bestServer.Country) +
-                                        "), distance: " + (int)bestServer.Distance / 1000 +
-                                        "km, latency: " + bestServer.Latency +
-                                        "ms" +
-                                        Environment.NewLine,
+                                        Environment.NewLine +
+                                        "Distance: " +
+                                        FormatLocationsDistanceString(
+                                            GetStringCorrectEncoding(ipInfo.Country_Name),
+                                            GetStringCorrectEncoding(bestServer.Country),
+                                            GetStringCorrectEncoding(ipInfo.City),
+                                            GetStringCorrectEncoding(bestServer.Name),
+                                            (int)bestServer.Distance / 1000) +
+                                        Environment.NewLine +
+                                        "Latency: " +
+                                        bestServer.Latency +
+                                        "ms",
                                     Color.DeepSkyBlue,
                                     true);
 
@@ -250,16 +223,20 @@ namespace EndpointChecker
 
             AppendTextToLogBox(
                                     rtb_SpeedTest_LogConsole,
-                                        "Hosted by '" +
+                                        "Hosting: " +
                                         GetStringCorrectEncoding(selectedServer.Sponsor) +
-                                        "' (" +
-                                        GetStringCorrectEncoding(selectedServer.Name) +
-                                        "/" +
-                                        GetStringCorrectEncoding(selectedServer.Country) +
-                                        "), distance: " + (int)selectedServer.Distance / 1000 +
-                                        "km, latency: " + selectedServer.Latency +
-                                        "ms" +
-                                        Environment.NewLine,
+                                        Environment.NewLine +
+                                        "Distance: " +
+                                        FormatLocationsDistanceString(
+                                            GetStringCorrectEncoding(ipInfo.Country_Name),
+                                            GetStringCorrectEncoding(selectedServer.Country),
+                                            GetStringCorrectEncoding(ipInfo.City),
+                                            GetStringCorrectEncoding(selectedServer.Name),
+                                            (int)selectedServer.Distance / 1000) +
+                                        Environment.NewLine +
+                                        "Latency: " +
+                                        selectedServer.Latency +
+                                        "ms",
                                     Color.DeepSkyBlue,
                                     true);
         }
@@ -683,19 +660,28 @@ namespace EndpointChecker
                 }
 
                 AppendTextToLogBox(
-                            rtb_SpeedTest_LogConsole,
-                                "Hosted by '" +
-                                GetStringCorrectEncoding(server.Sponsor) +
-                                "' (" +
-                                GetStringCorrectEncoding(server.Name) +
-                                "/" +
-                                GetStringCorrectEncoding(server.Country) +
-                                "), distance: " +
-                                (int)server.Distance / 1000 +
-                                "km, latency: " +
-                                server.Latency + "ms",
-                            Color.White,
-                            true);
+                                    rtb_SpeedTest_LogConsole,
+                                        "Hosting: " +
+                                        GetStringCorrectEncoding(server.Sponsor) +
+                                        Environment.NewLine +
+                                        "Distance: " +
+                                        FormatLocationsDistanceString(
+                                            GetStringCorrectEncoding(ipInfo.Country_Name),
+                                            GetStringCorrectEncoding(server.Country),
+                                            GetStringCorrectEncoding(ipInfo.City),
+                                            GetStringCorrectEncoding(server.Name),
+                                            (int)server.Distance / 1000),
+                                    Color.White,
+                                    true);
+
+                AppendTextToLogBox(
+                                    rtb_SpeedTest_LogConsole,
+                                        "Latency: " +
+                                        server.Latency +
+                                        "ms" +
+                                        Environment.NewLine,
+                                    GetColorByLatencyTime(server.Latency),
+                                    true);
             }
 
             return filteredServersList;
@@ -723,7 +709,6 @@ namespace EndpointChecker
                 }
 
                 logBox.AppendText(resultLine);
-
                 logBox.AppendText(Environment.NewLine);
 
                 logBox.SelectionColor = logBox.ForeColor;
@@ -927,7 +912,8 @@ namespace EndpointChecker
                     {
                         AppendTextToLogBox(
                                 rtb_SpeedTest_LogConsole,
-                                    "Getting test servers list [from 'https://www.speedtest.net'] ...",
+                                    "Getting test servers list [from 'https://www.speedtest.net'] ..." +
+                                    Environment.NewLine,
                                 Color.Black,
                                 true);
 
@@ -1128,6 +1114,61 @@ namespace EndpointChecker
                     // Draw the string
                     e.Graphics.DrawString(cbx.Items[e.Index].ToString(), new Font("Segoe UI", 10, FontStyle.Regular), brush, e.Bounds, sf);
                 }
+            }
+        }
+
+        public string FormatLocationsDistanceString(
+            string firstCountryName,
+            string secondCountryName,
+            string firstCityName,
+            string secondCityName,
+            int distanceKMs)
+        {
+            string locationString;
+
+            if (firstCountryName == secondCountryName &&
+                firstCityName == secondCityName)
+            {
+                // NO DISTANCE, SAME CITY/COUNTRY
+                locationString =
+                    "Right Here (" +
+                    firstCityName +
+                    "/" +
+                    firstCountryName +
+                    ")";
+            }
+            else
+            {
+                // CONCRETE DISTANCE
+                locationString =
+                    distanceKMs +
+                    " km (from '" +
+                    firstCityName +
+                    "/" +
+                    firstCountryName +
+                    "' to '" +
+                    secondCityName +
+                    "/" +
+                    secondCountryName +
+                    "')";
+            }
+
+            return locationString;
+        }
+
+        public static Color GetColorByLatencyTime(int latencyTime)
+        {
+            if (latencyTime <= 10)
+            {
+                return Color.LimeGreen;
+            }
+            else if (latencyTime <= 20)
+            {
+                return Color.Orange;
+            }
+            else
+            {
+                return Color.Red;
             }
         }
     }
