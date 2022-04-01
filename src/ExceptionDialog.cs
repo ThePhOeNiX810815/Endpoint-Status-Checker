@@ -170,8 +170,13 @@ namespace EndpointChecker
                     // SET STATUS CONTROLS
                     lbl_Status.Text = "There was an error sending details report";
                     pb_Status.Image = Resources.Failed;
+                });
 
-                    BringToFront();
+                Thread.Sleep(3000);
+
+                ThreadSafeInvoke(() =>
+                {
+                    Hide();
 
                     MessageBox.Show(
                             "Unable to send exception details e-mail due to following error:" +
@@ -181,8 +186,6 @@ namespace EndpointChecker
                         Program.app_ApplicationName + " v" + Program.app_VersionString,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
-
-                    Thread.Sleep(3000);
                 });
             }
 
@@ -201,7 +204,7 @@ namespace EndpointChecker
             using (SmtpClient smtpClient = new SmtpClient())
             {
                 smtpClient.Host = "gmail-smtp-in.l.google.com";
-                smtpClient.EnableSsl = true;
+                smtpClient.EnableSsl = false;
                 smtpClient.UseDefaultCredentials = false;
                 smtpClient.Port = 25;
                 smtpClient.Send(mailMessage);
@@ -422,6 +425,7 @@ namespace EndpointChecker
             Update();
             Refresh();
             CenterToScreen();
+            BringToFront();
         }
 
         public void ExceptionDialog_Paint(object sender, PaintEventArgs e)

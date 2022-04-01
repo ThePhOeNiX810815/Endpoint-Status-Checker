@@ -177,6 +177,30 @@ namespace EndpointChecker
         // SIGNING CERTIFICATE
         public static bool app_IsOriginalSignedExecutable = IsOriginalSignedExecutable();
 
+        // REQUIRED LIBRARIES LIST
+        public static string[] app_RequiredLibsList = new string[]
+        {
+            "AGauge.dll",
+            "ClosedXML.dll",
+            "DocumentFormat.OpenXml.dll",
+            "ExcelNumberFormat.dll",
+            "FastMember.dll",
+            "Flurl.dll",
+            "HtmlAgilityPack.dll",
+            "IPAddressRange.dll",
+            "Microsoft.WindowsAPICodePack.dll",
+            "Microsoft.WindowsAPICodePack.Shell.dll",
+            "Nager.PublicSuffix.dll",
+            "Newtonsoft.Json.dll",
+            "NSpeedTest.dll",
+            "Spire.License.dll",
+            "Spire.XLS.dll",
+            "Spire.Pdf.dll",
+            "tracert.dll",
+            "VirusTotal.NET.dll",
+            "WhoisClient.dll"
+        };
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -247,25 +271,7 @@ namespace EndpointChecker
                         ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
                         SetForegroundWindow(wdwIntPtr);
                     }
-                    else if (RequiredLibraryExists("AGauge.dll") &&
-                             RequiredLibraryExists("ClosedXML.dll") &&
-                             RequiredLibraryExists("DocumentFormat.OpenXml.dll") &&
-                             RequiredLibraryExists("ExcelNumberFormat.dll") &&
-                             RequiredLibraryExists("FastMember.dll") &&
-                             RequiredLibraryExists("Flurl.dll") &&
-                             RequiredLibraryExists("HtmlAgilityPack.dll") &&
-                             RequiredLibraryExists("IPAddressRange.dll") &&
-                             RequiredLibraryExists("Microsoft.WindowsAPICodePack.dll") &&
-                             RequiredLibraryExists("Microsoft.WindowsAPICodePack.Shell.dll") &&
-                             RequiredLibraryExists("Nager.PublicSuffix.dll") &&
-                             RequiredLibraryExists("Newtonsoft.Json.dll") &&
-                             RequiredLibraryExists("NSpeedTest.dll") &&
-                             RequiredLibraryExists("Spire.License.dll") &&
-                             RequiredLibraryExists("Spire.XLS.dll") &&
-                             RequiredLibraryExists("Spire.Pdf.dll") &&
-                             RequiredLibraryExists("tracert.dll") &&
-                             RequiredLibraryExists("VirusTotal.NET.dll") &&
-                             RequiredLibraryExists("WhoisClient.dll"))
+                    else if (RequiredLibrariesExists(app_RequiredLibsList))
                     {
                         CheckForUpdate();
 
@@ -311,20 +317,33 @@ namespace EndpointChecker
             }
         }
 
-        public static bool RequiredLibraryExists(string fileName)
+        public static bool RequiredLibrariesExists(string[] librariesList)
         {
-            if (!File.Exists(Path.Combine(app_CurrentWorkingDir, fileName)))
-            {
-                MessageBox.Show("Required library \"" + fileName + "\" not found in current working directory \""
-                    + app_CurrentWorkingDir + "\".", "Endpoint Status Checker v" + app_VersionString,
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            bool libabriesPresent = true;
 
-                return false;
-            }
-            else
+            foreach (string library in librariesList)
             {
-                return true;
+                if (!File.Exists(Path.Combine(app_CurrentWorkingDir, library)))
+                {
+                    MessageBox.Show(
+                        "Referenced library \"" +
+                        library +
+                        "\" not found in \"" +
+                        app_CurrentWorkingDir +
+                        "\"." +
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        "Check all required libraries are present in application directory.",
+                        "Endpoint Status Checker v" +
+                        app_VersionString,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    libabriesPresent = false;
+                    break;
+                }
             }
+
+            return libabriesPresent;
         }
 
         // If assemblyName is not fully qualified, a random matching may be 
@@ -499,16 +518,27 @@ namespace EndpointChecker
 
         public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
-            ExceptionNotifier((Exception)args.ExceptionObject);
+            ExceptionNotifier(null, (Exception)args.ExceptionObject);
         }
 
         public static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs args)
         {
-            ExceptionNotifier(args.Exception);
+            ExceptionNotifier(null, args.Exception);
         }
-        public static void ExceptionNotifier(Exception exception, string callerName = "")
+        public static void ExceptionNotifier(object sender, Exception exception, string callerName = "")
         {
-            string callingMethod = new StackTrace().GetFrame(2).GetMethod().Name;
+            if (sender != null)
+            {
+                Form senderForm = (sender as Form);
+                senderForm.Hide();
+            }
+
+            StackFrame[] stackFrames = new StackTrace().GetFrames();
+
+            string callingMethod =
+                stackFrames[1].GetMethod().Name +
+                " ->> " +
+                stackFrames[2].GetMethod().Name;
 
             if (!string.IsNullOrEmpty(callerName))
             {
