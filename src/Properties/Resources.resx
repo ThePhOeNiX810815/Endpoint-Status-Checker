@@ -196,9 +196,6 @@
   <data name="description" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\description.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="disabled1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\disabled.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="eMailEnvelope" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\emailenvelope.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -313,9 +310,6 @@
   <data name="notAvailable" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\notavailable.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="notKnown1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\notknown.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="openGraph" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\opengraph.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -336,9 +330,6 @@
   </data>
   <data name="progressWheel_GreenDots" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\progresswheel_greendots.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="radioactive1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\radioactive.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="rails" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\rails.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -406,9 +397,6 @@
   <data name="virusTotal" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\virustotal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="warning1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\warning.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="weak_eTag" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\weak etag.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -432,5 +420,11 @@
   </data>
   <data name="loadingProgress_Violet" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\loadingprogress_violet.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="notifications_OFF" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\notifications_off.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="notifications_ON" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\notifications_on.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

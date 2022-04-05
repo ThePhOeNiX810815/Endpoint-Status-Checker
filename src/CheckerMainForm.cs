@@ -195,9 +195,11 @@ namespace EndpointChecker
             toolStripMenuItem_SSH.Image = ResizeImage(Resources.ssh_2, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Width, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Height);
 
             // ASSIGN RESIZED IMAGES TO TRAY CONTEXT MENU STRIP ITEMS
-            tray_Exit.Image = ResizeImage(Resources.error.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
+            tray_Notifications_Enable.Image = ResizeImage(Resources.notifications_ON.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
+            tray_Notifications_Disable.Image = ResizeImage(Resources.notifications_OFF.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_Refresh.Image = ResizeImage(Resources.refresh.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_SpeedTest.Image = ResizeImage(Resources.speedTest.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
+            tray_Exit.Image = ResizeImage(Resources.error.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
 
             // SET VERSION / BUILD LABELS
             Text = app_Title;
@@ -2340,7 +2342,7 @@ namespace EndpointChecker
             lbl_TimerIntervalMinutesText.Enabled = !inProgress && !locked;
             num_ParallelThreadsCount.Enabled = !inProgress && !locked;
             lbl_ParallelThreadsCount.Enabled = !inProgress && !locked;
-            tray_Separator.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
+            tray_Separator_1.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             tray_Refresh.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             tray_SpeedTest.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             btn_BrowseExportDir.Enabled = !inProgress && !locked;
@@ -2811,6 +2813,9 @@ namespace EndpointChecker
 
         public void cb_TrayBalloonNotify_CheckedChanged(object sender, EventArgs e)
         {
+            tray_Notifications_Enable.Visible = !cb_TrayBalloonNotify.Checked;
+            tray_Notifications_Disable.Visible = cb_TrayBalloonNotify.Checked;
+
             SaveConfiguration();
         }
 
@@ -4741,7 +4746,7 @@ namespace EndpointChecker
         {
             tray_Refresh.Visible = false;
             tray_SpeedTest.Visible = false;
-            tray_Separator.Visible = false;
+            tray_Separator_1.Visible = false;
 
             dialog_EndpointDetails = new EndpointDetailsDialog(
                 (int)num_PingTimeout.Value * 1000,
@@ -4762,7 +4767,7 @@ namespace EndpointChecker
 
             tray_Refresh.Visible = true;
             tray_SpeedTest.Visible = true;
-            tray_Separator.Visible = true;
+            tray_Separator_1.Visible = true;
 
         }
 
@@ -5489,7 +5494,7 @@ namespace EndpointChecker
         {
             tray_Refresh.Visible = false;
             tray_SpeedTest.Visible = false;
-            tray_Separator.Visible = false;
+            tray_Separator_1.Visible = false;
 
             dialog_SpeedTest = new SpeedTestDialog();
             dialog_SpeedTest.ShowDialog();
@@ -5502,7 +5507,17 @@ namespace EndpointChecker
 
             tray_Refresh.Visible = true;
             tray_SpeedTest.Visible = true;
-            tray_Separator.Visible = true;
+            tray_Separator_1.Visible = true;
+        }
+
+        public void tray_Notifications_Enable_Click(object sender, EventArgs e)
+        {
+            cb_TrayBalloonNotify.Checked = true;
+        }
+
+        public void tray_Notifications_Disable_Click(object sender, EventArgs e)
+        {
+            cb_TrayBalloonNotify.Checked = false;
         }
     }
 

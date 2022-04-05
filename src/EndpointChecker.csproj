@@ -272,6 +272,8 @@
     <Content Include="Images\microsoft.png" />
     <Content Include="Images\newUpdateLogo.png" />
     <Content Include="Images\norton.png" />
+    <Content Include="Images\notifications_OFF.ico" />
+    <Content Include="Images\notifications_ON.ico" />
     <Content Include="Images\openGraph.png" />
     <Content Include="Images\password.png" />
     <Content Include="Images\progressWheel_GreenDots.gif" />
