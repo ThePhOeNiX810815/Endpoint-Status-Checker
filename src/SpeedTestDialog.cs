@@ -1126,8 +1126,9 @@ namespace EndpointChecker
         {
             string locationString;
 
-            if (firstCountryName == secondCountryName &&
-                firstCityName == secondCityName)
+            if ((firstCountryName.ToLower() == secondCountryName.ToLower() &&
+                 firstCityName.ToLower() == secondCityName.ToLower()) ||
+                distanceKMs == 0)
             {
                 // NO DISTANCE, SAME CITY/COUNTRY
                 locationString =

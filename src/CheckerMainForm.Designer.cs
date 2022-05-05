@@ -61,7 +61,10 @@
             this.trayContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tray_SpeedTest = new System.Windows.Forms.ToolStripMenuItem();
             this.tray_Refresh = new System.Windows.Forms.ToolStripMenuItem();
-            this.tray_Separator = new System.Windows.Forms.ToolStripSeparator();
+            this.tray_Separator_1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tray_Notifications_Enable = new System.Windows.Forms.ToolStripMenuItem();
+            this.tray_Notifications_Disable = new System.Windows.Forms.ToolStripMenuItem();
+            this.tray_Separator_2 = new System.Windows.Forms.ToolStripSeparator();
             this.tray_Exit = new System.Windows.Forms.ToolStripMenuItem();
             this.cb_TrayBalloonNotify = new System.Windows.Forms.CheckBox();
             this.lbl_RequestTimeoutSecondsText = new System.Windows.Forms.Label();
@@ -427,38 +430,66 @@
             this.trayContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tray_SpeedTest,
             this.tray_Refresh,
-            this.tray_Separator,
+            this.tray_Separator_1,
+            this.tray_Notifications_Enable,
+            this.tray_Notifications_Disable,
+            this.tray_Separator_2,
             this.tray_Exit});
             this.trayContextMenu.Name = "tray_contextMenu";
             this.trayContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.trayContextMenu.Size = new System.Drawing.Size(196, 82);
+            this.trayContextMenu.Size = new System.Drawing.Size(223, 168);
             // 
             // tray_SpeedTest
             // 
+            this.tray_SpeedTest.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tray_SpeedTest.Name = "tray_SpeedTest";
-            this.tray_SpeedTest.Size = new System.Drawing.Size(195, 24);
+            this.tray_SpeedTest.Size = new System.Drawing.Size(222, 26);
             this.tray_SpeedTest.Text = "SpeedTest";
             this.tray_SpeedTest.Visible = false;
             this.tray_SpeedTest.Click += new System.EventHandler(this.tray_SpeedTest_Click);
             // 
             // tray_Refresh
             // 
+            this.tray_Refresh.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tray_Refresh.Name = "tray_Refresh";
-            this.tray_Refresh.Size = new System.Drawing.Size(195, 24);
+            this.tray_Refresh.Size = new System.Drawing.Size(222, 26);
             this.tray_Refresh.Text = "Refresh List";
             this.tray_Refresh.Visible = false;
             this.tray_Refresh.Click += new System.EventHandler(this.tray_Refresh_Click);
             // 
-            // tray_Separator
+            // tray_Separator_1
             // 
-            this.tray_Separator.Name = "tray_Separator";
-            this.tray_Separator.Size = new System.Drawing.Size(192, 6);
-            this.tray_Separator.Visible = false;
+            this.tray_Separator_1.Name = "tray_Separator_1";
+            this.tray_Separator_1.Size = new System.Drawing.Size(219, 6);
+            this.tray_Separator_1.Visible = false;
+            // 
+            // tray_Notifications_Enable
+            // 
+            this.tray_Notifications_Enable.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tray_Notifications_Enable.Name = "tray_Notifications_Enable";
+            this.tray_Notifications_Enable.Size = new System.Drawing.Size(222, 26);
+            this.tray_Notifications_Enable.Text = "Enable Notifications";
+            this.tray_Notifications_Enable.Visible = false;
+            this.tray_Notifications_Enable.Click += new System.EventHandler(this.tray_Notifications_Enable_Click);
+            // 
+            // tray_Notifications_Disable
+            // 
+            this.tray_Notifications_Disable.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tray_Notifications_Disable.Name = "tray_Notifications_Disable";
+            this.tray_Notifications_Disable.Size = new System.Drawing.Size(222, 26);
+            this.tray_Notifications_Disable.Text = "Disable Notifications";
+            this.tray_Notifications_Disable.Click += new System.EventHandler(this.tray_Notifications_Disable_Click);
+            // 
+            // tray_Separator_2
+            // 
+            this.tray_Separator_2.Name = "tray_Separator_2";
+            this.tray_Separator_2.Size = new System.Drawing.Size(219, 6);
             // 
             // tray_Exit
             // 
+            this.tray_Exit.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tray_Exit.Name = "tray_Exit";
-            this.tray_Exit.Size = new System.Drawing.Size(195, 24);
+            this.tray_Exit.Size = new System.Drawing.Size(222, 26);
             this.tray_Exit.Text = "Close Application";
             this.tray_Exit.Click += new System.EventHandler(this.tray_Exit_Click);
             // 
@@ -1808,7 +1839,7 @@
         public System.Windows.Forms.CheckBox cb_AutomaticRefresh;
         public System.Windows.Forms.PictureBox pb_Progress_Init;
         public System.Windows.Forms.CheckBox cb_TrayBalloonNotify;
-        public System.Windows.Forms.ToolStripSeparator tray_Separator;
+        public System.Windows.Forms.ToolStripSeparator tray_Separator_1;
         public System.Windows.Forms.Label lbl_RequestTimeout;
         public System.Windows.Forms.CheckBox cb_AllowAutoRedirect;
         public System.Windows.Forms.Label lbl_Copyright;
@@ -1871,6 +1902,9 @@
         public System.Windows.Forms.CheckBox cb_DNSAndMACLookupOnHost;
         public System.Windows.Forms.PictureBox pb_RefreshProcess;
         public System.Windows.Forms.Timer TIMER_ContinuousRefresh;
+        public System.Windows.Forms.ToolStripMenuItem tray_Notifications_Enable;
+        public System.Windows.Forms.ToolStripSeparator tray_Separator_2;
+        public System.Windows.Forms.ToolStripMenuItem tray_Notifications_Disable;
     }
 }
 

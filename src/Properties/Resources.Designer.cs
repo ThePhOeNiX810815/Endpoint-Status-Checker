@@ -291,16 +291,6 @@ namespace EndpointChecker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon disabled1 {
-            get {
-                object obj = ResourceManager.GetObject("disabled1", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap eMailEnvelope {
@@ -703,9 +693,9 @@ namespace EndpointChecker.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon notKnown {
+        internal static System.Drawing.Icon notifications_OFF {
             get {
-                object obj = ResourceManager.GetObject("notKnown", resourceCulture);
+                object obj = ResourceManager.GetObject("notifications_OFF", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -713,9 +703,19 @@ namespace EndpointChecker.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon notKnown1 {
+        internal static System.Drawing.Icon notifications_ON {
             get {
-                object obj = ResourceManager.GetObject("notKnown1", resourceCulture);
+                object obj = ResourceManager.GetObject("notifications_ON", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon notKnown {
+            get {
+                object obj = ResourceManager.GetObject("notKnown", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -796,16 +796,6 @@ namespace EndpointChecker.Properties {
         internal static System.Drawing.Icon radioactive {
             get {
                 object obj = ResourceManager.GetObject("radioactive", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon radioactive1 {
-            get {
-                object obj = ResourceManager.GetObject("radioactive1", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -1046,16 +1036,6 @@ namespace EndpointChecker.Properties {
         internal static System.Drawing.Icon warning {
             get {
                 object obj = ResourceManager.GetObject("warning", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon warning1 {
-            get {
-                object obj = ResourceManager.GetObject("warning1", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

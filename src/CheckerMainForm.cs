@@ -195,9 +195,11 @@ namespace EndpointChecker
             toolStripMenuItem_SSH.Image = ResizeImage(Resources.ssh_2, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Width, lv_Endpoints_ContextMenuStrip.ImageScalingSize.Height);
 
             // ASSIGN RESIZED IMAGES TO TRAY CONTEXT MENU STRIP ITEMS
-            tray_Exit.Image = ResizeImage(Resources.error.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
+            tray_Notifications_Enable.Image = ResizeImage(Resources.notifications_ON.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
+            tray_Notifications_Disable.Image = ResizeImage(Resources.notifications_OFF.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_Refresh.Image = ResizeImage(Resources.refresh.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_SpeedTest.Image = ResizeImage(Resources.speedTest.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
+            tray_Exit.Image = ResizeImage(Resources.error.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
 
             // SET VERSION / BUILD LABELS
             Text = app_Title;
@@ -2340,7 +2342,7 @@ namespace EndpointChecker
             lbl_TimerIntervalMinutesText.Enabled = !inProgress && !locked;
             num_ParallelThreadsCount.Enabled = !inProgress && !locked;
             lbl_ParallelThreadsCount.Enabled = !inProgress && !locked;
-            tray_Separator.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
+            tray_Separator_1.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             tray_Refresh.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             tray_SpeedTest.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             btn_BrowseExportDir.Enabled = !inProgress && !locked;
@@ -2811,6 +2813,9 @@ namespace EndpointChecker
 
         public void cb_TrayBalloonNotify_CheckedChanged(object sender, EventArgs e)
         {
+            tray_Notifications_Enable.Visible = !cb_TrayBalloonNotify.Checked;
+            tray_Notifications_Disable.Visible = cb_TrayBalloonNotify.Checked;
+
             SaveConfiguration();
         }
 
@@ -2848,6 +2853,9 @@ namespace EndpointChecker
                                           string dnsLookupOnHost
             )
         {
+            // ERROR LIST
+            List<string> errorsList = new List<string>();
+
             // GET ENABLED AND VISIBLE ENDPOINTS DEFINITIONS ITEMS LIST
             List<EndpointDefinition> exportList = new List<EndpointDefinition>();
 
@@ -2874,9 +2882,21 @@ namespace EndpointChecker
                         // ===========
                         // UNLOCK, SAVE AND LOCK JSON
                         SetProgressStatus(0, 0, "Generating Endpoint Status JSON Export ...", Color.BlueViolet);
-                        CloseFileStream(definitonsStatusExport_JSON_FileStream);
-                        File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_JSONFile), jsonString, Encoding.UTF8);
-                        definitonsStatusExport_JSON_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_JSONFile));
+
+
+                        try
+                        {
+                            CloseFileStream(definitonsStatusExport_JSON_FileStream);
+                            File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_JSONFile), jsonString, Encoding.UTF8);
+                            definitonsStatusExport_JSON_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_JSONFile));
+                        }
+                        catch (Exception ex)
+                        {
+                            errorsList.Add(
+                                "There was an error saving JSON Status Export:" +
+                                Environment.NewLine +
+                                ex.Message);
+                        }
                     }
 
                     if (cb_ExportEndpointsStatus_XML.Checked)
@@ -2885,10 +2905,21 @@ namespace EndpointChecker
                         // ==========
                         // UNLOCK, SAVE AND LOCK XML
                         SetProgressStatus(0, 0, "Generating Endpoint Status XML Export ...", Color.BlueViolet);
-                        CloseFileStream(definitonsStatusExport_XML_FileStream);
                         XmlDocument xmlExport = JsonConvert.DeserializeXmlNode("{\"EndpointStatus\":" + jsonString.Replace("Encoding+", "Encoding_") + "}", "EndpointStatus");
-                        xmlExport.Save(Path.Combine(statusExport_Directory, statusExport_XMLFile));
-                        definitonsStatusExport_XML_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_XMLFile));
+
+                        try
+                        {
+                            CloseFileStream(definitonsStatusExport_XML_FileStream);
+                            xmlExport.Save(Path.Combine(statusExport_Directory, statusExport_XMLFile));
+                            definitonsStatusExport_XML_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_XMLFile));
+                        }
+                        catch (Exception ex)
+                        {
+                            errorsList.Add(
+                                "There was an error saving XML Status Export:" +
+                                Environment.NewLine +
+                                ex.Message);
+                        }
                     }
                 }
 
@@ -3164,25 +3195,19 @@ namespace EndpointChecker
 
                         try
                         {
-                            // UNLOCK XLSX
-                            CloseFileStream(definitonsStatusExport_XLSX_FileStream);
-
                             // SAVE XLSX
                             Application.DoEvents();
+                            CloseFileStream(definitonsStatusExport_XLSX_FileStream);
                             endpointsStatusExport_WorkBook.SaveAs(Path.Combine(statusExport_Directory, statusExport_XLSFile), new SaveOptions { ValidatePackage = true });
+                            definitonsStatusExport_XLSX_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_XLSFile));
                             Application.DoEvents();
                         }
                         catch (Exception ex)
                         {
-                            // ERROR
-                            MessageBox.Show(
-                                "There was an error saving HTML Export:" +
+                            errorsList.Add(
+                                "There was an error saving XLSX Status Export:" +
                                 Environment.NewLine +
-                                Environment.NewLine +
-                                ex.Message,
-                                "Error Saving HTML Export",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
+                                ex.Message);
                         }
 
                         if (cb_ExportEndpointsStatus_HTML.Checked)
@@ -3190,11 +3215,6 @@ namespace EndpointChecker
                             // HTML EXPORT
                             // ===========
                             SetProgressStatus(0, 0, "Generating Endpoint Status HTML Export ...", Color.BlueViolet);
-
-                            // UNLOCK HTML(S)
-                            CloseFileStream(definitonsStatusExport_HTML_Info_FileStream);
-                            CloseFileStream(definitonsStatusExport_HTML_HTTP_FileStream);
-                            CloseFileStream(definitonsStatusExport_HTML_FTP_FileStream);
 
                             // SAVE AND LOCK HTML(S)
                             Workbook xlsxWorkBook = new Workbook();
@@ -3234,94 +3254,141 @@ namespace EndpointChecker
 
                             if (xlsxWorkBook.Worksheets.Where(w => w.Name == "HTTP Endpoints").Count() == 1)
                             {
-                                // SAVE HTML [HTTP PAGE]
-                                Application.DoEvents();
-                                xlsxWorkBook.Worksheets["HTTP Endpoints"].SaveToHtml(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
-                                Application.DoEvents();
+                                try
+                                {
+                                    CloseFileStream(definitonsStatusExport_HTML_Info_FileStream);
+                                    CloseFileStream(definitonsStatusExport_HTML_HTTP_FileStream);
+                                    CloseFileStream(definitonsStatusExport_HTML_FTP_FileStream);
 
-                                // ADD 'HTTP' HTML FIXED REFRESH BUTTON
-                                string httpHTMLstring = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
-                                httpHTMLstring = CreateEndpointURLHyperLink(httpHTMLstring);
-                                httpHTMLstring = AddRefreshCSSButtonToHTMLString(httpHTMLstring);
+                                    // SAVE HTML [HTTP PAGE]
+                                    Application.DoEvents();
+                                    xlsxWorkBook.Worksheets["HTTP Endpoints"].SaveToHtml(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
+                                    Application.DoEvents();
 
-                                // SAVE HTML STRING [HTTP PAGE]
-                                Application.DoEvents();
-                                File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage), httpHTMLstring, Encoding.UTF8);
-                                Application.DoEvents();
+                                    // ADD 'HTTP' HTML FIXED REFRESH BUTTON
+                                    string httpHTMLstring = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
+                                    httpHTMLstring = CreateEndpointURLHyperLink(httpHTMLstring);
+                                    httpHTMLstring = AddRefreshCSSButtonToHTMLString(httpHTMLstring);
 
-                                // LOCK 'HTTP' HTML
-                                definitonsStatusExport_HTML_HTTP_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
+                                    // SAVE HTML STRING [HTTP PAGE]
+                                    Application.DoEvents();
+                                    File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage), httpHTMLstring, Encoding.UTF8);
+                                    Application.DoEvents();
 
-                                // ADD 'HTTP' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
-                                RichText httpPageHyperlink = summaryWorkSheet["A14"].RichText;
-                                httpPageHyperlink.Text = "HTTP_Endpoints_Status_List_Hyperlink";
-                                summaryWorkSheet["A14"].Style.Color = Color.Green;
-                                summaryWorkSheet["A14"].Style.Font.IsBold = true;
-                                summaryWorkSheet["A14"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                                    // LOCK 'HTTP' HTML
+                                    definitonsStatusExport_HTML_HTTP_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
+
+                                    // ADD 'HTTP' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
+                                    RichText httpPageHyperlink = summaryWorkSheet["A14"].RichText;
+                                    httpPageHyperlink.Text = "HTTP_Endpoints_Status_List_Hyperlink";
+                                    summaryWorkSheet["A14"].Style.Color = Color.Green;
+                                    summaryWorkSheet["A14"].Style.Font.IsBold = true;
+                                    summaryWorkSheet["A14"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                                }
+                                catch (Exception ex)
+                                {
+                                    errorsList.Add(
+                                        "There was an error saving HTML Status Export (HTTP Page):" +
+                                        Environment.NewLine +
+                                        ex.Message);
+                                }
                             }
 
                             if (xlsxWorkBook.Worksheets.Where(w => w.Name == "FTP Endpoints").Count() == 1)
                             {
-                                // SAVE HTML [FTP PAGE]
-                                Application.DoEvents();
-                                xlsxWorkBook.Worksheets["FTP Endpoints"].SaveToHtml(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
-                                Application.DoEvents();
+                                try
+                                {
+                                    // SAVE HTML [FTP PAGE]
+                                    Application.DoEvents();
+                                    xlsxWorkBook.Worksheets["FTP Endpoints"].SaveToHtml(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
+                                    Application.DoEvents();
 
-                                // ADD 'FTP' HTML FIXED REFRESH BUTTON
-                                string ftpHTMLstring = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
-                                ftpHTMLstring = CreateEndpointURLHyperLink(ftpHTMLstring);
-                                ftpHTMLstring = AddRefreshCSSButtonToHTMLString(ftpHTMLstring);
+                                    // ADD 'FTP' HTML FIXED REFRESH BUTTON
+                                    string ftpHTMLstring = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
+                                    ftpHTMLstring = CreateEndpointURLHyperLink(ftpHTMLstring);
+                                    ftpHTMLstring = AddRefreshCSSButtonToHTMLString(ftpHTMLstring);
 
-                                // SAVE HTML STRING [FTP PAGE]
-                                Application.DoEvents();
-                                File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage), ftpHTMLstring, Encoding.UTF8);
-                                Application.DoEvents();
+                                    // SAVE HTML STRING [FTP PAGE]
+                                    Application.DoEvents();
+                                    File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage), ftpHTMLstring, Encoding.UTF8);
+                                    Application.DoEvents();
 
-                                // LOCK 'FTP' HTML
-                                definitonsStatusExport_HTML_FTP_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
+                                    // LOCK 'FTP' HTML
+                                    definitonsStatusExport_HTML_FTP_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
 
-                                // ADD 'FTP' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
-                                RichText ftpPageHyperlink = summaryWorkSheet["A15"].RichText;
-                                ftpPageHyperlink.Text = "FTP_Endpoints_Status_List_Hyperlink";
-                                summaryWorkSheet["A15"].Style.Color = Color.Blue;
-                                summaryWorkSheet["A15"].Style.Font.IsBold = true;
-                                summaryWorkSheet["A15"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                                    // ADD 'FTP' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
+                                    RichText ftpPageHyperlink = summaryWorkSheet["A15"].RichText;
+                                    ftpPageHyperlink.Text = "FTP_Endpoints_Status_List_Hyperlink";
+                                    summaryWorkSheet["A15"].Style.Color = Color.Blue;
+                                    summaryWorkSheet["A15"].Style.Font.IsBold = true;
+                                    summaryWorkSheet["A15"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                                }
+                                catch (Exception ex)
+                                {
+                                    errorsList.Add(
+                                        "There was an error saving HTML Status Export (FTP Page):" +
+                                        Environment.NewLine +
+                                        ex.Message);
+                                }
                             }
 
-                            // SAVE HTML [SUMMARY PAGE]
-                            Application.DoEvents();
-                            summaryWorkSheet.SaveToHtml(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
-                            Application.DoEvents();
+                            try
+                            {
+                                // SAVE HTML [SUMMARY PAGE]
+                                Application.DoEvents();
+                                summaryWorkSheet.SaveToHtml(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
+                                Application.DoEvents();
 
-                            // REPLACE HYPERLINKS ON 'SUMMARY' PAGE
-                            string summaryHTMLstring = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
-                            summaryHTMLstring = summaryHTMLstring
-                                .Replace("XLSX_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_XLSFile + "\" style=\"color:white;\">Endpoints Status XLSX Export</a>")
-                                .Replace("JSON_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_JSONFile + "\" style=\"color:white;\">Endpoints Status JSON Export </a>")
-                                .Replace("XML_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_XMLFile + "\" style=\"color:white;\">Endpoints Status XML Export</a>")
-                                .Replace("HTTP_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_HTMLFile_HTTPPage + "\" style=\"color:white;\">HTTP Endpoints Status List</a>")
-                                .Replace("FTP_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_HTMLFile_FTPPage + "\" style=\"color:white;\">FTP Endpoints Status List</a>");
+                                // REPLACE HYPERLINKS ON 'SUMMARY' PAGE
+                                string summaryHTMLstring = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
+                                summaryHTMLstring = summaryHTMLstring
+                                    .Replace("XLSX_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_XLSFile + "\" style=\"color:white;\">Endpoints Status XLSX Export</a>")
+                                    .Replace("JSON_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_JSONFile + "\" style=\"color:white;\">Endpoints Status JSON Export </a>")
+                                    .Replace("XML_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_XMLFile + "\" style=\"color:white;\">Endpoints Status XML Export</a>")
+                                    .Replace("HTTP_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_HTMLFile_HTTPPage + "\" style=\"color:white;\">HTTP Endpoints Status List</a>")
+                                    .Replace("FTP_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_HTMLFile_FTPPage + "\" style=\"color:white;\">FTP Endpoints Status List</a>");
 
-                            // ADD HTML AUTO REFRESH
-                            summaryHTMLstring = AddAutoRefreshToHTMLString(summaryHTMLstring, 30);
+                                // ADD HTML AUTO REFRESH
+                                summaryHTMLstring = AddAutoRefreshToHTMLString(summaryHTMLstring, 30);
 
-                            // SAVE HTML STRING [SUMMARY PAGE]
-                            Application.DoEvents();
-                            File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage), summaryHTMLstring, Encoding.UTF8);
-                            Application.DoEvents();
+                                // SAVE HTML STRING [SUMMARY PAGE]
+                                Application.DoEvents();
+                                File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage), summaryHTMLstring, Encoding.UTF8);
+                                Application.DoEvents();
 
-                            // LOCK 'SUMMARY' HTML
-                            definitonsStatusExport_HTML_Info_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
+                                // LOCK 'SUMMARY' HTML
+                                definitonsStatusExport_HTML_Info_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
+                            }
+                            catch (Exception ex)
+                            {
+                                errorsList.Add(
+                                    "There was an error saving HTML Status Export (Summary Page):" +
+                                    Environment.NewLine +
+                                    ex.Message);
+                            }
                         }
-
-                        // LOCK XLSX
-                        definitonsStatusExport_XLSX_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_XLSFile));
                     }
                     catch (Exception exception)
                     {
-                        ExceptionNotifier(this, exception);
+                        ThreadSafeInvoke(() =>
+                        {
+                            ExceptionNotifier(this, exception);
+                        });
                     }
                 }
+            }
+
+            if (errorsList.Count > 0)
+            {
+                MessageBox.Show(
+                    string.Join(
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        Environment.NewLine,
+                        errorsList),
+                    "Endpoints Status Export",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -4741,7 +4808,7 @@ namespace EndpointChecker
         {
             tray_Refresh.Visible = false;
             tray_SpeedTest.Visible = false;
-            tray_Separator.Visible = false;
+            tray_Separator_1.Visible = false;
 
             dialog_EndpointDetails = new EndpointDetailsDialog(
                 (int)num_PingTimeout.Value * 1000,
@@ -4762,7 +4829,7 @@ namespace EndpointChecker
 
             tray_Refresh.Visible = true;
             tray_SpeedTest.Visible = true;
-            tray_Separator.Visible = true;
+            tray_Separator_1.Visible = true;
 
         }
 
@@ -5489,7 +5556,7 @@ namespace EndpointChecker
         {
             tray_Refresh.Visible = false;
             tray_SpeedTest.Visible = false;
-            tray_Separator.Visible = false;
+            tray_Separator_1.Visible = false;
 
             dialog_SpeedTest = new SpeedTestDialog();
             dialog_SpeedTest.ShowDialog();
@@ -5502,7 +5569,17 @@ namespace EndpointChecker
 
             tray_Refresh.Visible = true;
             tray_SpeedTest.Visible = true;
-            tray_Separator.Visible = true;
+            tray_Separator_1.Visible = true;
+        }
+
+        public void tray_Notifications_Enable_Click(object sender, EventArgs e)
+        {
+            cb_TrayBalloonNotify.Checked = true;
+        }
+
+        public void tray_Notifications_Disable_Click(object sender, EventArgs e)
+        {
+            cb_TrayBalloonNotify.Checked = false;
         }
     }
 
