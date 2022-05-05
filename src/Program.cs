@@ -536,9 +536,10 @@ namespace EndpointChecker
             StackFrame[] stackFrames = new StackTrace().GetFrames();
 
             string callingMethod =
+                stackFrames[2].GetMethod().Name +
+                "() ->> " +
                 stackFrames[1].GetMethod().Name +
-                " ->> " +
-                stackFrames[2].GetMethod().Name;
+                "()";
 
             if (!string.IsNullOrEmpty(callerName))
             {
