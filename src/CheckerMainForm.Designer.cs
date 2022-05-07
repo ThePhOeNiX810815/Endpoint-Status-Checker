@@ -354,8 +354,7 @@
             // 
             // TIMER_Refresh
             // 
-            this.TIMER_Refresh.Enabled = true;
-            this.TIMER_Refresh.Interval = 60000;
+            this.TIMER_Refresh.Interval = 300000;
             this.TIMER_Refresh.Tick += new System.EventHandler(this.TIMER_Refresh_Tick);
             // 
             // num_RefreshInterval
@@ -380,7 +379,7 @@
             this.num_RefreshInterval.Size = new System.Drawing.Size(47, 25);
             this.num_RefreshInterval.TabIndex = 3;
             this.num_RefreshInterval.Value = new decimal(new int[] {
-            10,
+            5,
             0,
             0,
             0});
@@ -437,7 +436,7 @@
             this.tray_Exit});
             this.trayContextMenu.Name = "tray_contextMenu";
             this.trayContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.trayContextMenu.Size = new System.Drawing.Size(223, 168);
+            this.trayContextMenu.Size = new System.Drawing.Size(223, 146);
             // 
             // tray_SpeedTest
             // 
@@ -531,7 +530,7 @@
             this.num_HTTPRequestTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.num_HTTPRequestTimeout.Location = new System.Drawing.Point(160, 420);
             this.num_HTTPRequestTimeout.Maximum = new decimal(new int[] {
-            60,
+            300,
             0,
             0,
             0});
@@ -544,7 +543,7 @@
             this.num_HTTPRequestTimeout.Size = new System.Drawing.Size(47, 25);
             this.num_HTTPRequestTimeout.TabIndex = 8;
             this.num_HTTPRequestTimeout.Value = new decimal(new int[] {
-            10,
+            60,
             0,
             0,
             0});
@@ -631,7 +630,7 @@
             this.num_FTPRequestTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.num_FTPRequestTimeout.Location = new System.Drawing.Point(160, 448);
             this.num_FTPRequestTimeout.Maximum = new decimal(new int[] {
-            60,
+            300,
             0,
             0,
             0});
@@ -644,7 +643,7 @@
             this.num_FTPRequestTimeout.Size = new System.Drawing.Size(47, 25);
             this.num_FTPRequestTimeout.TabIndex = 22;
             this.num_FTPRequestTimeout.Value = new decimal(new int[] {
-            10,
+            60,
             0,
             0,
             0});
@@ -1099,7 +1098,7 @@
             this.num_PingTimeout.Size = new System.Drawing.Size(47, 25);
             this.num_PingTimeout.TabIndex = 45;
             this.num_PingTimeout.Value = new decimal(new int[] {
-            5,
+            30,
             0,
             0,
             0});

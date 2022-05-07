@@ -2480,7 +2480,7 @@ namespace EndpointChecker
             }
             else
             {
-                TIMER_ContinuousRefresh.Stop();
+                TIMER_Refresh.Stop();
             }
 
             SaveConfiguration();
