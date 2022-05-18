@@ -62,7 +62,7 @@ Application is using following libraries:
 - HtmlAgilityPack (1.11.42)
 - IPAddressRange (4.2.0)
 - Nager.PublicSuffix (2.2.2) (a newer version available, but not for target framework version)
-- Newtonsoft.Json (13.0.1)
+- Newtonsoft.Json (13.0.2-beta1)
 - NSpeedTest (1.0.0) (a newer version available, but not for target framework version)
 - System.IO.Compression (4.3.0)
 - System.Net.Http (4.3.4)

@@ -2470,12 +2470,12 @@ namespace EndpointChecker
             if (cb_AutomaticRefresh.Checked)
             {
                 cb_ContinuousRefresh.Checked = false;
-                TIMER_ContinuousRefresh.Stop();
+
+                TIMER_Refresh.Start();
 
                 if (endpointsList.Count > 0 && !onClose)
                 {
                     TIMER_Refresh_Tick(this, null);
-                    TIMER_Refresh.Start();
                 }
             }
             else
@@ -3543,12 +3543,12 @@ namespace EndpointChecker
             if (cb_ContinuousRefresh.Checked)
             {
                 cb_AutomaticRefresh.Checked = false;
-                TIMER_Refresh.Stop();
+
+                TIMER_ContinuousRefresh.Start();
 
                 if (endpointsList.Count > 0 && !onClose)
                 {
                     TIMER_ContinuousRefresh_Tick(this, null);
-                    TIMER_ContinuousRefresh.Start();
                 }
             }
             else
