@@ -34,6 +34,14 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F665E560-D64C-427A-B02E-B7F6882EB74A}
 	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://dev.azure.com/infekcnamononukleozainc
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = EndpointChecker.csproj
+		SccLocalPath1 = .
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = EndpointChecker.vsmdi
 	EndGlobalSection

@@ -525,12 +525,12 @@ namespace EndpointChecker
 
         public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
-            ExceptionNotifier(null, (Exception)args.ExceptionObject);
+            ExceptionNotifier(null, (Exception)args.ExceptionObject, true);
         }
 
         public static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs args)
         {
-            ExceptionNotifier(null, args.Exception);
+            ExceptionNotifier(null, args.Exception, true);
         }
 
         public static bool GetRegistryValue(string fullKeyName, string valueName, out object value)
@@ -553,11 +553,14 @@ namespace EndpointChecker
             }
         }
 
-        public static void ExceptionNotifier(object sender, Exception exception, string callerName = "")
+        public static void ExceptionNotifier(object sender, Exception exception, bool autoCloseApp, string callerName = "")
         {
-            if (sender != null)
+            Form senderForm = null;
+
+            if (sender != null &&
+                sender is Form)
             {
-                Form senderForm = (sender as Form);
+                senderForm = (sender as Form);
                 senderForm.Hide();
             }
 
@@ -579,9 +582,16 @@ namespace EndpointChecker
                 callingMethod,
                 exceptionReport_senderEMailAddress,
                 new List<string> { authorEmailAddress },
-                new List<string> { endpointDefinitonsFile });
+                new List<string> { endpointDefinitonsFile },
+                autoCloseApp);
 
             exDialog.ShowDialog();
+
+            if (!autoCloseApp &&
+                senderForm != null)
+            {
+                senderForm.Show();
+            }
         }
     }
 }

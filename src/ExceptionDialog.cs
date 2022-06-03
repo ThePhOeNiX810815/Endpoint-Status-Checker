@@ -19,6 +19,7 @@ namespace EndpointChecker
 {
     public partial class ExceptionDialog : Form
     {
+        public static bool _autoCloseApp;
         public static Exception _exception;
         public static string _callingMethod;
         public static string _senderAddress;
@@ -32,7 +33,7 @@ namespace EndpointChecker
         public static List<string> _machineInfo_MACList = new List<string>();
         public static MemoryStream _screenshotStream = new MemoryStream();
 
-        public ExceptionDialog(Exception exception, string callingMethod, string senderAddress, List<string> recipientsAddressesList, List<string> attachmentsList)
+        public ExceptionDialog(Exception exception, string callingMethod, string senderAddress, List<string> recipientsAddressesList, List<string> attachmentsList, bool autoCloseApp)
         {
             InitializeComponent();
 
@@ -40,6 +41,7 @@ namespace EndpointChecker
 
             SetDialogSize(true);
 
+            _autoCloseApp = autoCloseApp;
             _exception = exception;
             _callingMethod = callingMethod;
             _senderAddress = senderAddress;
@@ -191,8 +193,16 @@ namespace EndpointChecker
 
             ThreadSafeInvoke(() =>
             {
-                // CLOSE PROGRAM
-                Environment.Exit(1);
+                if (_autoCloseApp)
+                {
+                    // CLOSE PROGRAM
+                    Environment.Exit(1);
+                }
+                else
+                {
+                    // CLOSE DIALOG
+                    Close();
+                }
             });
         }
 

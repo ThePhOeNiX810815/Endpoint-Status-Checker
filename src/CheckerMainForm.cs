@@ -435,7 +435,7 @@ namespace EndpointChecker
             }
 
             // SET REFRESH TIMER INTERVAL VALUE
-            TIMER_Refresh.Interval = ((int)num_RefreshInterval.Value * 60000);
+            TIMER_AutomaticRefresh.Interval = ((int)num_RefreshInterval.Value * 60000);
         }
 
         public void SaveConfiguration()
@@ -1478,7 +1478,6 @@ namespace EndpointChecker
             httpWebRequest.Method = httpWebRequest_Method;
             httpWebRequest.UserAgent = http_UserAgent;
             httpWebRequest.Accept = "*/*";
-            httpWebRequest.Accept = "*/*";
             httpWebRequest.Timeout = httpRequestTimeout;
             httpWebRequest.ReadWriteTimeout = httpRequestTimeout;
             httpWebRequest.AllowAutoRedirect = allowAutoRedirect;
@@ -1489,6 +1488,7 @@ namespace EndpointChecker
             httpWebRequest.ProtocolVersion = httpWebRequest_ProtocolVersion;
             httpWebRequest.Date = DateTime.Now;
             httpWebRequest.MaximumAutomaticRedirections = 20;
+            httpWebRequest.Referer = endpointURI.Host;
 
             // CUSTOM HEADERS
             WebHeaderCollection requestHeadersCollection = new WebHeaderCollection();
@@ -2437,13 +2437,13 @@ namespace EndpointChecker
                 // UPDATE LIST
                 ListEndpoints(ListViewRefreshMethod.CurrentState);
 
-                // TRAY ICON
-                RefreshTrayIcon();
-
                 // LAST UPDATE LABEL
                 lbl_LastUpdate.Text = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
                 lbl_LastUpdate.Visible = true;
                 lbl_LastUpdate_Label.Visible = true;
+
+                // TRAY ICON
+                RefreshTrayIcon();
 
                 // CONTINUOUS REFRESH
                 if (cb_ContinuousRefresh.Checked)
@@ -2457,7 +2457,7 @@ namespace EndpointChecker
             }
         }
 
-        public void TIMER_Refresh_Tick(object sender, EventArgs e)
+        public void TIMER_AutomaticRefresh_Tick(object sender, EventArgs e)
         {
             if (btn_Refresh.Enabled)
             {
@@ -2465,34 +2465,12 @@ namespace EndpointChecker
             }
         }
 
-        public void cb_AutomaticRefresh_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cb_AutomaticRefresh.Checked)
-            {
-                cb_ContinuousRefresh.Checked = false;
-
-                TIMER_Refresh.Start();
-
-                if (endpointsList.Count > 0 && !onClose)
-                {
-                    TIMER_Refresh_Tick(this, null);
-                }
-            }
-            else
-            {
-                TIMER_Refresh.Stop();
-            }
-
-            SaveConfiguration();
-            RefreshTrayIcon();
-        }
-
         public void num_RefreshInterval_ValueChanged(object sender, EventArgs e)
         {
             lbl_TimerIntervalMinutesText.Text = GetFormattedValueCountString((int)num_RefreshInterval.Value, "minute");
 
             SaveConfiguration();
-            TIMER_Refresh.Interval = ((int)num_RefreshInterval.Value * 60000);
+            TIMER_AutomaticRefresh.Interval = ((int)num_RefreshInterval.Value * 60000);
         }
 
         public void RefreshTrayIcon()
@@ -2542,7 +2520,7 @@ namespace EndpointChecker
 
                     if (!string.IsNullOrEmpty(lbl_LastUpdate.Text))
                     {
-                        toolTipText += "Last Refresh: " + lbl_LastUpdate.Text;
+                        toolTipText += "Last Update: " + lbl_LastUpdate.Text;
                         toolTipText += Environment.NewLine;
                     }
 
@@ -2554,13 +2532,13 @@ namespace EndpointChecker
 
                     if (itemsWarning.Count > 0)
                     {
-                        toolTipText += "Warnings: " + itemsWarning.Count;
+                        toolTipText += "Warning: " + itemsWarning.Count;
                         toolTipText += Environment.NewLine;
                     }
 
                     if (itemsError.Count > 0)
                     {
-                        toolTipText += "ERRORs: " + itemsError.Count;
+                        toolTipText += "ERROR: " + itemsError.Count;
                         toolTipText += Environment.NewLine;
                     }
 
@@ -3372,7 +3350,7 @@ namespace EndpointChecker
                     {
                         ThreadSafeInvoke(() =>
                         {
-                            ExceptionNotifier(this, exception);
+                            ExceptionNotifier(this, exception, true);
                         });
                     }
                 }
@@ -3538,12 +3516,32 @@ namespace EndpointChecker
             }
         }
 
+        public void cb_AutomaticRefresh_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cb_AutomaticRefresh.Checked)
+            {
+                TIMER_ContinuousRefresh.Stop();
+                TIMER_AutomaticRefresh.Start();
+
+                if (endpointsList.Count > 0 && !onClose)
+                {
+                    TIMER_AutomaticRefresh_Tick(this, null);
+                }
+            }
+            else
+            {
+                TIMER_AutomaticRefresh.Stop();
+            }
+
+            SaveConfiguration();
+            RefreshTrayIcon();
+        }
+
         public void cb_ContinuousRefresh_CheckedChanged(object sender, EventArgs e)
         {
             if (cb_ContinuousRefresh.Checked)
             {
-                cb_AutomaticRefresh.Checked = false;
-
+                TIMER_AutomaticRefresh.Stop();
                 TIMER_ContinuousRefresh.Start();
 
                 if (endpointsList.Count > 0 && !onClose)
@@ -4327,7 +4325,7 @@ namespace EndpointChecker
                     RefreshTrayIcon();
                 });
 
-                // REFRESH
+                // AUTOMATIC REFRESH
                 if (app_ScanOnStartup)
                 {
                     ThreadSafeInvoke(() =>
@@ -4536,7 +4534,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(this, exception);
+                    ExceptionNotifier(this, exception, true);
                 }
 
                 SaveConfiguration();
@@ -4886,7 +4884,7 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(null, exception);
+                ExceptionNotifier(null, exception, true);
             }
         }
 
@@ -4902,7 +4900,7 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(null, exception);
+                ExceptionNotifier(null, exception, true);
             }
         }
 
@@ -4921,7 +4919,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(null, exception);
+                    ExceptionNotifier(null, exception, true);
                 }
             }
             else
@@ -4957,7 +4955,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(null, exception);
+                    ExceptionNotifier(null, exception, true);
                 }
             }
             else
@@ -4994,31 +4992,38 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(null, exception);
+                ExceptionNotifier(null, exception, true);
             }
         }
 
         public static void OpenEndpoint_HTTP(EndpointDefinition endpoint)
         {
-            string[] httpProtocols = new string[] { Uri.UriSchemeHttp, Uri.UriSchemeHttps };
-
-            Uri endpointURI = new Uri(endpoint.ResponseAddress);
-
-            string connectionString =
-                httpProtocols[0] +
-                Uri.SchemeDelimiter +
-                endpointURI.Authority +
-                endpointURI.AbsolutePath;
-
             NetworkCredential credentials = new NetworkCredential();
 
-            if (httpProtocols.Contains(endpointURI.Scheme))
+            Uri _endpointURI = new Uri(endpoint.Address);
+
+            if (_endpointURI.Scheme != Uri.UriSchemeHttp ||
+                _endpointURI.Scheme != Uri.UriSchemeHttps)            
+            {
+                // IF ENDPOINT IS NOT AN HTTP/HTTPS TYPE, PASS HTTP PROTOCOL PREFIX
+                _endpointURI = new Uri(
+                    Uri.UriSchemeHttp +
+                    Uri.SchemeDelimiter +
+                    _endpointURI.Host +
+                    _endpointURI.PathAndQuery +
+                    _endpointURI.Fragment);
+            }
+
+            if ((endpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
+                 endpoint.Protocol.ToLower() == Uri.UriSchemeHttps) &&
+                !string.IsNullOrEmpty(endpoint.LoginName) &&
+                endpoint.LoginName != status_NotAvailable)
             {
                 credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
             }
 
             BrowseEndpoint(
-                connectionString,
+                _endpointURI.AbsoluteUri,
                 null,
                 credentials.UserName,
                 credentials.Password);
@@ -5026,30 +5031,38 @@ namespace EndpointChecker
 
         public static void OpenEndpoint_FTP(EndpointDefinition endpoint)
         {
-            Uri endpointURI = new Uri(endpoint.ResponseAddress);
+            Uri _endpointURI = new Uri(endpoint.Address);
 
-            string connectionString =
-                Uri.UriSchemeFtp +
-                Uri.SchemeDelimiter +
-                endpointURI.Authority +
-                endpointURI.AbsolutePath;
+            if (_endpointURI.Scheme != Uri.UriSchemeFtp)
+            {
+                // IF ENDPOINT IS NOT AN FTP TYPE, PASS FTP PROTOCOL PREFIX
+                _endpointURI = new Uri(
+                    Uri.UriSchemeFtp +
+                    Uri.SchemeDelimiter +
+                    _endpointURI.Host +
+                    _endpointURI.PathAndQuery +
+                    _endpointURI.Fragment);
+            }
+
+            string _endpointAddress = _endpointURI.AbsoluteUri;
 
             if (!string.IsNullOrEmpty(endpoint.LoginName) &&
                 endpoint.LoginName != status_NotAvailable)
             {
-                connectionString =
+                // IF CREDENTIALS ARE SPECIFIED FOR THE ENDPOINT, PASS THEM INTO ADDRESS IN STANDARD WAY
+                _endpointAddress =
                     Uri.UriSchemeFtp +
                     Uri.SchemeDelimiter +
                     endpoint.LoginName +
                     ":" +
                     endpoint.LoginPass +
                     "@" +
-                    endpointURI.Authority +
-                    endpointURI.AbsolutePath;
+                    _endpointURI.Authority +
+                    _endpointURI.AbsolutePath;
             }
 
             BrowseEndpoint(
-                connectionString,
+                _endpointAddress,
                 null,
                 null,
                 null);

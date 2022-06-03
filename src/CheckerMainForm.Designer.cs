@@ -53,7 +53,7 @@
             this.imageList_ListViewIcons_20pix = new System.Windows.Forms.ImageList(this.components);
             this.cb_AutomaticRefresh = new System.Windows.Forms.CheckBox();
             this.BW_GetStatus = new System.ComponentModel.BackgroundWorker();
-            this.TIMER_Refresh = new System.Windows.Forms.Timer(this.components);
+            this.TIMER_AutomaticRefresh = new System.Windows.Forms.Timer(this.components);
             this.num_RefreshInterval = new System.Windows.Forms.NumericUpDown();
             this.lbl_TimerIntervalMinutesText = new System.Windows.Forms.Label();
             this.lbl_NoEndpoints = new System.Windows.Forms.Label();
@@ -333,8 +333,6 @@
             // cb_AutomaticRefresh
             // 
             this.cb_AutomaticRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cb_AutomaticRefresh.Checked = true;
-            this.cb_AutomaticRefresh.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_AutomaticRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_AutomaticRefresh.Enabled = false;
             this.cb_AutomaticRefresh.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -352,10 +350,10 @@
             this.BW_GetStatus.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bw_GetStatus_DoWork);
             this.BW_GetStatus.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bw_GetStatus_RunWorkerCompleted);
             // 
-            // TIMER_Refresh
+            // TIMER_AutomaticRefresh
             // 
-            this.TIMER_Refresh.Interval = 300000;
-            this.TIMER_Refresh.Tick += new System.EventHandler(this.TIMER_Refresh_Tick);
+            this.TIMER_AutomaticRefresh.Interval = 300000;
+            this.TIMER_AutomaticRefresh.Tick += new System.EventHandler(this.TIMER_AutomaticRefresh_Tick);
             // 
             // num_RefreshInterval
             // 
@@ -712,6 +710,11 @@
             this.num_ParallelThreadsCount.Enabled = false;
             this.num_ParallelThreadsCount.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.num_ParallelThreadsCount.Location = new System.Drawing.Point(160, 476);
+            this.num_ParallelThreadsCount.Maximum = new decimal(new int[] {
+            150,
+            0,
+            0,
+            0});
             this.num_ParallelThreadsCount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -1085,7 +1088,7 @@
             this.num_PingTimeout.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.num_PingTimeout.Location = new System.Drawing.Point(160, 392);
             this.num_PingTimeout.Maximum = new decimal(new int[] {
-            30,
+            90,
             0,
             0,
             0});
@@ -1349,9 +1352,9 @@
             this.lbl_LastUpdate_Label.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_LastUpdate_Label.Location = new System.Drawing.Point(10, 538);
             this.lbl_LastUpdate_Label.Name = "lbl_LastUpdate_Label";
-            this.lbl_LastUpdate_Label.Size = new System.Drawing.Size(117, 17);
+            this.lbl_LastUpdate_Label.Size = new System.Drawing.Size(137, 17);
             this.lbl_LastUpdate_Label.TabIndex = 51;
-            this.lbl_LastUpdate_Label.Text = "LAST LIST UPDATE";
+            this.lbl_LastUpdate_Label.Text = "LAST STATUS UPDATE";
             this.lbl_LastUpdate_Label.Visible = false;
             // 
             // lbl_LastUpdate
@@ -1780,7 +1783,7 @@
 
         #endregion
         public System.ComponentModel.BackgroundWorker BW_GetStatus;
-        public System.Windows.Forms.Timer TIMER_Refresh;
+        public System.Windows.Forms.Timer TIMER_AutomaticRefresh;
         public System.Windows.Forms.NumericUpDown num_RefreshInterval;
         public System.Windows.Forms.Label lbl_TimerIntervalMinutesText;
         public System.Windows.Forms.ColumnHeader ch_EndpointName;

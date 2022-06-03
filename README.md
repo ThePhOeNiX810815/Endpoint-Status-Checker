@@ -59,7 +59,7 @@ Application is using following libraries:
 - Flurl (3.0.0-pre4) (a newer version available, but not for target framework version)
 - FreeSpire.PDF (8.2.0)
 - FreeSpire.XLS (12.2.0)
-- HtmlAgilityPack (1.11.42)
+- HtmlAgilityPack (1.11.43)
 - IPAddressRange (4.2.0)
 - Nager.PublicSuffix (2.2.2) (a newer version available, but not for target framework version)
 - Newtonsoft.Json (13.0.2-beta1)

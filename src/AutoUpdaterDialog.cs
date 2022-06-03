@@ -104,7 +104,7 @@ namespace EndpointChecker
 
                 Thread.Sleep(2000);
 
-                ExceptionNotifier(this, exception);
+                ExceptionNotifier(this, exception, true);
             }
         }
 
