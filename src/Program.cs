@@ -95,14 +95,6 @@ namespace EndpointChecker
         public static Assembly app_Assembly = Assembly.GetExecutingAssembly();
         public static Version app_Version = app_Assembly.GetName().Version;
         public static string app_VersionString = GetVersionString(app_Version, true, false);
-
-        public static string os_VersionString =
-            (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion", "ProductName", null) +
-            " " +
-            (Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit") +
-            ", Build " +
-            Environment.OSVersion.Version.Build.ToString();
-
         public static bool app_ScanOnStartup;
         public static bool app_ShowSplashScreen;
         public static string app_ApplicationName = FileVersionInfo.GetVersionInfo(app_Assembly.Location).ProductName;
@@ -140,6 +132,9 @@ namespace EndpointChecker
 
         // STRING FORMAT FOR 'ERROR' STATUS
         public static string status_Error = "ERROR";
+
+        // OS ID STRING
+        public static string os_VersionString = status_NotAvailable;
 
         // APPLICATION CONFIGURATION FILE
         public static string appConfigFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
@@ -213,6 +208,18 @@ namespace EndpointChecker
                 Settings.Default.Upgrade();
                 Settings.Default.UpgradeRequired = false;
                 Settings.Default.Save();
+            }
+
+            // GET OS VERSION STRING
+            object reg_osVersion;
+            if (GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion", "ProductName", out reg_osVersion))
+            {
+                os_VersionString =
+                    (string)reg_osVersion +
+                    " " +
+                    (Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit") +
+                    ", Build " +
+                    Environment.OSVersion.Version.Build.ToString();
             }
 
             // GET SETTINGS
@@ -518,18 +525,42 @@ namespace EndpointChecker
 
         public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
-            ExceptionNotifier(null, (Exception)args.ExceptionObject);
+            ExceptionNotifier(null, (Exception)args.ExceptionObject, true);
         }
 
         public static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs args)
         {
-            ExceptionNotifier(null, args.Exception);
+            ExceptionNotifier(null, args.Exception, true);
         }
-        public static void ExceptionNotifier(object sender, Exception exception, string callerName = "")
+
+        public static bool GetRegistryValue(string fullKeyName, string valueName, out object value)
         {
-            if (sender != null)
+            value = Registry.GetValue(fullKeyName, valueName, null);
+
+            return (value != null);
+        }
+
+        public static bool SetRegistryValue(string fullKeyName, string valueName, object value, RegistryValueKind valueKind)
+        {
+            try
             {
-                Form senderForm = (sender as Form);
+                Registry.SetValue(fullKeyName, valueName, value, valueKind);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static void ExceptionNotifier(object sender, Exception exception, bool autoCloseApp, string callerName = "")
+        {
+            Form senderForm = null;
+
+            if (sender != null &&
+                sender is Form)
+            {
+                senderForm = (sender as Form);
                 senderForm.Hide();
             }
 
@@ -551,9 +582,16 @@ namespace EndpointChecker
                 callingMethod,
                 exceptionReport_senderEMailAddress,
                 new List<string> { authorEmailAddress },
-                new List<string> { endpointDefinitonsFile });
+                new List<string> { endpointDefinitonsFile },
+                autoCloseApp);
 
             exDialog.ShowDialog();
+
+            if (!autoCloseApp &&
+                senderForm != null)
+            {
+                senderForm.Show();
+            }
         }
     }
 }
