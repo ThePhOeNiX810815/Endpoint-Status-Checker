@@ -53,21 +53,6 @@ namespace EndpointChecker
             Ping = 1
         }
 
-        // CUSTOM .NET FRAMEWORK VERSION ENUM
-        public enum DotNetFramework_Version
-        {
-            v4_5,
-            v4_5_1,
-            v4_5_2,
-            v4_6,
-            v4_6_1,
-            v4_6_2,
-            v4_7,
-            v4_7_1,
-            v4_7_2,
-            v4_8
-        };
-
         // CUSTOM LISTVIEW REFRESH METHOD ENUM
         public enum ListViewRefreshMethod
         {
@@ -96,17 +81,17 @@ namespace EndpointChecker
         public static extern int SendARP(int destIp, int srcIP, byte[] macAddr, ref uint physicalAddrLen);
 
         // THIS SWITCH INDICATES THAT TRAY ICON BALLOON TOOLTIP IS ACTUALLY DISPLAYED
-        bool balloonVisible = false;
+        private bool balloonVisible = false;
 
         // VARIABLES FOR TRAY ICON ANIMATION PURPOSES
-        int trayAnimation_Index = 0;
-        List<Icon> trayAnimation_Icons = new List<Icon>();
+        private int trayAnimation_Index = 0;
+        private readonly List<Icon> trayAnimation_Icons = new List<Icon>();
 
         // THIS SWITCH INDICATES THAT ENDPOINTS LISTVIEW IS ACTUALLY UPDATING
-        bool listUpdating = false;
+        private bool listUpdating = false;
 
         // THIS SWITCH INDICATES ATTEMPT TO CLOSE APPLICATION DURING PROGRESS
-        bool onClose = false;
+        private bool onClose = false;
 
         // VNC VIEWER EXECUTABLE [FOR 'FTP' CONNECTION PURPOSE]
         public static string appExecutable_VNC = string.Empty;
@@ -115,27 +100,27 @@ namespace EndpointChecker
         public static string appExecutable_Putty = string.Empty;
 
         // ENDPOINTS STATUS EXPORT FILES STREAMS [FOR EXCLUSIVE LOCK PURPOSE]
-        FileStream definitonsStatusExport_JSON_FileStream = null;
-        FileStream definitonsStatusExport_XLSX_FileStream = null;
-        FileStream definitonsStatusExport_XML_FileStream = null;
-        FileStream definitonsStatusExport_HTML_Info_FileStream = null;
-        FileStream definitonsStatusExport_HTML_HTTP_FileStream = null;
-        FileStream definitonsStatusExport_HTML_FTP_FileStream = null;
+        private FileStream definitonsStatusExport_JSON_FileStream = null;
+        private FileStream definitonsStatusExport_XLSX_FileStream = null;
+        private FileStream definitonsStatusExport_XML_FileStream = null;
+        private FileStream definitonsStatusExport_HTML_Info_FileStream = null;
+        private FileStream definitonsStatusExport_HTML_HTTP_FileStream = null;
+        private FileStream definitonsStatusExport_HTML_FTP_FileStream = null;
 
         // WORKING LIST OF ENDPOINTS
-        List<EndpointDefinition> endpointsList = new List<EndpointDefinition>();
+        private List<EndpointDefinition> endpointsList = new List<EndpointDefinition>();
 
         // WORKING LIST OF DISABLED ENDPOINTS
-        List<string> endpointsList_Disabled = new List<string>();
+        private List<string> endpointsList_Disabled = new List<string>();
 
         // WORKING LIST OF 'LAST SEEN ONLINE' VALUES OF ENDPOINTS
-        Dictionary<string, string> endpointsList_LastSeenOnline = new Dictionary<string, string>();
+        private Dictionary<string, string> endpointsList_LastSeenOnline = new Dictionary<string, string>();
 
         // ENDPOINTS LISTVIEW TOPITEM INDEX [FOR PRESERVING SCROLLED POSITION AFTER LIST UPDATE]
-        int lv_Endpoints_TopItemIndex = 0;
+        private int lv_Endpoints_TopItemIndex = 0;
 
         // ENDPOINTS LISTVIEW SELECTED ITEM(S) INDEXES [FOR PRESERVING ITEM(S) SELECTION AFTER LIST UPDATE]
-        List<int> lv_Endpoints_SelectedItems = new List<int>();
+        private readonly List<int> lv_Endpoints_SelectedItems = new List<int>();
 
         // ENDPOINTS LISTVIEW SELECTED ITEM
         public static EndpointDefinition lv_Endpoints_SelectedEndpoint = null;
@@ -147,14 +132,14 @@ namespace EndpointChecker
         // SELECTED VALIDATION METHOD
         public static ValidationMethod validationMethod;
 
-        // INSTALLED .NET FRAMEWORK VERSION
-        DotNetFramework_Version dotNetFramework_LatestInstalledVersion;
+        // ACTIVE .NET FRAMEWORK VERSION
+        private readonly string dotNetFramework_ActiveVersion = RuntimeInformation.FrameworkDescription;
 
         // ENDPOINT DETAILS DIALOG INSTANCE
-        EndpointDetailsDialog dialog_EndpointDetails = null;
+        private EndpointDetailsDialog dialog_EndpointDetails = null;
 
         // SPEEDTEST DIALOG INSTANCE
-        SpeedTestDialog dialog_SpeedTest = null;
+        private SpeedTestDialog dialog_SpeedTest = null;
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public CheckerMainForm()
@@ -171,9 +156,8 @@ namespace EndpointChecker
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
             // THREAD POOL SETTINGS
-            int minWorker, minIOC;
-            ThreadPool.GetMinThreads(out minWorker, out minIOC);
-            ThreadPool.SetMinThreads(100, minIOC);
+            ThreadPool.GetMinThreads(out int minWorker, out int minIOC);
+            _ = ThreadPool.SetMinThreads(100, minIOC);
 
             // MAIN PROCESS PRIORITY
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
@@ -211,9 +195,6 @@ namespace EndpointChecker
             // SET CONTROLS TOOLTIPS
             SetControlsTooltips();
 
-            // CHECK .NET FRAMEWORK INSTALLED VERSION [FOR EXPORT INFORMATION PURPOSE]
-            CheckDotNetFWKInstalledVersion();
-
             // LOAD 'LAST SEEN ONLINE' LIST
             RestoreLastSeenOnlineList();
         }
@@ -221,162 +202,142 @@ namespace EndpointChecker
         public void SetControlsTooltips()
         {
             // SET TOOLTIP FOR APPLICATION WEB PAGE [WEBNODE] LINK LABEL
-            ToolTip toolTip_AppWebPage = new ToolTip();
-            toolTip_AppWebPage.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_AppWebPage.IsBalloon = true;
-            toolTip_AppWebPage.ToolTipTitle = "WebNode";
+            ToolTip toolTip_AppWebPage = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "WebNode"
+            };
             toolTip_AppWebPage.SetToolTip(pb_AppWebPage, "Open application web page.");
 
             // SET TOOLTIP FOR ITNETWORK LINK LABEL
-            ToolTip toolTip_ITNetwork = new ToolTip();
-            toolTip_ITNetwork.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_ITNetwork.IsBalloon = true;
-            toolTip_ITNetwork.ToolTipTitle = "IT Network CZ";
+            ToolTip toolTip_ITNetwork = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "IT Network CZ"
+            };
             toolTip_ITNetwork.SetToolTip(pb_ITNetwork, "Open project page on IT Network CZ portal.");
 
             // SET TOOLTIP FOR GITHUB LINK LABEL
-            ToolTip toolTip_GitHub = new ToolTip();
-            toolTip_GitHub.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_GitHub.IsBalloon = true;
-            toolTip_GitHub.ToolTipTitle = "GitHub";
+            ToolTip toolTip_GitHub = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "GitHub"
+            };
             toolTip_GitHub.SetToolTip(pb_GitHub, "Open project repository on GitHub portal. Entire source code and releases are open for public.");
 
             // SET TOOLTIP FOR GITLAB LINK LABEL
-            ToolTip toolTip_GitLab = new ToolTip();
-            toolTip_GitLab.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_GitLab.IsBalloon = true;
-            toolTip_GitLab.ToolTipTitle = "GitLab";
+            ToolTip toolTip_GitLab = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "GitLab"
+            };
             toolTip_GitLab.SetToolTip(pb_GitLab, "Open project repository on GitLab portal. Entire source code and releases are open for public.");
 
             // SET TOOLTIP FOR ITNETWORK LINK LABEL
-            ToolTip toolTip_SoftPedia = new ToolTip();
-            toolTip_SoftPedia.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_SoftPedia.IsBalloon = true;
-            toolTip_SoftPedia.ToolTipTitle = "SoftPedia";
+            ToolTip toolTip_SoftPedia = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "SoftPedia"
+            };
             toolTip_SoftPedia.SetToolTip(pb_SoftPedia, "Open project page on SoftPedia portal.");
 
             // SET TOOLTIP FOR FEATURE REQUEST BUTTON
-            ToolTip toolTip_FeatureRequest = new ToolTip();
-            toolTip_FeatureRequest.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_FeatureRequest.IsBalloon = true;
-            toolTip_FeatureRequest.ToolTipTitle = "Feature Request or Improvement";
+            ToolTip toolTip_FeatureRequest = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Feature Request or Improvement"
+            };
             toolTip_FeatureRequest.SetToolTip(pb_FeatureRequest, "Send new Feature or Improvement description to development team");
 
             // SET TOOLTIP FOR 'ALL' ENDPOINTS SELECTION BUTTON
-            ToolTip toolTip_EndpointSelection_All = new ToolTip();
-            toolTip_EndpointSelection_All.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_EndpointSelection_All.IsBalloon = true;
-            toolTip_EndpointSelection_All.ToolTipTitle = "Endpoints Selection";
+            ToolTip toolTip_EndpointSelection_All = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Endpoints Selection"
+            };
             toolTip_EndpointSelection_All.SetToolTip(btn_CheckAll, "Select ALL EndPoints on list");
 
             // SET TOOLTIP FOR 'PASSED' ENDPOINTS SELECTION BUTTON
-            ToolTip toolTip_EndpointSelection_Passed = new ToolTip();
-            toolTip_EndpointSelection_Passed.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_EndpointSelection_Passed.IsBalloon = true;
-            toolTip_EndpointSelection_Passed.ToolTipTitle = "Endpoints Selection";
+            ToolTip toolTip_EndpointSelection_Passed = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Endpoints Selection"
+            };
             toolTip_EndpointSelection_Passed.SetToolTip(btn_CheckAllAvailable, "Select only previously PASSED EndPoints on list");
 
             // SET TOOLTIP FOR 'NONE' ENDPOINTS SELECTION BUTTON
-            ToolTip toolTip_EndpointSelection_None = new ToolTip();
-            toolTip_EndpointSelection_None.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_EndpointSelection_None.IsBalloon = true;
-            toolTip_EndpointSelection_None.ToolTipTitle = "Endpoints Selection";
+            ToolTip toolTip_EndpointSelection_None = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Endpoints Selection"
+            };
             toolTip_EndpointSelection_None.SetToolTip(btn_UncheckAll, "Deselect ALL EndPoints on list");
 
             // SET TOOLTIP FOR 'FAILED' ENDPOINTS SELECTION BUTTON
-            ToolTip toolTip_EndpointSelection_Failed = new ToolTip();
-            toolTip_EndpointSelection_Failed.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_EndpointSelection_Failed.IsBalloon = true;
-            toolTip_EndpointSelection_Failed.ToolTipTitle = "Endpoints Selection";
+            ToolTip toolTip_EndpointSelection_Failed = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Endpoints Selection"
+            };
             toolTip_EndpointSelection_Failed.SetToolTip(btn_CheckAllErrors, "Select only previously FAILED EndPoints on list");
 
             // SET TOOLTIP FOR 'REPORT OUTPUT FOLDER' BROWSE BUTTON
-            ToolTip toolTip_BrowseReportOutputFolder = new ToolTip();
-            toolTip_BrowseReportOutputFolder.IsBalloon = true;
+            ToolTip toolTip_BrowseReportOutputFolder = new ToolTip
+            {
+                IsBalloon = true
+            };
             toolTip_BrowseReportOutputFolder.SetToolTip(btn_BrowseExportDir, "Browse for Report(s) output folder");
 
             // SET TOOLTIP FOR 'REFRESH' BUTTON
-            ToolTip toolTip_Refresh = new ToolTip();
-            toolTip_Refresh.IsBalloon = true;
+            ToolTip toolTip_Refresh = new ToolTip
+            {
+                IsBalloon = true
+            };
             toolTip_Refresh.SetToolTip(btn_Refresh, "Refresh EndPoints list status");
 
             // SET TOOLTIP FOR 'TERMINATE' BUTTON
-            ToolTip toolTip_Terminate = new ToolTip();
-            toolTip_Terminate.IsBalloon = true;
+            ToolTip toolTip_Terminate = new ToolTip
+            {
+                IsBalloon = true
+            };
             toolTip_Terminate.SetToolTip(btn_Terminate, "Terminate EndPoint status check process");
 
             // SET TOOLTIP FOR 'SPEEDTEST' BUTTON
-            ToolTip toolTip_SpeedTest = new ToolTip();
-            toolTip_SpeedTest.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_SpeedTest.IsBalloon = true;
-            toolTip_SpeedTest.ToolTipTitle = "SpeedTest";
+            ToolTip toolTip_SpeedTest = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "SpeedTest"
+            };
             toolTip_SpeedTest.SetToolTip(btn_SpeedTest, "Benchmark network Download / Upload speeds via OOKLA SpeedTest API");
 
             // SET TOOLTIP FOR 'ENDPOINTS LIST' FILE OPEN BUTTON
-            ToolTip toolTip_OpenEndpointsListFile = new ToolTip();
-            toolTip_OpenEndpointsListFile.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_OpenEndpointsListFile.IsBalloon = true;
-            toolTip_OpenEndpointsListFile.ToolTipTitle = "Open EndPoints list file";
+            ToolTip toolTip_OpenEndpointsListFile = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Open EndPoints list file"
+            };
             toolTip_OpenEndpointsListFile.SetToolTip(btn_EndpointsList, "Open EndPoints list file (" + endpointDefinitonsFile + ") in default editor");
 
             // SET TOOLTIP FOR 'CONFIG' FILE OPEN BUTTON
-            ToolTip toolTip_OpenAppConfigFile = new ToolTip();
-            toolTip_OpenAppConfigFile.ToolTipIcon = ToolTipIcon.Info;
-            toolTip_OpenAppConfigFile.IsBalloon = true;
-            toolTip_OpenAppConfigFile.ToolTipTitle = "Open App config file";
-            toolTip_OpenAppConfigFile.SetToolTip(btn_ConfigFile, "Open App configuration file (" + Path.GetFileName(appConfigFile) + ") in default editor");
-        }
-
-        public void CheckDotNetFWKInstalledVersion()
-        {
-            using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\"))
+            ToolTip toolTip_OpenAppConfigFile = new ToolTip
             {
-                if (ndpKey != null && ndpKey.GetValue("Release") != null)
-                {
-                    int releaseKey = Convert.ToInt32(ndpKey.GetValue("Release"));
-
-                    if (releaseKey >= 527934)
-                    {
-                        dotNetFramework_LatestInstalledVersion = DotNetFramework_Version.v4_8;
-                    }
-                    else if (releaseKey >= 461808)
-                    {
-                        dotNetFramework_LatestInstalledVersion = DotNetFramework_Version.v4_7_2;
-                    }
-                    else if (releaseKey >= 461308)
-                    {
-                        dotNetFramework_LatestInstalledVersion = DotNetFramework_Version.v4_7_1;
-                    }
-                    else if (releaseKey >= 460798)
-                    {
-                        dotNetFramework_LatestInstalledVersion = DotNetFramework_Version.v4_7;
-                    }
-                    else if (releaseKey >= 394802)
-                    {
-                        dotNetFramework_LatestInstalledVersion = DotNetFramework_Version.v4_6_2;
-                    }
-                    else if (releaseKey >= 394254)
-                    {
-                        dotNetFramework_LatestInstalledVersion = DotNetFramework_Version.v4_6_1;
-                    }
-                    else if (releaseKey >= 393295)
-                    {
-                        dotNetFramework_LatestInstalledVersion = DotNetFramework_Version.v4_6;
-                    }
-                    else if (releaseKey >= 379893)
-                    {
-                        dotNetFramework_LatestInstalledVersion = DotNetFramework_Version.v4_5_2;
-                    }
-                    else if (releaseKey >= 378675)
-                    {
-                        dotNetFramework_LatestInstalledVersion = DotNetFramework_Version.v4_5_1;
-                    }
-                    else
-                    {
-                        dotNetFramework_LatestInstalledVersion = DotNetFramework_Version.v4_5;
-                    }
-                }
-            }
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Open App config file"
+            };
+            toolTip_OpenAppConfigFile.SetToolTip(btn_ConfigFile, "Open App configuration file (" + Path.GetFileName(appConfigFile) + ") in default editor");
         }
 
         public void LoadConfiguration()
@@ -435,7 +396,7 @@ namespace EndpointChecker
             }
 
             // SET REFRESH TIMER INTERVAL VALUE
-            TIMER_AutomaticRefresh.Interval = ((int)num_RefreshInterval.Value * 60000);
+            TIMER_AutomaticRefresh.Interval = (int)num_RefreshInterval.Value * 60000;
         }
 
         public void SaveConfiguration()
@@ -501,29 +462,29 @@ namespace EndpointChecker
                         endpointItem.ResponseMessage));
 
                 // ADD SUBITEMS
-                refreshedItem.SubItems.Add(endpointItem.Protocol);
-                refreshedItem.SubItems.Add(endpointItem.Port);
+                _ = refreshedItem.SubItems.Add(endpointItem.Protocol);
+                _ = refreshedItem.SubItems.Add(endpointItem.Port);
 
-                refreshedItem.SubItems.Add(
+                _ = refreshedItem.SubItems.Add(
                     BuildUpConnectionString(
                         endpointItem,
                         new Uri(endpointItem.ResponseAddress).Scheme));
 
-                refreshedItem.SubItems.Add(string.Join(", ", endpointItem.IPAddress));
-                refreshedItem.SubItems.Add(endpointItem.ResponseTime);
-                refreshedItem.SubItems.Add(endpointItem.ResponseCode);
-                refreshedItem.SubItems.Add(endpointItem.ResponseMessage);
-                refreshedItem.SubItems.Add(endpointItem.LastSeenOnline);
-                refreshedItem.SubItems.Add(string.Join(", ", endpointItem.MACAddress));
-                refreshedItem.SubItems.Add(endpointItem.PingRoundtripTime);
-                refreshedItem.SubItems.Add(endpointItem.ServerID);
-                refreshedItem.SubItems.Add(endpointItem.LoginName);
-                refreshedItem.SubItems.Add(string.Join(", ", endpointItem.NetworkShare));
-                refreshedItem.SubItems.Add(string.Join(", ", endpointItem.DNSName));
-                refreshedItem.SubItems.Add(endpointItem.HTTPcontentType);
-                refreshedItem.SubItems.Add(endpointItem.HTTPcontentLenght);
-                refreshedItem.SubItems.Add(endpointItem.HTTPexpires);
-                refreshedItem.SubItems.Add(endpointItem.HTTPetag);
+                _ = refreshedItem.SubItems.Add(string.Join(", ", endpointItem.IPAddress));
+                _ = refreshedItem.SubItems.Add(endpointItem.ResponseTime);
+                _ = refreshedItem.SubItems.Add(endpointItem.ResponseCode);
+                _ = refreshedItem.SubItems.Add(endpointItem.ResponseMessage);
+                _ = refreshedItem.SubItems.Add(endpointItem.LastSeenOnline);
+                _ = refreshedItem.SubItems.Add(string.Join(", ", endpointItem.MACAddress));
+                _ = refreshedItem.SubItems.Add(endpointItem.PingRoundtripTime);
+                _ = refreshedItem.SubItems.Add(endpointItem.ServerID);
+                _ = refreshedItem.SubItems.Add(endpointItem.LoginName);
+                _ = refreshedItem.SubItems.Add(string.Join(", ", endpointItem.NetworkShare));
+                _ = refreshedItem.SubItems.Add(string.Join(", ", endpointItem.DNSName));
+                _ = refreshedItem.SubItems.Add(endpointItem.HTTPcontentType);
+                _ = refreshedItem.SubItems.Add(endpointItem.HTTPcontentLenght);
+                _ = refreshedItem.SubItems.Add(endpointItem.HTTPexpires);
+                _ = refreshedItem.SubItems.Add(endpointItem.HTTPetag);
 
                 // ADD SUBITEMS NAME
                 refreshedItem.Name = "Endpoint Name";
@@ -596,7 +557,7 @@ namespace EndpointChecker
 
                 if (refreshedItem.Text.ToLower().Contains(tb_ListFilter.Text.ToLower()))
                 {
-                    lv_Endpoints.Items.Add(refreshedItem);
+                    _ = lv_Endpoints.Items.Add(refreshedItem);
                 }
             }
 
@@ -633,7 +594,7 @@ namespace EndpointChecker
 
                 SetControls(false, false);
 
-                btn_Refresh.Enabled = (lv_Endpoints.CheckedItems.Count > 0);
+                btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
                 lbl_NoEndpoints.Visible = false;
                 lv_Endpoints.Visible = true;
             }
@@ -678,7 +639,7 @@ namespace EndpointChecker
                              eItem.Name.ToLower().Contains(tb_ListFilter.Text.ToLower())).Count();
 
             // FLUSH LOCAL DNS CACHE
-            DnsFlushResolverCache();
+            _ = DnsFlushResolverCache();
 
             // ALLOWED SECURITY PROTOCOLS
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)0x30 |
@@ -710,7 +671,7 @@ namespace EndpointChecker
             DateTime startDT_List = DateTime.Now;
 
             // EXECUTE PARALLEL PROCESS 
-            Parallel.ForEach(
+            _ = Parallel.ForEach(
                 endpointsList,
                 new ParallelOptions { MaxDegreeOfParallelism = threadsCount },
                 endpointItem =>
@@ -780,7 +741,7 @@ namespace EndpointChecker
                             if (!BW_GetStatus.CancellationPending)
                             {
                                 // INCREMENT PROGRESS COUNTER
-                                Interlocked.Increment(ref endpointsCount_Current);
+                                _ = Interlocked.Increment(ref endpointsCount_Current);
 
                                 // SET PROGRESS STATUS LABEL
                                 SetProgressStatus(endpointsCount_Enabled, endpointsCount_Current);
@@ -830,11 +791,9 @@ namespace EndpointChecker
                                         }
                                         catch (WebException wEX)
                                         {
-                                            HttpWebResponse _httpWebResponse = wEX.Response as HttpWebResponse;
-
                                             // IF RESULT CODE IS '3xx', DO A SECOND CALL ON 'LOCATION'
                                             if (autoRedirect_Enable &&
-                                                _httpWebResponse != null &&
+                                                wEX.Response is HttpWebResponse _httpWebResponse &&
                                                 ((int)_httpWebResponse.StatusCode).ToString().StartsWith("3") &&
                                                 _httpWebResponse.Headers.AllKeys.Contains("Location") &&
                                                 !string.IsNullOrEmpty(_httpWebResponse.GetResponseHeader("Location")))
@@ -864,7 +823,7 @@ namespace EndpointChecker
                                             }
                                             else
                                             {
-                                                throw (wEX);
+                                                throw wEX;
                                             }
                                         }
 
@@ -945,7 +904,7 @@ namespace EndpointChecker
 
                                         if (!string.IsNullOrEmpty(httpWebResponse.Headers["Content-Length"]))
                                         {
-                                            long.TryParse(httpWebResponse.Headers["Content-Length"], out contentLength);
+                                            _ = long.TryParse(httpWebResponse.Headers["Content-Length"], out contentLength);
                                         }
 
                                         GetWebResponseContentLenghtString(endpoint, contentLength);
@@ -970,7 +929,7 @@ namespace EndpointChecker
 
                                                 httpWebResponseByteArray = new byte[(int)httpWebResponseMemoryStream.Length];
                                                 httpWebResponseMemoryStream.Position = 0;
-                                                httpWebResponseMemoryStream.Read(httpWebResponseByteArray, 0, httpWebResponseByteArray.Length);
+                                                _ = httpWebResponseMemoryStream.Read(httpWebResponseByteArray, 0, httpWebResponseByteArray.Length);
 
                                                 // GET CONTENT LENGHT FROM FULL RESPONSE
                                                 contentLength = httpWebResponseMemoryStream.Length;
@@ -1372,7 +1331,7 @@ namespace EndpointChecker
             if (autoAdjustRefreshTimer)
             {
                 // ADJUST AUTO REFRESH INTERVAL BY LAST PROGRESS DURATION TIME (+ 1 MINUTE RESERVE]
-                decimal durationTime_List_Minutes = (durationTime_List / 60000);
+                decimal durationTime_List_Minutes = durationTime_List / 60000;
                 ThreadSafeInvoke(() =>
                 {
                     if (num_RefreshInterval.Value < durationTime_List_Minutes + 1)
@@ -1396,10 +1355,10 @@ namespace EndpointChecker
             EndpointsStatusExport(
                                   startDT_List.ToString("dd.MM.yyyy HH:mm:ss"),
                                   endDT_List.ToString("dd.MM.yyyy HH:mm:ss"),
-                                  (durationTime_List),
-                                  (pingTimeout / 1000),
-                                  (httpRequestTimeout / 1000),
-                                  (ftpRequestTimeout / 1000),
+                                  durationTime_List,
+                                  pingTimeout / 1000,
+                                  httpRequestTimeout / 1000,
+                                  ftpRequestTimeout / 1000,
                                   autoRedirect_Enable.ToString(),
                                   validateSSLCertificate.ToString(),
                                   threadsCount.ToString(),
@@ -1453,7 +1412,6 @@ namespace EndpointChecker
             // REQUEST PARAMETERS
             string httpWebRequest_Method = WebRequestMethods.Http.Get;
             Version httpWebRequest_ProtocolVersion = HttpVersion.Version11;
-            Guid httpWebRequest_ApplicationGUID = Guid.NewGuid();
             RequestCachePolicy httpWebRequest_CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
             DecompressionMethods httpWebRequest_DecompressionMethods =
                 DecompressionMethods.GZip |
@@ -1463,7 +1421,7 @@ namespace EndpointChecker
             if (removeURLParameters)
             {
                 // REMOVE URL PARAMETERS [IF ANY PRESENT]
-                endpointURI.RemoveQuery();
+                _ = endpointURI.RemoveQuery();
             }
 
             // COOKIE CONTAINER
@@ -1472,6 +1430,15 @@ namespace EndpointChecker
             {
                 httpWebRequest_CookieContainer.Add(cookies);
             }
+
+            // ADD GDPR COOKIES
+            httpWebRequest_CookieContainer.Add(new Cookie("viewed_cookie_policy", "yes", endpointURI.AbsolutePath, endpointURI.Host));
+            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-necessary", "yes", endpointURI.AbsolutePath, endpointURI.Host));
+            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-functional", "yes", endpointURI.AbsolutePath, endpointURI.Host));
+            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-performance", "yes", endpointURI.AbsolutePath, endpointURI.Host));
+            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-analytics", "yes", endpointURI.AbsolutePath, endpointURI.Host));
+            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-advertisement", "yes", endpointURI.AbsolutePath, endpointURI.Host));
+            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-others", "yes", endpointURI.AbsolutePath, endpointURI.Host));
 
             // CREATE REQUEST
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(endpointURI.AbsoluteUri);
@@ -1486,30 +1453,32 @@ namespace EndpointChecker
             httpWebRequest.CookieContainer = httpWebRequest_CookieContainer;
             httpWebRequest.AutomaticDecompression = httpWebRequest_DecompressionMethods;
             httpWebRequest.ProtocolVersion = httpWebRequest_ProtocolVersion;
-            httpWebRequest.Date = DateTime.Now;
-            httpWebRequest.MaximumAutomaticRedirections = 20;
+            httpWebRequest.Date = DateTime.Now.ToUniversalTime();
+            httpWebRequest.MaximumAutomaticRedirections = 100;
             httpWebRequest.Referer = endpointURI.Host;
 
             // CUSTOM HEADERS
-            WebHeaderCollection requestHeadersCollection = new WebHeaderCollection();
-            requestHeadersCollection.Add("EndpointStatusChecker-Token", httpWebRequest_ApplicationGUID.ToString());
-            requestHeadersCollection.Add("Accept-Encoding", "gzip, deflate, br");
-            requestHeadersCollection.Add("Accept-Language", "*;*");
-            requestHeadersCollection.Add("Cache-Control", "max-age=0");
-            requestHeadersCollection.Add("DNT", "1");
-            requestHeadersCollection.Add("Authority", endpointURI.Authority);
-            requestHeadersCollection.Add("Path", endpointURI.AbsolutePath);
-            requestHeadersCollection.Add("Scheme", endpointURI.Scheme);
+            WebHeaderCollection requestHeadersCollection = new WebHeaderCollection
+            {
+                { "Caller-Application-Name", app_Title },
+                { "Accept-Encoding", "gzip, deflate, br" },
+                { "Accept-Language", "*;*" },
+                { "Cache-Control", "max-age=0" },
+                { "DNT", "1" },
+                { "Authority", endpointURI.Authority },
+                { "Path", endpointURI.AbsolutePath },
+                { "Scheme", endpointURI.Scheme },
 
-            // SECURITY HEADERS
-            requestHeadersCollection.Add("Upgrade-Insecure-Requests", "1");
-            requestHeadersCollection.Add("Sec-Fetch-User", "?1");
-            requestHeadersCollection.Add("Sec-Fetch-Site", "same-origin");
-            requestHeadersCollection.Add("Sec-Fetch-Node", "navigate");
-            requestHeadersCollection.Add("Sec-Fetch-Dest", "empty");
-            requestHeadersCollection.Add("Sec-CH-UA", http_Sec_CH_UserAgent);
-            requestHeadersCollection.Add("Sec-CH-UA-Mobile", "?0");
-            requestHeadersCollection.Add("Sec-CH-UA-Platform", "\"Windows\"");
+                // SECURITY HEADERS
+                { "Upgrade-Insecure-Requests", "1" },
+                { "Sec-Fetch-User", "?1" },
+                { "Sec-Fetch-Site", "same-origin" },
+                { "Sec-Fetch-Node", "navigate" },
+                { "Sec-Fetch-Dest", "empty" },
+                { "Sec-CH-UA", http_Sec_CH_UserAgent },
+                { "Sec-CH-UA-Mobile", "?0" },
+                { "Sec-CH-UA-Platform", "\"Windows\"" }
+            };
             httpWebRequest.Headers.Add(requestHeadersCollection);
 
             // SET CREDENTIALS
@@ -1528,32 +1497,52 @@ namespace EndpointChecker
                 httpWebRequest.Credentials = CredentialCache.DefaultCredentials;
             }
 
+            // DEFINE STATIC ITEMS FOR HEADERS LIST [THESE ARE NOT INCLUDED IN 'Request.Headers' COLLECTION]
+            Dictionary<string, string> staticHeadersCollection = new Dictionary<string, string>()
+            {
+                { "Method", httpWebRequest.Method },
+                { "AllowAutoRedirect", allowAutoRedirect.ToString().ToLower() },
+                { "Keep-Alive", httpWebRequest.KeepAlive.ToString().ToLower() }
+            };
+
             // GET REQUEST HEADERS
-            GetHTTPWebHeaders(endpoint.HTTPRequestHeaders.PropertyItem, httpWebRequest.Headers);
+            GetHTTPWebHeaders(endpoint.HTTPRequestHeaders.PropertyItem, httpWebRequest.Headers, staticHeadersCollection);
 
             return httpWebRequest;
         }
 
-        public void GetHTTPWebHeaders(List<Property> propertyItemCollection, WebHeaderCollection headerCollection)
+        public void GetHTTPWebHeaders(
+            List<Property> propertyItemCollection,
+            WebHeaderCollection headerCollection,
+            Dictionary<string, string> staticHeadersCollection = null)
         {
             propertyItemCollection.Clear();
+
+            if (staticHeadersCollection != null &&
+                staticHeadersCollection.Count > 0)
+            {
+                foreach (string staticHeaderName in staticHeadersCollection.Keys)
+                {
+                    propertyItemCollection.Add(new Property { ItemName = staticHeaderName, ItemValue = staticHeadersCollection[staticHeaderName] });
+                }
+            }
 
             if (headerCollection != null &&
                 headerCollection.Count > 0)
             {
-                propertyItemCollection.Clear();
-
-                foreach (string headerName in headerCollection.AllKeys)
+                foreach (string headerName in headerCollection.Keys)
                 {
                     propertyItemCollection.Add(new Property { ItemName = headerName, ItemValue = headerCollection[headerName] });
                 }
             }
+
+            propertyItemCollection = propertyItemCollection.OrderBy(p => p.ItemName).ToList();
         }
 
         public string ReadHTTPResponseStream(MemoryStream httpWebResponseMemoryStream, Encoding encoding)
         {
             // SET MEMORY RESPONSE STREAM POSITION TO BEGINNING AND GET RESPONSE STRING
-            httpWebResponseMemoryStream.Seek(0, SeekOrigin.Begin);
+            _ = httpWebResponseMemoryStream.Seek(0, SeekOrigin.Begin);
 
             if (encoding != null)
             {
@@ -1570,7 +1559,7 @@ namespace EndpointChecker
         public bool TryParseHttpDate(string httpDate, out DateTime parsedDate)
         {
             // http://tools.ietf.org/html/rfc7231#section-7.1.1.1
-            var formats = new[] {
+            string[] formats = new[] {
                 "r",							// preferred
                 "dddd, dd-MMM-yy HH:mm:ss GMT",	// obsolete RFC 850 format
                 "ddd MMM  d HH:mm:ss yyyy"		// ANSI C's asctime() format
@@ -1582,7 +1571,7 @@ namespace EndpointChecker
         {
             if (contentLenght > http_SaveResponse_MaxLenght_Bytes)
             {
-                MessageBox.Show(
+                _ = MessageBox.Show(
                     "Response content is too big for download (" + http_SaveResponse_MaxLenght_Bytes + " bytes limit)" +
                     Environment.NewLine +
                     Environment.NewLine +
@@ -1598,7 +1587,7 @@ namespace EndpointChecker
                     MessageBoxIcon.Warning);
             }
 
-            return (contentLenght <= http_SaveResponse_MaxLenght_Bytes);
+            return contentLenght <= http_SaveResponse_MaxLenght_Bytes;
         }
         public void GetWebResponseContentLenghtString(EndpointDefinition endpoint, long contentLenght)
         {
@@ -1610,17 +1599,11 @@ namespace EndpointChecker
             {
                 endpoint.HTTPcontentLenght = (contentLenght / 1073741824).ToString("0.00") + " GB";
             }
-            else if (contentLenght >= 1048576)
-            {
-                endpoint.HTTPcontentLenght = (contentLenght / 1048576).ToString("0.00") + " MB";
-            }
-            else if (contentLenght >= 1024)
-            {
-                endpoint.HTTPcontentLenght = (contentLenght / 1024).ToString("0.00") + " kB";
-            }
             else
             {
-                endpoint.HTTPcontentLenght = contentLenght + " bytes";
+                endpoint.HTTPcontentLenght = contentLenght >= 1048576
+                    ? (contentLenght / 1048576).ToString("0.00") + " MB"
+                    : contentLenght >= 1024 ? (contentLenght / 1024).ToString("0.00") + " kB" : contentLenght + " bytes";
             }
         }
 
@@ -1989,15 +1972,10 @@ namespace EndpointChecker
 
         public static string GetEncodingName(Encoding encoding)
         {
-            if (encoding != null &&
-                !string.IsNullOrEmpty(encoding.EncodingName))
-            {
-                return encoding.EncodingName;
-            }
-            else
-            {
-                return status_NotAvailable;
-            }
+            return encoding != null &&
+                !string.IsNullOrEmpty(encoding.EncodingName)
+                ? encoding.EncodingName
+                : status_NotAvailable;
         }
 
         public string GetMetaInfoValueByKey(EndpointDefinition endpoint, string key)
@@ -2043,7 +2021,7 @@ namespace EndpointChecker
         public string GetFileExtensionByContentType(string mimeType)
         {
             RegistryKey key = Registry.ClassesRoot.OpenSubKey(@"MIME\Database\Content Type\" + mimeType, false);
-            object value = key != null ? key.GetValue("Extension", null) : null;
+            object value = key?.GetValue("Extension", null);
             return value != null ? value.ToString() : string.Empty;
         }
 
@@ -2065,7 +2043,7 @@ namespace EndpointChecker
             if (!Directory.Exists(htmlResponseDirectory))
             {
                 // CREATE OUTPUT DIRECTORY [IN CURRENT DIRECTORY]
-                Directory.CreateDirectory(htmlResponseDirectory);
+                _ = Directory.CreateDirectory(htmlResponseDirectory);
             }
 
             // SAVE RESPONSE
@@ -2196,12 +2174,8 @@ namespace EndpointChecker
             if (statusMessage == null)
             {
                 // GET ACTIVE THREADS COUNT
-                int threadCountMax_WT;
-                int threadCountAvailable_WT;
-                int threadCountMax_CPT;
-                int threadCountAvailable_CPT;
-                ThreadPool.GetMaxThreads(out threadCountMax_WT, out threadCountMax_CPT);
-                ThreadPool.GetAvailableThreads(out threadCountAvailable_WT, out threadCountAvailable_CPT);
+                ThreadPool.GetMaxThreads(out int threadCountMax_WT, out int threadCountMax_CPT);
+                ThreadPool.GetAvailableThreads(out int threadCountAvailable_WT, out int threadCountAvailable_CPT);
                 int threadCountUsed = threadCountMax_WT - threadCountAvailable_WT;
 
                 // SET STATUS INFORMATION
@@ -2232,7 +2206,7 @@ namespace EndpointChecker
                 if (Visible &&
                     Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.IsPlatformSupported)
                 {
-                    var taskBarInstance = Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance;
+                    Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager taskBarInstance = Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance;
 
                     if (BW_GetStatus.CancellationPending ||
                         onClose)
@@ -2356,18 +2330,7 @@ namespace EndpointChecker
 
             pb_ListFilterClear.Visible = !inProgress && !locked && endpointsList.Count > 0 && !string.IsNullOrEmpty(tb_ListFilter.Text);
 
-            if (string.IsNullOrEmpty(tb_ListFilter.Text))
-            {
-                tb_ListFilter.BackColor = Color.LightGray;
-            }
-            else if (lv_Endpoints.Items.Count > 0)
-            {
-                tb_ListFilter.BackColor = Color.Honeydew;
-            }
-            else
-            {
-                tb_ListFilter.BackColor = Color.MistyRose;
-            }
+            tb_ListFilter.BackColor = string.IsNullOrEmpty(tb_ListFilter.Text) ? Color.LightGray : lv_Endpoints.Items.Count > 0 ? Color.Honeydew : Color.MistyRose;
         }
 
         public int GetStatusImageIndex(string statusCode, string pingTime, string statusMessage)
@@ -2470,7 +2433,7 @@ namespace EndpointChecker
             lbl_TimerIntervalMinutesText.Text = GetFormattedValueCountString((int)num_RefreshInterval.Value, "minute");
 
             SaveConfiguration();
-            TIMER_AutomaticRefresh.Interval = ((int)num_RefreshInterval.Value * 60000);
+            TIMER_AutomaticRefresh.Interval = (int)num_RefreshInterval.Value * 60000;
         }
 
         public void RefreshTrayIcon()
@@ -2613,7 +2576,7 @@ namespace EndpointChecker
             Icon icon = Icon.FromHandle(UnmanagedIconHandle).Clone() as Icon;
 
             // Unfortunately, GetHicon creates an unmanaged handle which must be manually destroyed otherwise a generic error will occur in GDI+.
-            DestroyIcon(UnmanagedIconHandle);
+            _ = DestroyIcon(UnmanagedIconHandle);
 
             return icon;
         }
@@ -2639,7 +2602,7 @@ namespace EndpointChecker
             {
                 if (e.Item.Checked)
                 {
-                    endpointsList_Disabled.Remove(e.Item.Text);
+                    _ = endpointsList_Disabled.Remove(e.Item.Text);
                 }
                 else
                 {
@@ -2647,7 +2610,7 @@ namespace EndpointChecker
                 }
 
                 RefreshTrayIcon();
-                btn_Refresh.Enabled = (lv_Endpoints.CheckedItems.Count > 0);
+                btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
             }
         }
 
@@ -2658,7 +2621,7 @@ namespace EndpointChecker
             t.GetField("text", hidden).SetValue(trayIcon, Text + Environment.NewLine + text);
             if ((bool)t.GetField("added", hidden).GetValue(trayIcon))
             {
-                t.GetMethod("UpdateIcon", hidden).Invoke(trayIcon, new object[] { true });
+                _ = t.GetMethod("UpdateIcon", hidden).Invoke(trayIcon, new object[] { true });
             }
         }
 
@@ -2738,7 +2701,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_Refresh.Enabled = (lv_Endpoints.CheckedItems.Count > 0);
+            btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
         }
 
         public void btn_UncheckAll_Click(object sender, EventArgs e)
@@ -2748,7 +2711,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_Refresh.Enabled = (lv_Endpoints.CheckedItems.Count > 0);
+            btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
         }
 
         public void btn_CheckAllAvailable_Click(object sender, EventArgs e)
@@ -2758,7 +2721,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_Refresh.Enabled = (lv_Endpoints.CheckedItems.Count > 0);
+            btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
         }
 
         public void btn_CheckAllErrors_Click(object sender, EventArgs e)
@@ -2768,7 +2731,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_Refresh.Enabled = (lv_Endpoints.CheckedItems.Count > 0);
+            btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
         }
 
         public void SetCheckButtons(bool enabled)
@@ -2926,51 +2889,51 @@ namespace EndpointChecker
                         int ftpWorkSheetLineNumber = 1;
 
                         // ADD HEADER [HTTP ENDPOINTS WORKSHEET]
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("A" + httpWorkSheetLineNumber).SetValue("Endpoint Name");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("B" + httpWorkSheetLineNumber).SetValue("Protocol");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("C" + httpWorkSheetLineNumber).SetValue("Target Port");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetValue("Endpoint Response URL");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).SetValue("Endpoint IP Address");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).SetValue("Response Time");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).SetValue("Status Code");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("H" + httpWorkSheetLineNumber).SetValue("Status Message");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("I" + httpWorkSheetLineNumber).SetValue("Last Seen Online");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("J" + httpWorkSheetLineNumber).SetValue("Endpoint Host MAC Address");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("K" + httpWorkSheetLineNumber).SetValue("Ping Time");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("L" + httpWorkSheetLineNumber).SetValue("UserName [Basic Auth]");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("M" + httpWorkSheetLineNumber).SetValue("Server ID");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("N" + httpWorkSheetLineNumber).SetValue("Endpoint DNS Name");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("O" + httpWorkSheetLineNumber).SetValue("Network Shares");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("P" + httpWorkSheetLineNumber).SetValue("HTTP Auto Redirects");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("Q" + httpWorkSheetLineNumber).SetValue("HTTP Content Type");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("R" + httpWorkSheetLineNumber).SetValue("HTTP Content Lenght");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("S" + httpWorkSheetLineNumber).SetValue("HTTP Expires");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("T" + httpWorkSheetLineNumber).SetValue("HTTP ETag");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("U" + httpWorkSheetLineNumber).SetValue("HTTP Encoding");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("V" + httpWorkSheetLineNumber).SetValue("HTML Encoding");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("W" + httpWorkSheetLineNumber).SetValue("HTML Page Title");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("X" + httpWorkSheetLineNumber).SetValue("HTML Page Author");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("Y" + httpWorkSheetLineNumber).SetValue("HTML Page Description");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("Z" + httpWorkSheetLineNumber).SetValue("HTML Content Language");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("AA" + httpWorkSheetLineNumber).SetValue("HTML Theme Color");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("AB" + httpWorkSheetLineNumber).SetValue("HTML Page Links Count");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("A" + httpWorkSheetLineNumber).SetValue("Endpoint Name");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("B" + httpWorkSheetLineNumber).SetValue("Protocol");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("C" + httpWorkSheetLineNumber).SetValue("Target Port");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetValue("Endpoint Response URL");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).SetValue("Endpoint IP Address");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).SetValue("Response Time");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).SetValue("Status Code");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("H" + httpWorkSheetLineNumber).SetValue("Status Message");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("I" + httpWorkSheetLineNumber).SetValue("Last Seen Online");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("J" + httpWorkSheetLineNumber).SetValue("Endpoint Host MAC Address");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("K" + httpWorkSheetLineNumber).SetValue("Ping Time");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("L" + httpWorkSheetLineNumber).SetValue("UserName [Basic Auth]");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("M" + httpWorkSheetLineNumber).SetValue("Server ID");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("N" + httpWorkSheetLineNumber).SetValue("Endpoint DNS Name");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("O" + httpWorkSheetLineNumber).SetValue("Network Shares");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("P" + httpWorkSheetLineNumber).SetValue("HTTP Auto Redirects");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("Q" + httpWorkSheetLineNumber).SetValue("HTTP Content Type");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("R" + httpWorkSheetLineNumber).SetValue("HTTP Content Lenght");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("S" + httpWorkSheetLineNumber).SetValue("HTTP Expires");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("T" + httpWorkSheetLineNumber).SetValue("HTTP ETag");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("U" + httpWorkSheetLineNumber).SetValue("HTTP Encoding");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("V" + httpWorkSheetLineNumber).SetValue("HTML Encoding");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("W" + httpWorkSheetLineNumber).SetValue("HTML Page Title");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("X" + httpWorkSheetLineNumber).SetValue("HTML Page Author");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("Y" + httpWorkSheetLineNumber).SetValue("HTML Page Description");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("Z" + httpWorkSheetLineNumber).SetValue("HTML Content Language");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("AA" + httpWorkSheetLineNumber).SetValue("HTML Theme Color");
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Cell("AB" + httpWorkSheetLineNumber).SetValue("HTML Page Links Count");
                         httpWorkSheetLineNumber++;
 
                         // ADD HEADER [FTP ENDPOINTS WORKSHEET]
-                        endpointsStatusExport_FTP_WorkSheet.Cell("A" + ftpWorkSheetLineNumber).SetValue("Endpoint Name");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("B" + ftpWorkSheetLineNumber).SetValue("Protocol");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("C" + ftpWorkSheetLineNumber).SetValue("Target Port");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).SetValue("Endpoint Response URL");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).SetValue("Endpoint IP Address");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).SetValue("Response Time");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("G" + ftpWorkSheetLineNumber).SetValue("Status Code");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("H" + ftpWorkSheetLineNumber).SetValue("Status Message");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("I" + ftpWorkSheetLineNumber).SetValue("Last Seen Online");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("J" + ftpWorkSheetLineNumber).SetValue("Endpoint Host MAC Address");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("K" + ftpWorkSheetLineNumber).SetValue("Ping Time");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("L" + ftpWorkSheetLineNumber).SetValue("UserName");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("M" + ftpWorkSheetLineNumber).SetValue("Endpoint DNS Name");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("N" + ftpWorkSheetLineNumber).SetValue("Network Shares");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("A" + ftpWorkSheetLineNumber).SetValue("Endpoint Name");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("B" + ftpWorkSheetLineNumber).SetValue("Protocol");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("C" + ftpWorkSheetLineNumber).SetValue("Target Port");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).SetValue("Endpoint Response URL");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).SetValue("Endpoint IP Address");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).SetValue("Response Time");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("G" + ftpWorkSheetLineNumber).SetValue("Status Code");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("H" + ftpWorkSheetLineNumber).SetValue("Status Message");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("I" + ftpWorkSheetLineNumber).SetValue("Last Seen Online");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("J" + ftpWorkSheetLineNumber).SetValue("Endpoint Host MAC Address");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("K" + ftpWorkSheetLineNumber).SetValue("Ping Time");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("L" + ftpWorkSheetLineNumber).SetValue("UserName");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("M" + ftpWorkSheetLineNumber).SetValue("Endpoint DNS Name");
+                        _ = endpointsStatusExport_FTP_WorkSheet.Cell("N" + ftpWorkSheetLineNumber).SetValue("Network Shares");
                         ftpWorkSheetLineNumber++;
 
                         // ADD ENDPOINTS ITEMS TO SHEETS 
@@ -2980,37 +2943,37 @@ namespace EndpointChecker
                                 endpointItem.Protocol == Uri.UriSchemeHttps.ToUpper())
                             {
                                 // ADD ENDPOINT ITEM TO HTTP SHEET
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("A" + httpWorkSheetLineNumber).SetValue(endpointItem.Name);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("B" + httpWorkSheetLineNumber).SetValue(endpointItem.Protocol);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("C" + httpWorkSheetLineNumber).SetValue(endpointItem.Port);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetValue(endpointItem.ResponseAddress.Split(';')[0]);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("A" + httpWorkSheetLineNumber).SetValue(endpointItem.Name);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("B" + httpWorkSheetLineNumber).SetValue(endpointItem.Protocol);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("C" + httpWorkSheetLineNumber).SetValue(endpointItem.Port);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetValue(endpointItem.ResponseAddress.Split(';')[0]);
 
                                 // CREATE RESPONSE ADDRESS HYPERLINK
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).Hyperlink = new XLHyperlink(endpointItem.ResponseAddress.Split(';')[0]);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.IPAddress));
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).SetValue(endpointItem.ResponseTime);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).SetValue(endpointItem.ResponseCode);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("H" + httpWorkSheetLineNumber).SetValue(endpointItem.ResponseMessage);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("I" + httpWorkSheetLineNumber).SetValue(endpointItem.LastSeenOnline);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("J" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.MACAddress));
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("K" + httpWorkSheetLineNumber).SetValue(endpointItem.PingRoundtripTime);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("L" + httpWorkSheetLineNumber).SetValue(endpointItem.LoginName);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("M" + httpWorkSheetLineNumber).SetValue(endpointItem.ServerID);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("N" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.DNSName));
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("O" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.NetworkShare));
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("P" + httpWorkSheetLineNumber).SetValue(endpointItem.HTTPautoRedirects);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("Q" + httpWorkSheetLineNumber).SetValue(endpointItem.HTTPcontentType);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("R" + httpWorkSheetLineNumber).SetValue(endpointItem.HTTPcontentLenght);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("S" + httpWorkSheetLineNumber).SetValue(endpointItem.HTTPexpires);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("T" + httpWorkSheetLineNumber).SetValue(endpointItem.HTTPetag);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("U" + httpWorkSheetLineNumber).SetValue(GetEncodingName(endpointItem.HTTPencoding));
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("V" + httpWorkSheetLineNumber).SetValue(GetEncodingName(endpointItem.HTMLencoding));
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("W" + httpWorkSheetLineNumber).SetValue(endpointItem.HTMLTitle);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("X" + httpWorkSheetLineNumber).SetValue(endpointItem.HTMLAuthor);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("Y" + httpWorkSheetLineNumber).SetValue(endpointItem.HTMLDescription);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("Z" + httpWorkSheetLineNumber).SetValue(endpointItem.HTMLContentLanguage);
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("AA" + httpWorkSheetLineNumber).SetValue(GetKnownColorNameString(endpointItem.HTMLThemeColor));
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("AB" + httpWorkSheetLineNumber).SetValue(endpointItem.HTMLPageLinks.PropertyItem.Count().ToString());
+                                endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetHyperlink(new XLHyperlink(endpointItem.ResponseAddress.Split(';')[0]));
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.IPAddress));
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).SetValue(endpointItem.ResponseTime);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).SetValue(endpointItem.ResponseCode);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("H" + httpWorkSheetLineNumber).SetValue(endpointItem.ResponseMessage);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("I" + httpWorkSheetLineNumber).SetValue(endpointItem.LastSeenOnline);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("J" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.MACAddress));
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("K" + httpWorkSheetLineNumber).SetValue(endpointItem.PingRoundtripTime);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("L" + httpWorkSheetLineNumber).SetValue(endpointItem.LoginName);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("M" + httpWorkSheetLineNumber).SetValue(endpointItem.ServerID);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("N" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.DNSName));
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("O" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.NetworkShare));
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("P" + httpWorkSheetLineNumber).SetValue(endpointItem.HTTPautoRedirects);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("Q" + httpWorkSheetLineNumber).SetValue(endpointItem.HTTPcontentType);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("R" + httpWorkSheetLineNumber).SetValue(endpointItem.HTTPcontentLenght);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("S" + httpWorkSheetLineNumber).SetValue(endpointItem.HTTPexpires);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("T" + httpWorkSheetLineNumber).SetValue(endpointItem.HTTPetag);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("U" + httpWorkSheetLineNumber).SetValue(GetEncodingName(endpointItem.HTTPencoding));
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("V" + httpWorkSheetLineNumber).SetValue(GetEncodingName(endpointItem.HTMLencoding));
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("W" + httpWorkSheetLineNumber).SetValue(endpointItem.HTMLTitle);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("X" + httpWorkSheetLineNumber).SetValue(endpointItem.HTMLAuthor);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("Y" + httpWorkSheetLineNumber).SetValue(endpointItem.HTMLDescription);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("Z" + httpWorkSheetLineNumber).SetValue(endpointItem.HTMLContentLanguage);
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("AA" + httpWorkSheetLineNumber).SetValue(GetKnownColorNameString(endpointItem.HTMLThemeColor));
+                                _ = endpointsStatusExport_HTTP_WorkSheet.Cell("AB" + httpWorkSheetLineNumber).SetValue(endpointItem.HTMLPageLinks.PropertyItem.Count().ToString());
 
                                 // SET BACKGROUND COLOR BY STATUS CODE
                                 endpointsStatusExport_HTTP_WorkSheet.Row(httpWorkSheetLineNumber)
@@ -3027,21 +2990,21 @@ namespace EndpointChecker
                                         Uri.UriSchemeFtp);
 
                                 // ADD ENDPOINT ITEM TO FTP SHEET
-                                endpointsStatusExport_FTP_WorkSheet.Cell("A" + ftpWorkSheetLineNumber).SetValue(endpointItem.Name);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("B" + ftpWorkSheetLineNumber).SetValue(endpointItem.Protocol);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("C" + ftpWorkSheetLineNumber).SetValue(endpointItem.Port);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).SetValue(connectionString);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).Hyperlink = new XLHyperlink(connectionString);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.IPAddress));
-                                endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).SetValue(endpointItem.ResponseTime);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("G" + ftpWorkSheetLineNumber).SetValue(endpointItem.ResponseCode);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("H" + ftpWorkSheetLineNumber).SetValue(endpointItem.ResponseMessage);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("I" + ftpWorkSheetLineNumber).SetValue(endpointItem.LastSeenOnline);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("J" + ftpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.MACAddress));
-                                endpointsStatusExport_FTP_WorkSheet.Cell("K" + ftpWorkSheetLineNumber).SetValue(endpointItem.PingRoundtripTime);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("L" + ftpWorkSheetLineNumber).SetValue(endpointItem.LoginName);
-                                endpointsStatusExport_FTP_WorkSheet.Cell("M" + ftpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.DNSName));
-                                endpointsStatusExport_FTP_WorkSheet.Cell("N" + ftpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.NetworkShare));
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("A" + ftpWorkSheetLineNumber).SetValue(endpointItem.Name);
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("B" + ftpWorkSheetLineNumber).SetValue(endpointItem.Protocol);
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("C" + ftpWorkSheetLineNumber).SetValue(endpointItem.Port);
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).SetValue(connectionString);
+                                endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).SetHyperlink(new XLHyperlink(connectionString));
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.IPAddress));
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).SetValue(endpointItem.ResponseTime);
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("G" + ftpWorkSheetLineNumber).SetValue(endpointItem.ResponseCode);
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("H" + ftpWorkSheetLineNumber).SetValue(endpointItem.ResponseMessage);
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("I" + ftpWorkSheetLineNumber).SetValue(endpointItem.LastSeenOnline);
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("J" + ftpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.MACAddress));
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("K" + ftpWorkSheetLineNumber).SetValue(endpointItem.PingRoundtripTime);
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("L" + ftpWorkSheetLineNumber).SetValue(endpointItem.LoginName);
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("M" + ftpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.DNSName));
+                                _ = endpointsStatusExport_FTP_WorkSheet.Cell("N" + ftpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.NetworkShare));
 
                                 // SET BACKGROUND COLOR BY STATUS CODE
                                 endpointsStatusExport_FTP_WorkSheet.Row(ftpWorkSheetLineNumber)
@@ -3055,89 +3018,89 @@ namespace EndpointChecker
                         }
 
                         // ADD SUMMARY WORKSHEET
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A1").SetValue("Endpoint Checker Application");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").SetValue("Version " + app_VersionString + " (built " + app_BuiltDate + ")");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A2").SetValue("Operating System");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B2").SetValue(os_VersionString);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A3").SetValue("Latest Installed .NET FrameWork Runtime");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B3").SetValue(dotNetFramework_LatestInstalledVersion.ToString().Replace("v", "Version ").Replace("_", "."));
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A4").SetValue("System Memory (RAM)");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B4").SetValue(systemMemorySize);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A5").SetValue("User Name");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B5").SetValue(Environment.UserName);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A6").SetValue("Domain");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B6").SetValue(Environment.UserDomainName);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("A7").SetValue("Computer Name");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B7").SetValue(Environment.MachineName);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("A1").SetValue("Endpoint Checker Application");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("B1").SetValue("Version " + app_VersionString + " (built " + app_BuiltDate + ")");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("A2").SetValue("Operating System");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("B2").SetValue(os_VersionString);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("A3").SetValue("Active .NET Runtime");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("B3").SetValue(dotNetFramework_ActiveVersion);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("A4").SetValue("System Memory (RAM)");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("B4").SetValue(systemMemorySize);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("A5").SetValue("User Name");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("B5").SetValue(Environment.UserName);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("A6").SetValue("Domain");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("B6").SetValue(Environment.UserDomainName);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("A7").SetValue("Computer Name");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("B7").SetValue(Environment.MachineName);
 
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D1").SetValue("Check Started");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E1").SetValue(startDT);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D2").SetValue("Check Ended");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E2").SetValue(endDT);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D3").SetValue("Check Duration");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E3").SetValue(durationSeconds + " " + GetFormattedValueCountString(durationSeconds, "second"));
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D4").SetValue("HTTP Endpoints Count");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E4").SetValue((httpWorkSheetLineNumber - 2).ToString());
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D5").SetValue("FTP Endpoints Count");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E5").SetValue((ftpWorkSheetLineNumber - 2).ToString());
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D6").SetValue("Parallel Threads Count");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E6").SetValue(threadsCount);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D7").SetValue("Ping Timeout");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E7").SetValue(pingTimeout + " " + GetFormattedValueCountString(pingTimeout, "second"));
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D8").SetValue("HTTP Request Timeout");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E8").SetValue(httpRequestTimeout + " " + GetFormattedValueCountString(httpRequestTimeout, "second"));
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D9").SetValue("FTP Request Timeout");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E9").SetValue(ftpRequestTimeout + " " + GetFormattedValueCountString(ftpRequestTimeout, "second"));
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D10").SetValue("Supported Security Protocols [HTTPS]");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E10").SetValue("SSL 3.0, TLS 1.0, TLS 1.1, TLS 1.2, TLS 1.3");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D11").SetValue("Server Certificate Validation [HTTPS]");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E11").SetValue(sslCertificateValidation);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D12").SetValue("Auto Redirection [HTTP]");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E12").SetValue(httpAutoRedirection);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D13").SetValue("Resolve Network Shares");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E13").SetValue(resolveNetworkShares);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D14").SetValue("Resolve Page Meta Info [HTTP/HTML]");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E14").SetValue(resolvePageMetaInfo);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D15").SetValue("Save Response [HTTP]");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E15").SetValue(saveResponse);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D16").SetValue("Ping Host");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E16").SetValue(pingHost);
-                        endpointsStatusExport_Summary_WorkSheet.Cell("D17").SetValue("DNS / MAC Lookup on Host");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E17").SetValue(dnsLookupOnHost);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D1").SetValue("Check Started");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E1").SetValue(startDT);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D2").SetValue("Check Ended");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E2").SetValue(endDT);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D3").SetValue("Check Duration");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E3").SetValue(durationSeconds + " " + GetFormattedValueCountString(durationSeconds, "second"));
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D4").SetValue("HTTP Endpoints Count");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E4").SetValue((httpWorkSheetLineNumber - 2).ToString());
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D5").SetValue("FTP Endpoints Count");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E5").SetValue((ftpWorkSheetLineNumber - 2).ToString());
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D6").SetValue("Parallel Threads Count");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E6").SetValue(threadsCount);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D7").SetValue("Ping Timeout");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E7").SetValue(pingTimeout + " " + GetFormattedValueCountString(pingTimeout, "second"));
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D8").SetValue("HTTP Request Timeout");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E8").SetValue(httpRequestTimeout + " " + GetFormattedValueCountString(httpRequestTimeout, "second"));
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D9").SetValue("FTP Request Timeout");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E9").SetValue(ftpRequestTimeout + " " + GetFormattedValueCountString(ftpRequestTimeout, "second"));
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D10").SetValue("Supported Security Protocols [HTTPS]");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E10").SetValue("SSL 3.0, TLS 1.0, TLS 1.1, TLS 1.2, TLS 1.3");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D11").SetValue("Server Certificate Validation [HTTPS]");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E11").SetValue(sslCertificateValidation);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D12").SetValue("Auto Redirection [HTTP]");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E12").SetValue(httpAutoRedirection);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D13").SetValue("Resolve Network Shares");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E13").SetValue(resolveNetworkShares);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D14").SetValue("Resolve Page Meta Info [HTTP/HTML]");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E14").SetValue(resolvePageMetaInfo);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D15").SetValue("Save Response [HTTP]");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E15").SetValue(saveResponse);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D16").SetValue("Ping Host");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E16").SetValue(pingHost);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("D17").SetValue("DNS / MAC Lookup on Host");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("E17").SetValue(dnsLookupOnHost);
 
                         // SETTINGS FOR HTTP ENDPOINTS WORKSHEET
-                        endpointsStatusExport_HTTP_WorkSheet.Style
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Style
                             .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left)
                             .Alignment.SetVertical(XLAlignmentVerticalValues.Top);
                         endpointsStatusExport_HTTP_WorkSheet.SheetView.FreezeRows(1);
                         endpointsStatusExport_HTTP_WorkSheet.SheetView.FreezeColumns(1);
-                        endpointsStatusExport_HTTP_WorkSheet.RangeUsed().SetAutoFilter();
-                        endpointsStatusExport_HTTP_WorkSheet.Rows().AdjustToContents();
-                        endpointsStatusExport_HTTP_WorkSheet.Columns().AdjustToContents(10, (double)70);
-                        endpointsStatusExport_HTTP_WorkSheet.CellsUsed().SetDataType(XLDataType.Text);
+                        _ = endpointsStatusExport_HTTP_WorkSheet.RangeUsed().SetAutoFilter();
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Rows().AdjustToContents();
+                        _ = endpointsStatusExport_HTTP_WorkSheet.Columns().AdjustToContents(10, (double)70);
+                        _ = endpointsStatusExport_HTTP_WorkSheet.CellsUsed().SetDataType(XLDataType.Text);
                         endpointsStatusExport_HTTP_WorkSheet.Row(1).CellsUsed().Style.Fill.BackgroundColor = XLColor.CoolGrey;
                         endpointsStatusExport_HTTP_WorkSheet.CellsUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
                         // SETTINGS FOR FTP ENDPOINTS WORKSHEET
-                        endpointsStatusExport_FTP_WorkSheet.Style
+                        _ = endpointsStatusExport_FTP_WorkSheet.Style
                             .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left)
                             .Alignment.SetVertical(XLAlignmentVerticalValues.Top);
                         endpointsStatusExport_FTP_WorkSheet.SheetView.FreezeRows(1);
                         endpointsStatusExport_FTP_WorkSheet.SheetView.FreezeColumns(1);
-                        endpointsStatusExport_FTP_WorkSheet.RangeUsed().SetAutoFilter();
-                        endpointsStatusExport_FTP_WorkSheet.Rows().AdjustToContents();
-                        endpointsStatusExport_FTP_WorkSheet.Columns().AdjustToContents(10, (double)70);
-                        endpointsStatusExport_FTP_WorkSheet.CellsUsed().SetDataType(XLDataType.Text);
+                        _ = endpointsStatusExport_FTP_WorkSheet.RangeUsed().SetAutoFilter();
+                        _ = endpointsStatusExport_FTP_WorkSheet.Rows().AdjustToContents();
+                        _ = endpointsStatusExport_FTP_WorkSheet.Columns().AdjustToContents(10, (double)70);
+                        _ = endpointsStatusExport_FTP_WorkSheet.CellsUsed().SetDataType(XLDataType.Text);
                         endpointsStatusExport_FTP_WorkSheet.Row(1).CellsUsed().Style.Fill.BackgroundColor = XLColor.CoolGrey;
                         endpointsStatusExport_FTP_WorkSheet.CellsUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
                         // SETTINGS FOR SUMMARY WORKSHEET
                         endpointsStatusExport_Summary_WorkSheet.SheetView.FreezeColumns(1);
-                        endpointsStatusExport_Summary_WorkSheet.Style
+                        _ = endpointsStatusExport_Summary_WorkSheet.Style
                             .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left)
                             .Alignment.SetVertical(XLAlignmentVerticalValues.Top);
-                        endpointsStatusExport_Summary_WorkSheet.Rows().AdjustToContents();
-                        endpointsStatusExport_Summary_WorkSheet.Columns().AdjustToContents();
+                        _ = endpointsStatusExport_Summary_WorkSheet.Rows().AdjustToContents();
+                        _ = endpointsStatusExport_Summary_WorkSheet.Columns().AdjustToContents();
                         endpointsStatusExport_Summary_WorkSheet.Column(1).CellsUsed().Style.Fill.BackgroundColor = XLColor.CoolGrey;
                         endpointsStatusExport_Summary_WorkSheet.Column(2).CellsUsed().Style.Fill.BackgroundColor = XLColor.LightBlue;
                         endpointsStatusExport_Summary_WorkSheet.Column(4).CellsUsed().Style.Fill.BackgroundColor = XLColor.CoolGrey;
@@ -3149,7 +3112,7 @@ namespace EndpointChecker
                         {
                             if (column.CellsUsed().Where(c => c.Value.ToString() != status_NotAvailable).Count() == 1)
                             {
-                                column.Hide();
+                                _ = column.Hide();
                             }
                         }
 
@@ -3157,7 +3120,7 @@ namespace EndpointChecker
                         {
                             if (column.CellsUsed().Where(c => c.Value.ToString() != status_NotAvailable).Count() == 1)
                             {
-                                column.Hide();
+                                _ = column.Hide();
                             }
                         }
 
@@ -3207,7 +3170,7 @@ namespace EndpointChecker
                             {
                                 // ADD 'JSON' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
                                 RichText jsonPageHyperlink = summaryWorkSheet["A10"].RichText;
-                                jsonPageHyperlink.Text = "JSON_Endpoints_Status_List_Hyperlink";
+                                jsonPageHyperlink.Text = "xHTML_JSONx";
                                 summaryWorkSheet["A10"].Style.Color = Color.DarkOrange;
                                 summaryWorkSheet["A10"].Style.Font.IsBold = true;
                                 summaryWorkSheet["A10"].Style.HorizontalAlignment = HorizontalAlignType.Center;
@@ -3217,7 +3180,7 @@ namespace EndpointChecker
                             {
                                 // ADD 'XML' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
                                 RichText xmlPageHyperlink = summaryWorkSheet["A11"].RichText;
-                                xmlPageHyperlink.Text = "XML_Endpoints_Status_List_Hyperlink";
+                                xmlPageHyperlink.Text = "xHTML_XMLx";
                                 summaryWorkSheet["A11"].Style.Color = Color.Red;
                                 summaryWorkSheet["A11"].Style.Font.IsBold = true;
                                 summaryWorkSheet["A11"].Style.HorizontalAlignment = HorizontalAlignType.Center;
@@ -3225,7 +3188,7 @@ namespace EndpointChecker
 
                             // ADD 'XLSX' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
                             RichText xlsxPageHyperlink = summaryWorkSheet["A12"].RichText;
-                            xlsxPageHyperlink.Text = "XLSX_Endpoints_Status_List_Hyperlink";
+                            xlsxPageHyperlink.Text = "xHTML_XLSXx";
                             summaryWorkSheet["A12"].Style.Color = Color.DarkViolet;
                             summaryWorkSheet["A12"].Style.Font.IsBold = true;
                             summaryWorkSheet["A12"].Style.HorizontalAlignment = HorizontalAlignType.Center;
@@ -3258,7 +3221,7 @@ namespace EndpointChecker
 
                                     // ADD 'HTTP' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
                                     RichText httpPageHyperlink = summaryWorkSheet["A14"].RichText;
-                                    httpPageHyperlink.Text = "HTTP_Endpoints_Status_List_Hyperlink";
+                                    httpPageHyperlink.Text = "xHTML_HTTPx";
                                     summaryWorkSheet["A14"].Style.Color = Color.Green;
                                     summaryWorkSheet["A14"].Style.Font.IsBold = true;
                                     summaryWorkSheet["A14"].Style.HorizontalAlignment = HorizontalAlignType.Center;
@@ -3296,7 +3259,7 @@ namespace EndpointChecker
 
                                     // ADD 'FTP' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
                                     RichText ftpPageHyperlink = summaryWorkSheet["A15"].RichText;
-                                    ftpPageHyperlink.Text = "FTP_Endpoints_Status_List_Hyperlink";
+                                    ftpPageHyperlink.Text = "xHTML_FTPx";
                                     summaryWorkSheet["A15"].Style.Color = Color.Blue;
                                     summaryWorkSheet["A15"].Style.Font.IsBold = true;
                                     summaryWorkSheet["A15"].Style.HorizontalAlignment = HorizontalAlignType.Center;
@@ -3320,11 +3283,11 @@ namespace EndpointChecker
                                 // REPLACE HYPERLINKS ON 'SUMMARY' PAGE
                                 string summaryHTMLstring = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
                                 summaryHTMLstring = summaryHTMLstring
-                                    .Replace("XLSX_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_XLSFile + "\" style=\"color:white;\">Endpoints Status XLSX Export</a>")
-                                    .Replace("JSON_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_JSONFile + "\" style=\"color:white;\">Endpoints Status JSON Export </a>")
-                                    .Replace("XML_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_XMLFile + "\" style=\"color:white;\">Endpoints Status XML Export</a>")
-                                    .Replace("HTTP_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_HTMLFile_HTTPPage + "\" style=\"color:white;\">HTTP Endpoints Status List</a>")
-                                    .Replace("FTP_Endpoints_Status_List_Hyperlink", "<a href=\"" + statusExport_HTMLFile_FTPPage + "\" style=\"color:white;\">FTP Endpoints Status List</a>");
+                                    .Replace("xHTML_XLSXx", "<a href=\"" + statusExport_XLSFile + "\" style=\"color:white;\">Endpoints Status XLSX Export</a>")
+                                    .Replace("xHTML_JSONx", "<a href=\"" + statusExport_JSONFile + "\" style=\"color:white;\">Endpoints Status JSON Export</a>")
+                                    .Replace("xHTML_XMLx", "<a href=\"" + statusExport_XMLFile + "\" style=\"color:white;\">Endpoints Status XML Export</a>")
+                                    .Replace("xHTML_HTTPx", "<a href=\"" + statusExport_HTMLFile_HTTPPage + "\" style=\"color:white;\">HTTP Endpoints Status List</a>")
+                                    .Replace("xHTML_FTPx", "<a href=\"" + statusExport_HTMLFile_FTPPage + "\" style=\"color:white;\">FTP Endpoints Status List</a>");
 
                                 // ADD HTML AUTO REFRESH
                                 summaryHTMLstring = AddAutoRefreshToHTMLString(summaryHTMLstring, 30);
@@ -3358,7 +3321,7 @@ namespace EndpointChecker
 
             if (errorsList.Count > 0)
             {
-                MessageBox.Show(
+                _ = MessageBox.Show(
                     string.Join(
                         Environment.NewLine +
                         Environment.NewLine +
@@ -3399,10 +3362,10 @@ namespace EndpointChecker
                                  trNode.ChildNodes[3].ChildNodes[0].InnerXml +
                                  "'";
 
-                    trNode.ChildNodes[3].ChildNodes[0].Attributes.Append(attr);
+                    _ = trNode.ChildNodes[3].ChildNodes[0].Attributes.Append(attr);
 
-                    using (var stringWriter = new StringWriter())
-                    using (var xmlTextWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings { Indent = true, NewLineOnAttributes = false, OmitXmlDeclaration = true }))
+                    using (StringWriter stringWriter = new StringWriter())
+                    using (XmlWriter xmlTextWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings { Indent = true, NewLineOnAttributes = false, OmitXmlDeclaration = true }))
                     {
                         inputHTMLDoc.WriteTo(xmlTextWriter);
                         xmlTextWriter.Flush();
@@ -3620,7 +3583,7 @@ namespace EndpointChecker
             if (lv_Endpoints.Visible &&
                 cb_ResolveNetworkShares.Checked)
             {
-                MessageBox.Show("This option may cause check operation take a long time", "Resolve Network Shares", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _ = MessageBox.Show("This option may cause check operation take a long time", "Resolve Network Shares", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             SaveConfiguration();
@@ -3638,7 +3601,7 @@ namespace EndpointChecker
              );
 
         [DllImport("Netapi32.dll", SetLastError = true)]
-        static extern int NetApiBufferFree(IntPtr Buffer);
+        private static extern int NetApiBufferFree(IntPtr Buffer);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct SHARE_INFO_1
@@ -3674,7 +3637,7 @@ namespace EndpointChecker
                     netSharesList.Add(netShareitem);
                     currentPtr = new IntPtr(currentPtr.ToInt32() + nStructSize);
                 }
-                NetApiBufferFree(bufPtr);
+                _ = NetApiBufferFree(bufPtr);
             }
             else
             {
@@ -3686,65 +3649,57 @@ namespace EndpointChecker
 
         public string NetShareError(int code)
         {
-            Dictionary<int, string> codeList = new Dictionary<int, string>();
-            codeList.Add(0, "OK");
-            codeList.Add(5, "The user has insufficient privilege for this operation");
-            codeList.Add(8, "Not enough memory");
-            codeList.Add(65, "Network access is denied");
-            codeList.Add(87, "Invalid parameter specified");
-            codeList.Add(53, "The network path was not found");
-            codeList.Add(123, "Invalid name");
-            codeList.Add(124, "Invalid level parameter");
-            codeList.Add(234, "More data available, buffer too small");
-            codeList.Add(2102, "Device driver not installed");
-            codeList.Add(2106, "This operation can be performed only on a server");
-            codeList.Add(2114, "Server service not installed");
-            codeList.Add(2123, "Buffer too small for fixed-length data");
-            codeList.Add(2127, "Error encountered while executing function remotely");
-            codeList.Add(2138, "The Workstation service is not started");
-            codeList.Add(2141, "The server is not configured for this transaction (IPC$ is not shared)");
-            codeList.Add(2351, "Invalid computername specified");
+            Dictionary<int, string> codeList = new Dictionary<int, string>
+            {
+                { 0, "OK" },
+                { 5, "The user has insufficient privilege for this operation" },
+                { 8, "Not enough memory" },
+                { 65, "Network access is denied" },
+                { 87, "Invalid parameter specified" },
+                { 53, "The network path was not found" },
+                { 123, "Invalid name" },
+                { 124, "Invalid level parameter" },
+                { 234, "More data available, buffer too small" },
+                { 2102, "Device driver not installed" },
+                { 2106, "This operation can be performed only on a server" },
+                { 2114, "Server service not installed" },
+                { 2123, "Buffer too small for fixed-length data" },
+                { 2127, "Error encountered while executing function remotely" },
+                { 2138, "The Workstation service is not started" },
+                { 2141, "The server is not configured for this transaction (IPC$ is not shared)" },
+                { 2351, "Invalid computername specified" }
+            };
 
-            if (codeList.ContainsKey(code))
-            {
-                return codeList[code];
-            }
-            else
-            {
-                return "Result Code: " + code.ToString();
-            }
+            return codeList.ContainsKey(code) ? codeList[code] : "Result Code: " + code.ToString();
         }
 
         public string NetShareType(uint code)
         {
-            Dictionary<uint, string> codeList = new Dictionary<uint, string>();
-            codeList.Add(0, "Folder");
-            codeList.Add(1, "Printer");
-            codeList.Add(2, "Device");
-            codeList.Add(3, "IPC");
-            codeList.Add(2147483648, "Admin/Folder");
-            codeList.Add(2147483649, "Admin/Printer");
-            codeList.Add(2147483650, "Admin/Device");
-            codeList.Add(2147483651, "Admin/IPC");
+            Dictionary<uint, string> codeList = new Dictionary<uint, string>
+            {
+                { 0, "Folder" },
+                { 1, "Printer" },
+                { 2, "Device" },
+                { 3, "IPC" },
+                { 2147483648, "Admin/Folder" },
+                { 2147483649, "Admin/Printer" },
+                { 2147483650, "Admin/Device" },
+                { 2147483651, "Admin/IPC" }
+            };
 
-            if (codeList.ContainsKey(code))
-            {
-                return codeList[code];
-            }
-            else
-            {
-                return "Type Code: " + code.ToString();
-            }
+            return codeList.ContainsKey(code) ? codeList[code] : "Type Code: " + code.ToString();
         }
 
-        ToolTip endpointToolTip;
-        Point endpointToolTipLastPosition = new Point(-1, -1);
+        private ToolTip endpointToolTip;
+        private Point endpointToolTipLastPosition = new Point(-1, -1);
         public void lv_Endpoints_MouseMove(object sender, MouseEventArgs e)
         {
             ListViewHitTestInfo hitTestItem = lv_Endpoints.HitTest(e.X, e.Y);
 
             if (endpointToolTip == null)
+            {
                 endpointToolTip = new ToolTip();
+            }
 
             if (endpointToolTipLastPosition != e.Location)
             {
@@ -3760,7 +3715,7 @@ namespace EndpointChecker
                     infoText += Environment.NewLine + Environment.NewLine;
                     infoText += "Select single or more EndPoints and press CTRL+C to copy details to clipboard";
                     endpointToolTip.ToolTipTitle = hitTestItem.Item.Text;
-                    endpointToolTip.Show(infoText, hitTestItem.Item.ListView, (e.X + 20), (e.Y + 25), 20000);
+                    endpointToolTip.Show(infoText, hitTestItem.Item.ListView, e.X + 20, e.Y + 25, 20000);
                 }
                 else
                 {
@@ -4003,7 +3958,7 @@ namespace EndpointChecker
                             // CHECK ITEMS COUNT LIMIT
                             if (lineNumber > Settings.Default.Config_MaximumEndpointReferencesCount)
                             {
-                                MessageBox.Show(
+                                _ = MessageBox.Show(
                                   "Endpoints definitions file \"" + endpointDefinitonsFile +
                                   "\" contains more than " +
                                   Settings.Default.Config_MaximumEndpointReferencesCount +
@@ -4259,7 +4214,7 @@ namespace EndpointChecker
                             duplicityMessage += "See \"" + endpointsList_Duplicities + "\" for details.";
                         }
 
-                        MessageBox.Show(
+                        _ = MessageBox.Show(
                                 duplicityMessage,
                                 "Invalid endpoint definitions - Name duplicity",
                                 MessageBoxButtons.OK,
@@ -4303,7 +4258,7 @@ namespace EndpointChecker
                             invalidURLMessage += "See \"" + endpointsList_InvalidDefs + "\" for details.";
                         }
 
-                        MessageBox.Show(invalidURLMessage, "Invalid endpoint definitions - Invalid URL format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        _ = MessageBox.Show(invalidURLMessage, "Invalid endpoint definitions - Invalid URL format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
                 else
@@ -4452,10 +4407,15 @@ namespace EndpointChecker
 
         public void lv_Endpoints_KeyUp(object sender, KeyEventArgs e)
         {
-            if (sender != lv_Endpoints) return;
+            if (sender != lv_Endpoints)
+            {
+                return;
+            }
 
             if (e.Control && e.KeyCode == Keys.C)
+            {
                 CopySelectedValuesToClipboard();
+            }
         }
 
         public void CopySelectedValuesToClipboard()
@@ -4472,7 +4432,7 @@ namespace EndpointChecker
 
                 itemLineText += Environment.NewLine;
 
-                builder.AppendLine(itemLineText);
+                _ = builder.AppendLine(itemLineText);
             }
 
             if (!string.IsNullOrEmpty(builder.ToString()))
@@ -4489,7 +4449,7 @@ namespace EndpointChecker
 
         public void RestoreSavedSettingsError(string settingName)
         {
-            MessageBox.Show(
+            _ = MessageBox.Show(
                             "An error occurred while trying to apply your user specific settings" +
                             Environment.NewLine + Environment.NewLine +
                             "The program will continue to run, however saved user preferences " +
@@ -4650,11 +4610,17 @@ namespace EndpointChecker
                 foreach (IPAddress hostIP in hostIPs)
                 {
                     // is localhost
-                    if (IPAddress.IsLoopback(hostIP)) return true;
+                    if (IPAddress.IsLoopback(hostIP))
+                    {
+                        return true;
+                    }
                     // is local address
                     foreach (IPAddress localIP in localIPs)
                     {
-                        if (hostIP.Equals(localIP)) return true;
+                        if (hostIP.Equals(localIP))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -4679,7 +4645,7 @@ namespace EndpointChecker
                     macStrArr[i] = macAddr[i].ToString("x2");
                 }
 
-                return (string.Join(":", macStrArr)).ToUpper();
+                return string.Join(":", macStrArr).ToUpper();
             }
             else
             {
@@ -4752,21 +4718,19 @@ namespace EndpointChecker
         {
             FieldInfo field = enumValue.GetType().GetField(enumValue.ToString());
 
-            DescriptionAttribute attribute
-                    = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute))
-                        as DescriptionAttribute;
 
-            return attribute == null ? enumValue.ToString() : attribute.Description;
+            return !(Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attribute) ? enumValue.ToString() : attribute.Description;
         }
 
         public static int GetEnumByDescriptionString(string description, Type enumType)
         {
-            foreach (var field in enumType.GetFields())
+            foreach (FieldInfo field in enumType.GetFields())
             {
-                DescriptionAttribute attribute
-                    = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
-                if (attribute == null)
+                if (!(Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attribute))
+                {
                     continue;
+                }
+
                 if (attribute.Description == description)
                 {
                     return (int)field.GetValue(null);
@@ -4817,7 +4781,7 @@ namespace EndpointChecker
                             lv_Endpoints_SelectedEndpoint.PingRoundtripTime,
                             lv_Endpoints_SelectedEndpoint.ResponseMessage)]);
 
-            dialog_EndpointDetails.ShowDialog();
+            _ = dialog_EndpointDetails.ShowDialog();
             dialog_EndpointDetails = null;
 
             if (onClose)
@@ -5003,7 +4967,7 @@ namespace EndpointChecker
             Uri _endpointURI = new Uri(endpoint.Address);
 
             if (_endpointURI.Scheme != Uri.UriSchemeHttp ||
-                _endpointURI.Scheme != Uri.UriSchemeHttps)            
+                _endpointURI.Scheme != Uri.UriSchemeHttps)
             {
                 // IF ENDPOINT IS NOT AN HTTP/HTTPS TYPE, PASS HTTP PROTOCOL PREFIX
                 _endpointURI = new Uri(
@@ -5072,14 +5036,7 @@ namespace EndpointChecker
         {
             if (lv_Endpoints.SelectedItems.Count == 1)
             {
-                if (e.IsSelected)
-                {
-                    lv_Endpoints_SelectedEndpoint = endpointsList.Where(endpointItem => endpointItem.Name == e.Item.Text).First();
-                }
-                else
-                {
-                    lv_Endpoints_SelectedEndpoint = null;
-                }
+                lv_Endpoints_SelectedEndpoint = e.IsSelected ? endpointsList.Where(endpointItem => endpointItem.Name == e.Item.Text).First() : null;
             }
         }
 
@@ -5091,10 +5048,12 @@ namespace EndpointChecker
         {
             try
             {
-                ProcessStartInfo psInfo = new ProcessStartInfo();
-                psInfo.FileName = fileName;
-                psInfo.UseShellExecute = true;
-                psInfo.ErrorDialog = true;
+                ProcessStartInfo psInfo = new ProcessStartInfo
+                {
+                    FileName = fileName,
+                    UseShellExecute = true,
+                    ErrorDialog = true
+                };
 
                 if (!string.IsNullOrEmpty(arguments))
                 {
@@ -5114,7 +5073,7 @@ namespace EndpointChecker
 
                         using (netConnection)
                         {
-                            Process.Start(psInfo);
+                            _ = Process.Start(psInfo);
                         }
                     }
                     catch
@@ -5130,12 +5089,12 @@ namespace EndpointChecker
                 }
                 else
                 {
-                    Process.Start(psInfo);
+                    _ = Process.Start(psInfo);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                _ = MessageBox.Show(
                     ex.Message,
                     "Open Network Connection",
                     MessageBoxButtons.OK,
@@ -5151,11 +5110,11 @@ namespace EndpointChecker
             int sourceY = 0;
             int destX = 0;
             int destY = 0;
+            float nPercentW = Width / (float)sourceWidth;
+            float nPercentH = Height / (float)sourceHeight;
 
-            float nPercent = 0;
-            float nPercentW = (Width / (float)sourceWidth);
-            float nPercentH = (Height / (float)sourceHeight);
 
+            float nPercent;
             if (nPercentH < nPercentW)
             {
                 nPercent = nPercentH;
@@ -5202,7 +5161,7 @@ namespace EndpointChecker
         {
             try
             {
-                Invoke(action);
+                _ = Invoke(action);
             }
             catch
             {
@@ -5221,10 +5180,7 @@ namespace EndpointChecker
             }
             else
             {
-                if (lv_Endpoints.Sorting == SortOrder.Ascending)
-                    lv_Endpoints.Sorting = SortOrder.Descending;
-                else
-                    lv_Endpoints.Sorting = SortOrder.Ascending;
+                lv_Endpoints.Sorting = lv_Endpoints.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
             }
 
             lv_Endpoints.Sort();
@@ -5272,7 +5228,7 @@ namespace EndpointChecker
             }
         }
 
-        enum MatchType
+        private enum MatchType
         {
             NoMatch,
             ExactMatch,
@@ -5285,15 +5241,14 @@ namespace EndpointChecker
 
             if (!color.IsEmpty)
             {
-                string _colorName;
-                FindColor(color, out _colorName);
+                _ = FindColor(color, out string _colorName);
                 colorName = _colorName + " (" + ColorTranslator.ToHtml(color) + ")";
             }
 
             return colorName;
         }
 
-        static MatchType FindColor(Color colour, out string name)
+        private static MatchType FindColor(Color colour, out string name)
         {
             MatchType
               result = MatchType.NoMatch;
@@ -5320,7 +5275,7 @@ namespace EndpointChecker
                   r = colour.R - system_colour_value.R,
                   g = colour.G - system_colour_value.G,
                   b = colour.B - system_colour_value.B,
-                  difference = a * a + r * r + g * g + b * b;
+                  difference = (a * a) + (r * r) + (g * g) + (b * b);
 
                 if (result == MatchType.NoMatch || difference < least_difference)
                 {
@@ -5391,10 +5346,10 @@ namespace EndpointChecker
         public void pb_FeatureRequest_Click(object sender, EventArgs e)
         {
             FeatureRequestDialog frDialog = new FeatureRequestDialog(
-                featureRequest_senderEMailAddress,
+                reportServer_senderEMailAddress,
                 new List<string> { authorEmailAddress });
 
-            frDialog.ShowDialog();
+            _ = frDialog.ShowDialog();
         }
 
         public void btn_EndpointsList_Click(object sender, EventArgs e)
@@ -5509,14 +5464,7 @@ namespace EndpointChecker
 
         public static string NotAvailable_IfNullorEmpty(string input)
         {
-            if (string.IsNullOrEmpty(input))
-            {
-                return status_NotAvailable;
-            }
-            else
-            {
-                return input;
-            }
+            return string.IsNullOrEmpty(input) ? status_NotAvailable : input;
         }
 
         public void CheckerMainForm_Shown(object sender, EventArgs e)
@@ -5572,7 +5520,7 @@ namespace EndpointChecker
             tray_Separator_1.Visible = false;
 
             dialog_SpeedTest = new SpeedTestDialog();
-            dialog_SpeedTest.ShowDialog();
+            _ = dialog_SpeedTest.ShowDialog();
             dialog_SpeedTest = null;
 
             if (onClose)
@@ -5598,8 +5546,8 @@ namespace EndpointChecker
 
     public class ListViewItemComparer : IComparer
     {
-        private int col;
-        private SortOrder order;
+        private readonly int col;
+        private readonly SortOrder order;
         public ListViewItemComparer()
         {
             col = 0;
@@ -5614,12 +5562,13 @@ namespace EndpointChecker
 
         public int Compare(object x, object y)
         {
-            int returnVal = -1;
-            returnVal = string.Compare(((ListViewItem)x).SubItems[col].Text,
-                            ((ListViewItem)y).SubItems[col].Text);
+            int returnVal = string.Compare(((ListViewItem)x).SubItems[col].Text,
+                ((ListViewItem)y).SubItems[col].Text);
 
             if (order == SortOrder.Descending)
+            {
                 returnVal *= -1;
+            }
 
             return returnVal;
         }
@@ -5681,13 +5630,13 @@ namespace EndpointChecker
 
     public class NetworkConnection : IDisposable
     {
-        string _networkName;
+        private readonly string _networkName;
 
         public NetworkConnection(string networkName, NetworkCredential credentials)
         {
             _networkName = networkName;
 
-            var netResource = new NetResource()
+            NetResource netResource = new NetResource()
             {
                 Scope = ResourceScope.GlobalNetwork,
                 ResourceType = ResourceType.Disk,
@@ -5695,11 +5644,11 @@ namespace EndpointChecker
                 RemoteName = networkName
             };
 
-            var userName = string.IsNullOrEmpty(credentials.Domain)
+            string userName = string.IsNullOrEmpty(credentials.Domain)
                 ? credentials.UserName
                 : string.Format(@"{0}\{1}", credentials.Domain, credentials.UserName);
 
-            var result = WNetAddConnection2(
+            int result = WNetAddConnection2(
                 netResource,
                 credentials.Password,
                 userName,
@@ -5724,7 +5673,7 @@ namespace EndpointChecker
 
         protected virtual void Dispose(bool disposing)
         {
-            WNetCancelConnection2(_networkName, 0, true);
+            _ = WNetCancelConnection2(_networkName, 0, true);
         }
 
         [DllImport("mpr.dll")]

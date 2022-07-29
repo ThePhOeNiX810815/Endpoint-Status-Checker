@@ -3,12 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Windows.Forms;
+using static EndpointChecker.Program;
 
 namespace EndpointChecker
 {
@@ -29,11 +31,12 @@ namespace EndpointChecker
             string user_EMail,
             string user_Comment)
         {
-            List<Property> reportItems = new List<Property>();
-
-            reportItems.Add(new Property { ItemName = "Application Version", ItemValue = Program.app_ApplicationName + " v" + Program.app_VersionString });
-            reportItems.Add(new Property { ItemName = "Date / Time", ItemValue = DateTime.Now.ToString("dd.MM.yyyy HH:mm") });
-            reportItems.Add(new Property { ItemName = "Improvement Description", ItemValue = user_Comment });
+            List<Property> reportItems = new List<Property>
+            {
+                new Property { ItemName = "Application Version", ItemValue = app_ApplicationName + " v" + app_VersionString },
+                new Property { ItemName = "Date / Time", ItemValue = DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
+                new Property { ItemName = "Improvement Description", ItemValue = user_Comment }
+            };
 
             // OPTIONAL [USER E-MAIL]
             if (!string.IsNullOrEmpty(user_EMail))
@@ -42,7 +45,7 @@ namespace EndpointChecker
             }
 
             // E-MAIL SUBJECT AND CREATE BODY HTML TABLE
-            string eMailMessageSubject = Program.app_ApplicationName + " Feature Request";
+            string eMailMessageSubject = app_ApplicationName + " Feature Request";
             string eMailMessageBody = string.Empty;
 
             HtmlTable table = new HtmlTable
@@ -64,10 +67,10 @@ namespace EndpointChecker
                 table.Rows.Add(row);
             }
 
-            using (var sw = new StringWriter())
+            using (StringWriter sw = new StringWriter())
             {
                 table.RenderControl(new HtmlTextWriter(sw));
-                mailMessageString.AppendFormat(sw.ToString());
+                _ = mailMessageString.AppendFormat(sw.ToString());
                 eMailMessageBody = mailMessageString.ToString();
             }
 
@@ -115,12 +118,12 @@ namespace EndpointChecker
                 {
                     Hide();
 
-                    MessageBox.Show(
+                    _ = MessageBox.Show(
                             "Unable to send Feature Request e-mail due to following error:" +
                             Environment.NewLine +
                             Environment.NewLine +
                             ex.Message,
-                        Program.app_ApplicationName + " v" + Program.app_Version,
+                        app_ApplicationName + " v" + app_Version,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 });
@@ -142,10 +145,15 @@ namespace EndpointChecker
 
             using (SmtpClient smtpClient = new SmtpClient())
             {
-                smtpClient.Host = "gmail-smtp-in.l.google.com";
-                smtpClient.EnableSsl = false;
-                smtpClient.UseDefaultCredentials = false;
-                smtpClient.Port = 25;
+                smtpClient.Host = reportServer_SMTP_Address;
+                smtpClient.Credentials =
+                    new NetworkCredential(
+                        Encoding.UTF8.GetString(Convert.FromBase64String(reportServer_SMTP_APIKey)),
+                        Encoding.UTF8.GetString(Convert.FromBase64String(reportServer_SMTP_SecretKey))
+                        );
+
+                smtpClient.EnableSsl = reportServer_SMTP_UseSSL;
+                smtpClient.Port = reportServer_SMTP_Port;
                 smtpClient.Send(mailMessage);
 
                 ThreadSafeInvoke(() =>
@@ -178,7 +186,7 @@ namespace EndpointChecker
             {
                 Application.DoEvents();
 
-                Invoke(action);
+                _ = Invoke(action);
             }
             catch
             {
@@ -227,30 +235,14 @@ namespace EndpointChecker
                 (string.IsNullOrEmpty(tb_UserEMailAddress.Text) ||
                 IsMailAddressValid(tb_UserEMailAddress.Text));
 
-            if (string.IsNullOrEmpty(tb_UserEMailAddress.Text))
-            {
-                tb_UserEMailAddress.BackColor = SystemColors.Info;
-            }
-            else if (!IsMailAddressValid(tb_UserEMailAddress.Text))
-            {
-                tb_UserEMailAddress.BackColor = Color.Pink;
-            }
-            else
-            {
-                tb_UserEMailAddress.BackColor = Color.Honeydew;
-            }
+            tb_UserEMailAddress.BackColor = string.IsNullOrEmpty(tb_UserEMailAddress.Text)
+                ? SystemColors.Info
+                : !IsMailAddressValid(tb_UserEMailAddress.Text) ? Color.Pink : Color.Honeydew;
         }
 
         public void SetDialogSize(bool allControls)
         {
-            if (allControls)
-            {
-                Size = MaximumSize;
-            }
-            else
-            {
-                Size = MinimumSize;
-            }
+            Size = allControls ? MaximumSize : MinimumSize;
 
             Invalidate();
             Update();
@@ -272,14 +264,7 @@ namespace EndpointChecker
                 (string.IsNullOrEmpty(tb_UserEMailAddress.Text) ||
                 IsMailAddressValid(tb_UserEMailAddress.Text));
 
-            if (string.IsNullOrEmpty(tb_Information.Text))
-            {
-                tb_Information.BackColor = SystemColors.Info;
-            }
-            else
-            {
-                tb_Information.BackColor = Color.Honeydew;
-            }
+            tb_Information.BackColor = string.IsNullOrEmpty(tb_Information.Text) ? SystemColors.Info : Color.Honeydew;
         }
 
         public void btn_Close_Click(object sender, EventArgs e)
@@ -296,13 +281,15 @@ namespace EndpointChecker
             {
                 foreach (string fileName in openFileDialog_AttachFiles.FileNames)
                 {
-                    ListViewItem fileItem = new ListViewItem();
-                    fileItem.ImageIndex = 0;
-                    fileItem.Text = Path.GetFileName(fileName);
-                    fileItem.Tag = fileName;
-                    fileItem.ToolTipText = fileName + " (press DEL to remove from list)";
+                    ListViewItem fileItem = new ListViewItem
+                    {
+                        ImageIndex = 0,
+                        Text = Path.GetFileName(fileName),
+                        Tag = fileName,
+                        ToolTipText = fileName + " (press DEL to remove from list)"
+                    };
 
-                    lv_AttachedFiles.Items.Add(fileItem);
+                    _ = lv_AttachedFiles.Items.Add(fileItem);
                 }
             }
         }

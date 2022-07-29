@@ -80,7 +80,7 @@ namespace EndpointChecker
                 Uri linkURI = new Uri(e.LinkText);
 
                 ProcessStartInfo browseLINK = new ProcessStartInfo(linkURI.AbsoluteUri);
-                Process.Start(browseLINK);
+                _ = Process.Start(browseLINK);
             }
             catch
             {
@@ -91,8 +91,8 @@ namespace EndpointChecker
         {
             if (e.Button == MouseButtons.Left)
             {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                _ = ReleaseCapture();
+                _ = SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
     }

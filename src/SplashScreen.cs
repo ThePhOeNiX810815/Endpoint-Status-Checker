@@ -78,7 +78,10 @@ namespace EndpointChecker
                 case 0x84:
                     base.WndProc(ref m);
                     if ((int)m.Result == 0x1)
+                    {
                         m.Result = (IntPtr)0x2;
+                    }
+
                     return;
             }
 
@@ -89,7 +92,7 @@ namespace EndpointChecker
         {
             if (Opacity > 0)
             {
-                Opacity = Opacity - 0.01;
+                Opacity -= 0.01;
             }
             else
             {

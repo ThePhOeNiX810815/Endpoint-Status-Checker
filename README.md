@@ -40,9 +40,9 @@ Application source is Visual Studio 2022 solution.
 
 # Public API Keys Used
 
-Application is using following public APIs:
-- Google Maps (https://developers.google.com/maps/documentation/javascript/overview) (free key provided)
-- VirusTotal (https://developers.virustotal.com/reference) (custom key must be created)
+Application is using following public APIs (free keys provided):
+- Google Maps (https://developers.google.com/maps/documentation/javascript/overview)
+- VirusTotal (https://developers.virustotal.com/reference)
 
 All keys are FREE to use, but mind that all these free APIs works with limits.
 
@@ -52,13 +52,12 @@ For each of these services you can set your own key (edit config file by 'CONFIG
 
 Application is using following libraries:
 - AGauge (2.0.1)
-- ClosedXML (0.95.4)
-- DocumentFormat.OpenXml (2.16.0)
+- ClosedXML (0.96)
+- DocumentFormat.OpenXml (2.17.1)
 - ExcelNumberFormat (1.1.0)
 - FastMember (1.3.0) (a newer version available, but not for target framework version)
 - Flurl (3.0.0-pre4) (a newer version available, but not for target framework version)
-- FreeSpire.PDF (8.2.0)
-- FreeSpire.XLS (12.2.0)
+- FreeSpire.XLS (12.7.0)
 - HtmlAgilityPack (1.11.43)
 - IPAddressRange (4.2.0)
 - Nager.PublicSuffix (2.2.2) (a newer version available, but not for target framework version)
@@ -66,6 +65,7 @@ Application is using following libraries:
 - NSpeedTest (1.0.0) (a newer version available, but not for target framework version)
 - System.IO.Compression (4.3.0)
 - System.Net.Http (4.3.4)
+- System.Runtime.InteropServices.RuntimeInformation (4.3.0)
 - WhoisClient.NET (1.0.2) (a newer version available, but not for target framework version)
 - WindowsAPICodePack-Core (1.1.2)
 - WindowsAPICodePack-Shell (1.1.1)

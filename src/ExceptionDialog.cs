@@ -14,6 +14,7 @@ using System.Threading;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Windows.Forms;
+using static EndpointChecker.Program;
 
 namespace EndpointChecker
 {
@@ -56,10 +57,11 @@ namespace EndpointChecker
             string user_EMail,
             string user_Comment)
         {
-            List<Property> reportItems = new List<Property>();
-
-            reportItems.Add(new Property { ItemName = "Application Version", ItemValue = Program.app_ApplicationName + " v" + Program.app_VersionString });
-            reportItems.Add(new Property { ItemName = "Date / Time", ItemValue = DateTime.Now.ToString("dd.MM.yyyy HH:mm") });
+            List<Property> reportItems = new List<Property>
+            {
+                new Property { ItemName = "Application Version", ItemValue = app_ApplicationName + " v" + app_VersionString },
+                new Property { ItemName = "Date / Time", ItemValue = DateTime.Now.ToString("dd.MM.yyyy HH:mm") }
+            };
 
             // OPTIONAL [SYSTEM INFO]
             if (sendSystemInfo)
@@ -67,7 +69,7 @@ namespace EndpointChecker
                 reportItems.Add(new Property { ItemName = "Machine Name", ItemValue = _machineInfo_MachineName });
                 reportItems.Add(new Property { ItemName = "IP Address(es)", ItemValue = string.Join(", ", _machineInfo_IPList) });
                 reportItems.Add(new Property { ItemName = "MAC Address(es)", ItemValue = string.Join(", ", _machineInfo_MACList) });
-                reportItems.Add(new Property { ItemName = "Operating System Version", ItemValue = Program.os_VersionString });
+                reportItems.Add(new Property { ItemName = "Operating System Version", ItemValue = os_VersionString });
                 reportItems.Add(new Property { ItemName = "Operating System Login Name", ItemValue = _machineInfo_UserName });
                 reportItems.Add(new Property { ItemName = "Operating Memory", ItemValue = _machineInfo_RAM });
                 reportItems.Add(new Property { ItemName = "System Drive (C)", ItemValue = _machineInfo_DiskSpace });
@@ -91,7 +93,7 @@ namespace EndpointChecker
             }
 
             // E-MAIL SUBJECT AND CREATE BODY HTML TABLE
-            string eMailMessageSubject = Program.app_ApplicationName + " Unhandled Exception Report";
+            string eMailMessageSubject = app_ApplicationName + " Unhandled Exception Report";
             string eMailMessageBody = string.Empty;
 
             HtmlTable table = new HtmlTable
@@ -113,10 +115,10 @@ namespace EndpointChecker
                 table.Rows.Add(row);
             }
 
-            using (var sw = new StringWriter())
+            using (StringWriter sw = new StringWriter())
             {
                 table.RenderControl(new HtmlTextWriter(sw));
-                mailMessageString.AppendFormat(sw.ToString());
+                _ = mailMessageString.AppendFormat(sw.ToString());
                 eMailMessageBody = mailMessageString.ToString();
             }
 
@@ -180,12 +182,12 @@ namespace EndpointChecker
                 {
                     Hide();
 
-                    MessageBox.Show(
+                    _ = MessageBox.Show(
                             "Unable to send exception details e-mail due to following error:" +
                             Environment.NewLine +
                             Environment.NewLine +
                             ex.Message,
-                        Program.app_ApplicationName + " v" + Program.app_VersionString,
+                        app_ApplicationName + " v" + app_VersionString,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 });
@@ -213,10 +215,15 @@ namespace EndpointChecker
 
             using (SmtpClient smtpClient = new SmtpClient())
             {
-                smtpClient.Host = "gmail-smtp-in.l.google.com";
-                smtpClient.EnableSsl = false;
-                smtpClient.UseDefaultCredentials = false;
-                smtpClient.Port = 25;
+                smtpClient.Host = reportServer_SMTP_Address;
+                smtpClient.Credentials =
+                    new NetworkCredential(
+                        Encoding.UTF8.GetString(Convert.FromBase64String(reportServer_SMTP_APIKey)),
+                        Encoding.UTF8.GetString(Convert.FromBase64String(reportServer_SMTP_SecretKey))
+                        );
+
+                smtpClient.EnableSsl = reportServer_SMTP_UseSSL;
+                smtpClient.Port = reportServer_SMTP_Port;
                 smtpClient.Send(mailMessage);
 
                 ThreadSafeInvoke(() =>
@@ -293,8 +300,8 @@ namespace EndpointChecker
             long ram_Used = ram_Maximum - PerformanceInfo.GetPhysicalAvailableMemoryInMiB();
 
             DriveInfo driveInfo = new DriveInfo(@"C:");
-            long disk_Total = (driveInfo.TotalSize / 1024 / 1024 / 1024);
-            long disk_Used = ((driveInfo.TotalSize - driveInfo.AvailableFreeSpace) / 1024 / 1024 / 1024);
+            long disk_Total = driveInfo.TotalSize / 1024 / 1024 / 1024;
+            long disk_Used = (driveInfo.TotalSize - driveInfo.AvailableFreeSpace) / 1024 / 1024 / 1024;
 
             _machineInfo_RAM = (int)ram_Used + " of " + (int)ram_Maximum + " MB Used";
             _machineInfo_DiskSpace = (int)disk_Used + " of " + (int)disk_Total + " GB Used";
@@ -314,7 +321,7 @@ namespace EndpointChecker
                     macStrArr[i] = macAddr[i].ToString("x2");
                 }
 
-                return (string.Join(":", macStrArr)).ToUpper();
+                return string.Join(":", macStrArr).ToUpper();
             }
             else
             {
@@ -340,7 +347,7 @@ namespace EndpointChecker
             {
                 Application.DoEvents();
 
-                Invoke(action);
+                _ = Invoke(action);
             }
             catch
             {
@@ -394,42 +401,19 @@ namespace EndpointChecker
 
         public void tb_UserEMailAddress_TextChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(tb_UserEMailAddress.Text))
-            {
-                tb_UserEMailAddress.BackColor = SystemColors.Info;
-            }
-            else if (!IsMailAddressValid(tb_UserEMailAddress.Text))
-            {
-                tb_UserEMailAddress.BackColor = Color.Pink;
-            }
-            else
-            {
-                tb_UserEMailAddress.BackColor = Color.Honeydew;
-            }
+            tb_UserEMailAddress.BackColor = string.IsNullOrEmpty(tb_UserEMailAddress.Text)
+                ? SystemColors.Info
+                : !IsMailAddressValid(tb_UserEMailAddress.Text) ? Color.Pink : Color.Honeydew;
         }
 
         public void tb_OptionalComment_TextChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(tb_OptionalComment.Text))
-            {
-                tb_OptionalComment.BackColor = SystemColors.Info;
-            }
-            else
-            {
-                tb_OptionalComment.BackColor = Color.Honeydew;
-            }
+            tb_OptionalComment.BackColor = string.IsNullOrEmpty(tb_OptionalComment.Text) ? SystemColors.Info : Color.Honeydew;
         }
 
         public void SetDialogSize(bool allControls)
         {
-            if (allControls)
-            {
-                Size = MaximumSize;
-            }
-            else
-            {
-                Size = MinimumSize;
-            }
+            Size = allControls ? MaximumSize : MinimumSize;
 
             Invalidate();
             Update();
@@ -457,7 +441,7 @@ namespace EndpointChecker
     {
         [DllImport("psapi.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetPerformanceInfo([Out] out PerformanceInformation PerformanceInformation, [In] int Size);
+        private static extern bool GetPerformanceInfo([Out] out PerformanceInformation PerformanceInformation, [In] int Size);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct PerformanceInformation

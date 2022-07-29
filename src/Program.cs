@@ -52,25 +52,25 @@ namespace EndpointChecker
         public int cchBuf;
     }
 
-    static class Program
+    internal static class Program
     {
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
+        private static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
 
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string className, string windowTitle);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool ShowWindow(IntPtr hWnd, ShowWindowEnum flags);
+        private static extern bool ShowWindow(IntPtr hWnd, ShowWindowEnum flags);
 
         [DllImport("user32.dll")]
         private static extern int SetForegroundWindow(IntPtr hwnd);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetWindowPlacement(IntPtr hWnd, ref Windowplacement lpwndpl);
+        private static extern bool GetWindowPlacement(IntPtr hWnd, ref Windowplacement lpwndpl);
 
         private enum ShowWindowEnum
         {
@@ -104,9 +104,14 @@ namespace EndpointChecker
         public static string app_Copyright = FileVersionInfo.GetVersionInfo(app_Assembly.Location).LegalCopyright;
         public static string app_Title = app_ApplicationName + " v" + app_VersionString;
 
-        // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES
-        public static string exceptionReport_senderEMailAddress = "ExceptionReport@EndpointStatusChecker";
-        public static string featureRequest_senderEMailAddress = "FeatureRequest@EndpointStatusChecker";
+        // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES AND SMTP SERVER SETTINGS [MAILJET]
+        public static string reportServer_senderEMailAddress = "phoenixvm@gmail.com";
+        public static string reportServer_SMTP_Address = "in-v3.mailjet.com";
+        public static string reportServer_SMTP_APIKey = "YmQ4ZWRiN2RjOTAwNTdiZjVkMjI5MzkxYjVlZTE1YWU=";
+        public static string reportServer_SMTP_SecretKey = "ZTY1ZTU2ZWNjMjIyNzJhMDA3MGY5NTNiNGI3MGVjYTE=";
+        public static bool reportServer_SMTP_UseSSL = true;
+        public static int reportServer_SMTP_Port = 587;
+
         public static string authorEmailAddress = "phoenixvm@gmail.com";
         public static string anonymousFTPPassword = "anonymous";
 
@@ -188,9 +193,7 @@ namespace EndpointChecker
             "Nager.PublicSuffix.dll",
             "Newtonsoft.Json.dll",
             "NSpeedTest.dll",
-            "Spire.License.dll",
             "Spire.XLS.dll",
-            "Spire.Pdf.dll",
             "tracert.dll",
             "VirusTotal.NET.dll",
             "WhoisClient.dll"
@@ -200,7 +203,7 @@ namespace EndpointChecker
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             if (Settings.Default.UpgradeRequired)
             {
@@ -211,15 +214,19 @@ namespace EndpointChecker
             }
 
             // GET OS VERSION STRING
-            object reg_osVersion;
-            if (GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion", "ProductName", out reg_osVersion))
+            if (GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", out object reg_osVersion_ProductName))
             {
                 os_VersionString =
-                    (string)reg_osVersion +
+                    (string)reg_osVersion_ProductName +
                     " " +
                     (Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit") +
                     ", Build " +
                     Environment.OSVersion.Version.Build.ToString();
+
+                if (GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion", "DisplayVersion", out object reg_osVersion_DisplayVersion))
+                {
+                    os_VersionString += " (" + reg_osVersion_DisplayVersion + ")";
+                }
             }
 
             // GET SETTINGS
@@ -260,13 +267,11 @@ namespace EndpointChecker
             else
             {
                 // GET SYSTEM MEMORY SIZE
-                long systemMemorySize_KB;
-                GetPhysicallyInstalledSystemMemory(out systemMemorySize_KB);
+                _ = GetPhysicallyInstalledSystemMemory(out long systemMemorySize_KB);
                 systemMemorySize = (systemMemorySize_KB / 1024 / 1024).ToString() + " GB";
 
                 // CHECK APPLICATION INSTANCE
-                bool createdNew = true;
-                using (Mutex mainMutex = new Mutex(true, app_ApplicationName, out createdNew))
+                using (Mutex mainMutex = new Mutex(true, app_ApplicationName, out bool createdNew))
                 {
                     if (!createdNew)
                     {
@@ -274,9 +279,9 @@ namespace EndpointChecker
                         IntPtr wdwIntPtr = FindWindow(null, app_Title);
                         Windowplacement placement = new Windowplacement();
 
-                        GetWindowPlacement(wdwIntPtr, ref placement);
-                        ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
-                        SetForegroundWindow(wdwIntPtr);
+                        _ = GetWindowPlacement(wdwIntPtr, ref placement);
+                        _ = ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
+                        _ = SetForegroundWindow(wdwIntPtr);
                     }
                     else if (RequiredLibrariesExists(app_RequiredLibsList))
                     {
@@ -291,19 +296,23 @@ namespace EndpointChecker
                             File.Copy(currentExecutable, updaterExecutable, true);
 
                             // UPDATER ARGUMENTS
-                            List<string> updaterArgs = new List<string>();
-                            updaterArgs.Add("/AutoUpdate");
-                            updaterArgs.Add("\"" + Path.GetDirectoryName(currentExecutable) + "\"");
-                            updaterArgs.Add(app_ApplicationExecutableName);
-                            updaterArgs.Add(app_LatestPackageVersion.ToString());
-                            updaterArgs.Add(app_LatestPackageLink);
-                            updaterArgs.Add(app_LatestPackageDate);
+                            List<string> updaterArgs = new List<string>
+                            {
+                                "/AutoUpdate",
+                                "\"" + Path.GetDirectoryName(currentExecutable) + "\"",
+                                app_ApplicationExecutableName,
+                                app_LatestPackageVersion.ToString(),
+                                app_LatestPackageLink,
+                                app_LatestPackageDate
+                            };
 
                             // EXECUTE UPDATER
-                            ProcessStartInfo startUpdater = new ProcessStartInfo(updaterExecutable);
-                            startUpdater.Arguments = string.Join(" ", updaterArgs);
-                            startUpdater.UseShellExecute = false;
-                            Process.Start(startUpdater);
+                            ProcessStartInfo startUpdater = new ProcessStartInfo(updaterExecutable)
+                            {
+                                Arguments = string.Join(" ", updaterArgs),
+                                UseShellExecute = false
+                            };
+                            _ = Process.Start(startUpdater);
 
                             // CLOSE
                             Environment.Exit(1);
@@ -332,7 +341,7 @@ namespace EndpointChecker
             {
                 if (!File.Exists(Path.Combine(app_CurrentWorkingDir, library)))
                 {
-                    MessageBox.Show(
+                    _ = MessageBox.Show(
                         "Referenced library \"" +
                         library +
                         "\" not found in \"" +
@@ -356,15 +365,16 @@ namespace EndpointChecker
         // If assemblyName is not fully qualified, a random matching may be 
         public static string QueryAssemblyInfo(string assemblyName)
         {
-            ASSEMBLY_INFO assembyInfo = new ASSEMBLY_INFO();
-            assembyInfo.cchBuf = 512;
+            ASSEMBLY_INFO assembyInfo = new ASSEMBLY_INFO
+            {
+                cchBuf = 512
+            };
             assembyInfo.currentAssemblyPath = new string('\0',
                 assembyInfo.cchBuf);
 
-            IAssemblyCache assemblyCache = null;
 
             // Get IAssemblyCache pointer
-            IntPtr hr = GacApi.CreateAssemblyCache(out assemblyCache, 0);
+            IntPtr hr = GacApi.CreateAssemblyCache(out IAssemblyCache assemblyCache, 0);
             if (hr == IntPtr.Zero)
             {
                 hr = assemblyCache.QueryAssemblyInfo(1, assemblyName, ref assembyInfo);
@@ -380,7 +390,7 @@ namespace EndpointChecker
             return assembyInfo.currentAssemblyPath;
         }
 
-        static string RetrieveLinkerTimestamp()
+        private static string RetrieveLinkerTimestamp()
         {
             string filePath = Assembly.GetCallingAssembly().Location;
             const int c_PeHeaderOffset = 60;
@@ -391,7 +401,7 @@ namespace EndpointChecker
             try
             {
                 s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                s.Read(b, 0, 2048);
+                _ = s.Read(b, 0, 2048);
             }
             finally
             {
@@ -419,11 +429,11 @@ namespace EndpointChecker
 
             if (addBuildNumber)
             {
-                versionString += (".") + version.Build.ToString();
+                versionString += "." + version.Build.ToString();
 
                 if (addRevisionNumber)
                 {
-                    versionString += (".") + version.Revision.ToString();
+                    versionString += "." + version.Revision.ToString();
                 }
             }
 
@@ -476,7 +486,7 @@ namespace EndpointChecker
                         {
                             // SHOW NEW VERSION DIALOG
                             NewVersionDialog newVersionDialog = new NewVersionDialog();
-                            newVersionDialog.ShowDialog();
+                            _ = newVersionDialog.ShowDialog();
 
                             if (newVersionDialog.updateInFuture)
                             {
@@ -537,7 +547,7 @@ namespace EndpointChecker
         {
             value = Registry.GetValue(fullKeyName, valueName, null);
 
-            return (value != null);
+            return value != null;
         }
 
         public static bool SetRegistryValue(string fullKeyName, string valueName, object value, RegistryValueKind valueKind)
@@ -560,7 +570,7 @@ namespace EndpointChecker
             if (sender != null &&
                 sender is Form)
             {
-                senderForm = (sender as Form);
+                senderForm = sender as Form;
                 senderForm.Hide();
             }
 
@@ -580,12 +590,12 @@ namespace EndpointChecker
             ExceptionDialog exDialog = new ExceptionDialog(
                 exception,
                 callingMethod,
-                exceptionReport_senderEMailAddress,
+                reportServer_senderEMailAddress,
                 new List<string> { authorEmailAddress },
                 new List<string> { endpointDefinitonsFile },
                 autoCloseApp);
 
-            exDialog.ShowDialog();
+            _ = exDialog.ShowDialog();
 
             if (!autoCloseApp &&
                 senderForm != null)

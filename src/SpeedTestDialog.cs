@@ -541,7 +541,7 @@ namespace EndpointChecker
                 }
             }
 
-            return (downloadSpeed / testTakesCount);
+            return downloadSpeed / testTakesCount;
         }
 
         public int TestServerUploadSpeed()
@@ -600,7 +600,7 @@ namespace EndpointChecker
                 }
             }
 
-            return (uploadSpeed / testTakesCount);
+            return uploadSpeed / testTakesCount;
         }
 
         public IEnumerable<Server> GetServers()
@@ -633,8 +633,8 @@ namespace EndpointChecker
                 {
                     if (
                         (serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Name.ToLower())) ||
-                        (serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Code.ToLower())) &&
-                        filteredServersList.Count <= maxTestServersCount)
+                        ((serverItem.Country.ToLower() == GetStringCorrectEncoding(ipInfo.Country_Code.ToLower())) &&
+                        filteredServersList.Count <= maxTestServersCount))
                     {
                         filteredServersList.Add(serverItem);
                     }
@@ -645,7 +645,7 @@ namespace EndpointChecker
                 filteredServersList = serversList.Take(maxTestServersCount).ToList();
             }
 
-            foreach (var server in filteredServersList.Take(maxTestServersCount))
+            foreach (Server server in filteredServersList.Take(maxTestServersCount))
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -699,14 +699,7 @@ namespace EndpointChecker
                 // APPEND TEXT
                 logBox.SelectionColor = textColor;
 
-                if (boldText)
-                {
-                    logBox.SelectionFont = new Font(logBox.Font, FontStyle.Bold);
-                }
-                else
-                {
-                    logBox.SelectionFont = new Font(logBox.Font, FontStyle.Regular);
-                }
+                logBox.SelectionFont = boldText ? new Font(logBox.Font, FontStyle.Bold) : new Font(logBox.Font, FontStyle.Regular);
 
                 logBox.AppendText(resultLine);
                 logBox.AppendText(Environment.NewLine);
@@ -832,7 +825,7 @@ namespace EndpointChecker
             {
                 Application.DoEvents();
 
-                Invoke(action);
+                _ = Invoke(action);
             }
             catch
             {
@@ -925,7 +918,7 @@ namespace EndpointChecker
 
                             ThreadSafeInvoke(() =>
                             {
-                                cb_SpeedTest_TestServer.Items.Add(GetStringCorrectEncoding(testServer.Sponsor) +
+                                _ = cb_SpeedTest_TestServer.Items.Add(GetStringCorrectEncoding(testServer.Sponsor) +
                                                                   " (" +
                                                                   GetStringCorrectEncoding(testServer.Name) +
                                                                   "/" +
@@ -988,7 +981,7 @@ namespace EndpointChecker
             lbl_SpeedTest_Latency_Value.Text = status_NotAvailable;
 
             cb_SpeedTest_TestServer.Items.Clear();
-            cb_SpeedTest_TestServer.Items.Add("Using Best Server (by latency)");
+            _ = cb_SpeedTest_TestServer.Items.Add("Using Best Server (by latency)");
 
             lbl_SpeedTest_CurrentCountry_Value.BackColor = Color.DimGray;
             cb_SpeedTest_TestServer.BackColor = Color.DimGray;
@@ -1099,9 +1092,11 @@ namespace EndpointChecker
                 if (e.Index >= 0)
                 {
                     // Set the string alignment.  Choices are Center, Near and Far
-                    StringFormat sf = new StringFormat();
-                    sf.LineAlignment = StringAlignment.Center;
-                    sf.Alignment = StringAlignment.Center;
+                    StringFormat sf = new StringFormat
+                    {
+                        LineAlignment = StringAlignment.Center,
+                        Alignment = StringAlignment.Center
+                    };
 
                     // Set the Brush to ComboBox ForeColor to maintain any ComboBox color settings
                     // Assumes Brush is solid
@@ -1109,7 +1104,9 @@ namespace EndpointChecker
 
                     // If drawing highlighted selection, change brush
                     if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                    {
                         brush = SystemBrushes.HighlightText;
+                    }
 
                     // Draw the string
                     e.Graphics.DrawString(cbx.Items[e.Index].ToString(), new Font("Segoe UI", 10, FontStyle.Regular), brush, e.Bounds, sf);
@@ -1159,18 +1156,7 @@ namespace EndpointChecker
 
         public static Color GetColorByLatencyTime(int latencyTime)
         {
-            if (latencyTime <= 10)
-            {
-                return Color.LimeGreen;
-            }
-            else if (latencyTime <= 20)
-            {
-                return Color.Orange;
-            }
-            else
-            {
-                return Color.Red;
-            }
+            return latencyTime <= 10 ? Color.LimeGreen : latencyTime <= 20 ? Color.Orange : Color.Red;
         }
     }
 
@@ -1187,8 +1173,11 @@ namespace EndpointChecker
 
             rec.Width = (int)(rec.Width * ((double)Value / Maximum)) - 4;
             if (ProgressBarRenderer.IsSupported)
+            {
                 ProgressBarRenderer.DrawHorizontalBar(e.Graphics, e.ClipRectangle);
-            rec.Height = rec.Height - 4;
+            }
+
+            rec.Height -= 4;
             e.Graphics.FillRectangle(Brushes.Green, 2, 2, rec.Width, rec.Height);
         }
     }
@@ -1206,8 +1195,11 @@ namespace EndpointChecker
 
             rec.Width = (int)(rec.Width * ((double)Value / Maximum)) - 4;
             if (ProgressBarRenderer.IsSupported)
+            {
                 ProgressBarRenderer.DrawHorizontalBar(e.Graphics, e.ClipRectangle);
-            rec.Height = rec.Height - 4;
+            }
+
+            rec.Height -= 4;
             e.Graphics.FillRectangle(Brushes.Red, 2, 2, rec.Width, rec.Height);
         }
     }

@@ -16,11 +16,11 @@ namespace EndpointChecker
     public partial class AutoUpdaterDialog : Form
     {
         // TEMPORARY PACKAGE FILE
-        static string tempPackageZIPfileName = Path.GetFileName(new Uri(app_LatestPackageLink).AbsolutePath);
-        static string tempPackageFolderName = string.Empty;
+        private static readonly string tempPackageZIPfileName = Path.GetFileName(new Uri(app_LatestPackageLink).AbsolutePath);
+        private static string tempPackageFolderName = string.Empty;
 
         // SUCCESS SWITCH
-        static bool updateSucess = false;
+        private static bool updateSucess = false;
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public AutoUpdaterDialog()
@@ -114,7 +114,7 @@ namespace EndpointChecker
             {
                 // EXECUTE UPDATED APPLICATION
                 ProcessStartInfo startApp = new ProcessStartInfo(Path.Combine(app_CurrentWorkingDir, app_ApplicationExecutableName));
-                Process.Start(startApp);
+                _ = Process.Start(startApp);
             }
 
             // CLOSE
