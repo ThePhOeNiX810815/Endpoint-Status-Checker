@@ -22,6 +22,7 @@ namespace EndpointChecker
     {
         public static bool _autoCloseApp;
         public static Exception _exception;
+        public static string _additionalInfo;
         public static string _callingMethod;
         public static string _senderAddress;
         public static List<string> _recipientsAddressesList = new List<string>();
@@ -34,7 +35,7 @@ namespace EndpointChecker
         public static List<string> _machineInfo_MACList = new List<string>();
         public static MemoryStream _screenshotStream = new MemoryStream();
 
-        public ExceptionDialog(Exception exception, string callingMethod, string senderAddress, List<string> recipientsAddressesList, List<string> attachmentsList, bool autoCloseApp)
+        public ExceptionDialog(Exception exception, string callingMethod, string additionalInfo, string senderAddress, List<string> recipientsAddressesList, List<string> attachmentsList, bool autoCloseApp)
         {
             InitializeComponent();
 
@@ -44,6 +45,7 @@ namespace EndpointChecker
 
             _autoCloseApp = autoCloseApp;
             _exception = exception;
+            _additionalInfo = additionalInfo;
             _callingMethod = callingMethod;
             _senderAddress = senderAddress;
             _recipientsAddressesList = recipientsAddressesList;
@@ -90,6 +92,12 @@ namespace EndpointChecker
             if (!string.IsNullOrEmpty(user_Comment))
             {
                 reportItems.Add(new Property { ItemName = "Reporter Comment", ItemValue = user_Comment });
+            }
+
+            // OPTIONAL [ADDITIONAL INFO]
+            if (!string.IsNullOrEmpty(_additionalInfo))
+            {
+                reportItems.Add(new Property { ItemName = "Additional Information", ItemValue = _additionalInfo });
             }
 
             // E-MAIL SUBJECT AND CREATE BODY HTML TABLE

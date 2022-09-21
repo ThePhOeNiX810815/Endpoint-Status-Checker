@@ -57,8 +57,8 @@
     <Reference Include="ClosedXML, Version=0.96.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
       <HintPath>packages\ClosedXML.0.96.0\lib\net40\ClosedXML.dll</HintPath>
     </Reference>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.17.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
-      <HintPath>packages\DocumentFormat.OpenXml.2.17.1\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>packages\DocumentFormat.OpenXml.2.18.0\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="ExcelNumberFormat, Version=1.1.0.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
       <HintPath>packages\ExcelNumberFormat.1.1.0\lib\net20\ExcelNumberFormat.dll</HintPath>
@@ -69,8 +69,8 @@
     <Reference Include="Flurl, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Flurl.3.0.0-pre4\lib\net40\Flurl.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.11.43.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>packages\HtmlAgilityPack.1.11.43\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.11.46.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>packages\HtmlAgilityPack.1.11.46\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="IPAddressRange, Version=4.2.0.0, Culture=neutral, PublicKeyToken=578e3c3d17e7c751, processorArchitecture=MSIL">
       <HintPath>packages\IPAddressRange.4.2.0\lib\net45\IPAddressRange.dll</HintPath>
@@ -86,10 +86,7 @@
       <HintPath>packages\Nager.PublicSuffix.2.2.2\lib\net45\Nager.PublicSuffix.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.13.0.2-beta1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NSpeedTest, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\NSpeedTest.1.0\lib\net45\NSpeedTest.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.13.0.2-beta2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Spire.XLS, Version=12.7.0.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
       <HintPath>packages\FreeSpire.XLS.12.7.0\lib\net40\Spire.XLS.dll</HintPath>
@@ -164,6 +161,20 @@
     </Compile>
     <Compile Include="NewVersionDialog.Designer.cs">
       <DependentUpon>NewVersionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NSpeedTest\ISpeedTestClient.cs" />
+    <Compile Include="NSpeedTest\Models\Client.cs" />
+    <Compile Include="NSpeedTest\Models\Coordinate.cs" />
+    <Compile Include="NSpeedTest\Models\Download.cs" />
+    <Compile Include="NSpeedTest\Models\Server.cs" />
+    <Compile Include="NSpeedTest\Models\ServerConfig.cs" />
+    <Compile Include="NSpeedTest\Models\ServersList.cs" />
+    <Compile Include="NSpeedTest\Models\Settings.cs" />
+    <Compile Include="NSpeedTest\Models\Times.cs" />
+    <Compile Include="NSpeedTest\Models\Upload.cs" />
+    <Compile Include="NSpeedTest\SpeedTestClient.cs" />
+    <Compile Include="NSpeedTest\SpeedTestWebClient.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="SpeedTestDialog.cs">
       <SubType>Form</SubType>

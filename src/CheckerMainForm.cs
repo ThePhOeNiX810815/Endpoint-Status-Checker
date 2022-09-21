@@ -3313,7 +3313,7 @@ namespace EndpointChecker
                     {
                         ThreadSafeInvoke(() =>
                         {
-                            ExceptionNotifier(this, exception, true);
+                            ExceptionNotifier(this, exception, string.Empty, true);
                         });
                     }
                 }
@@ -4494,7 +4494,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(this, exception, true);
+                    ExceptionNotifier(this, exception, string.Empty, true);
                 }
 
                 SaveConfiguration();
@@ -4848,7 +4848,7 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(null, exception, true);
+                ExceptionNotifier(null, exception, string.Empty, true);
             }
         }
 
@@ -4864,7 +4864,7 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(null, exception, true);
+                ExceptionNotifier(null, exception, string.Empty, true);
             }
         }
 
@@ -4883,7 +4883,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(null, exception, true);
+                    ExceptionNotifier(null, exception, string.Empty, true);
                 }
             }
             else
@@ -4919,7 +4919,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(null, exception, true);
+                    ExceptionNotifier(null, exception, string.Empty, true);
                 }
             }
             else
@@ -4956,34 +4956,38 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(null, exception, true);
+                ExceptionNotifier(null, exception, string.Empty, true);
             }
         }
 
         public static void OpenEndpoint_HTTP(EndpointDefinition endpoint)
         {
+            // DEFAULT CREDENTIALS
             NetworkCredential credentials = new NetworkCredential();
 
+            // ENDPOINT URI
             Uri _endpointURI = new Uri(endpoint.Address);
 
-            if (_endpointURI.Scheme != Uri.UriSchemeHttp ||
-                _endpointURI.Scheme != Uri.UriSchemeHttps)
+            if (_endpointURI.Scheme == Uri.UriSchemeHttp ||
+                _endpointURI.Scheme == Uri.UriSchemeHttps)
             {
-                // IF ENDPOINT IS NOT AN HTTP/HTTPS TYPE, PASS HTTP PROTOCOL PREFIX
+                // ENDPOINT SCHEME IS 'HTTP' OR 'HTTPS'
+                if (!string.IsNullOrEmpty(endpoint.LoginName) &&
+                    endpoint.LoginName != status_NotAvailable)
+                {
+                    // PASS THE CREDENTIALS
+                    credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
+                }
+            }
+            else
+            {
+                // ENDPOINT SCHEME IS OTHER THAN 'HTTP' OR 'HTTPS', PASS DEFAULT 'HTTP' PROTOCOL PREFIX
                 _endpointURI = new Uri(
                     Uri.UriSchemeHttp +
                     Uri.SchemeDelimiter +
                     _endpointURI.Host +
                     _endpointURI.PathAndQuery +
                     _endpointURI.Fragment);
-            }
-
-            if ((endpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
-                 endpoint.Protocol.ToLower() == Uri.UriSchemeHttps) &&
-                !string.IsNullOrEmpty(endpoint.LoginName) &&
-                endpoint.LoginName != status_NotAvailable)
-            {
-                credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
             }
 
             BrowseEndpoint(

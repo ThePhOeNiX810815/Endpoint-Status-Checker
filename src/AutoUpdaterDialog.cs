@@ -53,11 +53,46 @@ namespace EndpointChecker
         {
             try
             {
-                // DOWNLOAD PACKAGE
-                lbl_Progress.Text = "Downloading Package from GitHub ...";
+                // DOWNLOAD PACKAGE                
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                WebClient webClient = new WebClient();
-                webClient.DownloadFile(new Uri(app_LatestPackageLink), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName));
+                lbl_Progress.Text = "Downloading Package from GitHub ...";
+
+                int downloadPackage_MaxAttemptCount = 5;
+                int downloadPackage_CurrentAttempt = 0;
+                bool downloadPackage_Success = false;
+
+                while (!downloadPackage_Success &&
+                       downloadPackage_CurrentAttempt <= downloadPackage_MaxAttemptCount)
+                {
+                    // INCREASE ATTEMP COUNTER
+                    downloadPackage_CurrentAttempt++;
+
+                    try
+                    {
+                        // TRY TO DOWNLOAD PACKAGE
+                        using (WebClient webClient = new WebClient())
+                        {
+                            webClient.DownloadFile(new Uri(app_LatestPackageLink), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName));
+
+                            // SUCCESS, JUMP OUT OF WHILE CYCLE AND CONTINUE CODE
+                            downloadPackage_Success = true;
+                        }
+                    }
+                    catch (Exception webClientEX)
+                    {
+                        // CLEAN TEMPORARY PACKAGE FILE
+                        CleanTempPackageArchive();
+
+                        // WAIT FOR 1 SECOND
+                        Thread.Sleep(1000);
+
+                        // IF CURRENT ATTEMPT COUNT EQUALS MAX ATTEMPTS COUNT, THROW EXCEPTION 
+                        if (downloadPackage_CurrentAttempt == downloadPackage_MaxAttemptCount)
+                        {
+                            throw (webClientEX);
+                        }
+                    }
+                }
 
                 // UNZIP PACKAGE
                 using (ZipArchive zipArchive = ZipFile.OpenRead(Path.Combine(Path.GetTempPath(), tempPackageZIPfileName)))
@@ -104,7 +139,7 @@ namespace EndpointChecker
 
                 Thread.Sleep(2000);
 
-                ExceptionNotifier(this, exception, true);
+                ExceptionNotifier(this, exception, "Package Link: " + app_LatestPackageLink, true);
             }
         }
 

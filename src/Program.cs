@@ -112,7 +112,7 @@ namespace EndpointChecker
         public static bool reportServer_SMTP_UseSSL = true;
         public static int reportServer_SMTP_Port = 587;
 
-        public static string authorEmailAddress = "phoenixvm@gmail.com";
+        public static string authorEmailAddress = "petermachaj@e.email";
         public static string anonymousFTPPassword = "anonymous";
 
         // ENDPOINTS DEFINITIONS FILE NAME
@@ -192,7 +192,6 @@ namespace EndpointChecker
             "Microsoft.WindowsAPICodePack.Shell.dll",
             "Nager.PublicSuffix.dll",
             "Newtonsoft.Json.dll",
-            "NSpeedTest.dll",
             "Spire.XLS.dll",
             "tracert.dll",
             "VirusTotal.NET.dll",
@@ -535,12 +534,12 @@ namespace EndpointChecker
 
         public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
-            ExceptionNotifier(null, (Exception)args.ExceptionObject, true);
+            ExceptionNotifier(null, (Exception)args.ExceptionObject, "Raised by UnhandledExceptionHandler", true);
         }
 
         public static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs args)
         {
-            ExceptionNotifier(null, args.Exception, true);
+            ExceptionNotifier(null, args.Exception, "Raised by ThreadExceptionHandler", true);
         }
 
         public static bool GetRegistryValue(string fullKeyName, string valueName, out object value)
@@ -563,7 +562,7 @@ namespace EndpointChecker
             }
         }
 
-        public static void ExceptionNotifier(object sender, Exception exception, bool autoCloseApp, string callerName = "")
+        public static void ExceptionNotifier(object sender, Exception exception, string additionalInfo, bool autoCloseApp, string callerName = "")
         {
             Form senderForm = null;
 
@@ -590,6 +589,7 @@ namespace EndpointChecker
             ExceptionDialog exDialog = new ExceptionDialog(
                 exception,
                 callingMethod,
+                additionalInfo,
                 reportServer_senderEMailAddress,
                 new List<string> { authorEmailAddress },
                 new List<string> { endpointDefinitonsFile },
