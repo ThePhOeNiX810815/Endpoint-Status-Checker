@@ -75,5 +75,6 @@ Application is using following external programs:
 - VNC Viewer (vncviever.exe) - https://www.uvnc.com
 - Putty (putty.exe) - https://www.putty.org
 
+
 NSpeedTest project sources added to solution:
 - https://github.com/Kwull/NSpeedTest
