@@ -76,4 +76,4 @@ Application is using following external programs:
 - Putty (putty.exe) - https://www.putty.org
 
 NSpeedTest project sources added to solution:
-GitHub: https://github.com/Kwull/NSpeedTest
+- https://github.com/Kwull/NSpeedTest
