@@ -53,8 +53,7 @@ namespace EndpointChecker
         {
             try
             {
-                // DOWNLOAD PACKAGE                
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                // DOWNLOAD UPDATE PACKAGE
                 lbl_Progress.Text = "Downloading Package from GitHub ...";
 
                 int downloadPackage_MaxAttemptCount = 5;
@@ -69,6 +68,8 @@ namespace EndpointChecker
 
                     try
                     {
+                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
                         // TRY TO DOWNLOAD PACKAGE
                         using (WebClient webClient = new WebClient())
                         {
@@ -94,31 +95,21 @@ namespace EndpointChecker
                     }
                 }
 
-                // UNZIP PACKAGE
-                using (ZipArchive zipArchive = ZipFile.OpenRead(Path.Combine(Path.GetTempPath(), tempPackageZIPfileName)))
-                {
-                    tempPackageFolderName = zipArchive.Entries.First().FullName;
+                // UNZIP UPDATE PACKAGE
+                lbl_Progress.ForeColor = Color.Chartreuse;
+                lbl_Progress.Text = "Exctracting Package ...";
+                UnzipUpdatePackage();
 
-                    CleanTempPackageDirectory();
-
-                    zipArchive.ExtractToDirectory(Path.GetTempPath());
-                }
+                // CLEANUP OLD APPLICATION EXECUTABLE AND LIBRARIES
+                lbl_Progress.Text = "Old Files Cleanup ...";
+                CleanOldExecutableAndLibraries();
 
                 // UPDATE
-                lbl_Progress.Text = "Copying Files ...";
-                foreach (string appFile in Directory.GetFiles(Path.Combine(Path.GetTempPath(), tempPackageFolderName)))
-                {
-                    if (Path.GetExtension(appFile) == ".exe" ||
-                        Path.GetExtension(appFile) == ".dll" ||
-                        Path.GetExtension(appFile) == ".pdb" ||
-                        Path.GetExtension(appFile) == ".config")
-                    {
-                        File.Copy(appFile, Path.Combine(app_CurrentWorkingDir, Path.GetFileName(appFile)), true);
-                    }
-                }
+                lbl_Progress.Text = "Copying New Files ...";
+                CopyNewExecutableAndLibraries();
 
                 // CLEANUP
-                lbl_Progress.Text = "Cleaning Up ...";
+                lbl_Progress.Text = "Cleaning Up Temporary Files ...";
                 CleanTempPackageArchive();
                 CleanTempPackageDirectory();
 
@@ -169,6 +160,51 @@ namespace EndpointChecker
             if (File.Exists(Path.Combine(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName))))
             {
                 File.Delete(Path.Combine(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName)));
+            }
+        }
+
+        public static void CleanOldExecutableAndLibraries()
+        {
+            foreach (string appFile in Directory.GetFiles(app_CurrentWorkingDir))
+            {
+                if (Path.GetExtension(appFile).ToLower() == ".exe" ||
+                    Path.GetExtension(appFile).ToLower() == ".dll" ||
+                    Path.GetExtension(appFile).ToLower() == ".pdb")
+                {
+                    File.Delete(appFile);
+                }               
+            }
+
+
+            if (File.Exists(Path.Combine(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName))))
+            {
+                File.Delete(Path.Combine(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName)));
+            }
+        }
+
+        public static void CopyNewExecutableAndLibraries()
+        {
+            foreach (string appFile in Directory.GetFiles(Path.Combine(Path.GetTempPath(), tempPackageFolderName)))
+            {
+                if (Path.GetExtension(appFile) == ".exe" ||
+                    Path.GetExtension(appFile) == ".dll" ||
+                    Path.GetExtension(appFile) == ".pdb" ||
+                    Path.GetExtension(appFile) == ".config")
+                {
+                    File.Copy(appFile, Path.Combine(app_CurrentWorkingDir, Path.GetFileName(appFile)), true);
+                }
+            }
+        }
+
+        public static void UnzipUpdatePackage()
+        {
+            using (ZipArchive zipArchive = ZipFile.OpenRead(Path.Combine(Path.GetTempPath(), tempPackageZIPfileName)))
+            {
+                tempPackageFolderName = zipArchive.Entries.First().FullName;
+
+                CleanTempPackageDirectory();
+
+                zipArchive.ExtractToDirectory(Path.GetTempPath());
             }
         }
     }

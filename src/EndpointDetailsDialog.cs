@@ -1046,19 +1046,13 @@ namespace EndpointChecker
                     // TRY TO GET TLD REGISTRABLE DOMAIN NAME
                     DomainParser domainParser = new DomainParser(new WebTldRuleProvider());
                     registrableDomainName = domainParser.Parse(registrableDomainName).RegistrableDomain;
-                }
-                catch
-                {
-                }
 
-                try
-                {
-                    // TRY TO FIND WHOIS SERVER
+                    // FIND WHOIS SERVER
                     whoISserver_ServerAddress = DomainToWhoisServerList.Default.FindWhoisServer(registrableDomainName);
 
                     if (!string.IsNullOrEmpty(whoISserver_ServerAddress))
                     {
-                        // TRY TO GET RESPONSE FROM WHOIS SERVER
+                        // GET RESPONSE FROM WHOIS SERVER
                         whoISserver_RAWresponse = WhoisClient.RawQuery(
                                                                 registrableDomainName,
                                                                 whoISserver_ServerAddress,
@@ -1066,25 +1060,25 @@ namespace EndpointChecker
                                                                 Encoding.UTF8)
                                                                     .TrimStart()
                                                                     .TrimEnd();
+
+                        if (!string.IsNullOrEmpty(whoISserver_RAWresponse))
+                        {
+                            ThreadSafeInvoke(() =>
+                            {
+                                tb_WhoIs_RegistrableDomain.Text = registrableDomainName;
+                                tb_WhoIs_Server.Text = whoISserver_ServerAddress;
+
+                                rtb_WhoIsInfo.Text = whoISserver_RAWresponse;
+                                rtb_WhoIsInfo.Visible = true;
+                                pb_WhoIsProgress.Visible = false;
+
+                                tabControl.TabPages.Add(tabPage_WhoIs);
+                            });
+                        }
                     }
                 }
                 catch
                 {
-                }
-
-                if (!string.IsNullOrEmpty(whoISserver_RAWresponse))
-                {
-                    ThreadSafeInvoke(() =>
-                    {
-                        tb_WhoIs_RegistrableDomain.Text = registrableDomainName;
-                        tb_WhoIs_Server.Text = whoISserver_ServerAddress;
-
-                        rtb_WhoIsInfo.Text = whoISserver_RAWresponse;
-                        rtb_WhoIsInfo.Visible = true;
-                        pb_WhoIsProgress.Visible = false;
-
-                        tabControl.TabPages.Add(tabPage_WhoIs);
-                    });
                 }
             });
         }

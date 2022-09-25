@@ -1,2 +1,2 @@
-https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v2.9.3-20220921-PreRelease/Endpoint.Status.Checker.v2.9.3.zip
-21.09.2022
+https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v2.9.5-20220925-PreRelease/Endpoint.Status.Checker.v2.9.5.zip
+25.09.2022

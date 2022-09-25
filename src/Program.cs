@@ -108,7 +108,7 @@ namespace EndpointChecker
         public static string reportServer_senderEMailAddress = "phoenixvm@gmail.com";
         public static string reportServer_SMTP_Address = "in-v3.mailjet.com";
         public static string reportServer_SMTP_APIKey = "YmQ4ZWRiN2RjOTAwNTdiZjVkMjI5MzkxYjVlZTE1YWU=";
-        public static string reportServer_SMTP_SecretKey = "ZTY1ZTU2ZWNjMjIyNzJhMDA3MGY5NTNiNGI3MGVjYTE=";
+        public static string reportServer_SMTP_SecretKey = "MWFmNTM0N2EyOTU2YTZmZTJjOWNjY2UyMTg1YTZiYWE=";
         public static bool reportServer_SMTP_UseSSL = true;
         public static int reportServer_SMTP_Port = 587;
 

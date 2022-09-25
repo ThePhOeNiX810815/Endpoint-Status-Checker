@@ -4962,24 +4962,11 @@ namespace EndpointChecker
 
         public static void OpenEndpoint_HTTP(EndpointDefinition endpoint)
         {
-            // DEFAULT CREDENTIALS
-            NetworkCredential credentials = new NetworkCredential();
-
             // ENDPOINT URI
             Uri _endpointURI = new Uri(endpoint.Address);
 
-            if (_endpointURI.Scheme == Uri.UriSchemeHttp ||
-                _endpointURI.Scheme == Uri.UriSchemeHttps)
-            {
-                // ENDPOINT SCHEME IS 'HTTP' OR 'HTTPS'
-                if (!string.IsNullOrEmpty(endpoint.LoginName) &&
-                    endpoint.LoginName != status_NotAvailable)
-                {
-                    // PASS THE CREDENTIALS
-                    credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
-                }
-            }
-            else
+            if (_endpointURI.Scheme != Uri.UriSchemeHttp &&
+                _endpointURI.Scheme != Uri.UriSchemeHttps)
             {
                 // ENDPOINT SCHEME IS OTHER THAN 'HTTP' OR 'HTTPS', PASS DEFAULT 'HTTP' PROTOCOL PREFIX
                 _endpointURI = new Uri(
@@ -4990,11 +4977,28 @@ namespace EndpointChecker
                     _endpointURI.Fragment);
             }
 
+            string _endpointAddress = _endpointURI.AbsoluteUri;
+
+            if (!string.IsNullOrEmpty(endpoint.LoginName) &&
+                endpoint.LoginName != status_NotAvailable)
+            {
+                // IF CREDENTIALS ARE SPECIFIED FOR THE ENDPOINT, PASS THEM INTO ADDRESS IN STANDARD WAY
+                _endpointAddress =
+                    _endpointURI.Scheme +
+                    Uri.SchemeDelimiter +
+                    endpoint.LoginName +
+                    ":" +
+                    endpoint.LoginPass +
+                    "@" +
+                    _endpointURI.Authority +
+                    _endpointURI.AbsolutePath;
+            }
+
             BrowseEndpoint(
-                _endpointURI.AbsoluteUri,
+                _endpointAddress,
                 null,
-                credentials.UserName,
-                credentials.Password);
+                null,
+                null);
         }
 
         public static void OpenEndpoint_FTP(EndpointDefinition endpoint)

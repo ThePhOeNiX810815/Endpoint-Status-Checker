@@ -74,6 +74,12 @@ namespace EndpointChecker
                 try
                 {
                     // GET SPEEDTEST SETTINGS
+                    AppendTextToLogBox(
+                                         rtb_SpeedTest_LogConsole,
+                                         "Retreiving API Configuration ...",
+                                         Color.Blue,
+                                         true);
+
                     speedTestSettings = speedTestClient.GetSettings();
 
                     ThreadSafeInvoke(() =>
