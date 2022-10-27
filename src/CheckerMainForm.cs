@@ -19,6 +19,7 @@ using System.Linq;
 using System.Management;
 using System.Net;
 using System.Net.Cache;
+using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
@@ -1455,7 +1456,7 @@ namespace EndpointChecker
             httpWebRequest.ProtocolVersion = httpWebRequest_ProtocolVersion;
             httpWebRequest.Date = DateTime.Now.ToUniversalTime();
             httpWebRequest.MaximumAutomaticRedirections = 100;
-            httpWebRequest.Referer = endpointURI.Host;
+            //   httpWebRequest.Referer = endpointURI.Host;
 
             // CUSTOM HEADERS
             WebHeaderCollection requestHeadersCollection = new WebHeaderCollection
@@ -3553,7 +3554,7 @@ namespace EndpointChecker
         public void btn_Terminate_Click(object sender, EventArgs e)
         {
             if (e != null)
-            {             
+            {
                 // DISABLE 'AUTO REFRESH' OPTIONS
                 cb_AutomaticRefresh.Checked = false;
                 cb_ContinuousRefresh.Checked = false;
@@ -5399,8 +5400,7 @@ namespace EndpointChecker
         public void pb_FeatureRequest_Click(object sender, EventArgs e)
         {
             FeatureRequestDialog frDialog = new FeatureRequestDialog(
-                reportServer_SMTP_SenderEMail,
-                new List<string> { reportServer_SMTP_SenderEMail });
+                new List<MailAddress> { report_Recipient });
 
             _ = frDialog.ShowDialog();
         }

@@ -195,7 +195,6 @@
             this.Opacity = 0D;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ExceptionDialog";
-            this.TopMost = true;
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.ExceptionDialog_Paint);
             ((System.ComponentModel.ISupportInitialize)(this.pb_Status)).EndInit();
             this.ResumeLayout(false);

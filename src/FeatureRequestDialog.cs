@@ -1,9 +1,10 @@
 ﻿using EndpointChecker.Properties;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Net;
+using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading;
@@ -16,14 +17,12 @@ namespace EndpointChecker
 {
     public partial class FeatureRequestDialog : Form
     {
-        public static string _senderAddress;
-        public static List<string> _recipientsAddressesList = new List<string>();
+        public static List<MailAddress> _recipientsAddressesList = new List<MailAddress>();
 
-        public FeatureRequestDialog(string senderAddress, List<string> recipientsAddressesList)
+        public FeatureRequestDialog(List<MailAddress> recipientsAddressesList)
         {
             InitializeComponent();
 
-            _senderAddress = senderAddress;
             _recipientsAddressesList = recipientsAddressesList;
         }
 
@@ -78,7 +77,6 @@ namespace EndpointChecker
             {
                 using (MailMessage mailMessage = new MailMessage())
                 {
-                    mailMessage.From = new MailAddress(_senderAddress);
                     mailMessage.Subject = eMailMessageSubject;
                     mailMessage.Body = eMailMessageBody;
                     mailMessage.IsBodyHtml = true;
@@ -93,16 +91,10 @@ namespace EndpointChecker
                         }
                     });
 
-                    // ADD RECIPIENTS FROM LIST
-                    foreach (string recipientAddress in _recipientsAddressesList)
-                    {
-                        if (IsMailAddressValid(recipientAddress))
-                        {
-                            SendMailMessage(mailMessage, new MailAddress(recipientAddress));
+                    // TRY TO SEND THE E-MAIL(S) BY HOST E-MAIL CLIENT
+                    SendMailMessage(mailMessage);
 
-                            Thread.Sleep(2000);
-                        }
-                    }
+                    Thread.Sleep(2000);
                 }
             }
             catch (Exception ex)
@@ -110,7 +102,7 @@ namespace EndpointChecker
                 ThreadSafeInvoke(() =>
                 {
                     // SET STATUS CONTROLS
-                    lbl_Status.Text = "There was an error sending Feature Request";
+                    lbl_Status.Text = "There was an error opening Feature Request";
                     pb_Status.Image = Resources.Failed;
                 });
 
@@ -140,28 +132,50 @@ namespace EndpointChecker
             });
         }
 
-        public void SendMailMessage(MailMessage mailMessage, MailAddress recipientAddress)
+        public void SendMailMessage(MailMessage mailMessage)
         {
-            mailMessage.To.Clear();
-            mailMessage.To.Add(recipientAddress);
+            mailMessage.From = report_Recipient;
+
+            foreach (MailAddress _recipientAddress in _recipientsAddressesList)
+            {
+                mailMessage.To.Add(_recipientAddress);
+            }
 
             using (SmtpClient smtpClient = new SmtpClient())
             {
-                smtpClient.Host = reportServer_SMTP_Address;
-                smtpClient.Credentials =
-                    new NetworkCredential(
-                        Encoding.UTF8.GetString(Convert.FromBase64String(reportServer_SMTP_APIKey)),
-                        Encoding.UTF8.GetString(Convert.FromBase64String(reportServer_SMTP_SecretKey))
-                        );
+                string mail_TempFolder = Path.Combine(app_TempDir, Guid.NewGuid().ToString());
 
-                smtpClient.EnableSsl = reportServer_SMTP_UseSSL;
-                smtpClient.Port = reportServer_SMTP_Port;
+                // CREATE TEMP MAIL FOLDER
+                if (!Directory.Exists(mail_TempFolder))
+                {
+                    Directory.CreateDirectory(mail_TempFolder);
+                }
+
+                // SAVE MESSAGE TO LIST
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
+                smtpClient.PickupDirectoryLocation = mail_TempFolder;
                 smtpClient.Send(mailMessage);
+
+                // SHOW INFORMATION TO USER
+                MessageBox.Show(
+                    "Report E-Mail Message will be opened in your E-Mail application." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please, resend the report message to the author in such a way that you reply on it." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Thanks a lot :-)",
+                    app_ApplicationName + " v" + app_VersionString,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                // OPEN SAVED MESSAGE BY HOST DEFAULT ASSOCIATED E-MAIL CLIENT
+                Process.Start(Directory.GetFiles(mail_TempFolder).Single());
 
                 ThreadSafeInvoke(() =>
                 {
                     // SET STATUS CONTROLS
-                    lbl_Status.Text = "Feature Request has been sent to '" + recipientAddress.Address + "'";
+                    lbl_Status.Text = "Feature Request has been created and opened";
                     pb_Status.Image = Resources.Success;
 
                     Application.DoEvents();

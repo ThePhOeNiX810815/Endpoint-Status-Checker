@@ -76,7 +76,7 @@ namespace EndpointChecker
                     // GET SPEEDTEST SETTINGS
                     AppendTextToLogBox(
                                          rtb_SpeedTest_LogConsole,
-                                         "Retreiving API Configuration ...",
+                                         "Retreiving OOKLA's SpeedTest API Configuration ...",
                                          Color.Blue,
                                          true);
 

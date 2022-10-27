@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NSpeedTest.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -7,7 +8,6 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using NSpeedTest.Models;
 
 namespace NSpeedTest
 {
@@ -65,7 +65,7 @@ namespace NSpeedTest
                     }
                     finally
                     {
-                        timer.Stop();    
+                        timer.Stop();
                     }
 
                     if (!testString.StartsWith("test=test"))
@@ -145,9 +145,9 @@ namespace NSpeedTest
             var random = new Random();
             var result = new List<NameValueCollection>();
 
-            for (var sizeCounter = 1; sizeCounter < MaxUploadSize+1; sizeCounter++)
+            for (var sizeCounter = 1; sizeCounter < MaxUploadSize + 1; sizeCounter++)
             {
-                var size = sizeCounter*200*1024;
+                var size = sizeCounter * 200 * 1024;
                 var builder = new StringBuilder(size);
 
                 for (var i = 0; i < size; ++i)

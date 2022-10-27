@@ -73,7 +73,7 @@ namespace EndpointChecker
                         // TRY TO DOWNLOAD PACKAGE
                         using (WebClient webClient = new WebClient())
                         {
-                            webClient.DownloadFile(new Uri(app_LatestPackageLink), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName));
+                            webClient.DownloadFile(new Uri(app_LatestPackageLink), Path.Combine(app_TempDir, tempPackageZIPfileName));
 
                             // SUCCESS, JUMP OUT OF WHILE CYCLE AND CONTINUE CODE
                             downloadPackage_Success = true;
@@ -149,17 +149,17 @@ namespace EndpointChecker
 
         public static void CleanTempPackageDirectory()
         {
-            if (Directory.Exists(Path.Combine(Path.GetTempPath(), tempPackageFolderName)))
+            if (Directory.Exists(Path.Combine(app_TempDir, tempPackageFolderName)))
             {
-                Directory.Delete(Path.Combine(Path.GetTempPath(), tempPackageFolderName), true);
+                Directory.Delete(Path.Combine(app_TempDir, tempPackageFolderName), true);
             }
         }
 
         public static void CleanTempPackageArchive()
         {
-            if (File.Exists(Path.Combine(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName))))
+            if (File.Exists(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPfileName))))
             {
-                File.Delete(Path.Combine(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName)));
+                File.Delete(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPfileName)));
             }
         }
 
@@ -172,19 +172,19 @@ namespace EndpointChecker
                     Path.GetExtension(appFile).ToLower() == ".pdb")
                 {
                     File.Delete(appFile);
-                }               
+                }
             }
 
 
-            if (File.Exists(Path.Combine(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName))))
+            if (File.Exists(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPfileName))))
             {
-                File.Delete(Path.Combine(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), tempPackageZIPfileName)));
+                File.Delete(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPfileName)));
             }
         }
 
         public static void CopyNewExecutableAndLibraries()
         {
-            foreach (string appFile in Directory.GetFiles(Path.Combine(Path.GetTempPath(), tempPackageFolderName)))
+            foreach (string appFile in Directory.GetFiles(Path.Combine(app_TempDir, tempPackageFolderName)))
             {
                 if (Path.GetExtension(appFile) == ".exe" ||
                     Path.GetExtension(appFile) == ".dll" ||
@@ -198,13 +198,13 @@ namespace EndpointChecker
 
         public static void UnzipUpdatePackage()
         {
-            using (ZipArchive zipArchive = ZipFile.OpenRead(Path.Combine(Path.GetTempPath(), tempPackageZIPfileName)))
+            using (ZipArchive zipArchive = ZipFile.OpenRead(Path.Combine(app_TempDir, tempPackageZIPfileName)))
             {
                 tempPackageFolderName = zipArchive.Entries.First().FullName;
 
                 CleanTempPackageDirectory();
 
-                zipArchive.ExtractToDirectory(Path.GetTempPath());
+                zipArchive.ExtractToDirectory(app_TempDir);
             }
         }
     }

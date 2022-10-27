@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Mail;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
@@ -100,17 +101,13 @@ namespace EndpointChecker
         public static string app_ApplicationName = FileVersionInfo.GetVersionInfo(app_Assembly.Location).ProductName;
         public static string app_ApplicationExecutableName = AppDomain.CurrentDomain.FriendlyName;
         public static string app_CurrentWorkingDir = Path.GetDirectoryName(app_Assembly.Location);
+        public static string app_TempDir = Path.GetTempPath();
         public static string app_BuiltDate = RetrieveLinkerTimestamp();
         public static string app_Copyright = FileVersionInfo.GetVersionInfo(app_Assembly.Location).LegalCopyright;
         public static string app_Title = app_ApplicationName + " v" + app_VersionString;
 
-        // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES AND SMTP SERVER SETTINGS [MAILJET]
-        public static string reportServer_SMTP_SenderEMail = "petermachaj@e.email";
-        public static string reportServer_SMTP_Address = "in-v3.mailjet.com";
-        public static string reportServer_SMTP_APIKey = "YmQ4ZWRiN2RjOTAwNTdiZjVkMjI5MzkxYjVlZTE1YWU=";
-        public static string reportServer_SMTP_SecretKey = "MWFmNTM0N2EyOTU2YTZmZTJjOWNjY2UyMTg1YTZiYWE=";
-        public static bool reportServer_SMTP_UseSSL = true;
-        public static int reportServer_SMTP_Port = 587;
+        // FEEDBACK AND EXCEPTION E-MAIL REPORT SENDER AND RECIPIENT ADDRESS 
+        public static MailAddress report_Recipient = new MailAddress("petermachaj@e.email");
 
         // ANONYMOUS FTP DEFAULT PASSWORD
         public static string anonymousFTPPassword = "anonymous";
@@ -289,7 +286,7 @@ namespace EndpointChecker
                         if (app_AutoUpdate)
                         {
                             string currentExecutable = app_Assembly.Location;
-                            string updaterExecutable = Path.Combine(Path.GetTempPath(), "EndpointChecker_AutoUpdater.exe");
+                            string updaterExecutable = Path.Combine(app_TempDir, "EndpointChecker_AutoUpdater.exe");
 
                             // COPY UPDATER TO TEMP DIRECORY
                             File.Copy(currentExecutable, updaterExecutable, true);
@@ -590,8 +587,7 @@ namespace EndpointChecker
                 exception,
                 callingMethod,
                 additionalInfo,
-                reportServer_SMTP_SenderEMail,
-                new List<string> { reportServer_SMTP_SenderEMail },
+                new List<MailAddress> { report_Recipient },
                 new List<string> { endpointDefinitonsFile },
                 autoCloseApp);
 

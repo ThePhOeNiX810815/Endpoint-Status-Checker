@@ -1,9 +1,11 @@
 ﻿using EndpointChecker.Properties;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Sockets;
@@ -24,8 +26,7 @@ namespace EndpointChecker
         public static Exception _exception;
         public static string _additionalInfo;
         public static string _callingMethod;
-        public static string _senderAddress;
-        public static List<string> _recipientsAddressesList = new List<string>();
+        public static List<MailAddress> _recipientsAddressesList = new List<MailAddress>();
         public static List<string> _attachmentsList = new List<string>();
         public static string _machineInfo_MachineName;
         public static string _machineInfo_UserName;
@@ -35,7 +36,7 @@ namespace EndpointChecker
         public static List<string> _machineInfo_MACList = new List<string>();
         public static MemoryStream _screenshotStream = new MemoryStream();
 
-        public ExceptionDialog(Exception exception, string callingMethod, string additionalInfo, string senderAddress, List<string> recipientsAddressesList, List<string> attachmentsList, bool autoCloseApp)
+        public ExceptionDialog(Exception exception, string callingMethod, string additionalInfo, List<MailAddress> recipientsAddressesList, List<string> attachmentsList, bool autoCloseApp)
         {
             InitializeComponent();
 
@@ -47,7 +48,6 @@ namespace EndpointChecker
             _exception = exception;
             _additionalInfo = additionalInfo;
             _callingMethod = callingMethod;
-            _senderAddress = senderAddress;
             _recipientsAddressesList = recipientsAddressesList;
             _attachmentsList = attachmentsList;
         }
@@ -134,7 +134,6 @@ namespace EndpointChecker
             {
                 using (MailMessage mailMessage = new MailMessage())
                 {
-                    mailMessage.From = new MailAddress(_senderAddress);
                     mailMessage.Subject = eMailMessageSubject;
                     mailMessage.Body = eMailMessageBody;
                     mailMessage.IsBodyHtml = true;
@@ -159,20 +158,13 @@ namespace EndpointChecker
                         }
                     }
 
-                    // SEND TO DEFINED RECIPIENTS
-                    foreach (string recipientAddress in _recipientsAddressesList)
-                    {
-                        if (IsMailAddressValid(recipientAddress))
-                        {
-                            SendMailMessage(mailMessage, new MailAddress(recipientAddress));
-                        }
-                    }
-
-                    // SEND TO USER MAIL (OPTIONAL)
+                    // ADD USER MAIL ON RECIPIENTS LIST (OPTIONAL)
                     if (IsMailAddressValid(user_EMail))
                     {
-                        SendMailMessage(mailMessage, new MailAddress(user_EMail));
+                        _recipientsAddressesList.Add(new MailAddress(user_EMail));
                     }
+
+                    SendMailMessage(mailMessage);
                 }
             }
             catch (Exception ex)
@@ -180,7 +172,7 @@ namespace EndpointChecker
                 ThreadSafeInvoke(() =>
                 {
                     // SET STATUS CONTROLS
-                    lbl_Status.Text = "There was an error sending details report";
+                    lbl_Status.Text = "There was an error opening Exception Report";
                     pb_Status.Image = Resources.Failed;
                 });
 
@@ -216,28 +208,50 @@ namespace EndpointChecker
             });
         }
 
-        public void SendMailMessage(MailMessage mailMessage, MailAddress recipientAddress)
+        public void SendMailMessage(MailMessage mailMessage)
         {
-            mailMessage.To.Clear();
-            mailMessage.To.Add(recipientAddress);
+            mailMessage.From = report_Recipient;
+
+            foreach (MailAddress _recipientAddress in _recipientsAddressesList)
+            {
+                mailMessage.To.Add(_recipientAddress);
+            }
 
             using (SmtpClient smtpClient = new SmtpClient())
             {
-                smtpClient.Host = reportServer_SMTP_Address;
-                smtpClient.Credentials =
-                    new NetworkCredential(
-                        Encoding.UTF8.GetString(Convert.FromBase64String(reportServer_SMTP_APIKey)),
-                        Encoding.UTF8.GetString(Convert.FromBase64String(reportServer_SMTP_SecretKey))
-                        );
+                string mail_TempFolder = Path.Combine(app_TempDir, Guid.NewGuid().ToString());
 
-                smtpClient.EnableSsl = reportServer_SMTP_UseSSL;
-                smtpClient.Port = reportServer_SMTP_Port;
+                // CREATE TEMP MAIL FOLDER
+                if (!Directory.Exists(mail_TempFolder))
+                {
+                    Directory.CreateDirectory(mail_TempFolder);
+                }
+
+                // SAVE MESSAGE TO LIST
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
+                smtpClient.PickupDirectoryLocation = mail_TempFolder;
                 smtpClient.Send(mailMessage);
+
+                // SHOW INFORMATION TO USER
+                MessageBox.Show(
+                    "Report E-Mail Message will be opened in your E-Mail application." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please, resend the report message to the author in such a way that you reply on it." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Thanks a lot :-)",
+                    app_ApplicationName + " v" + app_VersionString,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                // OPEN SAVED MESSAGE BY HOST DEFAULT ASSOCIATED E-MAIL CLIENT
+                Process.Start(Directory.GetFiles(mail_TempFolder).Single());
 
                 ThreadSafeInvoke(() =>
                 {
                     // SET STATUS CONTROLS
-                    lbl_Status.Text = "Report has been sent to '" + recipientAddress.Address + "'";
+                    lbl_Status.Text = "Exception report has been created and opened";
                     pb_Status.Image = Resources.Success;
 
                     Application.DoEvents();
