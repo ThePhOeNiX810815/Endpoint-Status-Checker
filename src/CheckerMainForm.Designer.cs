@@ -849,7 +849,7 @@
             this.lbl_CheckAllErrors.AutoSize = true;
             this.lbl_CheckAllErrors.Enabled = false;
             this.lbl_CheckAllErrors.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(139, 101);
+            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(137, 103);
             this.lbl_CheckAllErrors.Name = "lbl_CheckAllErrors";
             this.lbl_CheckAllErrors.Size = new System.Drawing.Size(51, 17);
             this.lbl_CheckAllErrors.TabIndex = 22;
@@ -863,7 +863,7 @@
             this.btn_UncheckAll.Enabled = false;
             this.btn_UncheckAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_UncheckAll.Image = ((System.Drawing.Image)(resources.GetObject("btn_UncheckAll.Image")));
-            this.btn_UncheckAll.Location = new System.Drawing.Point(11, 88);
+            this.btn_UncheckAll.Location = new System.Drawing.Point(11, 92);
             this.btn_UncheckAll.Name = "btn_UncheckAll";
             this.btn_UncheckAll.Size = new System.Drawing.Size(40, 40);
             this.btn_UncheckAll.TabIndex = 15;
@@ -878,7 +878,7 @@
             this.btn_CheckAll.Enabled = false;
             this.btn_CheckAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_CheckAll.Image = ((System.Drawing.Image)(resources.GetObject("btn_CheckAll.Image")));
-            this.btn_CheckAll.Location = new System.Drawing.Point(11, 35);
+            this.btn_CheckAll.Location = new System.Drawing.Point(11, 33);
             this.btn_CheckAll.Name = "btn_CheckAll";
             this.btn_CheckAll.Size = new System.Drawing.Size(40, 40);
             this.btn_CheckAll.TabIndex = 17;
@@ -891,7 +891,7 @@
             this.lbl_CheckAll.AutoSize = true;
             this.lbl_CheckAll.Enabled = false;
             this.lbl_CheckAll.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAll.Location = new System.Drawing.Point(51, 47);
+            this.lbl_CheckAll.Location = new System.Drawing.Point(49, 45);
             this.lbl_CheckAll.Name = "lbl_CheckAll";
             this.lbl_CheckAll.Size = new System.Drawing.Size(31, 17);
             this.lbl_CheckAll.TabIndex = 21;
@@ -905,7 +905,7 @@
             this.btn_CheckAllErrors.Enabled = false;
             this.btn_CheckAllErrors.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_CheckAllErrors.Image = ((System.Drawing.Image)(resources.GetObject("btn_CheckAllErrors.Image")));
-            this.btn_CheckAllErrors.Location = new System.Drawing.Point(99, 88);
+            this.btn_CheckAllErrors.Location = new System.Drawing.Point(99, 92);
             this.btn_CheckAllErrors.Name = "btn_CheckAllErrors";
             this.btn_CheckAllErrors.Size = new System.Drawing.Size(40, 40);
             this.btn_CheckAllErrors.TabIndex = 16;
@@ -918,7 +918,7 @@
             this.lbl_UncheckAll.AutoSize = true;
             this.lbl_UncheckAll.Enabled = false;
             this.lbl_UncheckAll.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UncheckAll.Location = new System.Drawing.Point(51, 99);
+            this.lbl_UncheckAll.Location = new System.Drawing.Point(49, 103);
             this.lbl_UncheckAll.Name = "lbl_UncheckAll";
             this.lbl_UncheckAll.Size = new System.Drawing.Size(45, 17);
             this.lbl_UncheckAll.TabIndex = 20;
@@ -932,7 +932,7 @@
             this.btn_CheckAllAvailable.Enabled = false;
             this.btn_CheckAllAvailable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_CheckAllAvailable.Image = ((System.Drawing.Image)(resources.GetObject("btn_CheckAllAvailable.Image")));
-            this.btn_CheckAllAvailable.Location = new System.Drawing.Point(99, 35);
+            this.btn_CheckAllAvailable.Location = new System.Drawing.Point(99, 33);
             this.btn_CheckAllAvailable.Name = "btn_CheckAllAvailable";
             this.btn_CheckAllAvailable.Size = new System.Drawing.Size(40, 40);
             this.btn_CheckAllAvailable.TabIndex = 18;
@@ -945,7 +945,7 @@
             this.lbl_CheckAllAvailable.AutoSize = true;
             this.lbl_CheckAllAvailable.Enabled = false;
             this.lbl_CheckAllAvailable.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(138, 47);
+            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(136, 45);
             this.lbl_CheckAllAvailable.Name = "lbl_CheckAllAvailable";
             this.lbl_CheckAllAvailable.Size = new System.Drawing.Size(55, 17);
             this.lbl_CheckAllAvailable.TabIndex = 19;
@@ -957,7 +957,7 @@
             this.lbl_ConfigFile.AutoSize = true;
             this.lbl_ConfigFile.Enabled = false;
             this.lbl_ConfigFile.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ConfigFile.Location = new System.Drawing.Point(932, 500);
+            this.lbl_ConfigFile.Location = new System.Drawing.Point(930, 501);
             this.lbl_ConfigFile.Name = "lbl_ConfigFile";
             this.lbl_ConfigFile.Size = new System.Drawing.Size(56, 17);
             this.lbl_ConfigFile.TabIndex = 26;
@@ -999,7 +999,7 @@
             this.lbl_EndpointsList.AutoSize = true;
             this.lbl_EndpointsList.Enabled = false;
             this.lbl_EndpointsList.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_EndpointsList.Location = new System.Drawing.Point(844, 500);
+            this.lbl_EndpointsList.Location = new System.Drawing.Point(842, 501);
             this.lbl_EndpointsList.Name = "lbl_EndpointsList";
             this.lbl_EndpointsList.Size = new System.Drawing.Size(34, 17);
             this.lbl_EndpointsList.TabIndex = 25;
@@ -1011,7 +1011,7 @@
             this.lbl_Refresh.AutoSize = true;
             this.lbl_Refresh.Enabled = false;
             this.lbl_Refresh.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Refresh.Location = new System.Drawing.Point(1042, 372);
+            this.lbl_Refresh.Location = new System.Drawing.Point(1040, 371);
             this.lbl_Refresh.Name = "lbl_Refresh";
             this.lbl_Refresh.Size = new System.Drawing.Size(62, 17);
             this.lbl_Refresh.TabIndex = 39;
@@ -1023,7 +1023,7 @@
             this.lbl_Terminate.AutoSize = true;
             this.lbl_Terminate.Enabled = false;
             this.lbl_Terminate.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Terminate.Location = new System.Drawing.Point(1042, 426);
+            this.lbl_Terminate.Location = new System.Drawing.Point(1040, 429);
             this.lbl_Terminate.Name = "lbl_Terminate";
             this.lbl_Terminate.Size = new System.Drawing.Size(80, 17);
             this.lbl_Terminate.TabIndex = 40;
@@ -1047,7 +1047,7 @@
             this.lbl_SpeedTest.AutoSize = true;
             this.lbl_SpeedTest.Enabled = false;
             this.lbl_SpeedTest.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest.Location = new System.Drawing.Point(1042, 501);
+            this.lbl_SpeedTest.Location = new System.Drawing.Point(1040, 501);
             this.lbl_SpeedTest.Name = "lbl_SpeedTest";
             this.lbl_SpeedTest.Size = new System.Drawing.Size(77, 17);
             this.lbl_SpeedTest.TabIndex = 44;
@@ -1078,6 +1078,9 @@
             this.imageList_Icons_32pix.Images.SetKeyName(18, "loadingProgressWheel_Frame_7.gif");
             this.imageList_Icons_32pix.Images.SetKeyName(19, "loadingProgressWheel_Frame_8.gif");
             this.imageList_Icons_32pix.Images.SetKeyName(20, "loadingProgressWheel_Frame_9.gif");
+            this.imageList_Icons_32pix.Images.SetKeyName(21, "appClosing_Tray_0.ico");
+            this.imageList_Icons_32pix.Images.SetKeyName(22, "appClosing_Tray_1.ico");
+            this.imageList_Icons_32pix.Images.SetKeyName(23, "appClosing_Tray_2.ico");
             // 
             // num_PingTimeout
             // 
@@ -1263,7 +1266,7 @@
             this.btn_Terminate.Enabled = false;
             this.btn_Terminate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Terminate.Image = ((System.Drawing.Image)(resources.GetObject("btn_Terminate.Image")));
-            this.btn_Terminate.Location = new System.Drawing.Point(1002, 414);
+            this.btn_Terminate.Location = new System.Drawing.Point(1002, 418);
             this.btn_Terminate.Name = "btn_Terminate";
             this.btn_Terminate.Size = new System.Drawing.Size(40, 40);
             this.btn_Terminate.TabIndex = 28;
@@ -1278,7 +1281,7 @@
             this.btn_Refresh.Enabled = false;
             this.btn_Refresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Refresh.Image = ((System.Drawing.Image)(resources.GetObject("btn_Refresh.Image")));
-            this.btn_Refresh.Location = new System.Drawing.Point(1002, 360);
+            this.btn_Refresh.Location = new System.Drawing.Point(1002, 359);
             this.btn_Refresh.Name = "btn_Refresh";
             this.btn_Refresh.Size = new System.Drawing.Size(40, 40);
             this.btn_Refresh.TabIndex = 1;

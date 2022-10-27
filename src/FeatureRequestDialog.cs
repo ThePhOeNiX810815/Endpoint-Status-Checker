@@ -28,7 +28,7 @@ namespace EndpointChecker
         }
 
         public void SendNotificationMail(
-            string user_EMail,
+            string user_ReporterEMail,
             string user_Comment)
         {
             List<Property> reportItems = new List<Property>
@@ -39,9 +39,9 @@ namespace EndpointChecker
             };
 
             // OPTIONAL [USER E-MAIL]
-            if (!string.IsNullOrEmpty(user_EMail))
+            if (!string.IsNullOrEmpty(user_ReporterEMail))
             {
-                reportItems.Add(new Property { ItemName = "Reporter E-Mail Address", ItemValue = user_EMail });
+                reportItems.Add(new Property { ItemName = "Reporter E-Mail Address", ItemValue = user_ReporterEMail });
             }
 
             // E-MAIL SUBJECT AND CREATE BODY HTML TABLE
@@ -99,6 +99,8 @@ namespace EndpointChecker
                         if (IsMailAddressValid(recipientAddress))
                         {
                             SendMailMessage(mailMessage, new MailAddress(recipientAddress));
+
+                            Thread.Sleep(2000);
                         }
                     }
                 }

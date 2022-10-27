@@ -169,6 +169,20 @@ namespace EndpointChecker
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
             Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
 
+            // SET LOCAL VARIABLES
+            _selectedEndpoint = selectedEndpoint;
+            _selectedEndpointIcon = selectedEndpointImage;
+            _pingTimeout = pingTimeout;
+        }
+
+        public void EndpointDetailsDialog_Shown(object sender, EventArgs e)
+        {
+            InitializeControls();
+            LoadProperties();
+        }
+
+        public void InitializeControls()
+        {
             // HIDE PROTOCOL SPECIFIC FIELDS FROM 'MAIN INFO' TAB, IF VALIDATION METHOD IS 'PING ONLY'
             if (validationMethod == ValidationMethod.Ping)
             {
@@ -224,10 +238,6 @@ namespace EndpointChecker
             pb_VNC.Image = ResizeImage(Properties.Resources.connect_VNC, pb_VNC.Width, pb_VNC.Height);
             pb_SSH.Image = ResizeImage(Properties.Resources.ssh_2, pb_SSH.Width, pb_SSH.Height);
 
-            _selectedEndpoint = selectedEndpoint;
-            _selectedEndpointIcon = selectedEndpointImage;
-            _pingTimeout = pingTimeout;
-
             ipAddress_ComboboxTooltip.SetToolTip(cb_IPAddress, "Click to select desired IP Address");
             livePingIconTooltip.SetToolTip(pb_PingRefresh, "Click for Live 1 second Ping Refresh");
             virusTotal_PermalinkTextboxTooltip.SetToolTip(tb_VirusTotal_Permalink, "Click to open Scan Result in browser");
@@ -239,8 +249,6 @@ namespace EndpointChecker
                 "Weak eTags are easy to generate," +
                 Environment.NewLine +
                 "but are far less useful for comparisons");
-
-            TIMER_LoadProperties.Start();
         }
 
         public void LoadProperties()
@@ -1480,14 +1488,6 @@ namespace EndpointChecker
             {
                 ExceptionNotifier(this, exception, string.Empty, true);
             }
-        }
-
-        public void TIMER_LoadProperties_Tick(object sender, EventArgs e)
-        {
-            TIMER_LoadProperties.Stop();
-            TIMER_LoadProperties.Enabled = false;
-
-            LoadProperties();
         }
 
         public void cb_IPAddress_SelectedIndexChanged(object sender, EventArgs e)

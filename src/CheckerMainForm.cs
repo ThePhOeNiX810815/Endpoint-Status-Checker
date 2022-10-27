@@ -90,7 +90,7 @@ namespace EndpointChecker
         // THIS SWITCH INDICATES THAT ENDPOINTS LISTVIEW IS ACTUALLY UPDATING
         private bool listUpdating = false;
 
-        // THIS SWITCH INDICATES ATTEMPT TO CLOSE APPLICATION DURING PROGRESS
+        // THIS SWITCH INDICATES STATE OF APPLICATION CLOSE
         private bool onClose = false;
 
         // VNC VIEWER EXECUTABLE [FOR 'FTP' CONNECTION PURPOSE]
@@ -2250,25 +2250,8 @@ namespace EndpointChecker
 
         public void SetControls(bool inProgress, bool locked)
         {
-            if (inProgress)
-            {
-                // SET TRAY ICON [ANIMATION]
-                SetTrayIcon(12, 20);
-
-                // SET TRAY TOOLTIP MESSAGE
-                SetTrayTooltipText(Environment.NewLine + "Endpoints check in progress ...");
-
-                // CLEAR PROGRESS COUNTER INFORMATION LABEL
-                SetProgressStatus(0, 0, string.Empty);
-            }
-            else if (Visible &&
-                     Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.IsPlatformSupported)
-            {
-                // SET TASKBAR PROGRESS TO 'NO PROGRESS'
-                Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance
-                    .SetProgressState(
-                    Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress);
-            }
+            // SET TRAY CONTROLS (TRAY ICON AND TOOLTIP TEXT)
+            SetTrayControls(inProgress);
 
             // VISIBLE OR ENABLED DURING PROGRESS
             btn_Terminate.Enabled = inProgress && locked;
@@ -2331,6 +2314,52 @@ namespace EndpointChecker
             pb_ListFilterClear.Visible = !inProgress && !locked && endpointsList.Count > 0 && !string.IsNullOrEmpty(tb_ListFilter.Text);
 
             tb_ListFilter.BackColor = string.IsNullOrEmpty(tb_ListFilter.Text) ? Color.LightGray : lv_Endpoints.Items.Count > 0 ? Color.Honeydew : Color.MistyRose;
+        }
+
+        public void SetTrayControls(bool inProgress)
+        {
+            if (inProgress)
+            {
+
+                if (onClose)
+                {
+                    // TERMINATING PROCESS AND CLOSING APP
+                    // SET TRAY ICON [BLINKING RED DOT ICON]
+                    SetTrayIcon(21, 23, 500);
+
+                    // SET TRAY TOOLTIP MESSAGE
+                    SetTrayTooltipText(Environment.NewLine + "Terminating process and closing app ...");
+                }
+                else if (BW_GetStatus.CancellationPending)
+                {
+                    // TERMINATING PROCESS
+                    // SET TRAY ICON [SPINNING WHEEL ANIMATION]
+                    SetTrayIcon(12, 20);
+
+                    // SET TRAY TOOLTIP MESSAGE
+                    SetTrayTooltipText(Environment.NewLine + "Terminating process ...");
+                }
+                else
+                {
+                    // IN PROGRESS
+                    // SET TRAY ICON [SPINNING WHEEL ANIMATION]
+                    SetTrayIcon(12, 20);
+
+                    // SET TRAY TOOLTIP MESSAGE
+                    SetTrayTooltipText(Environment.NewLine + "Endpoints check in progress ...");
+                }
+
+                // CLEAR PROGRESS COUNTER INFORMATION LABEL
+                SetProgressStatus(0, 0, string.Empty);
+            }
+            else if (Visible &&
+                     Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.IsPlatformSupported)
+            {
+                // SET TASKBAR PROGRESS TO 'NO PROGRESS'
+                Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance
+                    .SetProgressState(
+                    Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.NoProgress);
+            }
         }
 
         public int GetStatusImageIndex(string statusCode, string pingTime, string statusMessage)
@@ -3524,10 +3553,18 @@ namespace EndpointChecker
         public void btn_Terminate_Click(object sender, EventArgs e)
         {
             if (e != null)
-            {
+            {             
                 // DISABLE 'AUTO REFRESH' OPTIONS
                 cb_AutomaticRefresh.Checked = false;
                 cb_ContinuousRefresh.Checked = false;
+            }
+            else
+            {
+                // DISABLE TRAY ICON CONTEXT MENU
+                trayIcon.ContextMenuStrip = null;
+
+                // HIDE MAIN FORM TO TRAY WHILE TERMINATES THE PROCESS AND CLOSE
+                Hide();
             }
 
             // DISABLE ITSELF
@@ -3537,6 +3574,7 @@ namespace EndpointChecker
             // TERMINATE WORKER
             BW_GetStatus.CancelAsync();
 
+            SetTrayControls(true);
             SetProgressStatus(0, 0);
         }
 
@@ -3562,8 +3600,8 @@ namespace EndpointChecker
             }
 
             // SAVE SETTINGS
-            SaveListViewColumnsWidthAndOrder();
             SaveWindowSizeAndPosition();
+            SaveListViewColumnsWidthAndOrder();
             SaveDisabledItemsListAndFilter();
             SaveConfiguration();
         }
@@ -3922,7 +3960,13 @@ namespace EndpointChecker
             {
                 try
                 {
-                    endpointsList_LastSeenOnline = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(lastSeenOnlineJSONFile));
+                    Dictionary<string, string> _endpointsList_LastSeenOnline = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(lastSeenOnlineJSONFile));
+
+                    if (_endpointsList_LastSeenOnline != null &&
+                        _endpointsList_LastSeenOnline.Count > 0)
+                    {
+                        endpointsList_LastSeenOnline = _endpointsList_LastSeenOnline;
+                    }
                 }
                 catch
                 {
@@ -4369,14 +4413,14 @@ namespace EndpointChecker
             SaveConfiguration();
         }
 
-        public void SetTrayIcon(int firstFrameIndex, int lastFrameIndex)
+        public void SetTrayIcon(int firstFrameIndex, int lastFrameIndex, int animationInterval_mS = 50)
         {
+            TIMER_TrayIconAnimation.Stop();
+            trayAnimation_Icons.Clear();
+            trayAnimation_Index = 0;
+
             if (firstFrameIndex == lastFrameIndex)
             {
-                TIMER_TrayIconAnimation.Stop();
-                trayAnimation_Icons.Clear();
-                trayAnimation_Index = 0;
-
                 trayIcon.Icon = GetIconFromListByIndex(firstFrameIndex);
             }
             else if (lastFrameIndex > firstFrameIndex)
@@ -4386,6 +4430,7 @@ namespace EndpointChecker
                     trayAnimation_Icons.Add(GetIconFromListByIndex(index));
                 }
 
+                TIMER_TrayIconAnimation.Interval = animationInterval_mS;
                 TIMER_TrayIconAnimation.Start();
             }
         }
@@ -5354,8 +5399,8 @@ namespace EndpointChecker
         public void pb_FeatureRequest_Click(object sender, EventArgs e)
         {
             FeatureRequestDialog frDialog = new FeatureRequestDialog(
-                reportServer_senderEMailAddress,
-                new List<string> { authorEmailAddress });
+                reportServer_SMTP_SenderEMail,
+                new List<string> { reportServer_SMTP_SenderEMail });
 
             _ = frDialog.ShowDialog();
         }

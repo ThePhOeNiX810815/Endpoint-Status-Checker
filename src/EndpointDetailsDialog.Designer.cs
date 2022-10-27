@@ -92,6 +92,7 @@
             this.lbl_Port = new System.Windows.Forms.Label();
             this.lbl_Protocol = new System.Windows.Forms.Label();
             this.lbl_EndpointName = new System.Windows.Forms.Label();
+            this.imageList_Tabs = new System.Windows.Forms.ImageList(this.components);
             this.tabPage_GeoLocation = new System.Windows.Forms.TabPage();
             this.tb_GeoLocation_IP = new System.Windows.Forms.TextBox();
             this.pb_GeoLocation_CountryFlag = new System.Windows.Forms.PictureBox();
@@ -118,7 +119,6 @@
             this.lbl_GeoLocation_ORG = new System.Windows.Forms.Label();
             this.pb_GeoLocation_Map = new System.Windows.Forms.PictureBox();
             this.lbl_GeoLocation_AS = new System.Windows.Forms.Label();
-            this.imageList_Tabs = new System.Windows.Forms.ImageList(this.components);
             this.tabPage_VirusTotal = new System.Windows.Forms.TabPage();
             this.pb_VirusTotal_Status = new System.Windows.Forms.PictureBox();
             this.tb_VirusTotal_ScanDateTime = new System.Windows.Forms.TextBox();
@@ -219,7 +219,6 @@
             this.pb_RDP = new System.Windows.Forms.PictureBox();
             this.pb_Browse_WindowsExplorer = new System.Windows.Forms.PictureBox();
             this.BW_PortCheck = new System.ComponentModel.BackgroundWorker();
-            this.TIMER_LoadProperties = new System.Windows.Forms.Timer(this.components);
             this.pb_AdminBrowse_WindowsExplorer = new System.Windows.Forms.PictureBox();
             this.lbl_AdminBrowse_WindowsExplorer = new System.Windows.Forms.Label();
             this.TIMER_VirusTotalResult = new System.Windows.Forms.Timer(this.components);
@@ -1075,6 +1074,12 @@
             this.lbl_EndpointName.Text = "Endpoint Name";
             this.lbl_EndpointName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // imageList_Tabs
+            // 
+            this.imageList_Tabs.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.imageList_Tabs.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList_Tabs.TransparentColor = System.Drawing.Color.Transparent;
+            // 
             // tabPage_GeoLocation
             // 
             this.tabPage_GeoLocation.BackColor = System.Drawing.Color.Silver;
@@ -1422,12 +1427,6 @@
             this.lbl_GeoLocation_AS.TabIndex = 45;
             this.lbl_GeoLocation_AS.Text = "AS";
             this.lbl_GeoLocation_AS.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // imageList_Tabs
-            // 
-            this.imageList_Tabs.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.imageList_Tabs.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList_Tabs.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // tabPage_VirusTotal
             // 
@@ -1884,6 +1883,7 @@
             this.treeView_ComputerInfo.ImageIndex = 6;
             this.treeView_ComputerInfo.ImageList = this.imageList_ListViewIcons_20pix;
             this.treeView_ComputerInfo.Indent = 25;
+            this.treeView_ComputerInfo.LineColor = System.Drawing.Color.Empty;
             this.treeView_ComputerInfo.Location = new System.Drawing.Point(11, 9);
             this.treeView_ComputerInfo.Name = "treeView_ComputerInfo";
             this.treeView_ComputerInfo.SelectedImageIndex = 6;
@@ -2634,11 +2634,6 @@
             this.BW_PortCheck.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BW_PortCheck_DoWork);
             this.BW_PortCheck.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BW_PortCheck_RunWorkerCompleted);
             // 
-            // TIMER_LoadProperties
-            // 
-            this.TIMER_LoadProperties.Interval = 250;
-            this.TIMER_LoadProperties.Tick += new System.EventHandler(this.TIMER_LoadProperties_Tick);
-            // 
             // pb_AdminBrowse_WindowsExplorer
             // 
             this.pb_AdminBrowse_WindowsExplorer.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -2723,6 +2718,7 @@
             this.Name = "EndpointDetailsDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Endpoint Status Details";
+            this.Shown += new System.EventHandler(this.EndpointDetailsDialog_Shown);
             this.tabPage_HTMLInfo.ResumeLayout(false);
             this.tabPage_HTMLInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_PageInfo_ThemeColor)).EndInit();
@@ -2785,7 +2781,6 @@
         public System.Windows.Forms.ColumnHeader statusHeader;
         public System.Windows.Forms.ColumnHeader portHeader;
         public System.ComponentModel.BackgroundWorker BW_PortCheck;
-        public System.Windows.Forms.Timer TIMER_LoadProperties;
         public System.Windows.Forms.ColumnHeader columnHeader10;
         public System.Windows.Forms.TabPage tabPage_VirusTotal;
         public System.Windows.Forms.TabControl tabControl;

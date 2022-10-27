@@ -105,14 +105,14 @@ namespace EndpointChecker
         public static string app_Title = app_ApplicationName + " v" + app_VersionString;
 
         // FEEDBACK AND EXCEPTION HANDLING E-MAIL ADDRESSES AND SMTP SERVER SETTINGS [MAILJET]
-        public static string reportServer_senderEMailAddress = "phoenixvm@gmail.com";
+        public static string reportServer_SMTP_SenderEMail = "petermachaj@e.email";
         public static string reportServer_SMTP_Address = "in-v3.mailjet.com";
         public static string reportServer_SMTP_APIKey = "YmQ4ZWRiN2RjOTAwNTdiZjVkMjI5MzkxYjVlZTE1YWU=";
         public static string reportServer_SMTP_SecretKey = "MWFmNTM0N2EyOTU2YTZmZTJjOWNjY2UyMTg1YTZiYWE=";
         public static bool reportServer_SMTP_UseSSL = true;
         public static int reportServer_SMTP_Port = 587;
 
-        public static string authorEmailAddress = "petermachaj@e.email";
+        // ANONYMOUS FTP DEFAULT PASSWORD
         public static string anonymousFTPPassword = "anonymous";
 
         // ENDPOINTS DEFINITIONS FILE NAME
@@ -590,8 +590,8 @@ namespace EndpointChecker
                 exception,
                 callingMethod,
                 additionalInfo,
-                reportServer_senderEMailAddress,
-                new List<string> { authorEmailAddress },
+                reportServer_SMTP_SenderEMail,
+                new List<string> { reportServer_SMTP_SenderEMail },
                 new List<string> { endpointDefinitonsFile },
                 autoCloseApp);
 
