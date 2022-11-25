@@ -7,7 +7,7 @@ https://endpoint-status-checker.webnode.com
 Checks pre-defined list of network EndPoints on various conditions:
 
 - checking endpoint availability based on 'Protocol Scan [HTTP/FTP]' or simple 'Ping'
-- various external APIs used [as SpeedTest, GEO IP Loaction, TraceRoute, VirusTotal scan and more...]
+- various external APIs used [as SpeedTest, GEO IP Location, TraceRoute, VirusTotal scan and more...]
 - exporting scan result report [XML, JSON, HTML or XLS formats]
 - automatic periodical or continuous scan options
 - tray status icon and notifications
