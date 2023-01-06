@@ -56,7 +56,7 @@ namespace EndpointChecker
                 // DOWNLOAD UPDATE PACKAGE
                 lbl_Progress.Text = "Downloading Package from GitHub ...";
 
-                int downloadPackage_MaxAttemptCount = 5;
+                int downloadPackage_MaxAttemptCount = 20;
                 int downloadPackage_CurrentAttempt = 0;
                 bool downloadPackage_Success = false;
 

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Retail")]
 [assembly: AssemblyCompany("Infekčná Mononukleóza Inc.")]
 [assembly: AssemblyProduct("Endpoint Status Checker")]
-[assembly: AssemblyCopyright("© 2014-2022 Peter Machaj")]
+[assembly: AssemblyCopyright("© 2014-2023 Peter Machaj")]
 [assembly: AssemblyTrademark("Endpoint Status Checker")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.9.8.0")]
-[assembly: AssemblyFileVersion("2.9.8.0")]
+[assembly: AssemblyVersion("2.9.17.0")]
+[assembly: AssemblyFileVersion("2.9.17.0")]

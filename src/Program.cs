@@ -165,7 +165,8 @@ namespace EndpointChecker
         // AUTO UPDATE VARIABLES
         public static bool app_AutoUpdate_AutoUpdateInFuture;
         public static Version app_AutoUpdate_SkipVersion;
-        public static bool app_AutoUpdate = false;
+        public static bool app_AutoUpdateNow = false;
+        public static bool app_UpdateAvailable = false;
         public static Version app_LatestPackageVersion = new Version(0, 0, 0, 0);
         public static string app_LatestPackageLink = string.Empty;
         public static string app_LatestPackageDate = string.Empty;
@@ -283,35 +284,9 @@ namespace EndpointChecker
                     {
                         CheckForUpdate();
 
-                        if (app_AutoUpdate)
+                        if (app_AutoUpdateNow)
                         {
-                            string currentExecutable = app_Assembly.Location;
-                            string updaterExecutable = Path.Combine(app_TempDir, "EndpointChecker_AutoUpdater.exe");
-
-                            // COPY UPDATER TO TEMP DIRECORY
-                            File.Copy(currentExecutable, updaterExecutable, true);
-
-                            // UPDATER ARGUMENTS
-                            List<string> updaterArgs = new List<string>
-                            {
-                                "/AutoUpdate",
-                                "\"" + Path.GetDirectoryName(currentExecutable) + "\"",
-                                app_ApplicationExecutableName,
-                                app_LatestPackageVersion.ToString(),
-                                app_LatestPackageLink,
-                                app_LatestPackageDate
-                            };
-
-                            // EXECUTE UPDATER
-                            ProcessStartInfo startUpdater = new ProcessStartInfo(updaterExecutable)
-                            {
-                                Arguments = string.Join(" ", updaterArgs),
-                                UseShellExecute = false
-                            };
-                            _ = Process.Start(startUpdater);
-
-                            // CLOSE
-                            Environment.Exit(1);
+                            ExecuteUpdater();
                         }
                         else
                         {
@@ -473,10 +448,12 @@ namespace EndpointChecker
                     if (app_LatestPackageVersion > app_Version &&
                         app_LatestPackageVersion > app_AutoUpdate_SkipVersion)
                     {
+                        app_UpdateAvailable = true;
+
                         if (app_AutoUpdate_AutoUpdateInFuture)
                         {
                             // AUTO UPDATE
-                            app_AutoUpdate = true;
+                            app_AutoUpdateNow = true;
                         }
                         else
                         {
@@ -484,7 +461,7 @@ namespace EndpointChecker
                             NewVersionDialog newVersionDialog = new NewVersionDialog();
                             _ = newVersionDialog.ShowDialog();
 
-                            if (newVersionDialog.updateInFuture)
+                            if (newVersionDialog.autoUpdateInFuture)
                             {
                                 Settings.Default.AutoUpdate_AutoUpdateInFuture = true;
                                 Settings.Default.Save();
@@ -492,7 +469,7 @@ namespace EndpointChecker
 
                             if (newVersionDialog.updateNow)
                             {
-                                app_AutoUpdate = true;
+                                app_AutoUpdateNow = true;
                             }
                             else if (newVersionDialog.updateSkip)
                             {
@@ -598,6 +575,37 @@ namespace EndpointChecker
             {
                 senderForm.Show();
             }
+        }
+
+        public static void ExecuteUpdater()
+        {
+            string currentExecutable = app_Assembly.Location;
+            string updaterExecutable = Path.Combine(app_TempDir, "EndpointChecker_AutoUpdater.exe");
+
+            // COPY UPDATER TO TEMP DIRECORY
+            File.Copy(currentExecutable, updaterExecutable, true);
+
+            // UPDATER ARGUMENTS
+            List<string> updaterArgs = new List<string>
+                            {
+                                "/AutoUpdate",
+                                "\"" + Path.GetDirectoryName(currentExecutable) + "\"",
+                                app_ApplicationExecutableName,
+                                app_LatestPackageVersion.ToString(),
+                                app_LatestPackageLink,
+                                app_LatestPackageDate
+                            };
+
+            // EXECUTE UPDATER
+            ProcessStartInfo startUpdater = new ProcessStartInfo(updaterExecutable)
+            {
+                Arguments = string.Join(" ", updaterArgs),
+                UseShellExecute = false
+            };
+            _ = Process.Start(startUpdater);
+
+            // CLOSE
+            Environment.Exit(0);
         }
     }
 }

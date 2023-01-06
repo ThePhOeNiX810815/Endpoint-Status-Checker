@@ -1,4 +1,6 @@
-﻿using EndpointChecker.Properties;
+﻿using ArpLookup;
+using DocumentFormat.OpenXml.Wordprocessing;
+using EndpointChecker.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -298,8 +300,7 @@ namespace EndpointChecker
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
                     _machineInfo_IPList.Add(ip.ToString());
-
-                    string localMAC = GetMACAddress(ip);
+                    string localMAC = WindowsLookupService.Lookup(ip);
 
                     if (!string.IsNullOrEmpty(localMAC))
                     {
@@ -327,28 +328,6 @@ namespace EndpointChecker
 
             _machineInfo_RAM = (int)ram_Used + " of " + (int)ram_Maximum + " MB Used";
             _machineInfo_DiskSpace = (int)disk_Used + " of " + (int)disk_Total + " GB Used";
-        }
-
-        public static string GetMACAddress(IPAddress ipAddress)
-        {
-            byte[] macAddr = new byte[6];
-            uint macAddrLen = (uint)macAddr.Length;
-
-            if (NetworkTools.SendARP(BitConverter.ToInt32(ipAddress.GetAddressBytes(), 0), 0, macAddr, ref macAddrLen) == 0)
-            {
-                string[] macStrArr = new string[(int)macAddrLen];
-
-                for (int i = 0; i < macAddrLen; i++)
-                {
-                    macStrArr[i] = macAddr[i].ToString("x2");
-                }
-
-                return string.Join(":", macStrArr).ToUpper();
-            }
-            else
-            {
-                return null;
-            }
         }
 
         public void NewBackgroundThread(Action action)
@@ -425,12 +404,12 @@ namespace EndpointChecker
         {
             tb_UserEMailAddress.BackColor = string.IsNullOrEmpty(tb_UserEMailAddress.Text)
                 ? SystemColors.Info
-                : !IsMailAddressValid(tb_UserEMailAddress.Text) ? Color.Pink : Color.Honeydew;
+                : !IsMailAddressValid(tb_UserEMailAddress.Text) ? System.Drawing.Color.Pink : System.Drawing.Color.Honeydew;
         }
 
         public void tb_OptionalComment_TextChanged(object sender, EventArgs e)
         {
-            tb_OptionalComment.BackColor = string.IsNullOrEmpty(tb_OptionalComment.Text) ? SystemColors.Info : Color.Honeydew;
+            tb_OptionalComment.BackColor = string.IsNullOrEmpty(tb_OptionalComment.Text) ? SystemColors.Info : System.Drawing.Color.Honeydew;
         }
 
         public void SetDialogSize(bool allControls)
@@ -447,16 +426,10 @@ namespace EndpointChecker
         public void ExceptionDialog_Paint(object sender, PaintEventArgs e)
         {
             Graphics graphicsObj = CreateGraphics();
-            Pen myPen = new Pen(Color.Red, 20);
+            Pen myPen = new Pen(System.Drawing.Color.Red, 20);
             Rectangle myRectangle = new Rectangle(0, 0, Width, Height);
             graphicsObj.DrawRectangle(myPen, myRectangle);
         }
-    }
-
-    public static class NetworkTools
-    {
-        [DllImport("iphlpapi.dll", ExactSpelling = true)]
-        internal static extern int SendARP(int destIp, int srcIP, byte[] macAddr, ref uint physicalAddrLen);
     }
 
     public static class PerformanceInfo

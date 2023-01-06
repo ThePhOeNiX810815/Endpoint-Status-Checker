@@ -7,7 +7,7 @@ https://endpoint-status-checker.webnode.com
 Checks pre-defined list of network EndPoints on various conditions:
 
 - checking endpoint availability based on 'Protocol Scan [HTTP/FTP]' or simple 'Ping'
-- various external APIs used [as SpeedTest, GEO IP Location, TraceRoute, VirusTotal scan and more...]
+- various external APIs used [as SpeedTest, GEO IP Loaction, TraceRoute, VirusTotal scan and more...]
 - exporting scan result report [XML, JSON, HTML or XLS formats]
 - automatic periodical or continuous scan options
 - tray status icon and notifications
@@ -53,19 +53,20 @@ For each of these services you can set your own key (edit config file by 'CONFIG
 Application is using following libraries:
 - AGauge (2.0.1)
 - ClosedXML (0.96.0)
-- DocumentFormat.OpenXml (2.17.1)
+- DocumentFormat.OpenXml (2.19.0)
 - ExcelNumberFormat (1.1.0)
-- FastMember (1.3.0) (a newer version available, but not for target framework version)
-- Flurl (3.0.0-pre4) (a newer version available, but not for target framework version)
+- FastMember (1.3.0)
+- Flurl (3.0.0-pre4)
 - FreeSpire.XLS (12.7.0)
 - HtmlAgilityPack (1.11.46)
 - IPAddressRange (4.2.0)
-- Nager.PublicSuffix (2.2.2) (a newer version available, but not for target framework version)
-- Newtonsoft.Json (13.0.2-beta2)
+- Nager.PublicSuffix (2.2.2)
+- Newtonsoft.Json (13.0.2)
 - System.IO.Compression (4.3.0)
 - System.Net.Http (4.3.4)
 - System.Runtime.InteropServices.RuntimeInformation (4.3.0)
-- WhoisClient.NET (1.0.2.0) (a newer version available, but not for target framework version)
+- System.ValueTuple (4.5.0)
+- WhoisClient.NET (1.0.2.0)
 - WindowsAPICodePack-Core (1.1.2)
 - WindowsAPICodePack-Shell (1.1.1)
 
@@ -76,5 +77,8 @@ Application is using following external programs:
 - Putty (putty.exe) - https://www.putty.org
 
 
-NSpeedTest project sources added to solution:
+NSpeedTest project sources (adjusted) added to solution:
 - https://github.com/Kwull/NSpeedTest
+
+ArpLookup project sources (adjusted) added to solution:
+- https://github.com/georg-jung/ArpLookup

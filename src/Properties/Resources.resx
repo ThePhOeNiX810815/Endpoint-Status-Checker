@@ -427,4 +427,7 @@
   <data name="notifications_ON" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\notifications_on.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="updateIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\updateicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
-﻿using Nager.PublicSuffix;
+﻿using EndpointChecker.Properties;
+using Nager.PublicSuffix;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -271,7 +272,6 @@ namespace EndpointChecker
             tb_EndpointURL.Text = _selectedEndpoint.Address;
             cb_IPAddress.Items.AddRange(_selectedEndpoint.IPAddress);
             cb_IPAddress.SelectedIndex = 0;
-            tb_PingTime.Text = _selectedEndpoint.PingRoundtripTime;
             tb_Port.Text = _selectedEndpoint.Port;
             tb_Protocol.Text = _selectedEndpoint.Protocol;
             tb_ResponseTime.Text = _selectedEndpoint.ResponseTime;
@@ -597,6 +597,9 @@ namespace EndpointChecker
 
             // GET PAGE CATEGORY LIST
             GetPageCategoryListFromHTMLMeta();
+
+            // GET LIVE PING
+            pb_PingRefresh_Click(this, null);
         }
 
         public void GetWebsiteFavicon(string websiteURL)
@@ -771,15 +774,15 @@ namespace EndpointChecker
                 // START
                 TIMER_PingRefresh.Enabled = true;
                 TIMER_PingRefresh.Start();
-                pb_PingRefresh.Image = Properties.Resources.loadingProgressWheel;
+                pb_PingRefresh.Image = Resources.loadingProgressWheel;
             }
             else
             {
                 // STOP
                 TIMER_PingRefresh.Stop();
                 TIMER_PingRefresh.Enabled = false;
-                pb_PingRefresh.Image = Properties.Resources.refresh.ToBitmap();
-                tb_PingTime.Text = _selectedEndpoint.PingRoundtripTime;
+                pb_PingRefresh.Image = Resources.refresh.ToBitmap();
+                tb_PingTime.Text = GetPingTime(new Uri(_selectedEndpoint.ResponseAddress).Host, _pingTimeout, 3);
             }
         }
 
@@ -796,7 +799,7 @@ namespace EndpointChecker
                         ThreadSafeInvoke(() =>
                         {
                             tb_PingTime.Text = pingRoundtripTime;
-                            tb_PingTime.Text += " (1s refresh)";
+                            tb_PingTime.Text += " (1s live refresh)";
                         });
                     }
                 }

@@ -170,7 +170,13 @@ namespace EndpointChecker
         public void SetServerDetails()
         {
             lbl_SpeedTest_Latency_Value.Text = targetServer.Latency + " ms";
-            lbl_SpeedTest_HostedBy_Value.Text = GetStringCorrectEncoding(targetServer.Sponsor);
+            lbl_SpeedTest_HostedBy_Value.Text = GetStringCorrectEncoding(
+                targetServer.Sponsor +
+                " (" +
+                targetServer.Country +
+                "/" +
+                targetServer.Name +
+                ")");
 
             lbl_SpeedTest_Distance_Value.Text =
                     FormatLocationsDistanceString(

@@ -57,8 +57,8 @@
     <Reference Include="ClosedXML, Version=0.96.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
       <HintPath>packages\ClosedXML.0.96.0\lib\net40\ClosedXML.dll</HintPath>
     </Reference>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
-      <HintPath>packages\DocumentFormat.OpenXml.2.18.0\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.19.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>packages\DocumentFormat.OpenXml.2.19.0\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="ExcelNumberFormat, Version=1.1.0.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
       <HintPath>packages\ExcelNumberFormat.1.1.0\lib\net20\ExcelNumberFormat.dll</HintPath>
@@ -86,7 +86,7 @@
       <HintPath>packages\Nager.PublicSuffix.2.2.2\lib\net45\Nager.PublicSuffix.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.13.0.2-beta2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Spire.XLS, Version=12.7.0.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
       <HintPath>packages\FreeSpire.XLS.12.7.0\lib\net40\Spire.XLS.dll</HintPath>
@@ -126,6 +126,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArpLookup\Extensions.cs" />
+    <Compile Include="ArpLookup\WindowsLookupService.cs" />
     <Compile Include="AutoUpdaterDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -297,6 +299,7 @@
     <Content Include="Images\subCategory.png" />
     <Content Include="Images\Success.png" />
     <Content Include="Images\twitter.png" />
+    <Content Include="Images\updateIcon.png" />
     <Content Include="Images\updater_Background.jpg" />
     <Content Include="Images\updater_Progress.gif" />
     <Content Include="Images\virusClean.png" />

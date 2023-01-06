@@ -1,4 +1,5 @@
-﻿using ClosedXML.Excel;
+﻿using ArpLookup;
+using ClosedXML.Excel;
 using EndpointChecker.Properties;
 using Flurl;
 using HtmlAgilityPack;
@@ -24,6 +25,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Text;
@@ -77,9 +79,6 @@ namespace EndpointChecker
             NOTCHECKED = 4
         };
 
-        // FOR MAC ADDRESS RESOLVER FEATURE PURPOSE
-        [DllImport("iphlpapi.dll", ExactSpelling = true)]
-        public static extern int SendARP(int destIp, int srcIP, byte[] macAddr, ref uint physicalAddrLen);
 
         // THIS SWITCH INDICATES THAT TRAY ICON BALLOON TOOLTIP IS ACTUALLY DISPLAYED
         private bool balloonVisible = false;
@@ -134,7 +133,10 @@ namespace EndpointChecker
         public static ValidationMethod validationMethod;
 
         // ACTIVE .NET FRAMEWORK VERSION
-        private readonly string dotNetFramework_ActiveVersion = RuntimeInformation.FrameworkDescription;
+        private readonly TargetFrameworkAttribute dotNetFramework_TargetVersion =
+            (TargetFrameworkAttribute)Assembly.GetExecutingAssembly().
+            GetCustomAttributes(typeof(TargetFrameworkAttribute), false).
+            SingleOrDefault();
 
         // ENDPOINT DETAILS DIALOG INSTANCE
         private EndpointDetailsDialog dialog_EndpointDetails = null;
@@ -184,6 +186,7 @@ namespace EndpointChecker
             tray_Notifications_Disable.Image = ResizeImage(Resources.notifications_OFF.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_Refresh.Image = ResizeImage(Resources.refresh.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_SpeedTest.Image = ResizeImage(Resources.speedTest.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
+            tray_CheckForUpdate.Image = ResizeImage(Resources.updateIcon, trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_Exit.Image = ResizeImage(Resources.error.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
 
             // SET VERSION / BUILD LABELS
@@ -202,6 +205,15 @@ namespace EndpointChecker
 
         public void SetControlsTooltips()
         {
+            // SET TOOLTIP FOR UPDATE CHECK LABEL
+            ToolTip toolTip_CheckForUpdate = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Check for Update"
+            };
+            toolTip_CheckForUpdate.SetToolTip(pb_CheckForUpdate, "Check GitHub for latest update package.");
+
             // SET TOOLTIP FOR APPLICATION WEB PAGE [WEBNODE] LINK LABEL
             ToolTip toolTip_AppWebPage = new ToolTip
             {
@@ -1166,6 +1178,18 @@ namespace EndpointChecker
 
                                 if (!BW_GetStatus.CancellationPending)
                                 {
+                                    // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, BY REGEX]
+                                    if (Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
+                                    {
+                                        // IS IP ADDRESS
+                                        endpoint.IPAddress = new string[] { responseURI.Host };
+                                    }
+                                    else
+                                    {
+                                        // IS DNS NAME
+                                        endpoint.DNSName = new string[] { responseURI.Host };
+                                    }
+
                                     try
                                     {
                                         // RESOLVE NETWORK SHARES
@@ -1178,26 +1202,20 @@ namespace EndpointChecker
                                                 endpoint.NetworkShare = netSharesList.ToArray();
                                             }
                                         }
+                                    }
+                                    catch
+                                    {
+                                    }
 
-                                        // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, BY REGEX]
-                                        if (Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
-                                        {
-                                            // IS IP ADDRESS
-                                            endpoint.IPAddress = new string[] { responseURI.Host };
-                                        }
-                                        else
-                                        {
-                                            // IS DNS NAME
-                                            endpoint.DNSName = new string[] { responseURI.Host };
-                                        }
+                                    // DNS / MAC LOOKUP
+                                    if (dnsLookupOnHost)
+                                    {
+                                        List<string> endpointIPAddressesStringList = new List<string>();
+                                        List<string> endpointDNSNamesStringList = new List<string>();
+                                        List<string> endpointMACAddressStringList = new List<string>();
 
-                                        // DNS / MAC LOOKUP
-                                        if (dnsLookupOnHost)
+                                        try
                                         {
-                                            List<string> endpointIPAddressesStringList = new List<string>();
-                                            List<string> endpointDNSNamesStringList = new List<string>();
-                                            List<string> endpointMACAddressStringList = new List<string>();
-
                                             foreach (IPAddress endpointIPAddress in Dns.GetHostAddresses(responseURI.Host))
                                             {
                                                 if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
@@ -1217,10 +1235,11 @@ namespace EndpointChecker
                                                     try
                                                     {
                                                         // RESOLVE MAC ADDRESS(ES)
-                                                        string macAddress = GetMACAddress(endpointIPAddress);
+                                                        string macAddress = WindowsLookupService.Lookup(endpointIPAddress);
 
-                                                        // IF ENDPOINT IP ADDRESS IS NOT LOCAL OR
-                                                        // RESOLVED MAC IS NOT MAC ADDRESS OF ANY DNS SERVER OR DEFAULT GATEWAY
+                                                        // IF ENDPOINT IP ADDRESS IS ANY OF 'DNS SERVER OR DEFAULT GATEWAY' IPs
+                                                        // OR
+                                                        // RESOLVED MAC IS NOT ANY OF 'DNS SERVER OR DEFAULT GATEWAY' MAC ADDRESSes
                                                         if (!string.IsNullOrEmpty(macAddress) &&
                                                            (!localDNSAndGWMACAddresses.Contains(macAddress) ||
                                                             localDNSAndGWIPAddresses.Contains(endpointIPAddress.ToString())))
@@ -1257,24 +1276,24 @@ namespace EndpointChecker
                                                 endpoint.MACAddress = endpointMACAddressStringList.ToArray();
                                             }
                                         }
-                                    }
-                                    catch
-                                    {
+                                        catch
+                                        {
+                                        }
                                     }
                                 }
 
                                 if (!BW_GetStatus.CancellationPending)
                                 {
                                     // PING HOST
+                                    if (validationMethod == ValidationMethod.Ping)
+                                    {
+                                        endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
+                                    }
+
                                     try
                                     {
-                                        if (validationMethod == ValidationMethod.Ping || pingHost)
-                                        {
-                                            if (validationMethod == ValidationMethod.Ping)
-                                            {
-                                                endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
-                                            }
-
+                                        if (pingHost)
+                                        {                                          
                                             string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 1);
 
                                             if (!string.IsNullOrEmpty(pingRoundtripTime))
@@ -1310,7 +1329,6 @@ namespace EndpointChecker
                         {
                             // UPDATE 'LAST SEEN ONLINE' VALUE
                             if ((validationMethod == ValidationMethod.Protocol &&
-                                 !endpoint.ResponseCode.StartsWith("4") &&
                                  endpoint.ResponseCode != status_Error &&
                                  endpoint.ResponseCode != status_NotAvailable) ||
                                 (validationMethod == ValidationMethod.Ping &&
@@ -1456,7 +1474,6 @@ namespace EndpointChecker
             httpWebRequest.ProtocolVersion = httpWebRequest_ProtocolVersion;
             httpWebRequest.Date = DateTime.Now.ToUniversalTime();
             httpWebRequest.MaximumAutomaticRedirections = 100;
-            //   httpWebRequest.Referer = endpointURI.Host;
 
             // CUSTOM HEADERS
             WebHeaderCollection requestHeadersCollection = new WebHeaderCollection
@@ -3052,8 +3069,8 @@ namespace EndpointChecker
                         _ = endpointsStatusExport_Summary_WorkSheet.Cell("B1").SetValue("Version " + app_VersionString + " (built " + app_BuiltDate + ")");
                         _ = endpointsStatusExport_Summary_WorkSheet.Cell("A2").SetValue("Operating System");
                         _ = endpointsStatusExport_Summary_WorkSheet.Cell("B2").SetValue(os_VersionString);
-                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("A3").SetValue("Active .NET Runtime");
-                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("B3").SetValue(dotNetFramework_ActiveVersion);
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("A3").SetValue("Target Framework Version");
+                        _ = endpointsStatusExport_Summary_WorkSheet.Cell("B3").SetValue(dotNetFramework_TargetVersion.FrameworkDisplayName);
                         _ = endpointsStatusExport_Summary_WorkSheet.Cell("A4").SetValue("System Memory (RAM)");
                         _ = endpointsStatusExport_Summary_WorkSheet.Cell("B4").SetValue(systemMemorySize);
                         _ = endpointsStatusExport_Summary_WorkSheet.Cell("A5").SetValue("User Name");
@@ -3599,12 +3616,20 @@ namespace EndpointChecker
                 // TERMINATE PROCESS AND THEN CLOSE APPLICATION
                 btn_Terminate_Click(this, null);
             }
+            else
+            {
+                // SAVE SETTINGS
+                SaveWindowSizeAndPosition();
+                SaveListViewColumnsWidthAndOrder();
+                SaveDisabledItemsListAndFilter();
+                SaveConfiguration();
 
-            // SAVE SETTINGS
-            SaveWindowSizeAndPosition();
-            SaveListViewColumnsWidthAndOrder();
-            SaveDisabledItemsListAndFilter();
-            SaveConfiguration();
+                // IF UPDATE AVAILABLE, RUN UPDATER
+                if (app_AutoUpdateNow)
+                {
+                    ExecuteUpdater();
+                }
+            }
         }
 
         public void trayIcon_BalloonTipClosed(object sender, EventArgs e)
@@ -3998,7 +4023,9 @@ namespace EndpointChecker
                         line = line.Trim();
 
                         // CHECK LINE
-                        if (!string.IsNullOrEmpty(line) && line != "|")
+                        if (!string.IsNullOrEmpty(line) &&
+                            line != "|" &&
+                            !line.StartsWith("#"))
                         {
                             // CHECK ITEMS COUNT LIMIT
                             if (lineNumber > Settings.Default.Config_MaximumEndpointReferencesCount)
@@ -4676,29 +4703,7 @@ namespace EndpointChecker
 
             return false;
         }
-
-        public static string GetMACAddress(IPAddress ipAddress)
-        {
-            byte[] macAddr = new byte[6];
-            uint macAddrLen = (uint)macAddr.Length;
-
-            if (SendARP(BitConverter.ToInt32(ipAddress.GetAddressBytes(), 0), 0, macAddr, ref macAddrLen) == 0)
-            {
-                string[] macStrArr = new string[(int)macAddrLen];
-
-                for (int i = 0; i < macAddrLen; i++)
-                {
-                    macStrArr[i] = macAddr[i].ToString("x2");
-                }
-
-                return string.Join(":", macStrArr).ToUpper();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
+                
         public static void GetLocalDNSAndGWAddresses(out List<string> localDNSAndGWipAddresses, out List<string> localDNSAndGWmacAddresses)
         {
             localDNSAndGWipAddresses = new List<string>();
@@ -4722,10 +4727,11 @@ namespace EndpointChecker
                         {
                             foreach (string dnsIP in (Array)property.Value)
                             {
-                                if (!string.IsNullOrEmpty(dnsIP))
+                                if (!string.IsNullOrEmpty(dnsIP) &&
+                                    !localDNSAndGWipAddresses.Contains(dnsIP))
                                 {
                                     localDNSAndGWipAddresses.Add(dnsIP);
-                                    localDNSAndGWmacAddresses.Add(GetMACAddress(IPAddress.Parse(dnsIP)));
+                                    localDNSAndGWmacAddresses.Add(WindowsLookupService.Lookup(IPAddress.Parse(dnsIP)));
                                 }
                             }
                         }
@@ -4746,10 +4752,11 @@ namespace EndpointChecker
                         {
                             foreach (string gwIP in (Array)property.Value)
                             {
-                                if (!string.IsNullOrEmpty(gwIP))
+                                if (!string.IsNullOrEmpty(gwIP) &&
+                                    !localDNSAndGWipAddresses.Contains(gwIP))
                                 {
                                     localDNSAndGWipAddresses.Add(gwIP);
-                                    localDNSAndGWmacAddresses.Add(GetMACAddress(IPAddress.Parse(gwIP)));
+                                    localDNSAndGWmacAddresses.Add(WindowsLookupService.Lookup(IPAddress.Parse(gwIP)));
                                 }
                             }
                         }
@@ -5594,6 +5601,31 @@ namespace EndpointChecker
         public void tray_Notifications_Disable_Click(object sender, EventArgs e)
         {
             cb_TrayBalloonNotify.Checked = false;
+        }
+
+        public void pb_CheckForUpdate_Click(object sender, EventArgs e)
+        {
+            CheckForUpdate();
+
+            if (app_AutoUpdateNow)
+            {
+                tray_CheckForUpdate.Visible = false;
+
+                Close();
+            }
+            else if (!app_UpdateAvailable)
+            {
+                MessageBox.Show(
+                    "You are using the latest version available.",
+                    "Check for Update",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+        }
+
+        public void tray_CheckForUpdate_Click(object sender, EventArgs e)
+        {
+            pb_CheckForUpdate_Click(this, null);
         }
     }
 

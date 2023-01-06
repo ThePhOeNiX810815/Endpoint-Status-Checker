@@ -65,6 +65,8 @@
             this.tray_Notifications_Enable = new System.Windows.Forms.ToolStripMenuItem();
             this.tray_Notifications_Disable = new System.Windows.Forms.ToolStripMenuItem();
             this.tray_Separator_2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tray_CheckForUpdate = new System.Windows.Forms.ToolStripMenuItem();
+            this.tray_Separator_3 = new System.Windows.Forms.ToolStripSeparator();
             this.tray_Exit = new System.Windows.Forms.ToolStripMenuItem();
             this.cb_TrayBalloonNotify = new System.Windows.Forms.CheckBox();
             this.lbl_RequestTimeoutSecondsText = new System.Windows.Forms.Label();
@@ -155,6 +157,7 @@
             this.pb_SoftPedia = new System.Windows.Forms.PictureBox();
             this.pb_RefreshProcess = new System.Windows.Forms.PictureBox();
             this.TIMER_ContinuousRefresh = new System.Windows.Forms.Timer(this.components);
+            this.pb_CheckForUpdate = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
@@ -175,6 +178,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_SoftPedia)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_CheckForUpdate)).BeginInit();
             this.SuspendLayout();
             // 
             // lv_Endpoints
@@ -431,10 +435,12 @@
             this.tray_Notifications_Enable,
             this.tray_Notifications_Disable,
             this.tray_Separator_2,
+            this.tray_CheckForUpdate,
+            this.tray_Separator_3,
             this.tray_Exit});
             this.trayContextMenu.Name = "tray_contextMenu";
             this.trayContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.trayContextMenu.Size = new System.Drawing.Size(223, 146);
+            this.trayContextMenu.Size = new System.Drawing.Size(223, 178);
             // 
             // tray_SpeedTest
             // 
@@ -481,6 +487,19 @@
             // 
             this.tray_Separator_2.Name = "tray_Separator_2";
             this.tray_Separator_2.Size = new System.Drawing.Size(219, 6);
+            // 
+            // tray_CheckForUpdate
+            // 
+            this.tray_CheckForUpdate.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.tray_CheckForUpdate.Name = "tray_CheckForUpdate";
+            this.tray_CheckForUpdate.Size = new System.Drawing.Size(222, 26);
+            this.tray_CheckForUpdate.Text = "Check for Update";
+            this.tray_CheckForUpdate.Click += new System.EventHandler(this.tray_CheckForUpdate_Click);
+            // 
+            // tray_Separator_3
+            // 
+            this.tray_Separator_3.Name = "tray_Separator_3";
+            this.tray_Separator_3.Size = new System.Drawing.Size(219, 6);
             // 
             // tray_Exit
             // 
@@ -601,7 +620,7 @@
             // 
             this.lbl_ProgressCount.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lbl_ProgressCount.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ProgressCount.Location = new System.Drawing.Point(238, 559);
+            this.lbl_ProgressCount.Location = new System.Drawing.Point(236, 559);
             this.lbl_ProgressCount.Name = "lbl_ProgressCount";
             this.lbl_ProgressCount.Size = new System.Drawing.Size(610, 30);
             this.lbl_ProgressCount.TabIndex = 19;
@@ -1543,7 +1562,7 @@
             this.pb_ITNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_ITNetwork.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_ITNetwork.Image = ((System.Drawing.Image)(resources.GetObject("pb_ITNetwork.Image")));
-            this.pb_ITNetwork.Location = new System.Drawing.Point(1051, 535);
+            this.pb_ITNetwork.Location = new System.Drawing.Point(1013, 535);
             this.pb_ITNetwork.Name = "pb_ITNetwork";
             this.pb_ITNetwork.Size = new System.Drawing.Size(40, 40);
             this.pb_ITNetwork.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1556,7 +1575,7 @@
             this.pb_FeatureRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_FeatureRequest.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_FeatureRequest.Image = ((System.Drawing.Image)(resources.GetObject("pb_FeatureRequest.Image")));
-            this.pb_FeatureRequest.Location = new System.Drawing.Point(906, 538);
+            this.pb_FeatureRequest.Location = new System.Drawing.Point(868, 538);
             this.pb_FeatureRequest.Name = "pb_FeatureRequest";
             this.pb_FeatureRequest.Size = new System.Drawing.Size(32, 32);
             this.pb_FeatureRequest.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1575,7 +1594,7 @@
             this.pb_GitHub.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_GitHub.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_GitHub.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitHub.Image")));
-            this.pb_GitHub.Location = new System.Drawing.Point(931, 540);
+            this.pb_GitHub.Location = new System.Drawing.Point(893, 540);
             this.pb_GitHub.Name = "pb_GitHub";
             this.pb_GitHub.Size = new System.Drawing.Size(53, 30);
             this.pb_GitHub.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1599,7 +1618,7 @@
             this.pb_GitLab.BackColor = System.Drawing.Color.Transparent;
             this.pb_GitLab.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_GitLab.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitLab.Image")));
-            this.pb_GitLab.Location = new System.Drawing.Point(975, 536);
+            this.pb_GitLab.Location = new System.Drawing.Point(937, 536);
             this.pb_GitLab.Name = "pb_GitLab";
             this.pb_GitLab.Size = new System.Drawing.Size(42, 40);
             this.pb_GitLab.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1613,7 +1632,7 @@
             this.pb_AppWebPage.BackColor = System.Drawing.Color.Transparent;
             this.pb_AppWebPage.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_AppWebPage.Image = ((System.Drawing.Image)(resources.GetObject("pb_AppWebPage.Image")));
-            this.pb_AppWebPage.Location = new System.Drawing.Point(1092, 540);
+            this.pb_AppWebPage.Location = new System.Drawing.Point(1054, 540);
             this.pb_AppWebPage.Name = "pb_AppWebPage";
             this.pb_AppWebPage.Size = new System.Drawing.Size(32, 32);
             this.pb_AppWebPage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1668,7 +1687,7 @@
             this.pb_SoftPedia.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pb_SoftPedia.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pb_SoftPedia.Image = ((System.Drawing.Image)(resources.GetObject("pb_SoftPedia.Image")));
-            this.pb_SoftPedia.Location = new System.Drawing.Point(1016, 538);
+            this.pb_SoftPedia.Location = new System.Drawing.Point(978, 538);
             this.pb_SoftPedia.Name = "pb_SoftPedia";
             this.pb_SoftPedia.Size = new System.Drawing.Size(32, 32);
             this.pb_SoftPedia.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1693,12 +1712,27 @@
             this.TIMER_ContinuousRefresh.Interval = 5000;
             this.TIMER_ContinuousRefresh.Tick += new System.EventHandler(this.TIMER_ContinuousRefresh_Tick);
             // 
+            // pb_CheckForUpdate
+            // 
+            this.pb_CheckForUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pb_CheckForUpdate.BackColor = System.Drawing.Color.Transparent;
+            this.pb_CheckForUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pb_CheckForUpdate.Image = global::EndpointChecker.Properties.Resources.updateIcon;
+            this.pb_CheckForUpdate.Location = new System.Drawing.Point(1089, 536);
+            this.pb_CheckForUpdate.Name = "pb_CheckForUpdate";
+            this.pb_CheckForUpdate.Size = new System.Drawing.Size(36, 36);
+            this.pb_CheckForUpdate.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_CheckForUpdate.TabIndex = 72;
+            this.pb_CheckForUpdate.TabStop = false;
+            this.pb_CheckForUpdate.Click += new System.EventHandler(this.pb_CheckForUpdate_Click);
+            // 
             // CheckerMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1134, 593);
+            this.Controls.Add(this.pb_CheckForUpdate);
             this.Controls.Add(this.groupBox_CommonOptions);
             this.Controls.Add(this.pb_RefreshProcess);
             this.Controls.Add(this.pb_SoftPedia);
@@ -1779,6 +1813,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_SoftPedia)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_CheckForUpdate)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1910,6 +1945,9 @@
         public System.Windows.Forms.ToolStripMenuItem tray_Notifications_Enable;
         public System.Windows.Forms.ToolStripSeparator tray_Separator_2;
         public System.Windows.Forms.ToolStripMenuItem tray_Notifications_Disable;
+        public System.Windows.Forms.PictureBox pb_CheckForUpdate;
+        public System.Windows.Forms.ToolStripMenuItem tray_CheckForUpdate;
+        public System.Windows.Forms.ToolStripSeparator tray_Separator_3;
     }
 }
 

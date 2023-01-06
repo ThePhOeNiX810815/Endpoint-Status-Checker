@@ -973,6 +973,16 @@ namespace EndpointChecker.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap updateIcon {
+            get {
+                object obj = ResourceManager.GetObject("updateIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap updater_Background {
             get {
                 object obj = ResourceManager.GetObject("updater_Background", resourceCulture);

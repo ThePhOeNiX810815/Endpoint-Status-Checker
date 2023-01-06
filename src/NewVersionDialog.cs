@@ -19,7 +19,7 @@ namespace EndpointChecker
         public static extern bool ReleaseCapture();
         public bool updateNow { get; set; }
         public bool updateSkip { get; set; }
-        public bool updateInFuture { get; set; }
+        public bool autoUpdateInFuture { get; set; }
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public NewVersionDialog()
@@ -54,7 +54,7 @@ namespace EndpointChecker
         {
             updateNow = false;
             updateSkip = true;
-            updateInFuture = cb_FutureAutoUpdate.Checked;
+            autoUpdateInFuture = cb_FutureAutoUpdate.Checked;
 
             Close();
         }
@@ -68,7 +68,7 @@ namespace EndpointChecker
         {
             updateNow = true;
             updateSkip = false;
-            updateInFuture = cb_FutureAutoUpdate.Checked;
+            autoUpdateInFuture = cb_FutureAutoUpdate.Checked;
 
             Close();
         }
