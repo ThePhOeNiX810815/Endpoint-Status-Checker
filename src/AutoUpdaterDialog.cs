@@ -140,7 +140,7 @@ namespace EndpointChecker
             {
                 // EXECUTE UPDATED APPLICATION
                 ProcessStartInfo startApp = new ProcessStartInfo(Path.Combine(app_CurrentWorkingDir, app_ApplicationExecutableName));
-                _ = Process.Start(startApp);
+                Process.Start(startApp);
             }
 
             // CLOSE

@@ -40,11 +40,15 @@ namespace EndpointChecker
             }
 
             // SET RELEASE TYPE LABEL
-            if (!app_IsOriginalSignedExecutable)
+            if (app_UpdateTestMode)
+            {
+                lbl_ReleaseType.Text = "UPDATER TEST MODE";
+                lbl_ReleaseType.ForeColor = Color.OrangeRed;
+            }
+            else if (!app_IsOriginalSignedExecutable)
             {
                 lbl_ReleaseType.Text = "CUSTOM UNSIGNED BUILD";
                 lbl_ReleaseType.ForeColor = Color.Red;
-                lbl_ReleaseType.Visible = true;
             }
             else if (app_LatestPackageVersion > new Version(0, 0, 0, 0))
             {
@@ -63,8 +67,6 @@ namespace EndpointChecker
                     lbl_ReleaseType.Text = "RELEASE VERSION";
                     lbl_ReleaseType.ForeColor = Color.Green;
                 }
-
-                lbl_ReleaseType.Visible = true;
             }
 
             Opacity = 1;
@@ -99,6 +101,7 @@ namespace EndpointChecker
                 Close();
 
                 GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
         }
 
@@ -113,6 +116,7 @@ namespace EndpointChecker
             Close();
 
             GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
     }
 }

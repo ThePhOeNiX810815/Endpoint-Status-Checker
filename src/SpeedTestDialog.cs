@@ -837,7 +837,7 @@ namespace EndpointChecker
             {
                 Application.DoEvents();
 
-                _ = Invoke(action);
+                Invoke(action);
             }
             catch
             {
@@ -930,7 +930,7 @@ namespace EndpointChecker
 
                             ThreadSafeInvoke(() =>
                             {
-                                _ = cb_SpeedTest_TestServer.Items.Add(GetStringCorrectEncoding(testServer.Sponsor) +
+                                cb_SpeedTest_TestServer.Items.Add(GetStringCorrectEncoding(testServer.Sponsor) +
                                                                   " (" +
                                                                   GetStringCorrectEncoding(testServer.Name) +
                                                                   "/" +
@@ -993,7 +993,7 @@ namespace EndpointChecker
             lbl_SpeedTest_Latency_Value.Text = status_NotAvailable;
 
             cb_SpeedTest_TestServer.Items.Clear();
-            _ = cb_SpeedTest_TestServer.Items.Add("Using Best Server (by latency)");
+            cb_SpeedTest_TestServer.Items.Add("Using Best Server (by latency)");
 
             lbl_SpeedTest_CurrentCountry_Value.BackColor = Color.DimGray;
             cb_SpeedTest_TestServer.BackColor = Color.DimGray;

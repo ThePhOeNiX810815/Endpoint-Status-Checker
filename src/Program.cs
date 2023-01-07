@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -167,6 +168,7 @@ namespace EndpointChecker
         public static Version app_AutoUpdate_SkipVersion;
         public static bool app_AutoUpdateNow = false;
         public static bool app_UpdateAvailable = false;
+        public static bool app_UpdateTestMode = false;
         public static Version app_LatestPackageVersion = new Version(0, 0, 0, 0);
         public static string app_LatestPackageLink = string.Empty;
         public static string app_LatestPackageDate = string.Empty;
@@ -264,7 +266,7 @@ namespace EndpointChecker
             else
             {
                 // GET SYSTEM MEMORY SIZE
-                _ = GetPhysicallyInstalledSystemMemory(out long systemMemorySize_KB);
+                GetPhysicallyInstalledSystemMemory(out long systemMemorySize_KB);
                 systemMemorySize = (systemMemorySize_KB / 1024 / 1024).ToString() + " GB";
 
                 // CHECK APPLICATION INSTANCE
@@ -276,9 +278,9 @@ namespace EndpointChecker
                         IntPtr wdwIntPtr = FindWindow(null, app_Title);
                         Windowplacement placement = new Windowplacement();
 
-                        _ = GetWindowPlacement(wdwIntPtr, ref placement);
-                        _ = ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
-                        _ = SetForegroundWindow(wdwIntPtr);
+                        GetWindowPlacement(wdwIntPtr, ref placement);
+                        ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
+                        SetForegroundWindow(wdwIntPtr);
                     }
                     else if (RequiredLibrariesExists(app_RequiredLibsList))
                     {
@@ -287,6 +289,8 @@ namespace EndpointChecker
                         if (app_AutoUpdateNow)
                         {
                             ExecuteUpdater();
+
+                            Environment.Exit(0);
                         }
                         else
                         {
@@ -312,7 +316,7 @@ namespace EndpointChecker
             {
                 if (!File.Exists(Path.Combine(app_CurrentWorkingDir, library)))
                 {
-                    _ = MessageBox.Show(
+                    MessageBox.Show(
                         "Referenced library \"" +
                         library +
                         "\" not found in \"" +
@@ -372,7 +376,7 @@ namespace EndpointChecker
             try
             {
                 s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                _ = s.Read(b, 0, 2048);
+                s.Read(b, 0, 2048);
             }
             finally
             {
@@ -381,6 +385,7 @@ namespace EndpointChecker
                     s.Close();
 
                     GC.Collect();
+                    GC.WaitForPendingFinalizers();
                 }
             }
 
@@ -445,8 +450,9 @@ namespace EndpointChecker
                         .DownloadString(
                             "https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/release_notes.rtf");
 
-                    if (app_LatestPackageVersion > app_Version &&
-                        app_LatestPackageVersion > app_AutoUpdate_SkipVersion)
+                    if ((app_LatestPackageVersion > app_Version &&
+                         app_LatestPackageVersion > app_AutoUpdate_SkipVersion) || 
+                        app_UpdateTestMode)
                     {
                         app_UpdateAvailable = true;
 
@@ -459,7 +465,7 @@ namespace EndpointChecker
                         {
                             // SHOW NEW VERSION DIALOG
                             NewVersionDialog newVersionDialog = new NewVersionDialog();
-                            _ = newVersionDialog.ShowDialog();
+                            newVersionDialog.ShowDialog();
 
                             if (newVersionDialog.autoUpdateInFuture)
                             {
@@ -568,13 +574,18 @@ namespace EndpointChecker
                 new List<string> { endpointDefinitonsFile },
                 autoCloseApp);
 
-            _ = exDialog.ShowDialog();
+            exDialog.ShowDialog();
 
             if (!autoCloseApp &&
                 senderForm != null)
             {
                 senderForm.Show();
             }
+        }
+
+        public static string NotAvailable_IfNullorEmpty(string input)
+        {
+            return string.IsNullOrEmpty(input) ? status_NotAvailable : input;
         }
 
         public static void ExecuteUpdater()
@@ -596,16 +607,15 @@ namespace EndpointChecker
                                 app_LatestPackageDate
                             };
 
-            // EXECUTE UPDATER
+            // PREPARE UPDATER
             ProcessStartInfo startUpdater = new ProcessStartInfo(updaterExecutable)
             {
                 Arguments = string.Join(" ", updaterArgs),
-                UseShellExecute = false
+                UseShellExecute = true
             };
-            _ = Process.Start(startUpdater);
 
-            // CLOSE
-            Environment.Exit(0);
+            // EXECUTE UPDATE PROCESS
+            Process.Start(startUpdater);
         }
     }
 }

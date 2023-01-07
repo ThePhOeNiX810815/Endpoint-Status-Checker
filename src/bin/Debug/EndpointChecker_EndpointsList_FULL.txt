@@ -2,23 +2,36 @@
 #
 # Endpoint Definitions List
 
+# LOCAL DEVICES
+http://192.168.1.9
+http://192.168.1.100
+http://192.168.1.101
+http://192.168.1.102
+http://192.168.1.201
+http://192.168.1.200
+http://192.168.1.111
+http://192.168.1.220
+http://192.168.1.225
+http://192.168.1.250
+
 # TESTING
-HTTPBIN ->> HTTP Bin Basic Auth Test (unauthorized)|http://httpbin.org/basic-auth/auth/test
-HTTPBIN ->> HTTP Bin Basic Auth Test (authorized)|http://auth:test@httpbin.org/basic-auth/auth/test
-HTTPBIN ->> HTTPS Bin Basic Auth Test (unauthorized)|https://httpbin.org/basic-auth/auth/test
-HTTPBIN ->> HTTPS Bin Basic Auth Test (authorized)|https://auth:test@httpbin.org/basic-auth/auth/test
-HTTPBIN ->> HTTP Cookies Test|http://httpbin.org/cookies
-HTTPBIN ->> HTTP Anything Test|http://httpbin.org/anything
-HTTPBIN ->> HTTPS Cookies Test|https://httpbin.org/cookies
-HTTPBIN ->> HTTPS Anything Test|https://httpbin.org/anything
-https://httpstat.us/200
-https://httpstat.us/201
-https://httpstat.us/202
-https://httpstat.us/203
-https://httpstat.us/204
-https://httpstat.us/205
-https://httpstat.us/206
-https://httpstat.us/504
+_HTTPBIN ->> HTTP Bin Basic Auth Test (unauthorized)|http://httpbin.org/basic-auth/auth/test
+_HTTPBIN ->> HTTP Bin Basic Auth Test (authorized)|http://auth:test@httpbin.org/basic-auth/auth/test
+_HTTPBIN ->> HTTPS Bin Basic Auth Test (unauthorized)|https://httpbin.org/basic-auth/auth/test
+_HTTPBIN ->> HTTPS Bin Basic Auth Test (authorized)|https://auth:test@httpbin.org/basic-auth/auth/test
+_HTTPBIN ->> HTTP Cookies Test|http://httpbin.org/cookies
+_HTTPBIN ->> HTTP Anything Test|http://httpbin.org/anything
+_HTTPBIN ->> HTTPS Cookies Test|https://httpbin.org/cookies
+_HTTPBIN ->> HTTPS Anything Test|https://httpbin.org/anything
+
+_HTTPSTAT ->> Code 200|https://httpstat.us/200
+_HTTPSTAT ->> Code 201|https://httpstat.us/201
+_HTTPSTAT ->> Code 202|https://httpstat.us/202
+_HTTPSTAT ->> Code 203|https://httpstat.us/203
+_HTTPSTAT ->> Code 204|https://httpstat.us/204
+_HTTPSTAT ->> Code 205|https://httpstat.us/205
+_HTTPSTAT ->> Code 206|https://httpstat.us/206
+_HTTPSTAT ->> Code 504|https://httpstat.us/504
 
 # FTP ENDPOINTS
 ftp://128.10.252.10/pub
@@ -56,7 +69,6 @@ http://185.86.138.32
 http://185.86.138.78
 http://185.86.138.79
 http://188.40.29.114
-http://192.168.1.9
 http://192.185.11.46
 http://192.185.26.152/404.html
 http://192.186.192.110

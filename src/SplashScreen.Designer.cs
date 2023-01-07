@@ -106,7 +106,6 @@ namespace EndpointChecker
             this.lbl_ReleaseType.Size = new System.Drawing.Size(302, 25);
             this.lbl_ReleaseType.TabIndex = 5;
             this.lbl_ReleaseType.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lbl_ReleaseType.Visible = false;
             // 
             // pb_CloseDialog
             // 

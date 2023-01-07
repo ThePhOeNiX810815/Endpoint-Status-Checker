@@ -128,7 +128,7 @@ namespace EndpointChecker
             using (StringWriter sw = new StringWriter())
             {
                 table.RenderControl(new HtmlTextWriter(sw));
-                _ = mailMessageString.AppendFormat(sw.ToString());
+                mailMessageString.AppendFormat(sw.ToString());
                 eMailMessageBody = mailMessageString.ToString();
             }
 
@@ -184,7 +184,7 @@ namespace EndpointChecker
                 {
                     Hide();
 
-                    _ = MessageBox.Show(
+                    MessageBox.Show(
                             "Unable to send exception details e-mail due to following error:" +
                             Environment.NewLine +
                             Environment.NewLine +
@@ -348,7 +348,7 @@ namespace EndpointChecker
             {
                 Application.DoEvents();
 
-                _ = Invoke(action);
+                Invoke(action);
             }
             catch
             {

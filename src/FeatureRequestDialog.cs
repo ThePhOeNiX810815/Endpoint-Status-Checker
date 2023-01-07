@@ -69,7 +69,7 @@ namespace EndpointChecker
             using (StringWriter sw = new StringWriter())
             {
                 table.RenderControl(new HtmlTextWriter(sw));
-                _ = mailMessageString.AppendFormat(sw.ToString());
+                mailMessageString.AppendFormat(sw.ToString());
                 eMailMessageBody = mailMessageString.ToString();
             }
 
@@ -112,7 +112,7 @@ namespace EndpointChecker
                 {
                     Hide();
 
-                    _ = MessageBox.Show(
+                    MessageBox.Show(
                             "Unable to send Feature Request e-mail due to following error:" +
                             Environment.NewLine +
                             Environment.NewLine +
@@ -126,6 +126,7 @@ namespace EndpointChecker
             ThreadSafeInvoke(() =>
             {
                 GC.Collect();
+                GC.WaitForPendingFinalizers();
 
                 // CLOSE DIALOG
                 Close();
@@ -202,7 +203,7 @@ namespace EndpointChecker
             {
                 Application.DoEvents();
 
-                _ = Invoke(action);
+                Invoke(action);
             }
             catch
             {
@@ -285,9 +286,10 @@ namespace EndpointChecker
 
         public void btn_Close_Click(object sender, EventArgs e)
         {
-            Close();
-
             GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            Close();
         }
 
         public void btn_AttachFiles_Click(object sender, EventArgs e)
@@ -305,7 +307,7 @@ namespace EndpointChecker
                         ToolTipText = fileName + " (press DEL to remove from list)"
                     };
 
-                    _ = lv_AttachedFiles.Items.Add(fileItem);
+                    lv_AttachedFiles.Items.Add(fileItem);
                 }
             }
         }

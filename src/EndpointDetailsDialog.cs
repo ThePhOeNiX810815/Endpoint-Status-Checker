@@ -274,6 +274,7 @@ namespace EndpointChecker
             cb_IPAddress.SelectedIndex = 0;
             tb_Port.Text = _selectedEndpoint.Port;
             tb_Protocol.Text = _selectedEndpoint.Protocol;
+            tb_PingTime.Text = _selectedEndpoint.PingRoundtripTime;
             tb_ResponseTime.Text = _selectedEndpoint.ResponseTime;
 
             tb_ResponseURL.Text = _selectedEndpoint.ResponseAddress.Replace(
@@ -315,8 +316,8 @@ namespace EndpointChecker
                         foreach (Property header in _selectedEndpoint.HTTPRequestHeaders.PropertyItem)
                         {
                             ListViewItem headerItem = new ListViewItem(header.ItemName, 4);
-                            _ = headerItem.SubItems.Add(header.ItemValue);
-                            _ = lv_HTTP_RequestHeaders.Items.Add(headerItem);
+                            headerItem.SubItems.Add(header.ItemValue);
+                            lv_HTTP_RequestHeaders.Items.Add(headerItem);
                         }
 
                         // AUTO SIZE 'KEY' COLUMN BY LONGEST ITEM
@@ -332,8 +333,8 @@ namespace EndpointChecker
                         foreach (Property header in _selectedEndpoint.HTTPResponseHeaders.PropertyItem)
                         {
                             ListViewItem headerItem = new ListViewItem(header.ItemName, 5);
-                            _ = headerItem.SubItems.Add(header.ItemValue);
-                            _ = lv_HTTP_ResponseHeaders.Items.Add(headerItem);
+                            headerItem.SubItems.Add(header.ItemValue);
+                            lv_HTTP_ResponseHeaders.Items.Add(headerItem);
                         }
 
                         // AUTO SIZE 'KEY' COLUMN BY LONGEST ITEM
@@ -468,8 +469,8 @@ namespace EndpointChecker
                                 metaItem.ImageIndex = 6;
                             }
 
-                            _ = metaItem.SubItems.Add(meta.ItemValue);
-                            _ = lv_HTML_MetaInfo.Items.Add(metaItem);
+                            metaItem.SubItems.Add(meta.ItemValue);
+                            lv_HTML_MetaInfo.Items.Add(metaItem);
                         }
 
                         // AUTO SIZE 'META TAG' COLUMN BY LONGEST ITEM
@@ -507,8 +508,8 @@ namespace EndpointChecker
                         foreach (Property sslProperty in _selectedEndpoint.SSLCertificateProperties.PropertyItem)
                         {
                             ListViewItem sslItem = new ListViewItem(sslProperty.ItemName, 12);
-                            _ = sslItem.SubItems.Add(sslProperty.ItemValue);
-                            _ = lv_SSLCertificate.Items.Add(sslItem);
+                            sslItem.SubItems.Add(sslProperty.ItemValue);
+                            lv_SSLCertificate.Items.Add(sslItem);
                         }
 
                         // ADD SSL CERTIFICATE INFO PAGE
@@ -521,9 +522,9 @@ namespace EndpointChecker
                         foreach (Property pageLink in _selectedEndpoint.HTMLPageLinks.PropertyItem)
                         {
                             ListViewItem pageLinkItem = new ListViewItem("UNKNOWN", 14);
-                            _ = pageLinkItem.SubItems.Add(pageLink.ItemName);
-                            _ = pageLinkItem.SubItems.Add(pageLink.ItemValue);
-                            _ = lv_PageLinks.Items.Add(pageLinkItem);
+                            pageLinkItem.SubItems.Add(pageLink.ItemName);
+                            pageLinkItem.SubItems.Add(pageLink.ItemValue);
+                            lv_PageLinks.Items.Add(pageLinkItem);
                         }
 
                         // ADD HTML PAGE LINKS PAGE
@@ -576,16 +577,16 @@ namespace EndpointChecker
 
                     ListViewItem netShareItem = new ListViewItem(shareType, typeImageIndex);
 
-                    _ = netShareItem.SubItems.Add(valueStringArray[1].TrimStart().TrimEnd());
+                    netShareItem.SubItems.Add(valueStringArray[1].TrimStart().TrimEnd());
 
                     if (valueStringArray.Length > 2)
                     {
-                        _ = netShareItem.SubItems.Add(valueStringArray[2].Replace(")", string.Empty).TrimStart().TrimEnd());
+                        netShareItem.SubItems.Add(valueStringArray[2].Replace(")", string.Empty).TrimStart().TrimEnd());
                     }
 
                     netShareItem.ToolTipText = "Mouse doubleclick to browse shared resource";
 
-                    _ = lv_NetworkShares.Items.Add(netShareItem);
+                    lv_NetworkShares.Items.Add(netShareItem);
                 }
 
                 // ADD NETWORK SHARES TAB PAGE
@@ -636,6 +637,7 @@ namespace EndpointChecker
                         httpWebResponse.Close();
 
                         GC.Collect();
+                        GC.WaitForPendingFinalizers();
                     }
                 }
             });
@@ -646,14 +648,14 @@ namespace EndpointChecker
             if (e.Node.Address.ToString() != "0.0.0.0")
             {
                 ListViewItem item = new ListViewItem((lv_RouteList.Items.Count + 1).ToString(), 3);
-                _ = item.SubItems.Add(e.Node.Address.ToString());
-                _ = item.SubItems.Add(e.Node.DNSName);
-                _ = item.SubItems.Add(e.Node.RoundTripTime);
+                item.SubItems.Add(e.Node.Address.ToString());
+                item.SubItems.Add(e.Node.DNSName);
+                item.SubItems.Add(e.Node.RoundTripTime);
                 item.ToolTipText = "Mouse doubleclick to open in browser [HTTP]";
 
                 ThreadSafeInvoke(() =>
                 {
-                    _ = lv_RouteList.Items.Add(item);
+                    lv_RouteList.Items.Add(item);
                 });
             }
         }
@@ -782,30 +784,52 @@ namespace EndpointChecker
                 TIMER_PingRefresh.Stop();
                 TIMER_PingRefresh.Enabled = false;
                 pb_PingRefresh.Image = Resources.refresh.ToBitmap();
-                tb_PingTime.Text = GetPingTime(new Uri(_selectedEndpoint.ResponseAddress).Host, _pingTimeout, 3);
+
+                DoPing(false);
             }
         }
 
         public void TIMER_PingRefresh_Tick(object sender, EventArgs e)
         {
+            DoPing(true);
+        }
+
+        public void DoPing(bool isLiveRefresh)
+        {
             NewBackgroundThread(() =>
             {
+                if (_selectedEndpoint.PingRoundtripTime == status_NotAvailable)
+                {
+                    SetPingResponse(status_NotAvailable, isLiveRefresh);
+                }
+
                 try
                 {
-                    string pingRoundtripTime = GetPingTime(new Uri(_selectedEndpoint.ResponseAddress).Host, _pingTimeout, 3);
+                    string _pingRoundtripTime = GetPingTime(new Uri(_selectedEndpoint.ResponseAddress).Host, _pingTimeout, 3);
 
-                    if (!string.IsNullOrEmpty(pingRoundtripTime))
+                    if (!string.IsNullOrEmpty(_pingRoundtripTime))
                     {
-                        ThreadSafeInvoke(() =>
-                        {
-                            tb_PingTime.Text = pingRoundtripTime;
-                            tb_PingTime.Text += " (1s live refresh)";
-                        });
+                        SetPingResponse(_pingRoundtripTime, isLiveRefresh);
                     }
                 }
                 catch
                 {
                 }
+            });
+        }
+
+        public void SetPingResponse(string _pingResponse, bool _isLiveRefresh)
+        {
+            _selectedEndpoint.PingRoundtripTime = _pingResponse;
+
+            if (_isLiveRefresh)
+            {
+                _pingResponse += " (1s live refresh)";
+            }
+
+            ThreadSafeInvoke(() =>
+            {
+                tb_PingTime.Text = _pingResponse;
             });
         }
 
@@ -851,7 +875,7 @@ namespace EndpointChecker
 
                                         foreach (string st in str)
                                         {
-                                            _ = dataNode.Nodes.Add(new TreeNode(st.ToString()));
+                                            dataNode.Nodes.Add(new TreeNode(st.ToString()));
                                         }
 
                                         break;
@@ -861,28 +885,28 @@ namespace EndpointChecker
 
                                         foreach (ushort st in shortData)
                                         {
-                                            _ = dataNode.Nodes.Add(new TreeNode(st.ToString()));
+                                            dataNode.Nodes.Add(new TreeNode(st.ToString()));
                                         }
 
                                         break;
 
                                     default:
-                                        _ = dataNode.Nodes.Add(propertyData.Value.ToString());
+                                        dataNode.Nodes.Add(propertyData.Value.ToString());
                                         break;
                                 }
 
-                                _ = managementObjectNode.Nodes.Add(dataNode);
+                                managementObjectNode.Nodes.Add(dataNode);
                             }
                         }
 
-                        _ = classNode.Nodes.Add(managementObjectNode);
+                        classNode.Nodes.Add(managementObjectNode);
                     }
 
                     if (classNode.Nodes.Count > 0)
                     {
                         ThreadSafeInvoke(() =>
                         {
-                            _ = treeView_ComputerInfo.Nodes.Add(classNode);
+                            treeView_ComputerInfo.Nodes.Add(classNode);
                         });
                     }
                 }
@@ -976,7 +1000,7 @@ namespace EndpointChecker
                 ipAddress = cb_IPAddress.GetItemText(cb_IPAddress.SelectedItem);
             });
 
-            _ = Parallel.ForEach(portsList, portItem =>
+            Parallel.ForEach(portsList, portItem =>
             {
                 bool portOpen = true;
 
@@ -1004,7 +1028,7 @@ namespace EndpointChecker
                 {
                     lv_Ports.BeginUpdate();
 
-                    _ = lv_Ports.Items.Add(PortListViewItem(
+                    lv_Ports.Items.Add(PortListViewItem(
                         portOpen,
                         portItem.Key.ToString(),
                         portItem.Value));
@@ -1032,8 +1056,8 @@ namespace EndpointChecker
                 portItem.Text = "CLOSED";
             }
 
-            _ = portItem.SubItems.Add(portNumber);
-            _ = portItem.SubItems.Add(portDescription);
+            portItem.SubItems.Add(portNumber);
+            portItem.SubItems.Add(portDescription);
 
             return portItem;
         }
@@ -1114,7 +1138,7 @@ namespace EndpointChecker
                             ImageIndex = 27
                         };
 
-                        _ = lv_CategoryList.Items.Add(categoryItem);
+                        lv_CategoryList.Items.Add(categoryItem);
                     }
                 }
             }
@@ -1246,6 +1270,7 @@ namespace EndpointChecker
                                             httpWebResponse.Close();
 
                                             GC.Collect();
+                                            GC.WaitForPendingFinalizers();
                                         }
                                     }
                                 }
@@ -1262,6 +1287,7 @@ namespace EndpointChecker
                             httpWebResponse.Close();
 
                             GC.Collect();
+                            GC.WaitForPendingFinalizers();
                         }
                     }
                 }
@@ -1389,6 +1415,7 @@ namespace EndpointChecker
                     httpWebResponse.Close();
 
                     GC.Collect();
+                    GC.WaitForPendingFinalizers();
                 }
             }
 
@@ -1440,6 +1467,7 @@ namespace EndpointChecker
                     httpWebResponse.Close();
 
                     GC.Collect();
+                    GC.WaitForPendingFinalizers();
                 }
             }
 
@@ -1464,7 +1492,7 @@ namespace EndpointChecker
             {
                 Application.DoEvents();
 
-                _ = Invoke(action);
+                Invoke(action);
             }
             catch
             {
@@ -1601,6 +1629,7 @@ namespace EndpointChecker
                     httpWebResponse.Close();
 
                     GC.Collect();
+                    GC.WaitForPendingFinalizers();
                 }
             }
 
@@ -1767,7 +1796,9 @@ namespace EndpointChecker
                 Task<UrlReport> virusTotalReportTask = virusTotal.GetUrlReportAsync(virusTotal_ScanResult.Url);
                 UrlReport virusTotalReport = virusTotalReportTask.Result;
                 virusTotalReportTask.Dispose();
+
                 GC.Collect();
+                GC.WaitForPendingFinalizers();
 
                 if (virusTotalReport.ResponseCode == VirusTotalNET.ResponseCodes.UrlReportResponseCode.Present)
                 {
@@ -1808,11 +1839,11 @@ namespace EndpointChecker
                                 ListViewItem scanResultItem = new ListViewItem();
                                 UrlScanEngine urlScan = virusTotalReport.Scans[scanEngine];
                                 scanResultItem.Text = scanEngine;
-                                _ = scanResultItem.SubItems.Add(urlScan.Result);
+                                scanResultItem.SubItems.Add(urlScan.Result);
 
                                 scanResultItem.ImageIndex = urlScan.Result == "clean site" ? 10 : urlScan.Result == "unrated site" ? 14 : 13;
 
-                                _ = lv_VirusTotal.Items.Add(scanResultItem);
+                                lv_VirusTotal.Items.Add(scanResultItem);
                             }
                         }
                     });
@@ -1919,6 +1950,7 @@ namespace EndpointChecker
                                 httpWebResponse.Close();
 
                                 GC.Collect();
+                                GC.WaitForPendingFinalizers();
                             }
                         }
 
@@ -1950,10 +1982,10 @@ namespace EndpointChecker
                             linkItem.ImageIndex = 9;
                         }
 
-                        _ = linkItem.SubItems.Add(checkedLinkStatus.Item2);
-                        _ = linkItem.SubItems.Add(checkedLinkStatus.Item3);
+                        linkItem.SubItems.Add(checkedLinkStatus.Item2);
+                        linkItem.SubItems.Add(checkedLinkStatus.Item3);
 
-                        _ = lv_PageLinks.Items.Add(linkItem);
+                        lv_PageLinks.Items.Add(linkItem);
                     }
 
                     lv_PageLinks.EndUpdate();
