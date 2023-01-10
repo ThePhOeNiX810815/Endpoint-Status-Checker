@@ -125,9 +125,6 @@ namespace EndpointChecker
 
             ThreadSafeInvoke(() =>
             {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
                 // CLOSE DIALOG
                 Close();
             });
@@ -286,9 +283,6 @@ namespace EndpointChecker
 
         public void btn_Close_Click(object sender, EventArgs e)
         {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
             Close();
         }
 

@@ -635,9 +635,6 @@ namespace EndpointChecker
                     if (httpWebResponse != null)
                     {
                         httpWebResponse.Close();
-
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
                     }
                 }
             });
@@ -1268,9 +1265,6 @@ namespace EndpointChecker
                                         if (httpWebResponse != null)
                                         {
                                             httpWebResponse.Close();
-
-                                            GC.Collect();
-                                            GC.WaitForPendingFinalizers();
                                         }
                                     }
                                 }
@@ -1285,9 +1279,6 @@ namespace EndpointChecker
                         if (httpWebResponse != null)
                         {
                             httpWebResponse.Close();
-
-                            GC.Collect();
-                            GC.WaitForPendingFinalizers();
                         }
                     }
                 }
@@ -1413,9 +1404,6 @@ namespace EndpointChecker
                 if (httpWebResponse != null)
                 {
                     httpWebResponse.Close();
-
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
                 }
             }
 
@@ -1465,9 +1453,6 @@ namespace EndpointChecker
                 if (httpWebResponse != null)
                 {
                     httpWebResponse.Close();
-
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
                 }
             }
 
@@ -1627,9 +1612,6 @@ namespace EndpointChecker
                 if (httpWebResponse != null)
                 {
                     httpWebResponse.Close();
-
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
                 }
             }
 
@@ -1797,9 +1779,6 @@ namespace EndpointChecker
                 UrlReport virusTotalReport = virusTotalReportTask.Result;
                 virusTotalReportTask.Dispose();
 
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
                 if (virusTotalReport.ResponseCode == VirusTotalNET.ResponseCodes.UrlReportResponseCode.Present)
                 {
                     virusTotal_ScanResult = null;
@@ -1948,9 +1927,6 @@ namespace EndpointChecker
                             if (httpWebResponse != null)
                             {
                                 httpWebResponse.Close();
-
-                                GC.Collect();
-                                GC.WaitForPendingFinalizers();
                             }
                         }
 
@@ -2068,6 +2044,12 @@ namespace EndpointChecker
                     null,
                     null,
                     null);
+        }
+
+        public void EndpointDetailsDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
     }
 

@@ -99,9 +99,6 @@ namespace EndpointChecker
             else
             {
                 Close();
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
             }
         }
 
@@ -114,9 +111,6 @@ namespace EndpointChecker
         public void pb_CloseDialog_Click(object sender, EventArgs e)
         {
             Close();
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
         }
     }
 }

@@ -202,24 +202,7 @@ namespace EndpointChecker
 
             Server bestServer = testServersList.OrderBy(x => x.Latency).First();
 
-            AppendTextToLogBox(
-                                    rtb_SpeedTest_LogConsole,
-                                        "Hosting: " +
-                                        GetStringCorrectEncoding(bestServer.Sponsor) +
-                                        Environment.NewLine +
-                                        "Distance: " +
-                                        FormatLocationsDistanceString(
-                                            GetStringCorrectEncoding(ipInfo.Country_Name),
-                                            GetStringCorrectEncoding(bestServer.Country),
-                                            GetStringCorrectEncoding(ipInfo.City),
-                                            GetStringCorrectEncoding(bestServer.Name),
-                                            (int)bestServer.Distance / 1000) +
-                                        Environment.NewLine +
-                                        "Latency: " +
-                                        bestServer.Latency +
-                                        "ms",
-                                    Color.DeepSkyBlue,
-                                    true);
+            ListSelectedServerDetails(bestServer);
 
             return bestServer;
         }
@@ -233,24 +216,34 @@ namespace EndpointChecker
                                          Color.Black,
                                          true);
 
+            ListSelectedServerDetails(selectedServer);
+        }
+
+        public void ListSelectedServerDetails(Server server)
+        {
             AppendTextToLogBox(
                                     rtb_SpeedTest_LogConsole,
                                         "Hosting: " +
-                                        GetStringCorrectEncoding(selectedServer.Sponsor) +
+                                        GetStringCorrectEncoding(server.Sponsor) +
                                         Environment.NewLine +
                                         "Distance: " +
                                         FormatLocationsDistanceString(
                                             GetStringCorrectEncoding(ipInfo.Country_Name),
-                                            GetStringCorrectEncoding(selectedServer.Country),
+                                            GetStringCorrectEncoding(server.Country),
                                             GetStringCorrectEncoding(ipInfo.City),
-                                            GetStringCorrectEncoding(selectedServer.Name),
-                                            (int)selectedServer.Distance / 1000) +
-                                        Environment.NewLine +
-                                        "Latency: " +
-                                        selectedServer.Latency +
-                                        "ms",
-                                    Color.DeepSkyBlue,
+                                            GetStringCorrectEncoding(server.Name),
+                                            (int)server.Distance / 1000),
+                                    Color.White,
                                     true);
+
+            AppendTextToLogBox(
+                                rtb_SpeedTest_LogConsole,
+                                    "Latency: " +
+                                    server.Latency +
+                                    "ms" +
+                                    Environment.NewLine,
+                                GetColorByLatencyTime(server.Latency),
+                                true);
         }
 
         public void SpeedTestToServer()
@@ -671,29 +664,7 @@ namespace EndpointChecker
                     Thread.Sleep(333);
                 }
 
-                AppendTextToLogBox(
-                                    rtb_SpeedTest_LogConsole,
-                                        "Hosting: " +
-                                        GetStringCorrectEncoding(server.Sponsor) +
-                                        Environment.NewLine +
-                                        "Distance: " +
-                                        FormatLocationsDistanceString(
-                                            GetStringCorrectEncoding(ipInfo.Country_Name),
-                                            GetStringCorrectEncoding(server.Country),
-                                            GetStringCorrectEncoding(ipInfo.City),
-                                            GetStringCorrectEncoding(server.Name),
-                                            (int)server.Distance / 1000),
-                                    Color.White,
-                                    true);
-
-                AppendTextToLogBox(
-                                    rtb_SpeedTest_LogConsole,
-                                        "Latency: " +
-                                        server.Latency +
-                                        "ms" +
-                                        Environment.NewLine,
-                                    GetColorByLatencyTime(server.Latency),
-                                    true);
+                ListSelectedServerDetails(server);
             }
 
             return filteredServersList;
@@ -849,6 +820,9 @@ namespace EndpointChecker
             e.Cancel = pb_SpeedTestProgress.Visible;
 
             SaveServerScopePreferredSetting();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 
         public void rb_AllServers_CheckedChanged(object sender, EventArgs e)

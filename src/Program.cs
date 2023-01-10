@@ -383,9 +383,6 @@ namespace EndpointChecker
                 if (s != null)
                 {
                     s.Close();
-
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
                 }
             }
 

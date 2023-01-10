@@ -1023,24 +1023,24 @@ namespace EndpointChecker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool Config_PingHost {
+        public bool Config_TestPing {
             get {
-                return ((bool)(this["Config_PingHost"]));
+                return ((bool)(this["Config_TestPing"]));
             }
             set {
-                this["Config_PingHost"] = value;
+                this["Config_TestPing"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Config_DNSAndMACLookupOnHost {
+        public bool Config_Resolve_DNS_Names {
             get {
-                return ((bool)(this["Config_DNSAndMACLookupOnHost"]));
+                return ((bool)(this["Config_Resolve_DNS_Names"]));
             }
             set {
-                this["Config_DNSAndMACLookupOnHost"] = value;
+                this["Config_Resolve_DNS_Names"] = value;
             }
         }
         
@@ -1053,6 +1053,30 @@ namespace EndpointChecker.Properties {
             }
             set {
                 this["AutoUpdate_AutoUpdateInFuture"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Config_Resolve_IP_Addresses {
+            get {
+                return ((bool)(this["Config_Resolve_IP_Addresses"]));
+            }
+            set {
+                this["Config_Resolve_IP_Addresses"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Config_Resolve_MAC_Addresses {
+            get {
+                return ((bool)(this["Config_Resolve_MAC_Addresses"]));
+            }
+            set {
+                this["Config_Resolve_MAC_Addresses"] = value;
             }
         }
     }

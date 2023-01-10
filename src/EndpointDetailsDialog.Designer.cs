@@ -2718,6 +2718,7 @@
             this.Name = "EndpointDetailsDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Endpoint Status Details";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EndpointDetailsDialog_FormClosing);
             this.Shown += new System.EventHandler(this.EndpointDetailsDialog_Shown);
             this.tabPage_HTMLInfo.ResumeLayout(false);
             this.tabPage_HTMLInfo.PerformLayout();

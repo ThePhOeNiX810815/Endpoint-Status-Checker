@@ -205,69 +205,6 @@ namespace EndpointChecker
 
         public void SetControlsTooltips()
         {
-            // SET TOOLTIP FOR UPDATE CHECK LABEL
-            ToolTip toolTip_CheckForUpdate = new ToolTip
-            {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "Check for Update"
-            };
-            toolTip_CheckForUpdate.SetToolTip(pb_CheckForUpdate, "Check GitHub for latest update package.");
-
-            // SET TOOLTIP FOR APPLICATION WEB PAGE [WEBNODE] LINK LABEL
-            ToolTip toolTip_AppWebPage = new ToolTip
-            {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "WebNode"
-            };
-            toolTip_AppWebPage.SetToolTip(pb_AppWebPage, "Open application web page.");
-
-            // SET TOOLTIP FOR ITNETWORK LINK LABEL
-            ToolTip toolTip_ITNetwork = new ToolTip
-            {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "IT Network CZ"
-            };
-            toolTip_ITNetwork.SetToolTip(pb_ITNetwork, "Open project page on IT Network CZ portal.");
-
-            // SET TOOLTIP FOR GITHUB LINK LABEL
-            ToolTip toolTip_GitHub = new ToolTip
-            {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "GitHub"
-            };
-            toolTip_GitHub.SetToolTip(pb_GitHub, "Open project repository on GitHub portal. Entire source code and releases are open for public.");
-
-            // SET TOOLTIP FOR GITLAB LINK LABEL
-            ToolTip toolTip_GitLab = new ToolTip
-            {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "GitLab"
-            };
-            toolTip_GitLab.SetToolTip(pb_GitLab, "Open project repository on GitLab portal. Entire source code and releases are open for public.");
-
-            // SET TOOLTIP FOR ITNETWORK LINK LABEL
-            ToolTip toolTip_SoftPedia = new ToolTip
-            {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "SoftPedia"
-            };
-            toolTip_SoftPedia.SetToolTip(pb_SoftPedia, "Open project page on SoftPedia portal.");
-
-            // SET TOOLTIP FOR FEATURE REQUEST BUTTON
-            ToolTip toolTip_FeatureRequest = new ToolTip
-            {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "Feature Request or Improvement"
-            };
-            toolTip_FeatureRequest.SetToolTip(pb_FeatureRequest, "Send new Feature or Improvement description to development team");
-
             // SET TOOLTIP FOR 'ALL' ENDPOINTS SELECTION BUTTON
             ToolTip toolTip_EndpointSelection_All = new ToolTip
             {
@@ -324,33 +261,6 @@ namespace EndpointChecker
                 IsBalloon = true
             };
             toolTip_Terminate.SetToolTip(btn_Terminate, "Terminate EndPoint status check process");
-
-            // SET TOOLTIP FOR 'SPEEDTEST' BUTTON
-            ToolTip toolTip_SpeedTest = new ToolTip
-            {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "SpeedTest"
-            };
-            toolTip_SpeedTest.SetToolTip(btn_SpeedTest, "Benchmark network Download / Upload speeds via OOKLA SpeedTest API");
-
-            // SET TOOLTIP FOR 'ENDPOINTS LIST' FILE OPEN BUTTON
-            ToolTip toolTip_OpenEndpointsListFile = new ToolTip
-            {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "Open EndPoints list file"
-            };
-            toolTip_OpenEndpointsListFile.SetToolTip(btn_EndpointsList, "Open EndPoints list file (" + endpointDefinitonsFile + ") in default editor");
-
-            // SET TOOLTIP FOR 'CONFIG' FILE OPEN BUTTON
-            ToolTip toolTip_OpenAppConfigFile = new ToolTip
-            {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "Open App config file"
-            };
-            toolTip_OpenAppConfigFile.SetToolTip(btn_ConfigFile, "Open App configuration file (" + Path.GetFileName(appConfigFile) + ") in default editor");
         }
 
         public void LoadConfiguration()
@@ -380,8 +290,10 @@ namespace EndpointChecker
                     cb_RemoveURLParameters.Checked = Settings.Default.Config_RemoveURLParameters;
                     cb_ResolvePageLinks.Checked = Settings.Default.Config_ResolvePageLinks;
                     cb_SaveResponse.Checked = Settings.Default.Config_SaveResponse;
-                    cb_DNSAndMACLookupOnHost.Checked = Settings.Default.Config_DNSAndMACLookupOnHost;
-                    cb_PingHost.Checked = Settings.Default.Config_PingHost;
+                    cb_Resolve_DNS_Names.Checked = Settings.Default.Config_Resolve_DNS_Names;
+                    cb_Resolve_IPAddresses.Checked = Settings.Default.Config_Resolve_IP_Addresses;
+                    cb_Resolve_NIC_MACs.Checked = Settings.Default.Config_Resolve_MAC_Addresses;
+                    cb_TestPing.Checked = Settings.Default.Config_TestPing;
 
                     cb_RefreshOnStartup.Checked = app_ScanOnStartup;
 
@@ -439,8 +351,10 @@ namespace EndpointChecker
                     Settings.Default.Config_ResolvePageMetaInfo = cb_ResolvePageMetaInfo.Checked;
                     Settings.Default.Config_RemoveURLParameters = cb_RemoveURLParameters.Checked;
                     Settings.Default.Config_ResolvePageLinks = cb_ResolvePageLinks.Checked;
-                    Settings.Default.Config_DNSAndMACLookupOnHost = cb_DNSAndMACLookupOnHost.Checked;
-                    Settings.Default.Config_PingHost = cb_PingHost.Checked;
+                    Settings.Default.Config_Resolve_DNS_Names = cb_Resolve_DNS_Names.Checked;
+                    Settings.Default.Config_Resolve_IP_Addresses = cb_Resolve_IPAddresses.Checked;
+                    Settings.Default.Config_Resolve_MAC_Addresses = cb_Resolve_NIC_MACs.Checked;
+                    Settings.Default.Config_TestPing = cb_TestPing.Checked;
                     Settings.Default.Config_SaveResponse = cb_SaveResponse.Checked;
                     Settings.Default.VirusTotal_API_Key = apiKey_VirusTotal;
                     Settings.Default.GoogleMaps_API_Key = apiKey_GoogleMaps;
@@ -477,12 +391,7 @@ namespace EndpointChecker
                 // ADD SUBITEMS
                 refreshedItem.SubItems.Add(endpointItem.Protocol);
                 refreshedItem.SubItems.Add(endpointItem.Port);
-
-                refreshedItem.SubItems.Add(
-                    BuildUpConnectionString(
-                        endpointItem,
-                        new Uri(endpointItem.ResponseAddress).Scheme));
-
+                refreshedItem.SubItems.Add(BuildUpConnectionString(endpointItem));
                 refreshedItem.SubItems.Add(string.Join(", ", endpointItem.IPAddress));
                 refreshedItem.SubItems.Add(endpointItem.ResponseTime);
                 refreshedItem.SubItems.Add(endpointItem.ResponseCode);
@@ -637,8 +546,10 @@ namespace EndpointChecker
             bool removeURLParameters = cb_RemoveURLParameters.Checked;
             bool resolvePageLinks = cb_ResolvePageLinks.Checked;
             bool saveResponse = cb_SaveResponse.Checked;
-            bool pingHost = cb_PingHost.Checked;
-            bool dnsLookupOnHost = cb_DNSAndMACLookupOnHost.Checked;
+            bool testPing = cb_TestPing.Checked;
+            bool resolveDNSnames = cb_Resolve_DNS_Names.Checked;
+            bool resolveIPaddresses = cb_Resolve_IPAddresses.Checked;
+            bool resolveMACaddresses = cb_Resolve_NIC_MACs.Checked;
             int threadsCount = (int)num_ParallelThreadsCount.Value;
             int pingTimeout = (int)num_PingTimeout.Value * 1000;
             int httpRequestTimeout = (int)num_HTTPRequestTimeout.Value * 1000;
@@ -1178,7 +1089,7 @@ namespace EndpointChecker
 
                                 if (!BW_GetStatus.CancellationPending)
                                 {
-                                    // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, BY REGEX]
+                                    // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, FROM INPUT, BY REGEX]
                                     if (Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
                                     {
                                         // IS IP ADDRESS
@@ -1190,10 +1101,32 @@ namespace EndpointChecker
                                         endpoint.DNSName = new string[] { responseURI.Host };
                                     }
 
-                                    try
+                                    List<string> endpointIPAddressesStringList = new List<string>();
+                                    List<string> endpointDNSNamesStringList = new List<string>();
+                                    List<string> endpointMACAddressStringList = new List<string>();
+
+                                    // RESOLVE IP ADDRESS(ES)
+                                    if (resolveIPaddresses)
                                     {
-                                        // RESOLVE NETWORK SHARES
-                                        if (resolveNetworkShares)
+                                        try
+                                        {
+                                            foreach (IPAddress endpointIPAddress in Dns.GetHostAddresses(responseURI.Host))
+                                            {
+                                                if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
+                                                {
+                                                    endpointIPAddressesStringList.Add(endpointIPAddress.ToString());
+                                                }
+                                            }
+                                        }
+                                        catch
+                                        {
+                                        }
+                                    }
+
+                                    // RESOLVE NETWORK SHARES
+                                    if (resolveNetworkShares)
+                                    {
+                                        try
                                         {
                                             List<string> netSharesList = GetNetShares(responseURI.Host);
                                             if (netSharesList.Count > 0)
@@ -1202,98 +1135,83 @@ namespace EndpointChecker
                                                 endpoint.NetworkShare = netSharesList.ToArray();
                                             }
                                         }
-                                    }
-                                    catch
-                                    {
-                                    }
-
-                                    // DNS / MAC LOOKUP
-                                    if (dnsLookupOnHost)
-                                    {
-                                        List<string> endpointIPAddressesStringList = new List<string>();
-                                        List<string> endpointDNSNamesStringList = new List<string>();
-                                        List<string> endpointMACAddressStringList = new List<string>();
-
-                                        try
-                                        {
-                                            foreach (IPAddress endpointIPAddress in Dns.GetHostAddresses(responseURI.Host))
-                                            {
-                                                if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
-                                                {
-                                                    endpointIPAddressesStringList.Add(endpointIPAddress.ToString());
-
-                                                    try
-                                                    {
-                                                        // RESOLVE DNS NAME(S)
-                                                        IPHostEntry hostEntry = Dns.GetHostEntry(endpointIPAddress);
-                                                        endpointDNSNamesStringList.Add(hostEntry.HostName);
-                                                    }
-                                                    catch
-                                                    {
-                                                    }
-
-                                                    try
-                                                    {
-                                                        // RESOLVE MAC ADDRESS(ES)
-                                                        string macAddress = WindowsLookupService.Lookup(endpointIPAddress);
-
-                                                        // IF ENDPOINT IP ADDRESS IS ANY OF 'DNS SERVER OR DEFAULT GATEWAY' IPs
-                                                        // OR
-                                                        // RESOLVED MAC IS NOT ANY OF 'DNS SERVER OR DEFAULT GATEWAY' MAC ADDRESSes
-                                                        if (!string.IsNullOrEmpty(macAddress) &&
-                                                           (!localDNSAndGWMACAddresses.Contains(macAddress) ||
-                                                            localDNSAndGWIPAddresses.Contains(endpointIPAddress.ToString())))
-                                                        {
-                                                            endpointMACAddressStringList.Add(macAddress);
-                                                        }
-                                                    }
-                                                    catch
-                                                    {
-                                                    }
-                                                }
-                                            }
-
-                                            // SORT IP ADDRESS(ES) LIST
-                                            if (endpointIPAddressesStringList.Count > 0)
-                                            {
-                                                endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
-                                            }
-
-                                            // SORT DNS NAME(S) LIST
-                                            if (endpointDNSNamesStringList.Count > 0)
-                                            {
-                                                endpoint.DNSName = endpointDNSNamesStringList.ToArray();
-                                            }
-                                            else if (!Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
-                                            {
-                                                // ORIGINAL URL IS NOT IP ADDRESS, GET HOSTNAME
-                                                endpoint.DNSName = new string[] { responseURI.Host };
-                                            }
-
-                                            // SORT MAC ADDRESS(ES) LIST
-                                            if (endpointMACAddressStringList.Count > 0)
-                                            {
-                                                endpoint.MACAddress = endpointMACAddressStringList.ToArray();
-                                            }
-                                        }
                                         catch
                                         {
                                         }
+                                    }
+
+                                    // RESOLVE DNS NAME(S)
+                                    if (resolveDNSnames)
+                                    {
+                                        foreach (string _IP_Address in endpointIPAddressesStringList)
+                                        {
+                                            try
+                                            {
+                                                IPHostEntry hostEntry = Dns.GetHostEntry(_IP_Address);
+                                                endpointDNSNamesStringList.Add(hostEntry.HostName);
+                                            }
+                                            catch
+                                            {
+                                            }
+                                        }
+                                    }
+
+                                    if (resolveMACaddresses)
+                                    {
+                                        foreach (string _IP_Address in endpointIPAddressesStringList)
+                                        {
+                                            try
+                                            {
+                                                // RESOLVE MAC ADDRESS(ES)
+                                                string macAddress = WindowsLookupService.Lookup(IPAddress.Parse(_IP_Address));
+
+                                                // IF ENDPOINT IP ADDRESS IS ANY OF 'DNS SERVER OR DEFAULT GATEWAY' IPs
+                                                // OR
+                                                // RESOLVED MAC IS NOT ANY OF 'DNS SERVER OR DEFAULT GATEWAY' MAC ADDRESSes
+                                                if (!string.IsNullOrEmpty(macAddress) &&
+                                                   (!localDNSAndGWMACAddresses.Contains(macAddress) ||
+                                                    localDNSAndGWIPAddresses.Contains(_IP_Address.ToString())))
+                                                {
+                                                    endpointMACAddressStringList.Add(macAddress);
+                                                }
+                                            }
+                                            catch
+                                            {
+                                            }
+                                        }
+                                    }
+
+                                    // FILL IP ADDRESS(ES) LIST
+                                    if (endpointIPAddressesStringList.Count > 0)
+                                    {
+                                        endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
+                                    }
+
+                                    // FILL DNS NAME(S) LIST
+                                    if (endpointDNSNamesStringList.Count > 0)
+                                    {
+                                        endpoint.DNSName = endpointDNSNamesStringList.ToArray();
+                                    }
+
+                                    // FILL MAC ADDRESS(ES) LIST
+                                    if (endpointMACAddressStringList.Count > 0)
+                                    {
+                                        endpoint.MACAddress = endpointMACAddressStringList.ToArray();
                                     }
                                 }
 
                                 if (!BW_GetStatus.CancellationPending)
                                 {
-                                    // PING HOST
                                     if (validationMethod == ValidationMethod.Ping)
                                     {
                                         endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
                                     }
 
-                                    try
+                                    // TEST PING
+                                    if (testPing)
                                     {
-                                        if (pingHost)
-                                        {                                          
+                                        try
+                                        {
                                             string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 1);
 
                                             if (!string.IsNullOrEmpty(pingRoundtripTime))
@@ -1301,9 +1219,9 @@ namespace EndpointChecker
                                                 endpoint.PingRoundtripTime = pingRoundtripTime;
                                             }
                                         }
-                                    }
-                                    catch
-                                    {
+                                        catch
+                                        {
+                                        }
                                     }
                                 }
 
@@ -1384,13 +1302,9 @@ namespace EndpointChecker
                                   resolveNetworkShares.ToString(),
                                   resolvePageMetaInfo.ToString(),
                                   saveResponse.ToString(),
-                                  pingHost.ToString(),
-                                  dnsLookupOnHost.ToString()
+                                  testPing.ToString(),
+                                  resolveDNSnames.ToString()
                                   );
-
-            // GARBAGE COLLECTOR
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
         }
 
         public void GetSSLCertificateInfo(HttpWebRequest httpWebRequest, EndpointDefinition endpoint)
@@ -2293,8 +2207,10 @@ namespace EndpointChecker
             cb_TrayBalloonNotify.Enabled = !inProgress && !locked;
             cb_AllowAutoRedirect.Enabled = !inProgress && !locked;
             cb_ValidateSSLCertificate.Enabled = !inProgress && !locked;
-            cb_PingHost.Enabled = !inProgress && !locked;
-            cb_DNSAndMACLookupOnHost.Enabled = !inProgress && !locked;
+            cb_TestPing.Enabled = !inProgress && !locked;
+            cb_Resolve_DNS_Names.Enabled = !inProgress && !locked;
+            cb_Resolve_IPAddresses.Enabled = !inProgress && !locked;
+            cb_Resolve_NIC_MACs.Enabled = !inProgress && !locked;
             cb_RefreshAutoSet.Enabled = !inProgress && !locked;
             cb_ResolveNetworkShares.Enabled = !inProgress && !locked;
             cb_ExportEndpointsStatus_XLSX.Enabled = !inProgress && !locked;
@@ -2322,10 +2238,9 @@ namespace EndpointChecker
             tray_Refresh.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             tray_SpeedTest.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             btn_BrowseExportDir.Enabled = !inProgress && !locked;
-            btn_SpeedTest.Enabled = !inProgress && !locked;
+            mainMenu_SpeedTest.Enabled = !inProgress && !locked;
             lbl_Refresh.Enabled = !inProgress && !locked;
             lbl_BrowseExportDir.Enabled = !inProgress && !locked;
-            lbl_SpeedTest.Enabled = !inProgress && !locked;
 
             lbl_ListFilter.Enabled = !inProgress && !locked && endpointsList.Count > 0;
             tb_ListFilter.Enabled = !inProgress && !locked && endpointsList.Count > 0;
@@ -2455,6 +2370,10 @@ namespace EndpointChecker
 
                 // TRAY ICON
                 RefreshTrayIcon();
+
+                // GARBAGE COLLECTOR
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
 
                 // CONTINUOUS REFRESH
                 if (cb_ContinuousRefresh.Checked)
@@ -2941,16 +2860,16 @@ namespace EndpointChecker
                         endpointsStatusExport_HTTP_WorkSheet.Cell("B" + httpWorkSheetLineNumber).SetValue("Protocol");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("C" + httpWorkSheetLineNumber).SetValue("Target Port");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetValue("Endpoint Response URL");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).SetValue("Endpoint IP Address");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).SetValue("Endpoint NIC MAC Address");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).SetValue("Endpoint DNS Name");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).SetValue("Endpoint IP Address(es)");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).SetValue("Endpoint NIC MAC Address(es)");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).SetValue("Endpoint DNS Name(s)");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("H" + httpWorkSheetLineNumber).SetValue("Response Time");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("I" + httpWorkSheetLineNumber).SetValue("Status Code");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("J" + httpWorkSheetLineNumber).SetValue("Status Message");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("K" + httpWorkSheetLineNumber).SetValue("Last Seen Online");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("L" + httpWorkSheetLineNumber).SetValue("Ping Roundtrip Time");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("M" + httpWorkSheetLineNumber).SetValue("UserName [Basic Auth]");
-                        endpointsStatusExport_HTTP_WorkSheet.Cell("N" + httpWorkSheetLineNumber).SetValue("Network Shares");
+                        endpointsStatusExport_HTTP_WorkSheet.Cell("N" + httpWorkSheetLineNumber).SetValue("Network Share(s)");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("O" + httpWorkSheetLineNumber).SetValue("HTTP Server ID");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("P" + httpWorkSheetLineNumber).SetValue("HTTP Auto Redirects");
                         endpointsStatusExport_HTTP_WorkSheet.Cell("Q" + httpWorkSheetLineNumber).SetValue("HTTP Content Type");
@@ -2972,16 +2891,16 @@ namespace EndpointChecker
                         endpointsStatusExport_FTP_WorkSheet.Cell("B" + ftpWorkSheetLineNumber).SetValue("Protocol");
                         endpointsStatusExport_FTP_WorkSheet.Cell("C" + ftpWorkSheetLineNumber).SetValue("Target Port");
                         endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).SetValue("Endpoint Response URL");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).SetValue("Endpoint IP Address");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).SetValue("Endpoint NIC MAC Address");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("G" + ftpWorkSheetLineNumber).SetValue("Endpoint DNS Name");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).SetValue("Endpoint IP Address(es)");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).SetValue("Endpoint NIC MAC Address(es)");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("G" + ftpWorkSheetLineNumber).SetValue("Endpoint DNS Name(s)");
                         endpointsStatusExport_FTP_WorkSheet.Cell("H" + ftpWorkSheetLineNumber).SetValue("Response Time");
                         endpointsStatusExport_FTP_WorkSheet.Cell("I" + ftpWorkSheetLineNumber).SetValue("Status Code");
                         endpointsStatusExport_FTP_WorkSheet.Cell("J" + ftpWorkSheetLineNumber).SetValue("Status Message");
                         endpointsStatusExport_FTP_WorkSheet.Cell("K" + ftpWorkSheetLineNumber).SetValue("Last Seen Online");
                         endpointsStatusExport_FTP_WorkSheet.Cell("L" + ftpWorkSheetLineNumber).SetValue("Ping Roundtrip Time");
                         endpointsStatusExport_FTP_WorkSheet.Cell("M" + ftpWorkSheetLineNumber).SetValue("UserName");
-                        endpointsStatusExport_FTP_WorkSheet.Cell("N" + ftpWorkSheetLineNumber).SetValue("Network Shares");
+                        endpointsStatusExport_FTP_WorkSheet.Cell("N" + ftpWorkSheetLineNumber).SetValue("Network Share(s)");
                         ftpWorkSheetLineNumber++;
 
                         // ADD ENDPOINTS ITEMS TO SHEETS 
@@ -2990,13 +2909,17 @@ namespace EndpointChecker
                             if (endpointItem.Protocol == Uri.UriSchemeHttp.ToUpper() ||
                                 endpointItem.Protocol == Uri.UriSchemeHttps.ToUpper())
                             {
+                                string connectionString = BuildUpConnectionString(endpointItem);
+
                                 // ADD ENDPOINT ITEM TO HTTP SHEET
                                 endpointsStatusExport_HTTP_WorkSheet.Cell("A" + httpWorkSheetLineNumber).SetValue(endpointItem.Name);
                                 endpointsStatusExport_HTTP_WorkSheet.Cell("B" + httpWorkSheetLineNumber).SetValue(endpointItem.Protocol);
                                 endpointsStatusExport_HTTP_WorkSheet.Cell("C" + httpWorkSheetLineNumber).SetValue(endpointItem.Port);
+                                endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetValue(connectionString);
 
                                 // CREATE RESPONSE ADDRESS HYPERLINK
-                                endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetHyperlink(new XLHyperlink(endpointItem.ResponseAddress.Split(';')[0]));
+                                endpointsStatusExport_HTTP_WorkSheet.Cell("D" + httpWorkSheetLineNumber).SetHyperlink(new XLHyperlink(connectionString));
+
                                 endpointsStatusExport_HTTP_WorkSheet.Cell("E" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.IPAddress));
                                 endpointsStatusExport_HTTP_WorkSheet.Cell("F" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.MACAddress));
                                 endpointsStatusExport_HTTP_WorkSheet.Cell("G" + httpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.DNSName));
@@ -3031,15 +2954,15 @@ namespace EndpointChecker
                             }
                             else if (endpointItem.Protocol == Uri.UriSchemeFtp.ToUpper())
                             {
-                                string connectionString =
-                                    BuildUpConnectionString(
-                                        endpointItem,
-                                        Uri.UriSchemeFtp);
+                                string connectionString = BuildUpConnectionString(endpointItem);
 
                                 // ADD ENDPOINT ITEM TO FTP SHEET
                                 endpointsStatusExport_FTP_WorkSheet.Cell("A" + ftpWorkSheetLineNumber).SetValue(endpointItem.Name);
                                 endpointsStatusExport_FTP_WorkSheet.Cell("B" + ftpWorkSheetLineNumber).SetValue(endpointItem.Protocol);
                                 endpointsStatusExport_FTP_WorkSheet.Cell("C" + ftpWorkSheetLineNumber).SetValue(endpointItem.Port);
+                                endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).SetValue(connectionString);
+
+                                // CREATE RESPONSE ADDRESS HYPERLINK
                                 endpointsStatusExport_FTP_WorkSheet.Cell("D" + ftpWorkSheetLineNumber).SetHyperlink(new XLHyperlink(connectionString));
                                 endpointsStatusExport_FTP_WorkSheet.Cell("E" + ftpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.IPAddress));
                                 endpointsStatusExport_FTP_WorkSheet.Cell("F" + ftpWorkSheetLineNumber).SetValue(string.Join(Environment.NewLine, endpointItem.MACAddress));
@@ -4664,7 +4587,7 @@ namespace EndpointChecker
                 ch_Server.Width = 0;
                 ch_UserName.Width = 0;
 
-                cb_PingHost.Checked = true;
+                cb_TestPing.Checked = true;
             }
         }
 
@@ -5363,15 +5286,6 @@ namespace EndpointChecker
             SaveConfiguration();
         }
 
-        public void pb_ITNetwork_Click(object sender, EventArgs e)
-        {
-            BrowseEndpoint(
-                "https://www.itnetwork.cz/csharp/winforms/csharp-windows-forms-zdrojove-kody/endpoint-status-checker",
-                null,
-                null,
-                null);
-        }
-
         public static void TextBox_SetPasswordVisibilty(
             TextBox textBox,
             bool passVisible)
@@ -5379,9 +5293,7 @@ namespace EndpointChecker
             textBox.UseSystemPasswordChar = passVisible;
         }
 
-        public static string BuildUpConnectionString(
-            EndpointDefinition endpointItem,
-            string protocol)
+        public static string BuildUpConnectionString(EndpointDefinition endpointItem)
         {
             // BUILD-UP CONNECTION STRING
             Uri endpointURI = new Uri(endpointItem.ResponseAddress);
@@ -5390,8 +5302,7 @@ namespace EndpointChecker
                 endpointURI.Authority +
                 endpointURI.AbsolutePath;
 
-            if (
-                !string.IsNullOrEmpty(endpointItem.LoginName) &&
+            if (!string.IsNullOrEmpty(endpointItem.LoginName) &&
                 endpointItem.LoginName != status_NotAvailable)
             {
                 connectionString =
@@ -5400,82 +5311,21 @@ namespace EndpointChecker
                     connectionString;
             }
 
-            return protocol + Uri.SchemeDelimiter + connectionString;
-        }
-
-        public void pb_FeatureRequest_Click(object sender, EventArgs e)
-        {
-            FeatureRequestDialog frDialog = new FeatureRequestDialog(
-                new List<MailAddress> { report_Recipient });
-
-            frDialog.ShowDialog();
-        }
-
-        public void btn_EndpointsList_Click(object sender, EventArgs e)
-        {
-            if (File.Exists(endpointDefinitonsFile))
-            {
-                BrowseEndpoint(
-                endpointDefinitonsFile,
-                null,
-                null,
-                null);
-            }
+            return endpointItem.Protocol.ToLower() + Uri.SchemeDelimiter + connectionString;
         }
 
         public void TIMER_ListAndLogsFilesWatcher_Tick(object sender, EventArgs e)
         {
             // ENDPOINTS LIST FILE
-            btn_EndpointsList.Enabled = File.Exists(endpointDefinitonsFile);
-            lbl_EndpointsList.Enabled = File.Exists(endpointDefinitonsFile);
+            mainMenu_EndpointsList.Enabled = File.Exists(endpointDefinitonsFile);
 
-            // ERROR(S) LOG(S) FILES
-            btn_ConfigFile.Enabled = File.Exists(appConfigFile);
-            lbl_ConfigFile.Enabled = File.Exists(appConfigFile);
-        }
-
-        public void btn_ConfigFile_Click(object sender, EventArgs e)
-        {
-            if (File.Exists(appConfigFile))
-            {
-                BrowseEndpoint(
-                appConfigFile,
-                null,
-                null,
-                null);
-            }
-        }
-
-        public void pb_GitHub_Click(object sender, EventArgs e)
-        {
-            BrowseEndpoint(
-                "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/",
-                null,
-                null,
-                null);
+            // APP CONFIG FILE
+            mainMenu_ConfigFile.Enabled = File.Exists(appConfigFile);
         }
 
         public void toolStripMenuItem_SSH_Click(object sender, EventArgs e)
         {
             ConnectEndpoint_Putty(new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress).Host);
-        }
-
-        public void pb_GitLab_Click(object sender, EventArgs e)
-        {
-            BrowseEndpoint(
-                "https://gitlab.com/ThePhOeNiX810815/Endpoint-Status-Checker/",
-                null,
-                null,
-                null);
-        }
-
-        public void pb_AppWebPage_Click(object sender, EventArgs e)
-        {
-            BrowseEndpoint(
-                "https://endpoint-status-checker.webnode.com",
-                null,
-                null,
-                null);
         }
 
         public void tb_ListFilter_TextChanged(object sender, EventArgs e)
@@ -5490,15 +5340,6 @@ namespace EndpointChecker
             pb_ListFilterClear.Visible = false;
             tb_ListFilter.BackColor = Color.LightGray;
             tb_ListFilter.Text = string.Empty;
-        }
-
-        public void pb_SoftPedia_Click(object sender, EventArgs e)
-        {
-            BrowseEndpoint(
-                "https://www.softpedia.com/get/PORTABLE-SOFTWARE/Network/Endpoint-Status-Checker.shtml",
-                null,
-                null,
-                null);
         }
 
         public void lv_Endpoints_SelectedIndexChanged(object sender, EventArgs e)
@@ -5535,15 +5376,15 @@ namespace EndpointChecker
 
         public void tray_SpeedTest_Click(object sender, EventArgs e)
         {
-            if (btn_SpeedTest.Enabled)
+            if (mainMenu_SpeedTest.Enabled)
             {
-                btn_SpeedTest_Click(this, null);
+                mainMenu_SpeedTest_Click(this, null);
             }
         }
 
         public void cb_PingHost_CheckedChanged(object sender, EventArgs e)
         {
-            if (!cb_PingHost.Checked)
+            if (!cb_TestPing.Checked)
             {
                 comboBox_Validate.SelectedIndex = 0;
             }
@@ -5567,7 +5408,123 @@ namespace EndpointChecker
             }
         }
 
-        public void btn_SpeedTest_Click(object sender, EventArgs e)
+        public void tray_Notifications_Enable_Click(object sender, EventArgs e)
+        {
+            cb_TrayBalloonNotify.Checked = true;
+        }
+
+        public void tray_Notifications_Disable_Click(object sender, EventArgs e)
+        {
+            cb_TrayBalloonNotify.Checked = false;
+        }
+
+        public void tray_CheckForUpdate_Click(object sender, EventArgs e)
+        {
+            mainMenu_UpdateCheck_Click(this, null);
+        }
+
+        public void cb_Resolve_IPAddresses_CheckedChanged(object sender, EventArgs e)
+        {
+            SaveConfiguration();
+        }
+
+        public void cb_Resolve_NIC_MACs_CheckedChanged(object sender, EventArgs e)
+        {
+            SaveConfiguration();
+        }
+
+        public void mainMenu_UpdateCheck_Click(object sender, EventArgs e)
+        {
+            NewBackgroundThread(() =>
+            {
+                CheckForUpdate();
+
+                ThreadSafeInvoke(() =>
+                {
+                    if (app_AutoUpdateNow)
+                    {
+                        tray_CheckForUpdate.Visible = false;
+
+                        Close();
+                    }
+                    else if (!app_UpdateAvailable)
+                    {
+                        MessageBox.Show(
+                            "There is no new build package available at this time.",
+                            "Check for Update",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                });
+            });
+        }
+
+        public void mainMenu_SoftPedia_Click(object sender, EventArgs e)
+        {
+            BrowseEndpoint(
+               "https://www.softpedia.com/get/PORTABLE-SOFTWARE/Network/Endpoint-Status-Checker.shtml",
+               null,
+               null,
+               null);
+        }
+
+        public void mainMenu_ITNetwork_Click(object sender, EventArgs e)
+        {
+            BrowseEndpoint(
+                "https://www.itnetwork.cz/csharp/winforms/csharp-windows-forms-zdrojove-kody/endpoint-status-checker",
+                null,
+                null,
+                null);
+        }
+
+        public void mainMenu_GitHub_Click(object sender, EventArgs e)
+        {
+            BrowseEndpoint(
+                "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/",
+                null,
+                null,
+                null);
+        }
+
+        public void mainMenu_GitLab_Click(object sender, EventArgs e)
+        {
+            BrowseEndpoint(
+                "https://gitlab.com/ThePhOeNiX810815/Endpoint-Status-Checker/",
+                null,
+                null,
+                null);
+        }
+
+        public void mainMenu_HomePage_Click(object sender, EventArgs e)
+        {
+            BrowseEndpoint(
+               "https://endpoint-status-checker.webnode.com",
+               null,
+               null,
+               null);
+        }
+
+        public void mainMenu_FeatureRequest_Click(object sender, EventArgs e)
+        {
+            FeatureRequestDialog frDialog = new FeatureRequestDialog(
+               new List<MailAddress> { report_Recipient });
+
+            frDialog.ShowDialog();
+        }
+
+        public void mainMenu_EndpointsList_Click(object sender, EventArgs e)
+        {
+            if (File.Exists(endpointDefinitonsFile))
+            {
+                BrowseEndpoint(
+                endpointDefinitonsFile,
+                null,
+                null,
+                null);
+            }
+        }
+
+        public void mainMenu_SpeedTest_Click(object sender, EventArgs e)
         {
             tray_Refresh.Visible = false;
             tray_SpeedTest.Visible = false;
@@ -5587,39 +5544,21 @@ namespace EndpointChecker
             tray_Separator_1.Visible = true;
         }
 
-        public void tray_Notifications_Enable_Click(object sender, EventArgs e)
+        public void mainMenu_Exit_Click(object sender, EventArgs e)
         {
-            cb_TrayBalloonNotify.Checked = true;
+            Application.Exit();
         }
 
-        public void tray_Notifications_Disable_Click(object sender, EventArgs e)
+        public void mainMenu_ConfigFile_Click(object sender, EventArgs e)
         {
-            cb_TrayBalloonNotify.Checked = false;
-        }
-
-        public void pb_CheckForUpdate_Click(object sender, EventArgs e)
-        {
-            CheckForUpdate();
-
-            if (app_AutoUpdateNow)
+            if (File.Exists(appConfigFile))
             {
-                tray_CheckForUpdate.Visible = false;
-
-                Close();
+                BrowseEndpoint(
+                appConfigFile,
+                null,
+                null,
+                null);
             }
-            else if (!app_UpdateAvailable)
-            {
-                MessageBox.Show(
-                    "You are using the latest version available.",
-                    "Check for Update",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
-        }
-
-        public void tray_CheckForUpdate_Click(object sender, EventArgs e)
-        {
-            pb_CheckForUpdate_Click(this, null);
         }
     }
 

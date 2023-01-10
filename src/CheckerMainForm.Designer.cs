@@ -99,14 +99,9 @@
             this.lbl_UncheckAll = new System.Windows.Forms.Label();
             this.btn_CheckAllAvailable = new System.Windows.Forms.Button();
             this.lbl_CheckAllAvailable = new System.Windows.Forms.Label();
-            this.lbl_ConfigFile = new System.Windows.Forms.Label();
-            this.btn_EndpointsList = new System.Windows.Forms.Button();
-            this.btn_ConfigFile = new System.Windows.Forms.Button();
-            this.lbl_EndpointsList = new System.Windows.Forms.Label();
             this.lbl_Refresh = new System.Windows.Forms.Label();
             this.lbl_Terminate = new System.Windows.Forms.Label();
             this.lbl_BrowseExportDir = new System.Windows.Forms.Label();
-            this.lbl_SpeedTest = new System.Windows.Forms.Label();
             this.imageList_Icons_32pix = new System.Windows.Forms.ImageList(this.components);
             this.num_PingTimeout = new System.Windows.Forms.NumericUpDown();
             this.lbl_PingTimeout = new System.Windows.Forms.Label();
@@ -126,7 +121,6 @@
             this.toolStripMenuItem_SSH = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_Terminate = new System.Windows.Forms.Button();
             this.btn_Refresh = new System.Windows.Forms.Button();
-            this.btn_SpeedTest = new System.Windows.Forms.Button();
             this.btn_BrowseExportDir = new System.Windows.Forms.Button();
             this.pb_Progress_Init = new System.Windows.Forms.PictureBox();
             this.cb_ExportEndpointsStatus_HTML = new System.Windows.Forms.CheckBox();
@@ -138,26 +132,33 @@
             this.TIMER_TrayIconAnimation = new System.Windows.Forms.Timer(this.components);
             this.cb_RemoveURLParameters = new System.Windows.Forms.CheckBox();
             this.groupBox_CommonOptions = new System.Windows.Forms.GroupBox();
+            this.cb_Resolve_IPAddresses = new System.Windows.Forms.CheckBox();
+            this.cb_TestPing = new System.Windows.Forms.CheckBox();
             this.cb_RefreshOnStartup = new System.Windows.Forms.CheckBox();
             this.cb_ResolvePageLinks = new System.Windows.Forms.CheckBox();
             this.groupBox_HTTPOptions = new System.Windows.Forms.GroupBox();
-            this.cb_PingHost = new System.Windows.Forms.CheckBox();
-            this.cb_DNSAndMACLookupOnHost = new System.Windows.Forms.CheckBox();
-            this.pb_ITNetwork = new System.Windows.Forms.PictureBox();
-            this.pb_FeatureRequest = new System.Windows.Forms.PictureBox();
+            this.cb_Resolve_NIC_MACs = new System.Windows.Forms.CheckBox();
+            this.cb_Resolve_DNS_Names = new System.Windows.Forms.CheckBox();
             this.TIMER_ListAndLogsFilesWatcher = new System.Windows.Forms.Timer(this.components);
-            this.pb_GitHub = new System.Windows.Forms.PictureBox();
             this.openFileDialog_VNCExe = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog_PuttyExe = new System.Windows.Forms.OpenFileDialog();
-            this.pb_GitLab = new System.Windows.Forms.PictureBox();
-            this.pb_AppWebPage = new System.Windows.Forms.PictureBox();
             this.lbl_ListFilter = new System.Windows.Forms.Label();
             this.tb_ListFilter = new System.Windows.Forms.TextBox();
             this.pb_ListFilterClear = new System.Windows.Forms.PictureBox();
-            this.pb_SoftPedia = new System.Windows.Forms.PictureBox();
             this.pb_RefreshProcess = new System.Windows.Forms.PictureBox();
             this.TIMER_ContinuousRefresh = new System.Windows.Forms.Timer(this.components);
-            this.pb_CheckForUpdate = new System.Windows.Forms.PictureBox();
+            this.MainMenuStrip = new System.Windows.Forms.MenuStrip();
+            this.mainMenu_UpdateCheck = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu_SpeedTest = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu_ConfigFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu_EndpointsList = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu_HomePage = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu_SoftPedia = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu_ITNetwork = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu_GitHub = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu_GitLab = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu_FeatureRequest = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu_Exit = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
@@ -170,15 +171,9 @@
             this.groupBox_Export.SuspendLayout();
             this.groupBox_CommonOptions.SuspendLayout();
             this.groupBox_HTTPOptions.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_ITNetwork)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_FeatureRequest)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_GitHub)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_GitLab)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_AppWebPage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_SoftPedia)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_CheckForUpdate)).BeginInit();
+            this.MainMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // lv_Endpoints
@@ -215,10 +210,10 @@
             this.lv_Endpoints.GridLines = true;
             this.lv_Endpoints.HideSelection = false;
             this.lv_Endpoints.LargeImageList = this.imageList_ListViewIcons_20pix;
-            this.lv_Endpoints.Location = new System.Drawing.Point(10, 13);
+            this.lv_Endpoints.Location = new System.Drawing.Point(10, 44);
             this.lv_Endpoints.Name = "lv_Endpoints";
             this.lv_Endpoints.ShowItemToolTips = true;
-            this.lv_Endpoints.Size = new System.Drawing.Size(1110, 307);
+            this.lv_Endpoints.Size = new System.Drawing.Size(1110, 274);
             this.lv_Endpoints.SmallImageList = this.imageList_ListViewIcons_20pix;
             this.lv_Endpoints.TabIndex = 0;
             this.lv_Endpoints.UseCompatibleStateImageBehavior = false;
@@ -407,9 +402,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_NoEndpoints.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_NoEndpoints.ForeColor = System.Drawing.Color.DarkOrange;
-            this.lbl_NoEndpoints.Location = new System.Drawing.Point(1, 2);
+            this.lbl_NoEndpoints.Location = new System.Drawing.Point(1, 32);
             this.lbl_NoEndpoints.Name = "lbl_NoEndpoints";
-            this.lbl_NoEndpoints.Size = new System.Drawing.Size(1130, 329);
+            this.lbl_NoEndpoints.Size = new System.Drawing.Size(1130, 299);
             this.lbl_NoEndpoints.TabIndex = 6;
             this.lbl_NoEndpoints.Text = "List of predefined endpoints is empty";
             this.lbl_NoEndpoints.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -560,7 +555,7 @@
             this.num_HTTPRequestTimeout.Size = new System.Drawing.Size(47, 25);
             this.num_HTTPRequestTimeout.TabIndex = 8;
             this.num_HTTPRequestTimeout.Value = new decimal(new int[] {
-            60,
+            30,
             0,
             0,
             0});
@@ -970,60 +965,6 @@
             this.lbl_CheckAllAvailable.TabIndex = 19;
             this.lbl_CheckAllAvailable.Text = "PASSED";
             // 
-            // lbl_ConfigFile
-            // 
-            this.lbl_ConfigFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_ConfigFile.AutoSize = true;
-            this.lbl_ConfigFile.Enabled = false;
-            this.lbl_ConfigFile.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ConfigFile.Location = new System.Drawing.Point(930, 501);
-            this.lbl_ConfigFile.Name = "lbl_ConfigFile";
-            this.lbl_ConfigFile.Size = new System.Drawing.Size(56, 17);
-            this.lbl_ConfigFile.TabIndex = 26;
-            this.lbl_ConfigFile.Text = "CONFIG";
-            // 
-            // btn_EndpointsList
-            // 
-            this.btn_EndpointsList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_EndpointsList.BackColor = System.Drawing.Color.DarkGray;
-            this.btn_EndpointsList.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_EndpointsList.Enabled = false;
-            this.btn_EndpointsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_EndpointsList.Image = ((System.Drawing.Image)(resources.GetObject("btn_EndpointsList.Image")));
-            this.btn_EndpointsList.Location = new System.Drawing.Point(803, 489);
-            this.btn_EndpointsList.Name = "btn_EndpointsList";
-            this.btn_EndpointsList.Size = new System.Drawing.Size(40, 40);
-            this.btn_EndpointsList.TabIndex = 23;
-            this.btn_EndpointsList.UseVisualStyleBackColor = false;
-            this.btn_EndpointsList.Click += new System.EventHandler(this.btn_EndpointsList_Click);
-            // 
-            // btn_ConfigFile
-            // 
-            this.btn_ConfigFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_ConfigFile.BackColor = System.Drawing.Color.DarkGray;
-            this.btn_ConfigFile.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_ConfigFile.Enabled = false;
-            this.btn_ConfigFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_ConfigFile.Image = global::EndpointChecker.Properties.Resources.appConfig;
-            this.btn_ConfigFile.Location = new System.Drawing.Point(891, 489);
-            this.btn_ConfigFile.Name = "btn_ConfigFile";
-            this.btn_ConfigFile.Size = new System.Drawing.Size(40, 40);
-            this.btn_ConfigFile.TabIndex = 24;
-            this.btn_ConfigFile.UseVisualStyleBackColor = false;
-            this.btn_ConfigFile.Click += new System.EventHandler(this.btn_ConfigFile_Click);
-            // 
-            // lbl_EndpointsList
-            // 
-            this.lbl_EndpointsList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_EndpointsList.AutoSize = true;
-            this.lbl_EndpointsList.Enabled = false;
-            this.lbl_EndpointsList.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_EndpointsList.Location = new System.Drawing.Point(842, 501);
-            this.lbl_EndpointsList.Name = "lbl_EndpointsList";
-            this.lbl_EndpointsList.Size = new System.Drawing.Size(34, 17);
-            this.lbl_EndpointsList.TabIndex = 25;
-            this.lbl_EndpointsList.Text = "LIST";
-            // 
             // lbl_Refresh
             // 
             this.lbl_Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1059,18 +1000,6 @@
             this.lbl_BrowseExportDir.Size = new System.Drawing.Size(80, 13);
             this.lbl_BrowseExportDir.TabIndex = 42;
             this.lbl_BrowseExportDir.Text = "Output Folder";
-            // 
-            // lbl_SpeedTest
-            // 
-            this.lbl_SpeedTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_SpeedTest.AutoSize = true;
-            this.lbl_SpeedTest.Enabled = false;
-            this.lbl_SpeedTest.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest.Location = new System.Drawing.Point(1040, 501);
-            this.lbl_SpeedTest.Name = "lbl_SpeedTest";
-            this.lbl_SpeedTest.Size = new System.Drawing.Size(77, 17);
-            this.lbl_SpeedTest.TabIndex = 44;
-            this.lbl_SpeedTest.Text = "SPEEDTEST";
             // 
             // imageList_Icons_32pix
             // 
@@ -1123,7 +1052,7 @@
             this.num_PingTimeout.Size = new System.Drawing.Size(47, 25);
             this.num_PingTimeout.TabIndex = 45;
             this.num_PingTimeout.Value = new decimal(new int[] {
-            30,
+            5,
             0,
             0,
             0});
@@ -1307,23 +1236,6 @@
             this.btn_Refresh.UseVisualStyleBackColor = false;
             this.btn_Refresh.Click += new System.EventHandler(this.btn_Refresh_Click);
             // 
-            // btn_SpeedTest
-            // 
-            this.btn_SpeedTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_SpeedTest.BackColor = System.Drawing.Color.DarkGray;
-            this.btn_SpeedTest.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_SpeedTest.Enabled = false;
-            this.btn_SpeedTest.FlatAppearance.BorderColor = System.Drawing.Color.Lime;
-            this.btn_SpeedTest.FlatAppearance.BorderSize = 2;
-            this.btn_SpeedTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_SpeedTest.Image = ((System.Drawing.Image)(resources.GetObject("btn_SpeedTest.Image")));
-            this.btn_SpeedTest.Location = new System.Drawing.Point(1002, 489);
-            this.btn_SpeedTest.Name = "btn_SpeedTest";
-            this.btn_SpeedTest.Size = new System.Drawing.Size(40, 40);
-            this.btn_SpeedTest.TabIndex = 43;
-            this.btn_SpeedTest.UseVisualStyleBackColor = false;
-            this.btn_SpeedTest.Click += new System.EventHandler(this.btn_SpeedTest_Click);
-            // 
             // btn_BrowseExportDir
             // 
             this.btn_BrowseExportDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1343,7 +1255,7 @@
             // 
             this.pb_Progress_Init.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pb_Progress_Init.Image = global::EndpointChecker.Properties.Resources.loadingProgress;
-            this.pb_Progress_Init.Location = new System.Drawing.Point(472, 72);
+            this.pb_Progress_Init.Location = new System.Drawing.Point(472, 87);
             this.pb_Progress_Init.Name = "pb_Progress_Init";
             this.pb_Progress_Init.Size = new System.Drawing.Size(186, 186);
             this.pb_Progress_Init.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1369,22 +1281,22 @@
             // 
             // lbl_LastUpdate_Label
             // 
-            this.lbl_LastUpdate_Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbl_LastUpdate_Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_LastUpdate_Label.AutoSize = true;
             this.lbl_LastUpdate_Label.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LastUpdate_Label.Location = new System.Drawing.Point(10, 538);
+            this.lbl_LastUpdate_Label.Location = new System.Drawing.Point(789, 509);
             this.lbl_LastUpdate_Label.Name = "lbl_LastUpdate_Label";
-            this.lbl_LastUpdate_Label.Size = new System.Drawing.Size(137, 17);
+            this.lbl_LastUpdate_Label.Size = new System.Drawing.Size(140, 17);
             this.lbl_LastUpdate_Label.TabIndex = 51;
-            this.lbl_LastUpdate_Label.Text = "LAST STATUS UPDATE";
+            this.lbl_LastUpdate_Label.Text = "LAST STATUS UPDATE:";
             this.lbl_LastUpdate_Label.Visible = false;
             // 
             // lbl_LastUpdate
             // 
-            this.lbl_LastUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbl_LastUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_LastUpdate.AutoSize = true;
             this.lbl_LastUpdate.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LastUpdate.Location = new System.Drawing.Point(156, 536);
+            this.lbl_LastUpdate.Location = new System.Drawing.Point(931, 507);
             this.lbl_LastUpdate.Name = "lbl_LastUpdate";
             this.lbl_LastUpdate.Size = new System.Drawing.Size(0, 20);
             this.lbl_LastUpdate.TabIndex = 52;
@@ -1465,6 +1377,8 @@
             // groupBox_CommonOptions
             // 
             this.groupBox_CommonOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox_CommonOptions.Controls.Add(this.cb_Resolve_IPAddresses);
+            this.groupBox_CommonOptions.Controls.Add(this.cb_TestPing);
             this.groupBox_CommonOptions.Controls.Add(this.cb_RefreshOnStartup);
             this.groupBox_CommonOptions.Controls.Add(this.cb_AutomaticRefresh);
             this.groupBox_CommonOptions.Controls.Add(this.cb_TrayBalloonNotify);
@@ -1479,6 +1393,38 @@
             this.groupBox_CommonOptions.TabIndex = 57;
             this.groupBox_CommonOptions.TabStop = false;
             this.groupBox_CommonOptions.Text = "Common Options";
+            // 
+            // cb_Resolve_IPAddresses
+            // 
+            this.cb_Resolve_IPAddresses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cb_Resolve_IPAddresses.Checked = true;
+            this.cb_Resolve_IPAddresses.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cb_Resolve_IPAddresses.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cb_Resolve_IPAddresses.Enabled = false;
+            this.cb_Resolve_IPAddresses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_Resolve_IPAddresses.Location = new System.Drawing.Point(9, 135);
+            this.cb_Resolve_IPAddresses.Name = "cb_Resolve_IPAddresses";
+            this.cb_Resolve_IPAddresses.Size = new System.Drawing.Size(207, 19);
+            this.cb_Resolve_IPAddresses.TabIndex = 62;
+            this.cb_Resolve_IPAddresses.Text = "Resolve IP Address(es)";
+            this.cb_Resolve_IPAddresses.UseVisualStyleBackColor = true;
+            this.cb_Resolve_IPAddresses.CheckedChanged += new System.EventHandler(this.cb_Resolve_IPAddresses_CheckedChanged);
+            // 
+            // cb_TestPing
+            // 
+            this.cb_TestPing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cb_TestPing.Checked = true;
+            this.cb_TestPing.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cb_TestPing.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cb_TestPing.Enabled = false;
+            this.cb_TestPing.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_TestPing.Location = new System.Drawing.Point(9, 118);
+            this.cb_TestPing.Name = "cb_TestPing";
+            this.cb_TestPing.Size = new System.Drawing.Size(207, 19);
+            this.cb_TestPing.TabIndex = 61;
+            this.cb_TestPing.Text = "Test Ping";
+            this.cb_TestPing.UseVisualStyleBackColor = true;
+            this.cb_TestPing.CheckedChanged += new System.EventHandler(this.cb_PingHost_CheckedChanged);
             // 
             // cb_RefreshOnStartup
             // 
@@ -1496,6 +1442,8 @@
             // cb_ResolvePageLinks
             // 
             this.cb_ResolvePageLinks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cb_ResolvePageLinks.Checked = true;
+            this.cb_ResolvePageLinks.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_ResolvePageLinks.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cb_ResolvePageLinks.Enabled = false;
             this.cb_ResolvePageLinks.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1510,8 +1458,8 @@
             // groupBox_HTTPOptions
             // 
             this.groupBox_HTTPOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox_HTTPOptions.Controls.Add(this.cb_PingHost);
-            this.groupBox_HTTPOptions.Controls.Add(this.cb_DNSAndMACLookupOnHost);
+            this.groupBox_HTTPOptions.Controls.Add(this.cb_Resolve_NIC_MACs);
+            this.groupBox_HTTPOptions.Controls.Add(this.cb_Resolve_DNS_Names);
             this.groupBox_HTTPOptions.Controls.Add(this.cb_ResolvePageLinks);
             this.groupBox_HTTPOptions.Controls.Add(this.cb_AllowAutoRedirect);
             this.groupBox_HTTPOptions.Controls.Add(this.cb_ValidateSSLCertificate);
@@ -1527,80 +1475,39 @@
             this.groupBox_HTTPOptions.TabStop = false;
             this.groupBox_HTTPOptions.Text = "HTTP Options";
             // 
-            // cb_PingHost
+            // cb_Resolve_NIC_MACs
             // 
-            this.cb_PingHost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cb_PingHost.Checked = true;
-            this.cb_PingHost.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cb_PingHost.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cb_PingHost.Enabled = false;
-            this.cb_PingHost.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_PingHost.Location = new System.Drawing.Point(9, 118);
-            this.cb_PingHost.Name = "cb_PingHost";
-            this.cb_PingHost.Size = new System.Drawing.Size(207, 19);
-            this.cb_PingHost.TabIndex = 61;
-            this.cb_PingHost.Text = "Ping Host";
-            this.cb_PingHost.UseVisualStyleBackColor = true;
-            this.cb_PingHost.CheckedChanged += new System.EventHandler(this.cb_PingHost_CheckedChanged);
+            this.cb_Resolve_NIC_MACs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cb_Resolve_NIC_MACs.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cb_Resolve_NIC_MACs.Enabled = false;
+            this.cb_Resolve_NIC_MACs.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_Resolve_NIC_MACs.Location = new System.Drawing.Point(9, 135);
+            this.cb_Resolve_NIC_MACs.Name = "cb_Resolve_NIC_MACs";
+            this.cb_Resolve_NIC_MACs.Size = new System.Drawing.Size(207, 19);
+            this.cb_Resolve_NIC_MACs.TabIndex = 61;
+            this.cb_Resolve_NIC_MACs.Text = "Resolve NIC MAC Address(es)";
+            this.cb_Resolve_NIC_MACs.UseVisualStyleBackColor = true;
+            this.cb_Resolve_NIC_MACs.CheckedChanged += new System.EventHandler(this.cb_Resolve_NIC_MACs_CheckedChanged);
             // 
-            // cb_DNSAndMACLookupOnHost
+            // cb_Resolve_DNS_Names
             // 
-            this.cb_DNSAndMACLookupOnHost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cb_DNSAndMACLookupOnHost.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cb_DNSAndMACLookupOnHost.Enabled = false;
-            this.cb_DNSAndMACLookupOnHost.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cb_DNSAndMACLookupOnHost.Location = new System.Drawing.Point(9, 135);
-            this.cb_DNSAndMACLookupOnHost.Name = "cb_DNSAndMACLookupOnHost";
-            this.cb_DNSAndMACLookupOnHost.Size = new System.Drawing.Size(207, 19);
-            this.cb_DNSAndMACLookupOnHost.TabIndex = 60;
-            this.cb_DNSAndMACLookupOnHost.Text = "DNS / MAC Lookup on Host";
-            this.cb_DNSAndMACLookupOnHost.UseVisualStyleBackColor = true;
-            this.cb_DNSAndMACLookupOnHost.CheckedChanged += new System.EventHandler(this.cb_DNSLookupOnHost_CheckedChanged);
-            // 
-            // pb_ITNetwork
-            // 
-            this.pb_ITNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pb_ITNetwork.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_ITNetwork.Image = ((System.Drawing.Image)(resources.GetObject("pb_ITNetwork.Image")));
-            this.pb_ITNetwork.Location = new System.Drawing.Point(1013, 535);
-            this.pb_ITNetwork.Name = "pb_ITNetwork";
-            this.pb_ITNetwork.Size = new System.Drawing.Size(40, 40);
-            this.pb_ITNetwork.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_ITNetwork.TabIndex = 60;
-            this.pb_ITNetwork.TabStop = false;
-            this.pb_ITNetwork.Click += new System.EventHandler(this.pb_ITNetwork_Click);
-            // 
-            // pb_FeatureRequest
-            // 
-            this.pb_FeatureRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pb_FeatureRequest.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_FeatureRequest.Image = ((System.Drawing.Image)(resources.GetObject("pb_FeatureRequest.Image")));
-            this.pb_FeatureRequest.Location = new System.Drawing.Point(868, 538);
-            this.pb_FeatureRequest.Name = "pb_FeatureRequest";
-            this.pb_FeatureRequest.Size = new System.Drawing.Size(32, 32);
-            this.pb_FeatureRequest.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_FeatureRequest.TabIndex = 62;
-            this.pb_FeatureRequest.TabStop = false;
-            this.pb_FeatureRequest.Click += new System.EventHandler(this.pb_FeatureRequest_Click);
+            this.cb_Resolve_DNS_Names.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cb_Resolve_DNS_Names.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cb_Resolve_DNS_Names.Enabled = false;
+            this.cb_Resolve_DNS_Names.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_Resolve_DNS_Names.Location = new System.Drawing.Point(9, 118);
+            this.cb_Resolve_DNS_Names.Name = "cb_Resolve_DNS_Names";
+            this.cb_Resolve_DNS_Names.Size = new System.Drawing.Size(207, 19);
+            this.cb_Resolve_DNS_Names.TabIndex = 60;
+            this.cb_Resolve_DNS_Names.Text = "Resolve DNS Name(s)";
+            this.cb_Resolve_DNS_Names.UseVisualStyleBackColor = true;
+            this.cb_Resolve_DNS_Names.CheckedChanged += new System.EventHandler(this.cb_DNSLookupOnHost_CheckedChanged);
             // 
             // TIMER_ListAndLogsFilesWatcher
             // 
             this.TIMER_ListAndLogsFilesWatcher.Enabled = true;
             this.TIMER_ListAndLogsFilesWatcher.Interval = 1000;
             this.TIMER_ListAndLogsFilesWatcher.Tick += new System.EventHandler(this.TIMER_ListAndLogsFilesWatcher_Tick);
-            // 
-            // pb_GitHub
-            // 
-            this.pb_GitHub.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pb_GitHub.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_GitHub.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitHub.Image")));
-            this.pb_GitHub.Location = new System.Drawing.Point(893, 540);
-            this.pb_GitHub.Name = "pb_GitHub";
-            this.pb_GitHub.Size = new System.Drawing.Size(53, 30);
-            this.pb_GitHub.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_GitHub.TabIndex = 63;
-            this.pb_GitHub.TabStop = false;
-            this.pb_GitHub.Click += new System.EventHandler(this.pb_GitHub_Click);
             // 
             // openFileDialog_VNCExe
             // 
@@ -1611,34 +1518,6 @@
             // 
             this.openFileDialog_PuttyExe.Filter = "Putty executable|putty.exe";
             this.openFileDialog_PuttyExe.Title = "Browse Putty executable ...";
-            // 
-            // pb_GitLab
-            // 
-            this.pb_GitLab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pb_GitLab.BackColor = System.Drawing.Color.Transparent;
-            this.pb_GitLab.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_GitLab.Image = ((System.Drawing.Image)(resources.GetObject("pb_GitLab.Image")));
-            this.pb_GitLab.Location = new System.Drawing.Point(937, 536);
-            this.pb_GitLab.Name = "pb_GitLab";
-            this.pb_GitLab.Size = new System.Drawing.Size(42, 40);
-            this.pb_GitLab.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_GitLab.TabIndex = 64;
-            this.pb_GitLab.TabStop = false;
-            this.pb_GitLab.Click += new System.EventHandler(this.pb_GitLab_Click);
-            // 
-            // pb_AppWebPage
-            // 
-            this.pb_AppWebPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pb_AppWebPage.BackColor = System.Drawing.Color.Transparent;
-            this.pb_AppWebPage.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_AppWebPage.Image = ((System.Drawing.Image)(resources.GetObject("pb_AppWebPage.Image")));
-            this.pb_AppWebPage.Location = new System.Drawing.Point(1054, 540);
-            this.pb_AppWebPage.Name = "pb_AppWebPage";
-            this.pb_AppWebPage.Size = new System.Drawing.Size(32, 32);
-            this.pb_AppWebPage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_AppWebPage.TabIndex = 65;
-            this.pb_AppWebPage.TabStop = false;
-            this.pb_AppWebPage.Click += new System.EventHandler(this.pb_AppWebPage_Click);
             // 
             // lbl_ListFilter
             // 
@@ -1682,19 +1561,6 @@
             this.pb_ListFilterClear.Visible = false;
             this.pb_ListFilterClear.Click += new System.EventHandler(this.pb_ListFilterClear_Click);
             // 
-            // pb_SoftPedia
-            // 
-            this.pb_SoftPedia.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pb_SoftPedia.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_SoftPedia.Image = ((System.Drawing.Image)(resources.GetObject("pb_SoftPedia.Image")));
-            this.pb_SoftPedia.Location = new System.Drawing.Point(978, 538);
-            this.pb_SoftPedia.Name = "pb_SoftPedia";
-            this.pb_SoftPedia.Size = new System.Drawing.Size(32, 32);
-            this.pb_SoftPedia.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_SoftPedia.TabIndex = 69;
-            this.pb_SoftPedia.TabStop = false;
-            this.pb_SoftPedia.Click += new System.EventHandler(this.pb_SoftPedia_Click);
-            // 
             // pb_RefreshProcess
             // 
             this.pb_RefreshProcess.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -1712,19 +1578,144 @@
             this.TIMER_ContinuousRefresh.Interval = 5000;
             this.TIMER_ContinuousRefresh.Tick += new System.EventHandler(this.TIMER_ContinuousRefresh_Tick);
             // 
-            // pb_CheckForUpdate
+            // MainMenuStrip
             // 
-            this.pb_CheckForUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pb_CheckForUpdate.BackColor = System.Drawing.Color.Transparent;
-            this.pb_CheckForUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_CheckForUpdate.Image = global::EndpointChecker.Properties.Resources.updateIcon;
-            this.pb_CheckForUpdate.Location = new System.Drawing.Point(1089, 536);
-            this.pb_CheckForUpdate.Name = "pb_CheckForUpdate";
-            this.pb_CheckForUpdate.Size = new System.Drawing.Size(36, 36);
-            this.pb_CheckForUpdate.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_CheckForUpdate.TabIndex = 72;
-            this.pb_CheckForUpdate.TabStop = false;
-            this.pb_CheckForUpdate.Click += new System.EventHandler(this.pb_CheckForUpdate_Click);
+            this.MainMenuStrip.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.MainMenuStrip.BackColor = System.Drawing.Color.Silver;
+            this.MainMenuStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.MainMenuStrip.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MainMenuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.MainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mainMenu_UpdateCheck,
+            this.mainMenu_SpeedTest,
+            this.mainMenu_ConfigFile,
+            this.mainMenu_EndpointsList,
+            this.mainMenu_HomePage,
+            this.mainMenu_SoftPedia,
+            this.mainMenu_ITNetwork,
+            this.mainMenu_GitHub,
+            this.mainMenu_GitLab,
+            this.mainMenu_FeatureRequest,
+            this.mainMenu_Exit});
+            this.MainMenuStrip.Location = new System.Drawing.Point(21, 7);
+            this.MainMenuStrip.Name = "MainMenuStrip";
+            this.MainMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.MainMenuStrip.ShowItemToolTips = true;
+            this.MainMenuStrip.Size = new System.Drawing.Size(1085, 32);
+            this.MainMenuStrip.TabIndex = 73;
+            this.MainMenuStrip.Text = "Main Menu Strip";
+            // 
+            // mainMenu_UpdateCheck
+            // 
+            this.mainMenu_UpdateCheck.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_UpdateCheck.Image = global::EndpointChecker.Properties.Resources.updateIcon;
+            this.mainMenu_UpdateCheck.Name = "mainMenu_UpdateCheck";
+            this.mainMenu_UpdateCheck.Size = new System.Drawing.Size(117, 28);
+            this.mainMenu_UpdateCheck.Text = "Update Check";
+            this.mainMenu_UpdateCheck.ToolTipText = "Check GitHub for latest update package.";
+            this.mainMenu_UpdateCheck.Click += new System.EventHandler(this.mainMenu_UpdateCheck_Click);
+            // 
+            // mainMenu_SpeedTest
+            // 
+            this.mainMenu_SpeedTest.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_SpeedTest.Image = global::EndpointChecker.Properties.Resources.speedTest_Icon;
+            this.mainMenu_SpeedTest.Name = "mainMenu_SpeedTest";
+            this.mainMenu_SpeedTest.Size = new System.Drawing.Size(98, 28);
+            this.mainMenu_SpeedTest.Text = "Speed Test";
+            this.mainMenu_SpeedTest.ToolTipText = "Benchmark network Download / Upload speeds via OOKLA SpeedTest API";
+            this.mainMenu_SpeedTest.Click += new System.EventHandler(this.mainMenu_SpeedTest_Click);
+            // 
+            // mainMenu_ConfigFile
+            // 
+            this.mainMenu_ConfigFile.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_ConfigFile.Image = global::EndpointChecker.Properties.Resources.appConfig;
+            this.mainMenu_ConfigFile.Name = "mainMenu_ConfigFile";
+            this.mainMenu_ConfigFile.Size = new System.Drawing.Size(100, 28);
+            this.mainMenu_ConfigFile.Text = "Config File";
+            this.mainMenu_ConfigFile.ToolTipText = "Open application configuration file in system default editor";
+            this.mainMenu_ConfigFile.Click += new System.EventHandler(this.mainMenu_ConfigFile_Click);
+            // 
+            // mainMenu_EndpointsList
+            // 
+            this.mainMenu_EndpointsList.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_EndpointsList.Image = global::EndpointChecker.Properties.Resources.endpointsList_Icon;
+            this.mainMenu_EndpointsList.Name = "mainMenu_EndpointsList";
+            this.mainMenu_EndpointsList.Size = new System.Drawing.Size(117, 28);
+            this.mainMenu_EndpointsList.Text = "Endpoints List";
+            this.mainMenu_EndpointsList.ToolTipText = "Open EndPoints list file in system default editor";
+            this.mainMenu_EndpointsList.Click += new System.EventHandler(this.mainMenu_EndpointsList_Click);
+            // 
+            // mainMenu_HomePage
+            // 
+            this.mainMenu_HomePage.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_HomePage.Image = global::EndpointChecker.Properties.Resources.appWebPage;
+            this.mainMenu_HomePage.Name = "mainMenu_HomePage";
+            this.mainMenu_HomePage.Size = new System.Drawing.Size(105, 28);
+            this.mainMenu_HomePage.Text = "Home Page";
+            this.mainMenu_HomePage.ToolTipText = "Open application home web page on WebNode.";
+            this.mainMenu_HomePage.Click += new System.EventHandler(this.mainMenu_HomePage_Click);
+            // 
+            // mainMenu_SoftPedia
+            // 
+            this.mainMenu_SoftPedia.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_SoftPedia.Image = global::EndpointChecker.Properties.Resources.softPedia_Logo;
+            this.mainMenu_SoftPedia.Name = "mainMenu_SoftPedia";
+            this.mainMenu_SoftPedia.Size = new System.Drawing.Size(93, 28);
+            this.mainMenu_SoftPedia.Text = "SoftPedia";
+            this.mainMenu_SoftPedia.ToolTipText = "Open project page on SoftPedia portal.";
+            this.mainMenu_SoftPedia.Click += new System.EventHandler(this.mainMenu_SoftPedia_Click);
+            // 
+            // mainMenu_ITNetwork
+            // 
+            this.mainMenu_ITNetwork.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_ITNetwork.Image = global::EndpointChecker.Properties.Resources.itNetwork_Logo;
+            this.mainMenu_ITNetwork.Name = "mainMenu_ITNetwork";
+            this.mainMenu_ITNetwork.Size = new System.Drawing.Size(100, 28);
+            this.mainMenu_ITNetwork.Text = "IT Network";
+            this.mainMenu_ITNetwork.ToolTipText = "Open project page on IT Network CZ portal.";
+            this.mainMenu_ITNetwork.Click += new System.EventHandler(this.mainMenu_ITNetwork_Click);
+            // 
+            // mainMenu_GitHub
+            // 
+            this.mainMenu_GitHub.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_GitHub.Image = global::EndpointChecker.Properties.Resources.gitHub_Icon;
+            this.mainMenu_GitHub.Name = "mainMenu_GitHub";
+            this.mainMenu_GitHub.Size = new System.Drawing.Size(81, 28);
+            this.mainMenu_GitHub.Text = "GitHub";
+            this.mainMenu_GitHub.ToolTipText = "Open project repository on GitHub portal. Entire source code and releases are ope" +
+    "n for public.";
+            this.mainMenu_GitHub.Click += new System.EventHandler(this.mainMenu_GitHub_Click);
+            // 
+            // mainMenu_GitLab
+            // 
+            this.mainMenu_GitLab.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_GitLab.Image = global::EndpointChecker.Properties.Resources.gitLab_Logo;
+            this.mainMenu_GitLab.Name = "mainMenu_GitLab";
+            this.mainMenu_GitLab.Size = new System.Drawing.Size(77, 28);
+            this.mainMenu_GitLab.Text = "GitLab";
+            this.mainMenu_GitLab.ToolTipText = "Open project repository on GitLab portal. Entire source code and releases are ope" +
+    "n for public.";
+            this.mainMenu_GitLab.Click += new System.EventHandler(this.mainMenu_GitLab_Click);
+            // 
+            // mainMenu_FeatureRequest
+            // 
+            this.mainMenu_FeatureRequest.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_FeatureRequest.Image = global::EndpointChecker.Properties.Resources.featureRequest_Icon;
+            this.mainMenu_FeatureRequest.Name = "mainMenu_FeatureRequest";
+            this.mainMenu_FeatureRequest.Size = new System.Drawing.Size(127, 28);
+            this.mainMenu_FeatureRequest.Text = "Feature Request";
+            this.mainMenu_FeatureRequest.ToolTipText = "Send new Feature or Improvement description to development team";
+            this.mainMenu_FeatureRequest.Click += new System.EventHandler(this.mainMenu_FeatureRequest_Click);
+            // 
+            // mainMenu_Exit
+            // 
+            this.mainMenu_Exit.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.mainMenu_Exit.Image = global::EndpointChecker.Properties.Resources.close;
+            this.mainMenu_Exit.Name = "mainMenu_Exit";
+            this.mainMenu_Exit.Size = new System.Drawing.Size(62, 28);
+            this.mainMenu_Exit.Text = "Exit";
+            this.mainMenu_Exit.ToolTipText = "Exit application";
+            this.mainMenu_Exit.Click += new System.EventHandler(this.mainMenu_Exit_Click);
             // 
             // CheckerMainForm
             // 
@@ -1732,22 +1723,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1134, 593);
-            this.Controls.Add(this.pb_CheckForUpdate);
+            this.Controls.Add(this.MainMenuStrip);
             this.Controls.Add(this.groupBox_CommonOptions);
             this.Controls.Add(this.pb_RefreshProcess);
-            this.Controls.Add(this.pb_SoftPedia);
             this.Controls.Add(this.pb_ListFilterClear);
             this.Controls.Add(this.tb_ListFilter);
             this.Controls.Add(this.lbl_ListFilter);
-            this.Controls.Add(this.pb_AppWebPage);
-            this.Controls.Add(this.pb_GitLab);
-            this.Controls.Add(this.pb_FeatureRequest);
-            this.Controls.Add(this.pb_GitHub);
-            this.Controls.Add(this.pb_ITNetwork);
-            this.Controls.Add(this.lbl_ConfigFile);
-            this.Controls.Add(this.btn_EndpointsList);
-            this.Controls.Add(this.lbl_EndpointsList);
-            this.Controls.Add(this.btn_ConfigFile);
             this.Controls.Add(this.groupBox_HTTPOptions);
             this.Controls.Add(this.groupBox_Export);
             this.Controls.Add(this.lbl_LastUpdate);
@@ -1757,8 +1738,6 @@
             this.Controls.Add(this.num_PingTimeout);
             this.Controls.Add(this.lbl_PingTimeout);
             this.Controls.Add(this.lbl_PingTimeoutSecondsText);
-            this.Controls.Add(this.btn_SpeedTest);
-            this.Controls.Add(this.lbl_SpeedTest);
             this.Controls.Add(this.lbl_Terminate);
             this.Controls.Add(this.lbl_Refresh);
             this.Controls.Add(this.groupBox_EndpointSelection);
@@ -1805,15 +1784,10 @@
             this.groupBox_Export.PerformLayout();
             this.groupBox_CommonOptions.ResumeLayout(false);
             this.groupBox_HTTPOptions.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pb_ITNetwork)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_FeatureRequest)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_GitHub)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_GitLab)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_AppWebPage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_SoftPedia)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_CheckForUpdate)).EndInit();
+            this.MainMenuStrip.ResumeLayout(false);
+            this.MainMenuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1854,7 +1828,6 @@
         public System.Windows.Forms.FolderBrowserDialog folderBrowserExportDir;
         public System.Windows.Forms.ColumnHeader ch_DNSName;
         public System.Windows.Forms.ColumnHeader ch_HTTPContentLenght;
-        public System.Windows.Forms.Button btn_SpeedTest;
         public System.Windows.Forms.Button btn_BrowseExportDir;
         public System.Windows.Forms.ColumnHeader ch_HTTPContentType;
         public System.Windows.Forms.NumericUpDown num_PingTimeout;
@@ -1902,7 +1875,6 @@
         public System.Windows.Forms.Label lbl_CheckAll;
         public System.Windows.Forms.Label lbl_UncheckAll;
         public System.Windows.Forms.Label lbl_CheckAllAvailable;
-        public System.Windows.Forms.Label lbl_SpeedTest;
         public System.Windows.Forms.Label lbl_BrowseExportDir;
         public System.Windows.Forms.Label lbl_PingTimeout;
         public System.Windows.Forms.Label lbl_Validate;
@@ -1918,36 +1890,39 @@
         public System.Windows.Forms.CheckBox cb_ExportEndpointsStatus_JSON;
         public System.Windows.Forms.CheckBox cb_ResolvePageLinks;
         public System.Windows.Forms.ColumnHeader ch_HTTPETag;
-        public System.Windows.Forms.PictureBox pb_FeatureRequest;
-        public System.Windows.Forms.Label lbl_ConfigFile;
-        public System.Windows.Forms.Button btn_EndpointsList;
-        public System.Windows.Forms.Button btn_ConfigFile;
-        public System.Windows.Forms.Label lbl_EndpointsList;
         public System.Windows.Forms.Timer TIMER_ListAndLogsFilesWatcher;
         public System.Windows.Forms.GroupBox groupBox_HTTPOptions;
-        public System.Windows.Forms.PictureBox pb_ITNetwork;
-        public System.Windows.Forms.PictureBox pb_GitHub;
         public System.Windows.Forms.OpenFileDialog openFileDialog_VNCExe;
         public System.Windows.Forms.OpenFileDialog openFileDialog_PuttyExe;
         public System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_SSH;
-        public System.Windows.Forms.PictureBox pb_GitLab;
-        public System.Windows.Forms.PictureBox pb_AppWebPage;
         public System.Windows.Forms.Label lbl_ListFilter;
         public System.Windows.Forms.TextBox tb_ListFilter;
         public System.Windows.Forms.PictureBox pb_ListFilterClear;
         public System.Windows.Forms.CheckBox cb_RefreshOnStartup;
-        public System.Windows.Forms.PictureBox pb_SoftPedia;
         public System.Windows.Forms.ToolStripMenuItem tray_SpeedTest;
-        public System.Windows.Forms.CheckBox cb_PingHost;
-        public System.Windows.Forms.CheckBox cb_DNSAndMACLookupOnHost;
+        public System.Windows.Forms.CheckBox cb_TestPing;
+        public System.Windows.Forms.CheckBox cb_Resolve_DNS_Names;
         public System.Windows.Forms.PictureBox pb_RefreshProcess;
         public System.Windows.Forms.Timer TIMER_ContinuousRefresh;
         public System.Windows.Forms.ToolStripMenuItem tray_Notifications_Enable;
         public System.Windows.Forms.ToolStripSeparator tray_Separator_2;
         public System.Windows.Forms.ToolStripMenuItem tray_Notifications_Disable;
-        public System.Windows.Forms.PictureBox pb_CheckForUpdate;
         public System.Windows.Forms.ToolStripMenuItem tray_CheckForUpdate;
         public System.Windows.Forms.ToolStripSeparator tray_Separator_3;
+        public System.Windows.Forms.CheckBox cb_Resolve_IPAddresses;
+        public System.Windows.Forms.CheckBox cb_Resolve_NIC_MACs;
+        public System.Windows.Forms.MenuStrip MainMenuStrip;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_UpdateCheck;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_SpeedTest;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_ConfigFile;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_EndpointsList;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_HomePage;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_SoftPedia;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_ITNetwork;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_GitHub;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_GitLab;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_FeatureRequest;
+        public System.Windows.Forms.ToolStripMenuItem mainMenu_Exit;
     }
 }
 

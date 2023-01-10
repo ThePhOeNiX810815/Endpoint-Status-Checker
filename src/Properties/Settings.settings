@@ -251,13 +251,19 @@
     <Setting Name="ListView_Filter" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Config_PingHost" Type="System.Boolean" Scope="User">
+    <Setting Name="Config_TestPing" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="Config_DNSAndMACLookupOnHost" Type="System.Boolean" Scope="User">
+    <Setting Name="Config_Resolve_DNS_Names" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AutoUpdate_AutoUpdateInFuture" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Config_Resolve_IP_Addresses" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Config_Resolve_MAC_Addresses" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
