@@ -194,7 +194,7 @@ namespace EndpointChecker
 
             lbl_Copyright.Text = app_Copyright;
             lbl_Version.Text += "Version: " + app_VersionString +
-                                ", Built: " + app_BuiltDate;
+                                ", Built: " + app_Built_DateTime;
 
             // SET CONTROLS TOOLTIPS
             SetControlsTooltips();
@@ -528,7 +528,6 @@ namespace EndpointChecker
                 lv_Endpoints.Visible = false;
             }
 
-            pb_Progress_Init.Visible = false;
             listUpdating = false;
         }
 
@@ -1080,6 +1079,23 @@ namespace EndpointChecker
                                     }
                                 }
 
+                                // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, FROM INPUT, BY REGEX]
+                                if (Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
+                                {
+                                    // IS IP ADDRESS
+                                    endpoint.IPAddress = new string[] { responseURI.Host };
+                                }
+                                else
+                                {
+                                    // IS DNS NAME
+                                    endpoint.DNSName = new string[] { responseURI.Host };
+                                }
+
+                                // DECLARE TEMPORARY LISTS
+                                List<string> endpointIPAddressesStringList = new List<string>();
+                                List<string> endpointDNSNamesStringList = new List<string>();
+                                List<string> endpointMACAddressStringList = new List<string>();
+
                                 // GET ITEM CHECK DURATION TIME [FOR 'EXPORT' PURPOSE]
                                 if (validationMethod == ValidationMethod.Protocol &&
                                     !BW_GetStatus.CancellationPending)
@@ -1087,120 +1103,96 @@ namespace EndpointChecker
                                     durationTime_Item = sw_ItemProgress.ElapsedMilliseconds.ToString() + " ms";
                                 }
 
-                                if (!BW_GetStatus.CancellationPending)
+                                if (!BW_GetStatus.CancellationPending &&
+                                    resolveIPaddresses)
                                 {
-                                    // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, FROM INPUT, BY REGEX]
-                                    if (Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
-                                    {
-                                        // IS IP ADDRESS
-                                        endpoint.IPAddress = new string[] { responseURI.Host };
-                                    }
-                                    else
-                                    {
-                                        // IS DNS NAME
-                                        endpoint.DNSName = new string[] { responseURI.Host };
-                                    }
-
-                                    List<string> endpointIPAddressesStringList = new List<string>();
-                                    List<string> endpointDNSNamesStringList = new List<string>();
-                                    List<string> endpointMACAddressStringList = new List<string>();
-
                                     // RESOLVE IP ADDRESS(ES)
-                                    if (resolveIPaddresses)
+                                    try
                                     {
-                                        try
-                                        {
-                                            foreach (IPAddress endpointIPAddress in Dns.GetHostAddresses(responseURI.Host))
-                                            {
-                                                if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
-                                                {
-                                                    endpointIPAddressesStringList.Add(endpointIPAddress.ToString());
-                                                }
-                                            }
-                                        }
-                                        catch
-                                        {
-                                        }
-                                    }
+                                        // GET LIST
+                                        IPAddress[] endpoint_IP_Address_List = Dns.GetHostAddresses(responseURI.Host);
 
-                                    // RESOLVE NETWORK SHARES
-                                    if (resolveNetworkShares)
-                                    {
-                                        try
+                                        // PROCESS LIST
+                                        foreach (IPAddress endpointIPAddress in endpoint_IP_Address_List)
                                         {
-                                            List<string> netSharesList = GetNetShares(responseURI.Host);
-                                            if (netSharesList.Count > 0)
+                                            if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
                                             {
-                                                netSharesList.Sort();
-                                                endpoint.NetworkShare = netSharesList.ToArray();
-                                            }
-                                        }
-                                        catch
-                                        {
-                                        }
-                                    }
-
-                                    // RESOLVE DNS NAME(S)
-                                    if (resolveDNSnames)
-                                    {
-                                        foreach (string _IP_Address in endpointIPAddressesStringList)
-                                        {
-                                            try
-                                            {
-                                                IPHostEntry hostEntry = Dns.GetHostEntry(_IP_Address);
-                                                endpointDNSNamesStringList.Add(hostEntry.HostName);
-                                            }
-                                            catch
-                                            {
+                                                endpointIPAddressesStringList.Add(endpointIPAddress.ToString());
                                             }
                                         }
                                     }
-
-                                    if (resolveMACaddresses)
+                                    catch
                                     {
-                                        foreach (string _IP_Address in endpointIPAddressesStringList)
-                                        {
-                                            try
-                                            {
-                                                // RESOLVE MAC ADDRESS(ES)
-                                                string macAddress = WindowsLookupService.Lookup(IPAddress.Parse(_IP_Address));
-
-                                                // IF ENDPOINT IP ADDRESS IS ANY OF 'DNS SERVER OR DEFAULT GATEWAY' IPs
-                                                // OR
-                                                // RESOLVED MAC IS NOT ANY OF 'DNS SERVER OR DEFAULT GATEWAY' MAC ADDRESSes
-                                                if (!string.IsNullOrEmpty(macAddress) &&
-                                                   (!localDNSAndGWMACAddresses.Contains(macAddress) ||
-                                                    localDNSAndGWIPAddresses.Contains(_IP_Address.ToString())))
-                                                {
-                                                    endpointMACAddressStringList.Add(macAddress);
-                                                }
-                                            }
-                                            catch
-                                            {
-                                            }
-                                        }
-                                    }
-
-                                    // FILL IP ADDRESS(ES) LIST
-                                    if (endpointIPAddressesStringList.Count > 0)
-                                    {
-                                        endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
-                                    }
-
-                                    // FILL DNS NAME(S) LIST
-                                    if (endpointDNSNamesStringList.Count > 0)
-                                    {
-                                        endpoint.DNSName = endpointDNSNamesStringList.ToArray();
-                                    }
-
-                                    // FILL MAC ADDRESS(ES) LIST
-                                    if (endpointMACAddressStringList.Count > 0)
-                                    {
-                                        endpoint.MACAddress = endpointMACAddressStringList.ToArray();
                                     }
                                 }
 
-                                if (!BW_GetStatus.CancellationPending)
+                                if (!BW_GetStatus.CancellationPending &&
+                                    resolveNetworkShares)
+                                {
+                                    // RESOLVE NETWORK SHARES
+                                    try
+                                    {
+                                        // GET LIST
+                                        List<string> netSharesList = GetNetShares(responseURI.Host);
+
+                                        // PROCESS LIST
+                                        if (netSharesList.Count > 0)
+                                        {
+                                            netSharesList.Sort();
+                                            endpoint.NetworkShare = netSharesList.ToArray();
+                                        }
+                                    }
+                                    catch
+                                    {
+                                    }
+                                }
+
+                                if (!BW_GetStatus.CancellationPending &&
+                                    resolveDNSnames)
+                                {
+                                    // RESOLVE DNS NAME(S)
+                                    foreach (string _IP_Address in endpointIPAddressesStringList)
+                                    {
+                                        try
+                                        {                                            
+                                            // GET DNS NAME
+                                            IPHostEntry hostEntry = Dns.GetHostEntry(_IP_Address);
+                                            endpointDNSNamesStringList.Add(hostEntry.HostName);
+                                        }
+                                        catch
+                                        {
+                                        }
+                                    }
+                                }
+
+                                if (!BW_GetStatus.CancellationPending &&
+                                    resolveMACaddresses)
+                                {
+                                    foreach (string _IP_Address in endpointIPAddressesStringList)
+                                    {
+                                        try
+                                        {                                            
+                                            // RESOLVE MAC ADDRESS
+                                            string macAddress = WindowsLookupService.Lookup(IPAddress.Parse(_IP_Address));
+
+                                            // IF ENDPOINT IP ADDRESS IS ANY OF 'DNS SERVER OR DEFAULT GATEWAY' IPs
+                                            // OR
+                                            // RESOLVED MAC IS NOT ANY OF 'DNS SERVER OR DEFAULT GATEWAY' MAC ADDRESSes
+                                            if (!string.IsNullOrEmpty(macAddress) &&
+                                               (!localDNSAndGWMACAddresses.Contains(macAddress) ||
+                                                localDNSAndGWIPAddresses.Contains(_IP_Address.ToString())))
+                                            {
+                                                endpointMACAddressStringList.Add(macAddress);
+                                            }
+                                        }
+                                        catch
+                                        {
+                                        }
+                                    }
+                                }
+
+                                if (!BW_GetStatus.CancellationPending &&
+                                    testPing)
                                 {
                                     if (validationMethod == ValidationMethod.Ping)
                                     {
@@ -1208,21 +1200,36 @@ namespace EndpointChecker
                                     }
 
                                     // TEST PING
-                                    if (testPing)
+                                    try
                                     {
-                                        try
-                                        {
-                                            string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 1);
+                                        string pingRoundtripTime = GetPingTime(responseURI.Host, pingTimeout, 1);
 
-                                            if (!string.IsNullOrEmpty(pingRoundtripTime))
-                                            {
-                                                endpoint.PingRoundtripTime = pingRoundtripTime;
-                                            }
-                                        }
-                                        catch
+                                        if (!string.IsNullOrEmpty(pingRoundtripTime))
                                         {
+                                            endpoint.PingRoundtripTime = pingRoundtripTime;
                                         }
                                     }
+                                    catch
+                                    {
+                                    }
+                                }
+
+                                // FILL IP ADDRESS(ES) LIST
+                                if (endpointIPAddressesStringList.Count > 0)
+                                {
+                                    endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
+                                }
+
+                                // FILL DNS NAME(S) LIST
+                                if (endpointDNSNamesStringList.Count > 0)
+                                {
+                                    endpoint.DNSName = endpointDNSNamesStringList.ToArray();
+                                }
+
+                                // FILL MAC ADDRESS(ES) LIST
+                                if (endpointMACAddressStringList.Count > 0)
+                                {
+                                    endpoint.MACAddress = endpointMACAddressStringList.ToArray();
                                 }
 
                                 // SET PROGRESS STATUS LABEL
@@ -1378,7 +1385,7 @@ namespace EndpointChecker
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(endpointURI.AbsoluteUri);
             httpWebRequest.Method = httpWebRequest_Method;
             httpWebRequest.UserAgent = http_UserAgent;
-            httpWebRequest.Accept = "*/*";
+            httpWebRequest.Accept = @"*/*";
             httpWebRequest.Timeout = httpRequestTimeout;
             httpWebRequest.ReadWriteTimeout = httpRequestTimeout;
             httpWebRequest.AllowAutoRedirect = allowAutoRedirect;
@@ -1394,8 +1401,8 @@ namespace EndpointChecker
             WebHeaderCollection requestHeadersCollection = new WebHeaderCollection
             {
                 { "Caller-Application-Name", app_Title },
-                { "Accept-Encoding", "gzip, deflate, br" },
-                { "Accept-Language", "*;*" },
+                { "Accept-Encoding", @"gzip, deflate, br" },
+                { "Accept-Language", @"*;*" },
                 { "Cache-Control", "max-age=0" },
                 { "DNT", "1" },
                 { "Authority", endpointURI.Authority },
@@ -2988,7 +2995,7 @@ namespace EndpointChecker
 
                         // ADD SUMMARY WORKSHEET
                         endpointsStatusExport_Summary_WorkSheet.Cell("A1").SetValue("Endpoint Checker Application");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").SetValue("Version " + app_VersionString + " (built " + app_BuiltDate + ")");
+                        endpointsStatusExport_Summary_WorkSheet.Cell("B1").SetValue("Version " + app_VersionString + " (built " + app_Built_DateTime + ")");
                         endpointsStatusExport_Summary_WorkSheet.Cell("A2").SetValue("Operating System");
                         endpointsStatusExport_Summary_WorkSheet.Cell("B2").SetValue(os_VersionString);
                         endpointsStatusExport_Summary_WorkSheet.Cell("A3").SetValue("Target Framework Version");
@@ -3980,11 +3987,11 @@ namespace EndpointChecker
                             // CREATE ENDPOINT STATUS DEFINITION
                             EndpointDefinition endpointStatusDefiniton = new EndpointDefinition()
                             {
-                                Name = line.Split('|')[0].TrimEnd('/'),
+                                Name = line.Split('|')[0].Trim(),
                                 Protocol = status_NotAvailable,
                                 Port = status_NotAvailable,
-                                Address = line.Split('|')[1].TrimEnd('/'),
-                                ResponseAddress = line.Split('|')[1].TrimEnd('/'),
+                                Address = line.Split('|')[1].Trim(),
+                                ResponseAddress = line.Split('|')[1].Trim(),
                                 IPAddress = new string[] { status_NotAvailable },
                                 ResponseTime = status_NotAvailable,
                                 ResponseCode = status_NotAvailable,
@@ -5528,20 +5535,19 @@ namespace EndpointChecker
         {
             tray_Refresh.Visible = false;
             tray_SpeedTest.Visible = false;
+            tray_CheckForUpdate.Visible = false;
             tray_Separator_1.Visible = false;
+            tray_Separator_3.Visible = false;
 
             dialog_SpeedTest = new SpeedTestDialog();
             dialog_SpeedTest.ShowDialog();
             dialog_SpeedTest = null;
 
-            if (onClose)
-            {
-                Application.Exit();
-            }
-
             tray_Refresh.Visible = true;
             tray_SpeedTest.Visible = true;
+            tray_CheckForUpdate.Visible = true;
             tray_Separator_1.Visible = true;
+            tray_Separator_3.Visible = true;
         }
 
         public void mainMenu_Exit_Click(object sender, EventArgs e)

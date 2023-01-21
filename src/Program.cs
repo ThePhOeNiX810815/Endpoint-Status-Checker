@@ -56,6 +56,9 @@ namespace EndpointChecker
 
     internal static class Program
     {
+        // TEST MODE SWITCH
+        public static bool app_TestMode = false;
+
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
@@ -103,7 +106,8 @@ namespace EndpointChecker
         public static string app_ApplicationExecutableName = AppDomain.CurrentDomain.FriendlyName;
         public static string app_CurrentWorkingDir = Path.GetDirectoryName(app_Assembly.Location);
         public static string app_TempDir = Path.GetTempPath();
-        public static string app_BuiltDate = RetrieveLinkerTimestamp();
+        public static string app_Built_Date = RetrieveLinkerTimestamp(false);
+        public static string app_Built_DateTime = RetrieveLinkerTimestamp(true);
         public static string app_Copyright = FileVersionInfo.GetVersionInfo(app_Assembly.Location).LegalCopyright;
         public static string app_Title = app_ApplicationName + " v" + app_VersionString;
 
@@ -168,7 +172,6 @@ namespace EndpointChecker
         public static Version app_AutoUpdate_SkipVersion;
         public static bool app_AutoUpdateNow = false;
         public static bool app_UpdateAvailable = false;
-        public static bool app_UpdateTestMode = false;
         public static Version app_LatestPackageVersion = new Version(0, 0, 0, 0);
         public static string app_LatestPackageLink = string.Empty;
         public static string app_LatestPackageDate = string.Empty;
@@ -365,7 +368,7 @@ namespace EndpointChecker
             return assembyInfo.currentAssemblyPath;
         }
 
-        private static string RetrieveLinkerTimestamp()
+        private static string RetrieveLinkerTimestamp(bool appendTime)
         {
             string filePath = Assembly.GetCallingAssembly().Location;
             const int c_PeHeaderOffset = 60;
@@ -391,7 +394,15 @@ namespace EndpointChecker
             DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0);
             dt = dt.AddSeconds(secondsSince1970);
             dt = dt.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(dt).Hours);
-            return dt.ToString("dd.MM.yyyy HH:mm");
+
+            if (appendTime)
+            {
+                return dt.ToString("dd.MM.yyyy HH:mm");
+            }
+            else
+            {
+                return dt.ToString("dd.MM.yyyy");
+            }
         }
 
         public static string GetVersionString(Version version, bool addBuildNumber, bool addRevisionNumber)
@@ -449,7 +460,7 @@ namespace EndpointChecker
 
                     if ((app_LatestPackageVersion > app_Version &&
                          app_LatestPackageVersion > app_AutoUpdate_SkipVersion) || 
-                        app_UpdateTestMode)
+                        app_TestMode)
                     {
                         app_UpdateAvailable = true;
 

@@ -122,7 +122,6 @@
             this.btn_Terminate = new System.Windows.Forms.Button();
             this.btn_Refresh = new System.Windows.Forms.Button();
             this.btn_BrowseExportDir = new System.Windows.Forms.Button();
-            this.pb_Progress_Init = new System.Windows.Forms.PictureBox();
             this.cb_ExportEndpointsStatus_HTML = new System.Windows.Forms.CheckBox();
             this.lbl_LastUpdate_Label = new System.Windows.Forms.Label();
             this.lbl_LastUpdate = new System.Windows.Forms.Label();
@@ -167,7 +166,6 @@
             this.groupBox_EndpointSelection.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_PingTimeout)).BeginInit();
             this.lv_Endpoints_ContextMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_Progress_Init)).BeginInit();
             this.groupBox_Export.SuspendLayout();
             this.groupBox_CommonOptions.SuspendLayout();
             this.groupBox_HTTPOptions.SuspendLayout();
@@ -863,7 +861,7 @@
             this.lbl_CheckAllErrors.AutoSize = true;
             this.lbl_CheckAllErrors.Enabled = false;
             this.lbl_CheckAllErrors.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(137, 103);
+            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(141, 103);
             this.lbl_CheckAllErrors.Name = "lbl_CheckAllErrors";
             this.lbl_CheckAllErrors.Size = new System.Drawing.Size(51, 17);
             this.lbl_CheckAllErrors.TabIndex = 22;
@@ -905,7 +903,7 @@
             this.lbl_CheckAll.AutoSize = true;
             this.lbl_CheckAll.Enabled = false;
             this.lbl_CheckAll.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAll.Location = new System.Drawing.Point(49, 45);
+            this.lbl_CheckAll.Location = new System.Drawing.Point(53, 45);
             this.lbl_CheckAll.Name = "lbl_CheckAll";
             this.lbl_CheckAll.Size = new System.Drawing.Size(31, 17);
             this.lbl_CheckAll.TabIndex = 21;
@@ -932,7 +930,7 @@
             this.lbl_UncheckAll.AutoSize = true;
             this.lbl_UncheckAll.Enabled = false;
             this.lbl_UncheckAll.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UncheckAll.Location = new System.Drawing.Point(49, 103);
+            this.lbl_UncheckAll.Location = new System.Drawing.Point(53, 103);
             this.lbl_UncheckAll.Name = "lbl_UncheckAll";
             this.lbl_UncheckAll.Size = new System.Drawing.Size(45, 17);
             this.lbl_UncheckAll.TabIndex = 20;
@@ -959,7 +957,7 @@
             this.lbl_CheckAllAvailable.AutoSize = true;
             this.lbl_CheckAllAvailable.Enabled = false;
             this.lbl_CheckAllAvailable.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(136, 45);
+            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(140, 45);
             this.lbl_CheckAllAvailable.Name = "lbl_CheckAllAvailable";
             this.lbl_CheckAllAvailable.Size = new System.Drawing.Size(55, 17);
             this.lbl_CheckAllAvailable.TabIndex = 19;
@@ -971,7 +969,7 @@
             this.lbl_Refresh.AutoSize = true;
             this.lbl_Refresh.Enabled = false;
             this.lbl_Refresh.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Refresh.Location = new System.Drawing.Point(1040, 371);
+            this.lbl_Refresh.Location = new System.Drawing.Point(1044, 371);
             this.lbl_Refresh.Name = "lbl_Refresh";
             this.lbl_Refresh.Size = new System.Drawing.Size(62, 17);
             this.lbl_Refresh.TabIndex = 39;
@@ -983,7 +981,7 @@
             this.lbl_Terminate.AutoSize = true;
             this.lbl_Terminate.Enabled = false;
             this.lbl_Terminate.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Terminate.Location = new System.Drawing.Point(1040, 429);
+            this.lbl_Terminate.Location = new System.Drawing.Point(1044, 429);
             this.lbl_Terminate.Name = "lbl_Terminate";
             this.lbl_Terminate.Size = new System.Drawing.Size(80, 17);
             this.lbl_Terminate.TabIndex = 40;
@@ -1243,24 +1241,13 @@
             this.btn_BrowseExportDir.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_BrowseExportDir.Enabled = false;
             this.btn_BrowseExportDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_BrowseExportDir.Image = global::EndpointChecker.Properties.Resources.browseFolder_16x16;
+            this.btn_BrowseExportDir.Image = ((System.Drawing.Image)(resources.GetObject("btn_BrowseExportDir.Image")));
             this.btn_BrowseExportDir.Location = new System.Drawing.Point(331, 14);
             this.btn_BrowseExportDir.Name = "btn_BrowseExportDir";
             this.btn_BrowseExportDir.Size = new System.Drawing.Size(20, 20);
             this.btn_BrowseExportDir.TabIndex = 41;
             this.btn_BrowseExportDir.UseVisualStyleBackColor = false;
             this.btn_BrowseExportDir.MouseClick += new System.Windows.Forms.MouseEventHandler(this.btn_BrowseExportDir_MouseClick);
-            // 
-            // pb_Progress_Init
-            // 
-            this.pb_Progress_Init.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pb_Progress_Init.Image = global::EndpointChecker.Properties.Resources.loadingProgress;
-            this.pb_Progress_Init.Location = new System.Drawing.Point(472, 87);
-            this.pb_Progress_Init.Name = "pb_Progress_Init";
-            this.pb_Progress_Init.Size = new System.Drawing.Size(186, 186);
-            this.pb_Progress_Init.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb_Progress_Init.TabIndex = 5;
-            this.pb_Progress_Init.TabStop = false;
             // 
             // cb_ExportEndpointsStatus_HTML
             // 
@@ -1551,7 +1538,7 @@
             this.pb_ListFilterClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.pb_ListFilterClear.BackColor = System.Drawing.Color.Transparent;
             this.pb_ListFilterClear.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_ListFilterClear.Image = global::EndpointChecker.Properties.Resources.close;
+            this.pb_ListFilterClear.Image = ((System.Drawing.Image)(resources.GetObject("pb_ListFilterClear.Image")));
             this.pb_ListFilterClear.Location = new System.Drawing.Point(280, 335);
             this.pb_ListFilterClear.Name = "pb_ListFilterClear";
             this.pb_ListFilterClear.Size = new System.Drawing.Size(22, 22);
@@ -1564,7 +1551,7 @@
             // pb_RefreshProcess
             // 
             this.pb_RefreshProcess.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pb_RefreshProcess.Image = global::EndpointChecker.Properties.Resources.loadingProgress_Violet;
+            this.pb_RefreshProcess.Image = ((System.Drawing.Image)(resources.GetObject("pb_RefreshProcess.Image")));
             this.pb_RefreshProcess.Location = new System.Drawing.Point(310, 532);
             this.pb_RefreshProcess.Name = "pb_RefreshProcess";
             this.pb_RefreshProcess.Size = new System.Drawing.Size(467, 23);
@@ -1608,7 +1595,7 @@
             // mainMenu_UpdateCheck
             // 
             this.mainMenu_UpdateCheck.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_UpdateCheck.Image = global::EndpointChecker.Properties.Resources.updateIcon;
+            this.mainMenu_UpdateCheck.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_UpdateCheck.Image")));
             this.mainMenu_UpdateCheck.Name = "mainMenu_UpdateCheck";
             this.mainMenu_UpdateCheck.Size = new System.Drawing.Size(117, 28);
             this.mainMenu_UpdateCheck.Text = "Update Check";
@@ -1618,7 +1605,7 @@
             // mainMenu_SpeedTest
             // 
             this.mainMenu_SpeedTest.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_SpeedTest.Image = global::EndpointChecker.Properties.Resources.speedTest_Icon;
+            this.mainMenu_SpeedTest.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_SpeedTest.Image")));
             this.mainMenu_SpeedTest.Name = "mainMenu_SpeedTest";
             this.mainMenu_SpeedTest.Size = new System.Drawing.Size(98, 28);
             this.mainMenu_SpeedTest.Text = "Speed Test";
@@ -1628,7 +1615,7 @@
             // mainMenu_ConfigFile
             // 
             this.mainMenu_ConfigFile.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_ConfigFile.Image = global::EndpointChecker.Properties.Resources.appConfig;
+            this.mainMenu_ConfigFile.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_ConfigFile.Image")));
             this.mainMenu_ConfigFile.Name = "mainMenu_ConfigFile";
             this.mainMenu_ConfigFile.Size = new System.Drawing.Size(100, 28);
             this.mainMenu_ConfigFile.Text = "Config File";
@@ -1638,7 +1625,7 @@
             // mainMenu_EndpointsList
             // 
             this.mainMenu_EndpointsList.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_EndpointsList.Image = global::EndpointChecker.Properties.Resources.endpointsList_Icon;
+            this.mainMenu_EndpointsList.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_EndpointsList.Image")));
             this.mainMenu_EndpointsList.Name = "mainMenu_EndpointsList";
             this.mainMenu_EndpointsList.Size = new System.Drawing.Size(117, 28);
             this.mainMenu_EndpointsList.Text = "Endpoints List";
@@ -1648,7 +1635,7 @@
             // mainMenu_HomePage
             // 
             this.mainMenu_HomePage.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_HomePage.Image = global::EndpointChecker.Properties.Resources.appWebPage;
+            this.mainMenu_HomePage.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_HomePage.Image")));
             this.mainMenu_HomePage.Name = "mainMenu_HomePage";
             this.mainMenu_HomePage.Size = new System.Drawing.Size(105, 28);
             this.mainMenu_HomePage.Text = "Home Page";
@@ -1658,7 +1645,7 @@
             // mainMenu_SoftPedia
             // 
             this.mainMenu_SoftPedia.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_SoftPedia.Image = global::EndpointChecker.Properties.Resources.softPedia_Logo;
+            this.mainMenu_SoftPedia.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_SoftPedia.Image")));
             this.mainMenu_SoftPedia.Name = "mainMenu_SoftPedia";
             this.mainMenu_SoftPedia.Size = new System.Drawing.Size(93, 28);
             this.mainMenu_SoftPedia.Text = "SoftPedia";
@@ -1668,7 +1655,7 @@
             // mainMenu_ITNetwork
             // 
             this.mainMenu_ITNetwork.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_ITNetwork.Image = global::EndpointChecker.Properties.Resources.itNetwork_Logo;
+            this.mainMenu_ITNetwork.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_ITNetwork.Image")));
             this.mainMenu_ITNetwork.Name = "mainMenu_ITNetwork";
             this.mainMenu_ITNetwork.Size = new System.Drawing.Size(100, 28);
             this.mainMenu_ITNetwork.Text = "IT Network";
@@ -1678,7 +1665,7 @@
             // mainMenu_GitHub
             // 
             this.mainMenu_GitHub.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_GitHub.Image = global::EndpointChecker.Properties.Resources.gitHub_Icon;
+            this.mainMenu_GitHub.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_GitHub.Image")));
             this.mainMenu_GitHub.Name = "mainMenu_GitHub";
             this.mainMenu_GitHub.Size = new System.Drawing.Size(81, 28);
             this.mainMenu_GitHub.Text = "GitHub";
@@ -1689,7 +1676,7 @@
             // mainMenu_GitLab
             // 
             this.mainMenu_GitLab.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_GitLab.Image = global::EndpointChecker.Properties.Resources.gitLab_Logo;
+            this.mainMenu_GitLab.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_GitLab.Image")));
             this.mainMenu_GitLab.Name = "mainMenu_GitLab";
             this.mainMenu_GitLab.Size = new System.Drawing.Size(77, 28);
             this.mainMenu_GitLab.Text = "GitLab";
@@ -1700,7 +1687,7 @@
             // mainMenu_FeatureRequest
             // 
             this.mainMenu_FeatureRequest.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_FeatureRequest.Image = global::EndpointChecker.Properties.Resources.featureRequest_Icon;
+            this.mainMenu_FeatureRequest.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_FeatureRequest.Image")));
             this.mainMenu_FeatureRequest.Name = "mainMenu_FeatureRequest";
             this.mainMenu_FeatureRequest.Size = new System.Drawing.Size(127, 28);
             this.mainMenu_FeatureRequest.Text = "Feature Request";
@@ -1710,7 +1697,7 @@
             // mainMenu_Exit
             // 
             this.mainMenu_Exit.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_Exit.Image = global::EndpointChecker.Properties.Resources.close;
+            this.mainMenu_Exit.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_Exit.Image")));
             this.mainMenu_Exit.Name = "mainMenu_Exit";
             this.mainMenu_Exit.Size = new System.Drawing.Size(62, 28);
             this.mainMenu_Exit.Text = "Exit";
@@ -1756,7 +1743,6 @@
             this.Controls.Add(this.lbl_ProgressCount);
             this.Controls.Add(this.lbl_Version);
             this.Controls.Add(this.lbl_Copyright);
-            this.Controls.Add(this.pb_Progress_Init);
             this.Controls.Add(this.btn_Refresh);
             this.Controls.Add(this.lv_Endpoints);
             this.Controls.Add(this.lbl_NoEndpoints);
@@ -1779,7 +1765,6 @@
             this.groupBox_EndpointSelection.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_PingTimeout)).EndInit();
             this.lv_Endpoints_ContextMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pb_Progress_Init)).EndInit();
             this.groupBox_Export.ResumeLayout(false);
             this.groupBox_Export.PerformLayout();
             this.groupBox_CommonOptions.ResumeLayout(false);
@@ -1850,7 +1835,6 @@
         public System.Windows.Forms.ListView lv_Endpoints;
         public System.Windows.Forms.Button btn_Refresh;
         public System.Windows.Forms.CheckBox cb_AutomaticRefresh;
-        public System.Windows.Forms.PictureBox pb_Progress_Init;
         public System.Windows.Forms.CheckBox cb_TrayBalloonNotify;
         public System.Windows.Forms.ToolStripSeparator tray_Separator_1;
         public System.Windows.Forms.Label lbl_RequestTimeout;
@@ -1911,7 +1895,7 @@
         public System.Windows.Forms.ToolStripSeparator tray_Separator_3;
         public System.Windows.Forms.CheckBox cb_Resolve_IPAddresses;
         public System.Windows.Forms.CheckBox cb_Resolve_NIC_MACs;
-        public System.Windows.Forms.MenuStrip MainMenuStrip;
+        public new System.Windows.Forms.MenuStrip MainMenuStrip;
         public System.Windows.Forms.ToolStripMenuItem mainMenu_UpdateCheck;
         public System.Windows.Forms.ToolStripMenuItem mainMenu_SpeedTest;
         public System.Windows.Forms.ToolStripMenuItem mainMenu_ConfigFile;

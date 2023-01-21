@@ -56,7 +56,7 @@
             // lbl_NewVersion
             // 
             this.lbl_NewVersion.BackColor = System.Drawing.Color.Transparent;
-            this.lbl_NewVersion.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_NewVersion.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_NewVersion.ForeColor = System.Drawing.Color.White;
             this.lbl_NewVersion.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lbl_NewVersion.Location = new System.Drawing.Point(123, 11);
@@ -70,7 +70,7 @@
             // lbl_NewVersionDetail
             // 
             this.lbl_NewVersionDetail.BackColor = System.Drawing.Color.Transparent;
-            this.lbl_NewVersionDetail.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_NewVersionDetail.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_NewVersionDetail.ForeColor = System.Drawing.Color.White;
             this.lbl_NewVersionDetail.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lbl_NewVersionDetail.Location = new System.Drawing.Point(123, 45);
@@ -85,7 +85,7 @@
             // lbl_ReleaseNotes
             // 
             this.lbl_ReleaseNotes.BackColor = System.Drawing.Color.Transparent;
-            this.lbl_ReleaseNotes.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ReleaseNotes.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_ReleaseNotes.ForeColor = System.Drawing.Color.White;
             this.lbl_ReleaseNotes.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lbl_ReleaseNotes.Location = new System.Drawing.Point(123, 79);
@@ -101,7 +101,7 @@
             this.btn_SkipThisVersion.BackColor = System.Drawing.Color.Gray;
             this.btn_SkipThisVersion.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_SkipThisVersion.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btn_SkipThisVersion.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_SkipThisVersion.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_SkipThisVersion.Location = new System.Drawing.Point(126, 497);
             this.btn_SkipThisVersion.Name = "btn_SkipThisVersion";
             this.btn_SkipThisVersion.Size = new System.Drawing.Size(180, 29);
@@ -115,7 +115,7 @@
             this.btn_InstallUpdate.BackColor = System.Drawing.Color.Gray;
             this.btn_InstallUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_InstallUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btn_InstallUpdate.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_InstallUpdate.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_InstallUpdate.Location = new System.Drawing.Point(651, 497);
             this.btn_InstallUpdate.Name = "btn_InstallUpdate";
             this.btn_InstallUpdate.Size = new System.Drawing.Size(180, 29);
@@ -129,7 +129,7 @@
             this.btn_RemindMeLater.BackColor = System.Drawing.Color.Gray;
             this.btn_RemindMeLater.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_RemindMeLater.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btn_RemindMeLater.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_RemindMeLater.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_RemindMeLater.Location = new System.Drawing.Point(455, 497);
             this.btn_RemindMeLater.Name = "btn_RemindMeLater";
             this.btn_RemindMeLater.Size = new System.Drawing.Size(180, 29);
@@ -152,7 +152,7 @@
             this.rtb_ReleaseNotes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.rtb_ReleaseNotes.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.rtb_ReleaseNotes.Cursor = System.Windows.Forms.Cursors.Default;
-            this.rtb_ReleaseNotes.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtb_ReleaseNotes.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtb_ReleaseNotes.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.rtb_ReleaseNotes.Location = new System.Drawing.Point(137, 122);
             this.rtb_ReleaseNotes.Name = "rtb_ReleaseNotes";
@@ -166,11 +166,11 @@
             // 
             this.cb_FutureAutoUpdate.AutoSize = true;
             this.cb_FutureAutoUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cb_FutureAutoUpdate.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_FutureAutoUpdate.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_FutureAutoUpdate.ForeColor = System.Drawing.Color.White;
             this.cb_FutureAutoUpdate.Location = new System.Drawing.Point(126, 460);
             this.cb_FutureAutoUpdate.Name = "cb_FutureAutoUpdate";
-            this.cb_FutureAutoUpdate.Size = new System.Drawing.Size(419, 22);
+            this.cb_FutureAutoUpdate.Size = new System.Drawing.Size(427, 24);
             this.cb_FutureAutoUpdate.TabIndex = 10;
             this.cb_FutureAutoUpdate.Text = "Automatically download and install updates in the future";
             this.cb_FutureAutoUpdate.UseVisualStyleBackColor = true;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
@@ -9,6 +10,14 @@ namespace EndpointChecker
 {
     public partial class SplashScreen : Form
     {
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION = 0x2;
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
+
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public SplashScreen()
         {
@@ -25,24 +34,14 @@ namespace EndpointChecker
 
             // SET INFORMATION LABELS
             lbl_Name.Text = app_ApplicationName;
-            lbl_Version.Text = "Version ";
-            lbl_Build.Text = "Built " + app_BuiltDate;
+            lbl_Version_Date.Text = "v" + GetVersionString(app_Version, app_Version.Build != 0, false) + " ~ " + app_Built_Date;
             lbl_Copyright.Text = app_Copyright;
 
-            // SET VERSION LABEL
-            if (app_Version.Build == 0)
-            {
-                lbl_Version.Text += app_Version.Major + "." + app_Version.Minor;
-            }
-            else
-            {
-                lbl_Version.Text += app_VersionString;
-            }
 
             // SET RELEASE TYPE LABEL
-            if (app_UpdateTestMode)
+            if (app_TestMode)
             {
-                lbl_ReleaseType.Text = "UPDATER TEST MODE";
+                lbl_ReleaseType.Text = "BUILD IN TEST MODE";
                 lbl_ReleaseType.ForeColor = Color.OrangeRed;
             }
             else if (!app_IsOriginalSignedExecutable)
@@ -50,11 +49,12 @@ namespace EndpointChecker
                 lbl_ReleaseType.Text = "CUSTOM UNSIGNED BUILD";
                 lbl_ReleaseType.ForeColor = Color.Red;
             }
-            else if (app_LatestPackageVersion > new Version(0, 0, 0, 0))
+            else
             {
-                if (app_LatestPackageVersion < app_Version)
+                if (app_LatestPackageVersion > new Version(0, 0, 0, 0) &&
+                    app_LatestPackageVersion < app_Version)
                 {
-                    lbl_ReleaseType.Text = "UNRELEASED TESTING BUILD";
+                    lbl_ReleaseType.Text = "UNRELEASED VERSION";
                     lbl_ReleaseType.ForeColor = Color.DarkViolet;
                 }
                 else if (app_Version.Build != 0)
@@ -73,21 +73,14 @@ namespace EndpointChecker
 
             TIMER_StartFading.Start();
         }
-        protected override void WndProc(ref Message m)
+
+        public void Controls_MouseDown(object sender, MouseEventArgs e)
         {
-            switch (m.Msg)
+            if (e.Button == MouseButtons.Left)
             {
-                case 0x84:
-                    base.WndProc(ref m);
-                    if ((int)m.Result == 0x1)
-                    {
-                        m.Result = (IntPtr)0x2;
-                    }
-
-                    return;
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
-
-            base.WndProc(ref m);
         }
 
         public void TIMER_FadeOutAndClose_Tick(object sender, EventArgs e)

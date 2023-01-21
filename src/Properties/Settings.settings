@@ -219,7 +219,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Config_HTTP_UserAgent" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36</Value>
+      <Value Profile="(Default)">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.0.0</Value>
     </Setting>
     <Setting Name="Config_HTTP_SaveResponse_MaxLenght_Bytes" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5242880</Value>
@@ -234,7 +234,7 @@
       <Value Profile="(Default)">8ce0dda3e2e732fb4c6fc947a03dd892acc0993da101e54ab03589413598002b</Value>
     </Setting>
     <Setting Name="Config_HTTP_Sec_CH_UserAgent" Type="System.String" Scope="User">
-      <Value Profile="(Default)">"Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109"</Value>
+      <Value Profile="(Default)">"Chromium";v="110", "Not A(Brand";v="24", "Microsoft Edge";v="110"</Value>
     </Setting>
     <Setting Name="Config_ScanOnStartup" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
