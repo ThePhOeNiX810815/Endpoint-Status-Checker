@@ -94,12 +94,11 @@ namespace EndpointChecker
             // 
             this.lbl_ReleaseType.AutoSize = true;
             this.lbl_ReleaseType.BackColor = System.Drawing.Color.Transparent;
-            this.lbl_ReleaseType.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_ReleaseType.Font = new System.Drawing.Font("Agency FB", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ReleaseType.Font = new System.Drawing.Font("Agency FB", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_ReleaseType.ForeColor = System.Drawing.Color.Black;
-            this.lbl_ReleaseType.Location = new System.Drawing.Point(38, 13);
+            this.lbl_ReleaseType.Location = new System.Drawing.Point(35, 13);
             this.lbl_ReleaseType.Name = "lbl_ReleaseType";
-            this.lbl_ReleaseType.Size = new System.Drawing.Size(137, 26);
+            this.lbl_ReleaseType.Size = new System.Drawing.Size(147, 25);
             this.lbl_ReleaseType.TabIndex = 5;
             this.lbl_ReleaseType.Text = "<< PACKAGE TYPE >>";
             this.lbl_ReleaseType.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -109,10 +108,10 @@ namespace EndpointChecker
             // 
             this.pb_CloseDialog.BackColor = System.Drawing.Color.Transparent;
             this.pb_CloseDialog.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pb_CloseDialog.Image = ((System.Drawing.Image)(resources.GetObject("pb_CloseDialog.Image")));
-            this.pb_CloseDialog.Location = new System.Drawing.Point(967, 1);
+            this.pb_CloseDialog.Image = global::EndpointChecker.Properties.Resources.glass_transparent_cross;
+            this.pb_CloseDialog.Location = new System.Drawing.Point(948, 3);
             this.pb_CloseDialog.Name = "pb_CloseDialog";
-            this.pb_CloseDialog.Size = new System.Drawing.Size(32, 32);
+            this.pb_CloseDialog.Size = new System.Drawing.Size(48, 48);
             this.pb_CloseDialog.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pb_CloseDialog.TabIndex = 6;
             this.pb_CloseDialog.TabStop = false;

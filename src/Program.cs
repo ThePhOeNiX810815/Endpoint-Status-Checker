@@ -133,6 +133,8 @@ namespace EndpointChecker
         // HTTP CLIENT USER-AGENT STRINGS
         public static string http_UserAgent;
         public static string http_Sec_CH_UserAgent;
+        public static string http_Sec_CH_UserAgent_FullVersion;
+        public static string http_Sec_CH_UserAgent_FullVersionList;
 
         // STRING FORMAT FOR 'NOT AVAILABLE' STATUS
         public static string status_NotAvailable = "N/A";
@@ -232,16 +234,7 @@ namespace EndpointChecker
             }
 
             // GET SETTINGS
-            app_ScanOnStartup = Settings.Default.Config_ScanOnStartup;
-            app_ShowSplashScreen = Settings.Default.Config_ShowSplashScreen;
-            apiKey_GoogleMaps = Settings.Default.GoogleMaps_API_Key;
-            googleMapsZoomFactor = Settings.Default.GoogleMaps_API_ZoomFactor;
-            apiKey_VirusTotal = Settings.Default.VirusTotal_API_Key;
-            http_UserAgent = Settings.Default.Config_HTTP_UserAgent;
-            http_Sec_CH_UserAgent = Settings.Default.Config_HTTP_Sec_CH_UserAgent;
-            http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
-            app_AutoUpdate_SkipVersion = new Version(Settings.Default.AutoUpdate_SkipVersion);
-            app_AutoUpdate_AutoUpdateInFuture = Settings.Default.AutoUpdate_AutoUpdateInFuture;
+            LoadApplicationConfig();
 
             // APP SETTINGS
             Application.EnableVisualStyles();
@@ -297,7 +290,8 @@ namespace EndpointChecker
                         }
                         else
                         {
-                            if (app_ShowSplashScreen)
+                            if (app_ShowSplashScreen ||
+                                app_TestMode)
                             {
                                 // SHOW SPLASH SCREEN
                                 Application.Run(new SplashScreen());
@@ -475,19 +469,22 @@ namespace EndpointChecker
                             NewVersionDialog newVersionDialog = new NewVersionDialog();
                             newVersionDialog.ShowDialog();
 
-                            if (newVersionDialog.autoUpdateInFuture)
+                            if (newVersionDialog.AutoUpdateInFuture)
                             {
                                 Settings.Default.AutoUpdate_AutoUpdateInFuture = true;
                                 Settings.Default.Save();
+                                LoadApplicationConfig();
                             }
 
-                            if (newVersionDialog.updateNow)
+                            if (newVersionDialog.UpdateNow)
                             {
                                 app_AutoUpdateNow = true;
                             }
-                            else if (newVersionDialog.updateSkip)
+                            else if (newVersionDialog.UpdateSkip)
                             {
                                 Settings.Default.AutoUpdate_SkipVersion = app_LatestPackageVersion.ToString();
+                                Settings.Default.Save();
+                                LoadApplicationConfig();
                             }
                         }
                     }
@@ -624,6 +621,22 @@ namespace EndpointChecker
 
             // EXECUTE UPDATE PROCESS
             Process.Start(startUpdater);
+        }
+
+        public static void LoadApplicationConfig()
+        {
+            app_ScanOnStartup = Settings.Default.Config_ScanOnStartup;
+            app_ShowSplashScreen = Settings.Default.Config_ShowSplashScreen;
+            apiKey_GoogleMaps = Settings.Default.GoogleMaps_API_Key;
+            googleMapsZoomFactor = Settings.Default.GoogleMaps_API_ZoomFactor;
+            apiKey_VirusTotal = Settings.Default.VirusTotal_API_Key;
+            http_UserAgent = Settings.Default.Config_HTTP_UserAgent;
+            http_Sec_CH_UserAgent = Settings.Default.Config_HTTP_Sec_CH_UserAgent;
+            http_Sec_CH_UserAgent_FullVersion = Settings.Default.Config_HTTP_Sec_CH_UserAgent_FullVersion;
+            http_Sec_CH_UserAgent_FullVersionList = Settings.Default.Config_HTTP_Sec_CH_UserAgent_FullVersionList;
+            http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
+            app_AutoUpdate_SkipVersion = new Version(Settings.Default.AutoUpdate_SkipVersion);
+            app_AutoUpdate_AutoUpdateInFuture = Settings.Default.AutoUpdate_AutoUpdateInFuture;
         }
     }
 }

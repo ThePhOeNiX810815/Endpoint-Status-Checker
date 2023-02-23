@@ -56,11 +56,11 @@
             this.TIMER_AutomaticRefresh = new System.Windows.Forms.Timer(this.components);
             this.num_RefreshInterval = new System.Windows.Forms.NumericUpDown();
             this.lbl_TimerIntervalMinutesText = new System.Windows.Forms.Label();
-            this.lbl_NoEndpoints = new System.Windows.Forms.Label();
+            this.lbl_EndpointsListLoading = new System.Windows.Forms.Label();
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.trayContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tray_SpeedTest = new System.Windows.Forms.ToolStripMenuItem();
-            this.tray_Refresh = new System.Windows.Forms.ToolStripMenuItem();
+            this.tray_RunCheck = new System.Windows.Forms.ToolStripMenuItem();
             this.tray_Separator_1 = new System.Windows.Forms.ToolStripSeparator();
             this.tray_Notifications_Enable = new System.Windows.Forms.ToolStripMenuItem();
             this.tray_Notifications_Disable = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,15 +91,15 @@
             this.cb_ResolvePageMetaInfo = new System.Windows.Forms.CheckBox();
             this.cb_ValidateSSLCertificate = new System.Windows.Forms.CheckBox();
             this.groupBox_EndpointSelection = new System.Windows.Forms.GroupBox();
-            this.lbl_CheckAllErrors = new System.Windows.Forms.Label();
             this.btn_UncheckAll = new System.Windows.Forms.Button();
             this.btn_CheckAll = new System.Windows.Forms.Button();
-            this.lbl_CheckAll = new System.Windows.Forms.Label();
             this.btn_CheckAllErrors = new System.Windows.Forms.Button();
-            this.lbl_UncheckAll = new System.Windows.Forms.Label();
             this.btn_CheckAllAvailable = new System.Windows.Forms.Button();
+            this.lbl_CheckAllErrors = new System.Windows.Forms.Label();
+            this.lbl_CheckAll = new System.Windows.Forms.Label();
+            this.lbl_UncheckAll = new System.Windows.Forms.Label();
             this.lbl_CheckAllAvailable = new System.Windows.Forms.Label();
-            this.lbl_Refresh = new System.Windows.Forms.Label();
+            this.lbl_RunCheck = new System.Windows.Forms.Label();
             this.lbl_Terminate = new System.Windows.Forms.Label();
             this.lbl_BrowseExportDir = new System.Windows.Forms.Label();
             this.imageList_Icons_32pix = new System.Windows.Forms.ImageList(this.components);
@@ -120,7 +120,7 @@
             this.toolStripMenuItem_VNC = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_SSH = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_Terminate = new System.Windows.Forms.Button();
-            this.btn_Refresh = new System.Windows.Forms.Button();
+            this.btn_RunCheck = new System.Windows.Forms.Button();
             this.btn_BrowseExportDir = new System.Windows.Forms.Button();
             this.cb_ExportEndpointsStatus_HTML = new System.Windows.Forms.CheckBox();
             this.lbl_LastUpdate_Label = new System.Windows.Forms.Label();
@@ -158,6 +158,9 @@
             this.mainMenu_GitLab = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu_FeatureRequest = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu_Exit = new System.Windows.Forms.ToolStripMenuItem();
+            this.lbl_LoadList = new System.Windows.Forms.Label();
+            this.btn_LoadList = new System.Windows.Forms.Button();
+            this.groupBox_Actions = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
@@ -172,6 +175,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).BeginInit();
             this.MainMenuStrip.SuspendLayout();
+            this.groupBox_Actions.SuspendLayout();
             this.SuspendLayout();
             // 
             // lv_Endpoints
@@ -393,20 +397,19 @@
             this.lbl_TimerIntervalMinutesText.TabIndex = 4;
             this.lbl_TimerIntervalMinutesText.Text = "minutes";
             // 
-            // lbl_NoEndpoints
+            // lbl_EndpointsListLoading
             // 
-            this.lbl_NoEndpoints.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.lbl_EndpointsListLoading.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_NoEndpoints.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_NoEndpoints.ForeColor = System.Drawing.Color.DarkOrange;
-            this.lbl_NoEndpoints.Location = new System.Drawing.Point(1, 32);
-            this.lbl_NoEndpoints.Name = "lbl_NoEndpoints";
-            this.lbl_NoEndpoints.Size = new System.Drawing.Size(1130, 299);
-            this.lbl_NoEndpoints.TabIndex = 6;
-            this.lbl_NoEndpoints.Text = "List of predefined endpoints is empty";
-            this.lbl_NoEndpoints.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lbl_NoEndpoints.Visible = false;
+            this.lbl_EndpointsListLoading.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_EndpointsListLoading.ForeColor = System.Drawing.Color.DarkGreen;
+            this.lbl_EndpointsListLoading.Location = new System.Drawing.Point(1, 32);
+            this.lbl_EndpointsListLoading.Name = "lbl_EndpointsListLoading";
+            this.lbl_EndpointsListLoading.Size = new System.Drawing.Size(1130, 299);
+            this.lbl_EndpointsListLoading.TabIndex = 6;
+            this.lbl_EndpointsListLoading.Text = "Loading Endpoints list, please wait  ...";
+            this.lbl_EndpointsListLoading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // trayIcon
             // 
@@ -423,7 +426,7 @@
             this.trayContextMenu.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trayContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tray_SpeedTest,
-            this.tray_Refresh,
+            this.tray_RunCheck,
             this.tray_Separator_1,
             this.tray_Notifications_Enable,
             this.tray_Notifications_Disable,
@@ -444,14 +447,14 @@
             this.tray_SpeedTest.Visible = false;
             this.tray_SpeedTest.Click += new System.EventHandler(this.tray_SpeedTest_Click);
             // 
-            // tray_Refresh
+            // tray_RunCheck
             // 
-            this.tray_Refresh.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tray_Refresh.Name = "tray_Refresh";
-            this.tray_Refresh.Size = new System.Drawing.Size(222, 26);
-            this.tray_Refresh.Text = "Refresh List";
-            this.tray_Refresh.Visible = false;
-            this.tray_Refresh.Click += new System.EventHandler(this.tray_Refresh_Click);
+            this.tray_RunCheck.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tray_RunCheck.Name = "tray_RunCheck";
+            this.tray_RunCheck.Size = new System.Drawing.Size(222, 26);
+            this.tray_RunCheck.Text = "Run Check";
+            this.tray_RunCheck.Visible = false;
+            this.tray_RunCheck.Click += new System.EventHandler(this.tray_Refresh_Click);
             // 
             // tray_Separator_1
             // 
@@ -788,6 +791,7 @@
             // folderBrowserExportDir
             // 
             this.folderBrowserExportDir.Description = "Browse directory for Endpoints Status Export";
+            this.folderBrowserExportDir.RootFolder = System.Environment.SpecialFolder.MyComputer;
             // 
             // cb_SaveResponse
             // 
@@ -838,34 +842,22 @@
             // groupBox_EndpointSelection
             // 
             this.groupBox_EndpointSelection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox_EndpointSelection.Controls.Add(this.lbl_CheckAllErrors);
             this.groupBox_EndpointSelection.Controls.Add(this.btn_UncheckAll);
             this.groupBox_EndpointSelection.Controls.Add(this.btn_CheckAll);
-            this.groupBox_EndpointSelection.Controls.Add(this.lbl_CheckAll);
             this.groupBox_EndpointSelection.Controls.Add(this.btn_CheckAllErrors);
-            this.groupBox_EndpointSelection.Controls.Add(this.lbl_UncheckAll);
             this.groupBox_EndpointSelection.Controls.Add(this.btn_CheckAllAvailable);
+            this.groupBox_EndpointSelection.Controls.Add(this.lbl_CheckAllErrors);
+            this.groupBox_EndpointSelection.Controls.Add(this.lbl_CheckAll);
+            this.groupBox_EndpointSelection.Controls.Add(this.lbl_UncheckAll);
             this.groupBox_EndpointSelection.Controls.Add(this.lbl_CheckAllAvailable);
             this.groupBox_EndpointSelection.Enabled = false;
             this.groupBox_EndpointSelection.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold);
             this.groupBox_EndpointSelection.Location = new System.Drawing.Point(792, 326);
             this.groupBox_EndpointSelection.Name = "groupBox_EndpointSelection";
-            this.groupBox_EndpointSelection.Size = new System.Drawing.Size(200, 156);
+            this.groupBox_EndpointSelection.Size = new System.Drawing.Size(328, 74);
             this.groupBox_EndpointSelection.TabIndex = 38;
             this.groupBox_EndpointSelection.TabStop = false;
             this.groupBox_EndpointSelection.Text = "Endpoints Selection";
-            // 
-            // lbl_CheckAllErrors
-            // 
-            this.lbl_CheckAllErrors.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_CheckAllErrors.AutoSize = true;
-            this.lbl_CheckAllErrors.Enabled = false;
-            this.lbl_CheckAllErrors.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(141, 103);
-            this.lbl_CheckAllErrors.Name = "lbl_CheckAllErrors";
-            this.lbl_CheckAllErrors.Size = new System.Drawing.Size(51, 17);
-            this.lbl_CheckAllErrors.TabIndex = 22;
-            this.lbl_CheckAllErrors.Text = "FAILED";
             // 
             // btn_UncheckAll
             // 
@@ -875,7 +867,7 @@
             this.btn_UncheckAll.Enabled = false;
             this.btn_UncheckAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_UncheckAll.Image = ((System.Drawing.Image)(resources.GetObject("btn_UncheckAll.Image")));
-            this.btn_UncheckAll.Location = new System.Drawing.Point(11, 92);
+            this.btn_UncheckAll.Location = new System.Drawing.Point(104, 16);
             this.btn_UncheckAll.Name = "btn_UncheckAll";
             this.btn_UncheckAll.Size = new System.Drawing.Size(40, 40);
             this.btn_UncheckAll.TabIndex = 15;
@@ -890,24 +882,12 @@
             this.btn_CheckAll.Enabled = false;
             this.btn_CheckAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_CheckAll.Image = ((System.Drawing.Image)(resources.GetObject("btn_CheckAll.Image")));
-            this.btn_CheckAll.Location = new System.Drawing.Point(11, 33);
+            this.btn_CheckAll.Location = new System.Drawing.Point(23, 16);
             this.btn_CheckAll.Name = "btn_CheckAll";
             this.btn_CheckAll.Size = new System.Drawing.Size(40, 40);
             this.btn_CheckAll.TabIndex = 17;
             this.btn_CheckAll.UseVisualStyleBackColor = false;
             this.btn_CheckAll.Click += new System.EventHandler(this.btn_CheckAll_Click);
-            // 
-            // lbl_CheckAll
-            // 
-            this.lbl_CheckAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_CheckAll.AutoSize = true;
-            this.lbl_CheckAll.Enabled = false;
-            this.lbl_CheckAll.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAll.Location = new System.Drawing.Point(53, 45);
-            this.lbl_CheckAll.Name = "lbl_CheckAll";
-            this.lbl_CheckAll.Size = new System.Drawing.Size(31, 17);
-            this.lbl_CheckAll.TabIndex = 21;
-            this.lbl_CheckAll.Text = "ALL";
             // 
             // btn_CheckAllErrors
             // 
@@ -917,24 +897,12 @@
             this.btn_CheckAllErrors.Enabled = false;
             this.btn_CheckAllErrors.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_CheckAllErrors.Image = ((System.Drawing.Image)(resources.GetObject("btn_CheckAllErrors.Image")));
-            this.btn_CheckAllErrors.Location = new System.Drawing.Point(99, 92);
+            this.btn_CheckAllErrors.Location = new System.Drawing.Point(266, 16);
             this.btn_CheckAllErrors.Name = "btn_CheckAllErrors";
             this.btn_CheckAllErrors.Size = new System.Drawing.Size(40, 40);
             this.btn_CheckAllErrors.TabIndex = 16;
             this.btn_CheckAllErrors.UseVisualStyleBackColor = false;
             this.btn_CheckAllErrors.Click += new System.EventHandler(this.btn_CheckAllErrors_Click);
-            // 
-            // lbl_UncheckAll
-            // 
-            this.lbl_UncheckAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_UncheckAll.AutoSize = true;
-            this.lbl_UncheckAll.Enabled = false;
-            this.lbl_UncheckAll.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_UncheckAll.Location = new System.Drawing.Point(53, 103);
-            this.lbl_UncheckAll.Name = "lbl_UncheckAll";
-            this.lbl_UncheckAll.Size = new System.Drawing.Size(45, 17);
-            this.lbl_UncheckAll.TabIndex = 20;
-            this.lbl_UncheckAll.Text = "NONE";
             // 
             // btn_CheckAllAvailable
             // 
@@ -944,12 +912,48 @@
             this.btn_CheckAllAvailable.Enabled = false;
             this.btn_CheckAllAvailable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_CheckAllAvailable.Image = ((System.Drawing.Image)(resources.GetObject("btn_CheckAllAvailable.Image")));
-            this.btn_CheckAllAvailable.Location = new System.Drawing.Point(99, 33);
+            this.btn_CheckAllAvailable.Location = new System.Drawing.Point(185, 16);
             this.btn_CheckAllAvailable.Name = "btn_CheckAllAvailable";
             this.btn_CheckAllAvailable.Size = new System.Drawing.Size(40, 40);
             this.btn_CheckAllAvailable.TabIndex = 18;
             this.btn_CheckAllAvailable.UseVisualStyleBackColor = false;
             this.btn_CheckAllAvailable.Click += new System.EventHandler(this.btn_CheckAllAvailable_Click);
+            // 
+            // lbl_CheckAllErrors
+            // 
+            this.lbl_CheckAllErrors.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_CheckAllErrors.AutoSize = true;
+            this.lbl_CheckAllErrors.Enabled = false;
+            this.lbl_CheckAllErrors.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_CheckAllErrors.Location = new System.Drawing.Point(261, 53);
+            this.lbl_CheckAllErrors.Name = "lbl_CheckAllErrors";
+            this.lbl_CheckAllErrors.Size = new System.Drawing.Size(51, 17);
+            this.lbl_CheckAllErrors.TabIndex = 22;
+            this.lbl_CheckAllErrors.Text = "FAILED";
+            // 
+            // lbl_CheckAll
+            // 
+            this.lbl_CheckAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_CheckAll.AutoSize = true;
+            this.lbl_CheckAll.Enabled = false;
+            this.lbl_CheckAll.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_CheckAll.Location = new System.Drawing.Point(28, 53);
+            this.lbl_CheckAll.Name = "lbl_CheckAll";
+            this.lbl_CheckAll.Size = new System.Drawing.Size(31, 17);
+            this.lbl_CheckAll.TabIndex = 21;
+            this.lbl_CheckAll.Text = "ALL";
+            // 
+            // lbl_UncheckAll
+            // 
+            this.lbl_UncheckAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_UncheckAll.AutoSize = true;
+            this.lbl_UncheckAll.Enabled = false;
+            this.lbl_UncheckAll.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_UncheckAll.Location = new System.Drawing.Point(102, 53);
+            this.lbl_UncheckAll.Name = "lbl_UncheckAll";
+            this.lbl_UncheckAll.Size = new System.Drawing.Size(45, 17);
+            this.lbl_UncheckAll.TabIndex = 20;
+            this.lbl_UncheckAll.Text = "NONE";
             // 
             // lbl_CheckAllAvailable
             // 
@@ -957,23 +961,23 @@
             this.lbl_CheckAllAvailable.AutoSize = true;
             this.lbl_CheckAllAvailable.Enabled = false;
             this.lbl_CheckAllAvailable.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(140, 45);
+            this.lbl_CheckAllAvailable.Location = new System.Drawing.Point(179, 53);
             this.lbl_CheckAllAvailable.Name = "lbl_CheckAllAvailable";
             this.lbl_CheckAllAvailable.Size = new System.Drawing.Size(55, 17);
             this.lbl_CheckAllAvailable.TabIndex = 19;
             this.lbl_CheckAllAvailable.Text = "PASSED";
             // 
-            // lbl_Refresh
+            // lbl_RunCheck
             // 
-            this.lbl_Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbl_Refresh.AutoSize = true;
-            this.lbl_Refresh.Enabled = false;
-            this.lbl_Refresh.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Refresh.Location = new System.Drawing.Point(1044, 371);
-            this.lbl_Refresh.Name = "lbl_Refresh";
-            this.lbl_Refresh.Size = new System.Drawing.Size(62, 17);
-            this.lbl_Refresh.TabIndex = 39;
-            this.lbl_Refresh.Text = "REFRESH";
+            this.lbl_RunCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_RunCheck.AutoSize = true;
+            this.lbl_RunCheck.Enabled = false;
+            this.lbl_RunCheck.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_RunCheck.Location = new System.Drawing.Point(124, 54);
+            this.lbl_RunCheck.Name = "lbl_RunCheck";
+            this.lbl_RunCheck.Size = new System.Drawing.Size(80, 17);
+            this.lbl_RunCheck.TabIndex = 39;
+            this.lbl_RunCheck.Text = "RUN CHECK";
             // 
             // lbl_Terminate
             // 
@@ -981,7 +985,7 @@
             this.lbl_Terminate.AutoSize = true;
             this.lbl_Terminate.Enabled = false;
             this.lbl_Terminate.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Terminate.Location = new System.Drawing.Point(1044, 429);
+            this.lbl_Terminate.Location = new System.Drawing.Point(228, 54);
             this.lbl_Terminate.Name = "lbl_Terminate";
             this.lbl_Terminate.Size = new System.Drawing.Size(80, 17);
             this.lbl_Terminate.TabIndex = 40;
@@ -1212,27 +1216,27 @@
             this.btn_Terminate.Enabled = false;
             this.btn_Terminate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Terminate.Image = ((System.Drawing.Image)(resources.GetObject("btn_Terminate.Image")));
-            this.btn_Terminate.Location = new System.Drawing.Point(1002, 418);
+            this.btn_Terminate.Location = new System.Drawing.Point(247, 17);
             this.btn_Terminate.Name = "btn_Terminate";
             this.btn_Terminate.Size = new System.Drawing.Size(40, 40);
             this.btn_Terminate.TabIndex = 28;
             this.btn_Terminate.UseVisualStyleBackColor = false;
             this.btn_Terminate.Click += new System.EventHandler(this.btn_Terminate_Click);
             // 
-            // btn_Refresh
+            // btn_RunCheck
             // 
-            this.btn_Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Refresh.BackColor = System.Drawing.Color.DarkGray;
-            this.btn_Refresh.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_Refresh.Enabled = false;
-            this.btn_Refresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Refresh.Image = ((System.Drawing.Image)(resources.GetObject("btn_Refresh.Image")));
-            this.btn_Refresh.Location = new System.Drawing.Point(1002, 359);
-            this.btn_Refresh.Name = "btn_Refresh";
-            this.btn_Refresh.Size = new System.Drawing.Size(40, 40);
-            this.btn_Refresh.TabIndex = 1;
-            this.btn_Refresh.UseVisualStyleBackColor = false;
-            this.btn_Refresh.Click += new System.EventHandler(this.btn_Refresh_Click);
+            this.btn_RunCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_RunCheck.BackColor = System.Drawing.Color.DarkGray;
+            this.btn_RunCheck.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btn_RunCheck.Enabled = false;
+            this.btn_RunCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_RunCheck.Image = global::EndpointChecker.Properties.Resources.icon_RunCheck;
+            this.btn_RunCheck.Location = new System.Drawing.Point(144, 17);
+            this.btn_RunCheck.Name = "btn_RunCheck";
+            this.btn_RunCheck.Size = new System.Drawing.Size(40, 40);
+            this.btn_RunCheck.TabIndex = 1;
+            this.btn_RunCheck.UseVisualStyleBackColor = false;
+            this.btn_RunCheck.Click += new System.EventHandler(this.btn_RunCheck_Click);
             // 
             // btn_BrowseExportDir
             // 
@@ -1588,7 +1592,7 @@
             this.MainMenuStrip.Name = "MainMenuStrip";
             this.MainMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.MainMenuStrip.ShowItemToolTips = true;
-            this.MainMenuStrip.Size = new System.Drawing.Size(1085, 32);
+            this.MainMenuStrip.Size = new System.Drawing.Size(1103, 32);
             this.MainMenuStrip.TabIndex = 73;
             this.MainMenuStrip.Text = "Main Menu Strip";
             // 
@@ -1597,8 +1601,8 @@
             this.mainMenu_UpdateCheck.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.mainMenu_UpdateCheck.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_UpdateCheck.Image")));
             this.mainMenu_UpdateCheck.Name = "mainMenu_UpdateCheck";
-            this.mainMenu_UpdateCheck.Size = new System.Drawing.Size(117, 28);
-            this.mainMenu_UpdateCheck.Text = "Update Check";
+            this.mainMenu_UpdateCheck.Size = new System.Drawing.Size(135, 28);
+            this.mainMenu_UpdateCheck.Text = "Check for Update";
             this.mainMenu_UpdateCheck.ToolTipText = "Check GitHub for latest update package.";
             this.mainMenu_UpdateCheck.Click += new System.EventHandler(this.mainMenu_UpdateCheck_Click);
             // 
@@ -1704,12 +1708,58 @@
             this.mainMenu_Exit.ToolTipText = "Exit application";
             this.mainMenu_Exit.Click += new System.EventHandler(this.mainMenu_Exit_Click);
             // 
+            // lbl_LoadList
+            // 
+            this.lbl_LoadList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_LoadList.AutoSize = true;
+            this.lbl_LoadList.Enabled = false;
+            this.lbl_LoadList.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_LoadList.Location = new System.Drawing.Point(18, 54);
+            this.lbl_LoadList.Name = "lbl_LoadList";
+            this.lbl_LoadList.Size = new System.Drawing.Size(89, 17);
+            this.lbl_LoadList.TabIndex = 76;
+            this.lbl_LoadList.Text = "RELOAD LIST";
+            // 
+            // btn_LoadList
+            // 
+            this.btn_LoadList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_LoadList.BackColor = System.Drawing.Color.DarkGray;
+            this.btn_LoadList.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btn_LoadList.Enabled = false;
+            this.btn_LoadList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_LoadList.Image = global::EndpointChecker.Properties.Resources.icon_LoadList;
+            this.btn_LoadList.Location = new System.Drawing.Point(41, 17);
+            this.btn_LoadList.Name = "btn_LoadList";
+            this.btn_LoadList.Size = new System.Drawing.Size(40, 40);
+            this.btn_LoadList.TabIndex = 75;
+            this.btn_LoadList.UseVisualStyleBackColor = false;
+            this.btn_LoadList.Click += new System.EventHandler(this.btn_LoadList_Click);
+            // 
+            // groupBox_Actions
+            // 
+            this.groupBox_Actions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox_Actions.Controls.Add(this.btn_LoadList);
+            this.groupBox_Actions.Controls.Add(this.btn_RunCheck);
+            this.groupBox_Actions.Controls.Add(this.btn_Terminate);
+            this.groupBox_Actions.Controls.Add(this.lbl_LoadList);
+            this.groupBox_Actions.Controls.Add(this.lbl_RunCheck);
+            this.groupBox_Actions.Controls.Add(this.lbl_Terminate);
+            this.groupBox_Actions.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold);
+            this.groupBox_Actions.Location = new System.Drawing.Point(792, 408);
+            this.groupBox_Actions.Name = "groupBox_Actions";
+            this.groupBox_Actions.Size = new System.Drawing.Size(328, 74);
+            this.groupBox_Actions.TabIndex = 77;
+            this.groupBox_Actions.TabStop = false;
+            this.groupBox_Actions.Text = "Actions";
+            // 
             // CheckerMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1134, 593);
+            this.Controls.Add(this.groupBox_EndpointSelection);
+            this.Controls.Add(this.groupBox_Actions);
             this.Controls.Add(this.MainMenuStrip);
             this.Controls.Add(this.groupBox_CommonOptions);
             this.Controls.Add(this.pb_RefreshProcess);
@@ -1725,9 +1775,6 @@
             this.Controls.Add(this.num_PingTimeout);
             this.Controls.Add(this.lbl_PingTimeout);
             this.Controls.Add(this.lbl_PingTimeoutSecondsText);
-            this.Controls.Add(this.lbl_Terminate);
-            this.Controls.Add(this.lbl_Refresh);
-            this.Controls.Add(this.groupBox_EndpointSelection);
             this.Controls.Add(this.num_ParallelThreadsCount);
             this.Controls.Add(this.lbl_ParallelThreadsCount);
             this.Controls.Add(this.num_FTPRequestTimeout);
@@ -1739,13 +1786,11 @@
             this.Controls.Add(this.lbl_RequestTimeoutSecondsText);
             this.Controls.Add(this.lbl_TimerIntervalMinutesText);
             this.Controls.Add(this.num_RefreshInterval);
-            this.Controls.Add(this.btn_Terminate);
             this.Controls.Add(this.lbl_ProgressCount);
             this.Controls.Add(this.lbl_Version);
             this.Controls.Add(this.lbl_Copyright);
-            this.Controls.Add(this.btn_Refresh);
             this.Controls.Add(this.lv_Endpoints);
-            this.Controls.Add(this.lbl_NoEndpoints);
+            this.Controls.Add(this.lbl_EndpointsListLoading);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1773,6 +1818,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).EndInit();
             this.MainMenuStrip.ResumeLayout(false);
             this.MainMenuStrip.PerformLayout();
+            this.groupBox_Actions.ResumeLayout(false);
+            this.groupBox_Actions.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1786,10 +1833,10 @@
         public System.Windows.Forms.ColumnHeader ch_EndpointName;
         public System.Windows.Forms.ColumnHeader ch_Code;
         public System.Windows.Forms.ColumnHeader ch_EndpointURL;
-        public System.Windows.Forms.Label lbl_NoEndpoints;
+        public System.Windows.Forms.Label lbl_EndpointsListLoading;
         public System.Windows.Forms.NotifyIcon trayIcon;
         public System.Windows.Forms.ContextMenuStrip trayContextMenu;
-        public System.Windows.Forms.ToolStripMenuItem tray_Refresh;
+        public System.Windows.Forms.ToolStripMenuItem tray_RunCheck;
         public System.Windows.Forms.ToolStripMenuItem tray_Exit;
         public System.Windows.Forms.Label lbl_RequestTimeoutSecondsText;
         public System.Windows.Forms.NumericUpDown num_HTTPRequestTimeout;
@@ -1833,7 +1880,7 @@
         public System.Windows.Forms.GroupBox groupBox_CommonOptions;
         public System.Windows.Forms.CheckBox cb_RemoveURLParameters;
         public System.Windows.Forms.ListView lv_Endpoints;
-        public System.Windows.Forms.Button btn_Refresh;
+        public System.Windows.Forms.Button btn_RunCheck;
         public System.Windows.Forms.CheckBox cb_AutomaticRefresh;
         public System.Windows.Forms.CheckBox cb_TrayBalloonNotify;
         public System.Windows.Forms.ToolStripSeparator tray_Separator_1;
@@ -1853,7 +1900,7 @@
         public System.Windows.Forms.CheckBox cb_ResolvePageMetaInfo;
         public System.Windows.Forms.CheckBox cb_ValidateSSLCertificate;
         public System.Windows.Forms.Label lbl_Terminate;
-        public System.Windows.Forms.Label lbl_Refresh;
+        public System.Windows.Forms.Label lbl_RunCheck;
         public System.Windows.Forms.GroupBox groupBox_EndpointSelection;
         public System.Windows.Forms.Label lbl_CheckAllErrors;
         public System.Windows.Forms.Label lbl_CheckAll;
@@ -1907,6 +1954,9 @@
         public System.Windows.Forms.ToolStripMenuItem mainMenu_GitLab;
         public System.Windows.Forms.ToolStripMenuItem mainMenu_FeatureRequest;
         public System.Windows.Forms.ToolStripMenuItem mainMenu_Exit;
+        public System.Windows.Forms.Label lbl_LoadList;
+        public System.Windows.Forms.Button btn_LoadList;
+        public System.Windows.Forms.GroupBox groupBox_Actions;
     }
 }
 

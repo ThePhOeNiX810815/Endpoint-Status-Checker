@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
@@ -22,6 +23,14 @@ namespace EndpointChecker
         // SUCCESS SWITCH
         private static bool updateSucess = false;
 
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION = 0x2;
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
+
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public AutoUpdaterDialog()
         {
@@ -36,15 +45,10 @@ namespace EndpointChecker
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
-            // SET TITLE
-            lbl_Title.Text = app_ApplicationName + " AutoUpdate";
-
-            // SET VERSION LABEL
-            lbl_Version.Text =
-                "Version " +
-                GetVersionString(app_LatestPackageVersion, true, false) +
-                " from " +
-                app_LatestPackageDate;
+            // SET LABELS
+            lbl_Name.Text = app_ApplicationName;
+            lbl_UpdateVersion.Text = "Updating to version " + GetVersionString(app_Version, app_Version.Build != 0, false);
+            lbl_Copyright.Text = app_Copyright;
 
             BW_Update.RunWorkerAsync();
         }
@@ -96,7 +100,6 @@ namespace EndpointChecker
                 }
 
                 // UNZIP UPDATE PACKAGE
-                lbl_Progress.ForeColor = Color.Chartreuse;
                 lbl_Progress.Text = "Exctracting Package ...";
                 UnzipUpdatePackage();
 
@@ -114,7 +117,6 @@ namespace EndpointChecker
                 CleanTempPackageDirectory();
 
                 // COMPLETE
-                pb_Progress.Image = Properties.Resources.Success;
                 lbl_Progress.ForeColor = Color.Chartreuse;
                 lbl_Progress.Text = "Update Complete";
                 updateSucess = true;
@@ -124,7 +126,6 @@ namespace EndpointChecker
             catch (Exception exception)
             {
                 // FAILED
-                pb_Progress.Image = Properties.Resources.Failed;
                 lbl_Progress.ForeColor = Color.Red;
                 lbl_Progress.Text = "Update Failed";
 
@@ -136,15 +137,8 @@ namespace EndpointChecker
 
         public void bw_Update_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (updateSucess)
-            {
-                // EXECUTE UPDATED APPLICATION
-                ProcessStartInfo startApp = new ProcessStartInfo(Path.Combine(app_CurrentWorkingDir, app_ApplicationExecutableName));
-                Process.Start(startApp);
-            }
-
-            // CLOSE
-            Environment.Exit(0);
+            // FADE OUT AND CLOSE
+            TIMER_FadeOutAndClose.Start();
         }
 
         public static void CleanTempPackageDirectory()
@@ -205,6 +199,33 @@ namespace EndpointChecker
                 CleanTempPackageDirectory();
 
                 zipArchive.ExtractToDirectory(app_TempDir);
+            }
+        }
+
+        public void Controls_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left) {
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            }
+        }
+
+        public void TIMER_FadeOutAndClose_Tick(object sender, EventArgs e)
+        {
+            if (Opacity > 0)
+            {
+                Opacity -= 0.01;
+            }
+            else
+            {
+                if (updateSucess)
+                {
+                    // EXECUTE UPDATED APPLICATION
+                    ProcessStartInfo startApp = new ProcessStartInfo(Path.Combine(app_CurrentWorkingDir, app_ApplicationExecutableName));
+                    Process.Start(startApp);
+                }
+
+                Environment.Exit(0);
             }
         }
     }

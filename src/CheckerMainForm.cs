@@ -184,7 +184,7 @@ namespace EndpointChecker
             // ASSIGN RESIZED IMAGES TO TRAY CONTEXT MENU STRIP ITEMS
             tray_Notifications_Enable.Image = ResizeImage(Resources.notifications_ON.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_Notifications_Disable.Image = ResizeImage(Resources.notifications_OFF.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
-            tray_Refresh.Image = ResizeImage(Resources.refresh.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
+            tray_RunCheck.Image = ResizeImage(Resources.icon_RunCheck, trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_SpeedTest.Image = ResizeImage(Resources.speedTest.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_CheckForUpdate.Image = ResizeImage(Resources.updateIcon, trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
             tray_Exit.Image = ResizeImage(Resources.error.ToBitmap(), trayContextMenu.ImageScalingSize.Width, trayContextMenu.ImageScalingSize.Height);
@@ -230,7 +230,7 @@ namespace EndpointChecker
                 IsBalloon = true,
                 ToolTipTitle = "Endpoints Selection"
             };
-            toolTip_EndpointSelection_None.SetToolTip(btn_UncheckAll, "Deselect ALL EndPoints on list");
+            toolTip_EndpointSelection_None.SetToolTip(btn_UncheckAll, "Unselect ALL EndPoints on list");
 
             // SET TOOLTIP FOR 'FAILED' ENDPOINTS SELECTION BUTTON
             ToolTip toolTip_EndpointSelection_Failed = new ToolTip
@@ -244,21 +244,35 @@ namespace EndpointChecker
             // SET TOOLTIP FOR 'REPORT OUTPUT FOLDER' BROWSE BUTTON
             ToolTip toolTip_BrowseReportOutputFolder = new ToolTip
             {
-                IsBalloon = true
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Report(s) Output location"
             };
             toolTip_BrowseReportOutputFolder.SetToolTip(btn_BrowseExportDir, "Browse for Report(s) output folder");
 
-            // SET TOOLTIP FOR 'REFRESH' BUTTON
-            ToolTip toolTip_Refresh = new ToolTip
-            {
-                IsBalloon = true
+            // SET TOOLTIP FOR 'RUN CHECK' BUTTON
+            ToolTip toolTip_LoadList = new ToolTip {
+                ToolTipIcon = ToolTipIcon.Warning,
+                IsBalloon = true,
+                ToolTipTitle = "Load Endpoints Definitions List"
             };
-            toolTip_Refresh.SetToolTip(btn_Refresh, "Refresh EndPoints list status");
+            toolTip_LoadList.SetToolTip(btn_LoadList, "To reload Endpoints Definitions List, you must press the CTRL key when you click here");
+
+            // SET TOOLTIP FOR 'RUN CHECK' BUTTON
+            ToolTip toolTip_RunCheck = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Run Check"
+            };
+            toolTip_RunCheck.SetToolTip(btn_RunCheck, "Refresh EndPoints list status");
 
             // SET TOOLTIP FOR 'TERMINATE' BUTTON
             ToolTip toolTip_Terminate = new ToolTip
             {
-                IsBalloon = true
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Terminate Check"
             };
             toolTip_Terminate.SetToolTip(btn_Terminate, "Terminate EndPoint status check process");
         }
@@ -514,18 +528,24 @@ namespace EndpointChecker
                     }
                 }
 
-                SetControls(false, false);
-
-                btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
-                lbl_NoEndpoints.Visible = false;
-                lv_Endpoints.Visible = true;
+                ThreadSafeInvoke(() =>
+                {
+                    SetControls(false, false);
+                    btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+                    lbl_EndpointsListLoading.Visible = false;
+                    lv_Endpoints.Visible = true;
+                });
             }
             else
             {
-                SetControls(false, true);
-
-                lbl_NoEndpoints.Visible = true;
-                lv_Endpoints.Visible = false;
+                ThreadSafeInvoke(() =>
+                {
+                    SetControls(false, true);
+                    lbl_EndpointsListLoading.ForeColor = Color.BlueViolet;
+                    lbl_EndpointsListLoading.Text = "Endpoints definitions file \"" + endpointDefinitonsFile + "\" doesn't contains any valid Endpoint definition.";
+                    lbl_EndpointsListLoading.Visible = true;
+                    lv_Endpoints.Visible = false;
+                });
             }
 
             listUpdating = false;
@@ -1394,30 +1414,37 @@ namespace EndpointChecker
             httpWebRequest.CookieContainer = httpWebRequest_CookieContainer;
             httpWebRequest.AutomaticDecompression = httpWebRequest_DecompressionMethods;
             httpWebRequest.ProtocolVersion = httpWebRequest_ProtocolVersion;
-            httpWebRequest.Date = DateTime.Now.ToUniversalTime();
             httpWebRequest.MaximumAutomaticRedirections = 100;
 
             // CUSTOM HEADERS
             WebHeaderCollection requestHeadersCollection = new WebHeaderCollection
             {
-                { "Caller-Application-Name", app_Title },
-                { "Accept-Encoding", @"gzip, deflate, br" },
-                { "Accept-Language", @"*;*" },
-                { "Cache-Control", "max-age=0" },
-                { "DNT", "1" },
-                { "Authority", endpointURI.Authority },
-                { "Path", endpointURI.AbsolutePath },
-                { "Scheme", endpointURI.Scheme },
+                { "accept-encoding", @"gzip, deflate, br" },
+                { "accept-language", @"*;*" },
+                { "cache-control", "max-age=0" },
+                { "dnt", "1" },
+                { "authority", endpointURI.Authority },
+                { "path", endpointURI.AbsolutePath },
+                { "scheme", endpointURI.Scheme },
 
                 // SECURITY HEADERS
-                { "Upgrade-Insecure-Requests", "1" },
-                { "Sec-Fetch-User", "?1" },
-                { "Sec-Fetch-Site", "same-origin" },
-                { "Sec-Fetch-Node", "navigate" },
-                { "Sec-Fetch-Dest", "empty" },
-                { "Sec-CH-UA", http_Sec_CH_UserAgent },
-                { "Sec-CH-UA-Mobile", "?0" },
-                { "Sec-CH-UA-Platform", "\"Windows\"" }
+                { "upgrade-insecure-requests", "1" },
+
+                { "sec-ch-ua", http_Sec_CH_UserAgent },
+                { "sec-ch-ua-arch", "\"x86\"" },
+                { "sec-ch-ua-bitness", "\"64\"" },
+                { "sec-ch-ua-full-version", http_Sec_CH_UserAgent_FullVersion },
+                { "sec-ch-ua-full-version-list", http_Sec_CH_UserAgent_FullVersionList },
+                { "sec-ch-ua-mobile", "?0" },
+                { "sec-ch-ua-model", "\"\"" },
+                { "sec-ch-ua-platform", "\"Windows\"" },
+                { "sec-ch-ua-platform-version", "\"10.0.0\"" },
+                { "sec-ch-ua-platform-wow64", "?0" },
+
+                { "sec-fetch-dest", "document" },
+                { "sec-fetch-mode", "navigate" },
+                { "sec-fetch-site", "none" },
+                { "sec-fetch-user", "?1" },
             };
             httpWebRequest.Headers.Add(requestHeadersCollection);
 
@@ -1437,35 +1464,17 @@ namespace EndpointChecker
                 httpWebRequest.Credentials = CredentialCache.DefaultCredentials;
             }
 
-            // DEFINE STATIC ITEMS FOR HEADERS LIST [THESE ARE NOT INCLUDED IN 'Request.Headers' COLLECTION]
-            Dictionary<string, string> staticHeadersCollection = new Dictionary<string, string>()
-            {
-                { "Method", httpWebRequest.Method },
-                { "AllowAutoRedirect", allowAutoRedirect.ToString().ToLower() },
-                { "Keep-Alive", httpWebRequest.KeepAlive.ToString().ToLower() }
-            };
-
             // GET REQUEST HEADERS
-            GetHTTPWebHeaders(endpoint.HTTPRequestHeaders.PropertyItem, httpWebRequest.Headers, staticHeadersCollection);
+            GetHTTPWebHeaders(endpoint.HTTPRequestHeaders.PropertyItem, httpWebRequest.Headers);
 
             return httpWebRequest;
         }
 
         public void GetHTTPWebHeaders(
             List<Property> propertyItemCollection,
-            WebHeaderCollection headerCollection,
-            Dictionary<string, string> staticHeadersCollection = null)
+            WebHeaderCollection headerCollection)
         {
             propertyItemCollection.Clear();
-
-            if (staticHeadersCollection != null &&
-                staticHeadersCollection.Count > 0)
-            {
-                foreach (string staticHeaderName in staticHeadersCollection.Keys)
-                {
-                    propertyItemCollection.Add(new Property { ItemName = staticHeaderName, ItemValue = staticHeadersCollection[staticHeaderName] });
-                }
-            }
 
             if (headerCollection != null &&
                 headerCollection.Count > 0)
@@ -2172,7 +2181,7 @@ namespace EndpointChecker
             });
         }
 
-        public void btn_Refresh_Click(object sender, EventArgs e)
+        public void btn_RunCheck_Click(object sender, EventArgs e)
         {
             if (IsHandleCreated &&
                 !BW_GetStatus.IsBusy &&
@@ -2180,7 +2189,7 @@ namespace EndpointChecker
                 dialog_EndpointDetails == null &&
                 dialog_SpeedTest == null)
             {
-                btn_Refresh.Enabled = false;
+                btn_RunCheck.Enabled = false;
 
                 SetControls(true, true);
 
@@ -2201,6 +2210,8 @@ namespace EndpointChecker
 
             // NOT VISIBLE OR ENABLED DURING PROGRESS
             SetCheckButtons(!inProgress && !locked);
+            lbl_LoadList.Enabled = !inProgress && !locked;
+            btn_LoadList.Enabled = !inProgress && !locked;
             groupBox_Export.Enabled = !inProgress && !locked;
             groupBox_CommonOptions.Enabled = !inProgress && !locked;
             groupBox_HTTPOptions.Enabled = !inProgress && !locked;
@@ -2242,11 +2253,12 @@ namespace EndpointChecker
             num_ParallelThreadsCount.Enabled = !inProgress && !locked;
             lbl_ParallelThreadsCount.Enabled = !inProgress && !locked;
             tray_Separator_1.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
-            tray_Refresh.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
+            tray_RunCheck.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             tray_SpeedTest.Visible = !inProgress && !locked && dialog_SpeedTest == null && dialog_EndpointDetails == null;
             btn_BrowseExportDir.Enabled = !inProgress && !locked;
             mainMenu_SpeedTest.Enabled = !inProgress && !locked;
-            lbl_Refresh.Enabled = !inProgress && !locked;
+            lbl_RunCheck.Enabled = !inProgress && !locked;
+            btn_RunCheck.Enabled = !inProgress && !locked;
             lbl_BrowseExportDir.Enabled = !inProgress && !locked;
 
             lbl_ListFilter.Enabled = !inProgress && !locked && endpointsList.Count > 0;
@@ -2396,9 +2408,9 @@ namespace EndpointChecker
 
         public void TIMER_AutomaticRefresh_Tick(object sender, EventArgs e)
         {
-            if (btn_Refresh.Enabled)
+            if (btn_RunCheck.Enabled)
             {
-                btn_Refresh_Click(this, null);
+                btn_RunCheck_Click(this, null);
             }
         }
 
@@ -2584,7 +2596,7 @@ namespace EndpointChecker
                 }
 
                 RefreshTrayIcon();
-                btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+                btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
             }
         }
 
@@ -2642,7 +2654,7 @@ namespace EndpointChecker
         {
             if (!BW_GetStatus.IsBusy)
             {
-                btn_Refresh_Click(this, null);
+                btn_RunCheck_Click(this, null);
             }
         }
 
@@ -2675,7 +2687,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+            btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
         }
 
         public void btn_UncheckAll_Click(object sender, EventArgs e)
@@ -2685,7 +2697,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+            btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
         }
 
         public void btn_CheckAllAvailable_Click(object sender, EventArgs e)
@@ -2695,7 +2707,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+            btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
         }
 
         public void btn_CheckAllErrors_Click(object sender, EventArgs e)
@@ -2705,7 +2717,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_Refresh.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+            btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
         }
 
         public void SetCheckButtons(bool enabled)
@@ -4261,39 +4273,41 @@ namespace EndpointChecker
 
                         MessageBox.Show(invalidURLMessage, "Invalid endpoint definitions - Invalid URL format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
+
+                    // RESTORE DISABLED ITEMS LIST
+                    RestoreDisabledItemsListAndFilter();
+
+                    // LIST ENDPOINTS
+                    ThreadSafeInvoke(() =>
+                    {
+                        ListEndpoints(ListViewRefreshMethod.CurrentState);
+
+                        RefreshTrayIcon();
+                    });
+
+                    // AUTOMATIC REFRESH
+                    if (app_ScanOnStartup)
+                    {
+                        ThreadSafeInvoke(() =>
+                        {
+                            btn_RunCheck_Click(this, null);
+                        });
+                    }
+
+                    // CONTINUOUS REFRESH
+                    if (cb_ContinuousRefresh.Checked)
+                    {
+                        TIMER_ContinuousRefresh.Start();
+                    }
                 }
                 else
                 {
-                    SetControls(false, true);
-
-                    lbl_NoEndpoints.ForeColor = Color.Red;
-                    lbl_NoEndpoints.Text = "Endpoints definitions file \"" + endpointDefinitonsFile + "\" doesn't exists in \"" + Directory.GetCurrentDirectory() + "\".";
-                }
-
-                // RESTORE DISABLED ITEMS LIST
-                RestoreDisabledItemsListAndFilter();
-
-                // LIST ENDPOINTS
-                ThreadSafeInvoke(() =>
-                {
-                    ListEndpoints(ListViewRefreshMethod.CurrentState);
-
-                    RefreshTrayIcon();
-                });
-
-                // AUTOMATIC REFRESH
-                if (app_ScanOnStartup)
-                {
                     ThreadSafeInvoke(() =>
                     {
-                        btn_Refresh_Click(this, null);
+                        SetControls(false, true);
+                        lbl_EndpointsListLoading.ForeColor = Color.Red;
+                        lbl_EndpointsListLoading.Text = "Endpoints definitions file \"" + endpointDefinitonsFile + "\" doesn't exists in \"" + Directory.GetCurrentDirectory() + "\".";
                     });
-                }
-
-                // CONTINUOUS REFRESH
-                if (cb_ContinuousRefresh.Checked)
-                {
-                    TIMER_ContinuousRefresh.Start();
                 }
             });
         }
@@ -4750,7 +4764,7 @@ namespace EndpointChecker
 
         public void toolStripMenuItem_Details_Click(object sender, EventArgs e)
         {
-            tray_Refresh.Visible = false;
+            tray_RunCheck.Visible = false;
             tray_SpeedTest.Visible = false;
             tray_Separator_1.Visible = false;
 
@@ -4771,7 +4785,7 @@ namespace EndpointChecker
                 Application.Exit();
             }
 
-            tray_Refresh.Visible = true;
+            tray_RunCheck.Visible = true;
             tray_SpeedTest.Visible = true;
             tray_Separator_1.Visible = true;
 
@@ -5406,12 +5420,12 @@ namespace EndpointChecker
 
         public void TIMER_ContinuousRefresh_Tick(object sender, EventArgs e)
         {
-            if (btn_Refresh.Enabled &&
+            if (btn_RunCheck.Enabled &&
                 dialog_SpeedTest == null &&
                 dialog_EndpointDetails == null)
             {
                 TIMER_ContinuousRefresh.Enabled = false;
-                btn_Refresh_Click(this, null);
+                btn_RunCheck_Click(this, null);
             }
         }
 
@@ -5533,7 +5547,7 @@ namespace EndpointChecker
 
         public void mainMenu_SpeedTest_Click(object sender, EventArgs e)
         {
-            tray_Refresh.Visible = false;
+            tray_RunCheck.Visible = false;
             tray_SpeedTest.Visible = false;
             tray_CheckForUpdate.Visible = false;
             tray_Separator_1.Visible = false;
@@ -5543,7 +5557,7 @@ namespace EndpointChecker
             dialog_SpeedTest.ShowDialog();
             dialog_SpeedTest = null;
 
-            tray_Refresh.Visible = true;
+            tray_RunCheck.Visible = true;
             tray_SpeedTest.Visible = true;
             tray_CheckForUpdate.Visible = true;
             tray_Separator_1.Visible = true;
@@ -5564,6 +5578,19 @@ namespace EndpointChecker
                 null,
                 null,
                 null);
+            }
+        }
+
+        public void btn_LoadList_Click(object sender, EventArgs e)
+        {
+            if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
+                System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl))
+            {
+                SetControls(false, true);
+                lbl_EndpointsListLoading.Visible = true;
+                lbl_ProgressCount.Visible = true;
+                lv_Endpoints.Visible = false;
+                LoadEndpointReferences();
             }
         }
     }

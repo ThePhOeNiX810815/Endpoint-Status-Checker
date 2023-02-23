@@ -473,6 +473,16 @@ namespace EndpointChecker.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap glass_transparent_cross {
+            get {
+                object obj = ResourceManager.GetObject("glass_transparent_cross", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap goLogo {
             get {
                 object obj = ResourceManager.GetObject("goLogo", resourceCulture);
@@ -496,6 +506,26 @@ namespace EndpointChecker.Properties {
         internal static System.Drawing.Bitmap http {
             get {
                 object obj = ResourceManager.GetObject("http", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icon_LoadList {
+            get {
+                object obj = ResourceManager.GetObject("icon_LoadList", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icon_RunCheck {
+            get {
+                object obj = ResourceManager.GetObject("icon_RunCheck", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

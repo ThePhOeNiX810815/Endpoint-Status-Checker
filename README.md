@@ -61,7 +61,7 @@ Application is using following libraries:
 - HtmlAgilityPack (1.11.46)
 - IPAddressRange (4.2.0)
 - Nager.PublicSuffix (2.2.2)
-- Newtonsoft.Json (13.0.2)
+- Newtonsoft.Json (13.0.3-beta1)
 - System.IO.Compression (4.3.0)
 - System.Net.Http (4.3.4)
 - System.Runtime.InteropServices.RuntimeInformation (4.3.0)

@@ -703,7 +703,7 @@ namespace EndpointChecker
             return Encoding.UTF8.GetString(encodedBytes);
         }
 
-        public void GetUserCountry(string ipAddress)
+        public void GetUserCountry()
         {
             try
             {
@@ -883,7 +883,7 @@ namespace EndpointChecker
 
             NewBackgroundThread(() =>
             {
-                GetUserCountry(clientIP);
+                GetUserCountry();
 
                 if (ipInfo != null)
                 {

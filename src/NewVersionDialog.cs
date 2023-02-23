@@ -17,9 +17,9 @@ namespace EndpointChecker
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
-        public bool updateNow { get; set; }
-        public bool updateSkip { get; set; }
-        public bool autoUpdateInFuture { get; set; }
+        public bool UpdateNow { get; set; }
+        public bool UpdateSkip { get; set; }
+        public bool AutoUpdateInFuture { get; set; }
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public NewVersionDialog()
@@ -52,9 +52,9 @@ namespace EndpointChecker
 
         public void btn_SkipThisVersion_Click(object sender, EventArgs e)
         {
-            updateNow = false;
-            updateSkip = true;
-            autoUpdateInFuture = cb_FutureAutoUpdate.Checked;
+            UpdateNow = false;
+            UpdateSkip = true;
+            AutoUpdateInFuture = cb_FutureAutoUpdate.Checked;
 
             Close();
         }
@@ -66,9 +66,9 @@ namespace EndpointChecker
 
         public void btn_InstallUpdate_Click(object sender, EventArgs e)
         {
-            updateNow = true;
-            updateSkip = false;
-            autoUpdateInFuture = cb_FutureAutoUpdate.Checked;
+            UpdateNow = true;
+            UpdateSkip = false;
+            AutoUpdateInFuture = cb_FutureAutoUpdate.Checked;
 
             Close();
         }
