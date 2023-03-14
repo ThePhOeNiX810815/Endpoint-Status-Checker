@@ -47,8 +47,18 @@ namespace EndpointChecker
 
             // SET LABELS
             lbl_Name.Text = app_ApplicationName;
-            lbl_UpdateVersion.Text = "Updating to version " + GetVersionString(app_Version, app_Version.Build != 0, false);
             lbl_Copyright.Text = app_Copyright;
+
+            lbl_UpdateVersion.Text =
+                "Version " +
+                    GetVersionString(
+                        app_LatestPackageVersion,
+                        app_LatestPackageVersion.Build != 0,
+                        false);
+
+            lbl_ReleaseDate.Text =
+                "Released " +
+                app_LatestPackageDate;
 
             BW_Update.RunWorkerAsync();
         }
@@ -57,8 +67,11 @@ namespace EndpointChecker
         {
             try
             {
+                Thread.Sleep(1000);
+
                 // DOWNLOAD UPDATE PACKAGE
                 lbl_Progress.Text = "Downloading Package from GitHub ...";
+                Thread.Sleep(1000);
 
                 int downloadPackage_MaxAttemptCount = 20;
                 int downloadPackage_CurrentAttempt = 0;
@@ -72,8 +85,6 @@ namespace EndpointChecker
 
                     try
                     {
-                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
                         // TRY TO DOWNLOAD PACKAGE
                         using (WebClient webClient = new WebClient())
                         {
@@ -101,24 +112,31 @@ namespace EndpointChecker
 
                 // UNZIP UPDATE PACKAGE
                 lbl_Progress.Text = "Exctracting Package ...";
+                Thread.Sleep(1000);
                 UnzipUpdatePackage();
 
                 // CLEANUP OLD APPLICATION EXECUTABLE AND LIBRARIES
                 lbl_Progress.Text = "Old Files Cleanup ...";
-                CleanOldExecutableAndLibraries();
+                Thread.Sleep(1000);
+                CleanOldLibraries();
 
                 // UPDATE
                 lbl_Progress.Text = "Copying New Files ...";
-                CopyNewExecutableAndLibraries();
+                Thread.Sleep(1000);
+                CopyNewLibraries();
 
                 // CLEANUP
                 lbl_Progress.Text = "Cleaning Up Temporary Files ...";
+                Thread.Sleep(1000);
                 CleanTempPackageArchive();
                 CleanTempPackageDirectory();
 
                 // COMPLETE
-                lbl_Progress.ForeColor = Color.Chartreuse;
-                lbl_Progress.Text = "Update Complete";
+                lbl_Progress.Visible = false;
+                lbl_UpdateStatus_Wait.Visible = false;
+                lbl_UpdateStatus.ForeColor = Color.Lime;
+                lbl_UpdateStatus.Text = "SUCCESSFULLY UPDATED";
+
                 updateSucess = true;
 
                 Thread.Sleep(3000);
@@ -126,8 +144,10 @@ namespace EndpointChecker
             catch (Exception exception)
             {
                 // FAILED
-                lbl_Progress.ForeColor = Color.Red;
-                lbl_Progress.Text = "Update Failed";
+                lbl_Progress.Visible = false;
+                lbl_UpdateStatus_Wait.Visible = false;
+                lbl_UpdateStatus.ForeColor = Color.Red;
+                lbl_UpdateStatus.Text = "UPDATE FAILED";
 
                 Thread.Sleep(2000);
 
@@ -157,10 +177,11 @@ namespace EndpointChecker
             }
         }
 
-        public static void CleanOldExecutableAndLibraries()
+        public static void CleanOldLibraries()
         {
             foreach (string appFile in Directory.GetFiles(app_CurrentWorkingDir))
             {
+                // EXECUTABLE, LIBRARIES, DEBUG DBS
                 if (Path.GetExtension(appFile).ToLower() == ".exe" ||
                     Path.GetExtension(appFile).ToLower() == ".dll" ||
                     Path.GetExtension(appFile).ToLower() == ".pdb")
@@ -176,7 +197,7 @@ namespace EndpointChecker
             }
         }
 
-        public static void CopyNewExecutableAndLibraries()
+        public static void CopyNewLibraries()
         {
             foreach (string appFile in Directory.GetFiles(Path.Combine(app_TempDir, tempPackageFolderName)))
             {

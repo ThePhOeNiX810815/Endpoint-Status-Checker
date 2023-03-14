@@ -43,8 +43,7 @@ namespace EndpointChecker
                 " " +
                 GetVersionString(app_LatestPackageVersion, true, false) +
                 " is now available. You have version " +
-                GetVersionString(app_Version, true, false) +
-                ". Would you like to download it now ?";
+                GetVersionString(app_Version, true, false);
 
             // SET RELEASE NOTES
             rtb_ReleaseNotes.Rtf = app_LatestPackageReleaseNotes_RTF;

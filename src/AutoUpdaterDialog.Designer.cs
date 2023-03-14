@@ -36,6 +36,9 @@
             this.lbl_Progress = new System.Windows.Forms.Label();
             this.lbl_UpdateVersion = new System.Windows.Forms.Label();
             this.TIMER_FadeOutAndClose = new System.Windows.Forms.Timer(this.components);
+            this.lbl_UpdateStatus = new System.Windows.Forms.Label();
+            this.lbl_UpdateStatus_Wait = new System.Windows.Forms.Label();
+            this.lbl_ReleaseDate = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // BW_Update
@@ -84,22 +87,57 @@
             // 
             // lbl_UpdateVersion
             // 
-            this.lbl_UpdateVersion.AutoSize = true;
             this.lbl_UpdateVersion.BackColor = System.Drawing.Color.Transparent;
-            this.lbl_UpdateVersion.Font = new System.Drawing.Font("Agency FB", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_UpdateVersion.Font = new System.Drawing.Font("Agency FB", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_UpdateVersion.ForeColor = System.Drawing.Color.PaleGoldenrod;
-            this.lbl_UpdateVersion.Location = new System.Drawing.Point(35, 13);
+            this.lbl_UpdateVersion.Location = new System.Drawing.Point(394, 19);
             this.lbl_UpdateVersion.Name = "lbl_UpdateVersion";
-            this.lbl_UpdateVersion.Size = new System.Drawing.Size(161, 25);
+            this.lbl_UpdateVersion.Size = new System.Drawing.Size(339, 35);
             this.lbl_UpdateVersion.TabIndex = 7;
             this.lbl_UpdateVersion.Text = "<< UPDATE VERSION >>";
-            this.lbl_UpdateVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lbl_UpdateVersion.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lbl_UpdateVersion.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Controls_MouseDown);
             // 
             // TIMER_FadeOutAndClose
             // 
             this.TIMER_FadeOutAndClose.Interval = 10;
             this.TIMER_FadeOutAndClose.Tick += new System.EventHandler(this.TIMER_FadeOutAndClose_Tick);
+            // 
+            // lbl_UpdateStatus
+            // 
+            this.lbl_UpdateStatus.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_UpdateStatus.Font = new System.Drawing.Font("Agency FB", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_UpdateStatus.ForeColor = System.Drawing.Color.OrangeRed;
+            this.lbl_UpdateStatus.Location = new System.Drawing.Point(0, 20);
+            this.lbl_UpdateStatus.Name = "lbl_UpdateStatus";
+            this.lbl_UpdateStatus.Size = new System.Drawing.Size(326, 33);
+            this.lbl_UpdateStatus.TabIndex = 8;
+            this.lbl_UpdateStatus.Text = "UPDATE IN PROGRESS";
+            this.lbl_UpdateStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbl_UpdateStatus_Wait
+            // 
+            this.lbl_UpdateStatus_Wait.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_UpdateStatus_Wait.Font = new System.Drawing.Font("Agency FB", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_UpdateStatus_Wait.ForeColor = System.Drawing.Color.LightSkyBlue;
+            this.lbl_UpdateStatus_Wait.Location = new System.Drawing.Point(121, 51);
+            this.lbl_UpdateStatus_Wait.Name = "lbl_UpdateStatus_Wait";
+            this.lbl_UpdateStatus_Wait.Size = new System.Drawing.Size(85, 21);
+            this.lbl_UpdateStatus_Wait.TabIndex = 9;
+            this.lbl_UpdateStatus_Wait.Text = "plaese wait...";
+            this.lbl_UpdateStatus_Wait.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbl_ReleaseDate
+            // 
+            this.lbl_ReleaseDate.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_ReleaseDate.Font = new System.Drawing.Font("Agency FB", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ReleaseDate.ForeColor = System.Drawing.Color.LightSkyBlue;
+            this.lbl_ReleaseDate.Location = new System.Drawing.Point(476, 49);
+            this.lbl_ReleaseDate.Name = "lbl_ReleaseDate";
+            this.lbl_ReleaseDate.Size = new System.Drawing.Size(175, 23);
+            this.lbl_ReleaseDate.TabIndex = 10;
+            this.lbl_ReleaseDate.Text = "<< RELEASE DATE >>";
+            this.lbl_ReleaseDate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // AutoUpdaterDialog
             // 
@@ -108,7 +146,10 @@
             this.BackgroundImage = global::EndpointChecker.Properties.Resources.splash_Background_3;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1000, 378);
+            this.Controls.Add(this.lbl_UpdateStatus_Wait);
+            this.Controls.Add(this.lbl_ReleaseDate);
             this.Controls.Add(this.lbl_UpdateVersion);
+            this.Controls.Add(this.lbl_UpdateStatus);
             this.Controls.Add(this.lbl_Progress);
             this.Controls.Add(this.lbl_Copyright);
             this.Controls.Add(this.lbl_Name);
@@ -125,7 +166,6 @@
             this.TopMost = true;
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Controls_MouseDown);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -136,5 +176,8 @@
         public System.Windows.Forms.Label lbl_Progress;
         public System.Windows.Forms.Label lbl_UpdateVersion;
         public System.Windows.Forms.Timer TIMER_FadeOutAndClose;
+        public System.Windows.Forms.Label lbl_UpdateStatus;
+        public System.Windows.Forms.Label lbl_UpdateStatus_Wait;
+        public System.Windows.Forms.Label lbl_ReleaseDate;
     }
 }

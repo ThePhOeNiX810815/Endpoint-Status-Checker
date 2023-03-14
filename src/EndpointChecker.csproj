@@ -86,7 +86,7 @@
       <HintPath>packages\Nager.PublicSuffix.2.2.2\lib\net45\Nager.PublicSuffix.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.13.0.3-beta1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="Spire.XLS, Version=12.7.0.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
@@ -159,6 +159,7 @@
     <Compile Include="FeatureRequestDialog.Designer.cs">
       <DependentUpon>FeatureRequestDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="FontPublisher.cs" />
     <Compile Include="NewVersionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -231,6 +232,14 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="app.manifest" />
+    <EmbeddedResource Include="Fonts\AGENCYB.TTF" />
+    <EmbeddedResource Include="Fonts\AGENCYR.TTF" />
+    <EmbeddedResource Include="Fonts\segoeui.ttf" />
+    <EmbeddedResource Include="Fonts\segoeuib.ttf" />
+    <EmbeddedResource Include="Fonts\segoeuil.ttf" />
+    <EmbeddedResource Include="Fonts\segoeuisl.ttf" />
+    <EmbeddedResource Include="Fonts\seguibl.ttf" />
+    <EmbeddedResource Include="Fonts\seguisb.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -288,6 +297,7 @@
     <Content Include="Images\loading-colorful.gif" />
     <Content Include="Images\loadingProgress_Violet.gif" />
     <Content Include="Images\location.png" />
+    <Content Include="Images\logo_ZeroCarbon Emmision.png" />
     <Content Include="Images\main.png" />
     <Content Include="Images\microsoft.png" />
     <Content Include="Images\newUpdateLogo.png" />
@@ -361,6 +371,7 @@
     <Content Include="Images\wmiClass.png" />
     <Content Include="Images\wmiProperty.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>IF EXIST "$(ProjectDir)..\ExecutableSelfSign\SelfSignUtils\bin\Debug\signtool.exe" IF EXIST "$(ProjectDir)..\ExecutableSelfSign\Certificates [to 01-01-2025]\Peter Machaj.pfx" "$(ProjectDir)..\ExecutableSelfSign\SelfSignUtils\bin\Debug\signtool.exe" sign /f "$(ProjectDir)..\ExecutableSelfSign\Certificates [to 01-01-2025]\Peter Machaj.pfx" "$(TargetPath)"</PostBuildEvent>

@@ -161,6 +161,7 @@
             this.lbl_LoadList = new System.Windows.Forms.Label();
             this.btn_LoadList = new System.Windows.Forms.Button();
             this.groupBox_Actions = new System.Windows.Forms.GroupBox();
+            this.pb_CarbonFreeLogo = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.num_RefreshInterval)).BeginInit();
             this.trayContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_HTTPRequestTimeout)).BeginInit();
@@ -176,6 +177,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).BeginInit();
             this.MainMenuStrip.SuspendLayout();
             this.groupBox_Actions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_CarbonFreeLogo)).BeginInit();
             this.SuspendLayout();
             // 
             // lv_Endpoints
@@ -973,7 +975,7 @@
             this.lbl_RunCheck.AutoSize = true;
             this.lbl_RunCheck.Enabled = false;
             this.lbl_RunCheck.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_RunCheck.Location = new System.Drawing.Point(124, 54);
+            this.lbl_RunCheck.Location = new System.Drawing.Point(125, 54);
             this.lbl_RunCheck.Name = "lbl_RunCheck";
             this.lbl_RunCheck.Size = new System.Drawing.Size(80, 17);
             this.lbl_RunCheck.TabIndex = 39;
@@ -1275,7 +1277,7 @@
             this.lbl_LastUpdate_Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_LastUpdate_Label.AutoSize = true;
             this.lbl_LastUpdate_Label.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LastUpdate_Label.Location = new System.Drawing.Point(789, 509);
+            this.lbl_LastUpdate_Label.Location = new System.Drawing.Point(839, 509);
             this.lbl_LastUpdate_Label.Name = "lbl_LastUpdate_Label";
             this.lbl_LastUpdate_Label.Size = new System.Drawing.Size(140, 17);
             this.lbl_LastUpdate_Label.TabIndex = 51;
@@ -1287,7 +1289,7 @@
             this.lbl_LastUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_LastUpdate.AutoSize = true;
             this.lbl_LastUpdate.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LastUpdate.Location = new System.Drawing.Point(931, 507);
+            this.lbl_LastUpdate.Location = new System.Drawing.Point(981, 507);
             this.lbl_LastUpdate.Name = "lbl_LastUpdate";
             this.lbl_LastUpdate.Size = new System.Drawing.Size(0, 20);
             this.lbl_LastUpdate.TabIndex = 52;
@@ -1714,7 +1716,7 @@
             this.lbl_LoadList.AutoSize = true;
             this.lbl_LoadList.Enabled = false;
             this.lbl_LoadList.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_LoadList.Location = new System.Drawing.Point(18, 54);
+            this.lbl_LoadList.Location = new System.Drawing.Point(19, 54);
             this.lbl_LoadList.Name = "lbl_LoadList";
             this.lbl_LoadList.Size = new System.Drawing.Size(89, 17);
             this.lbl_LoadList.TabIndex = 76;
@@ -1752,12 +1754,24 @@
             this.groupBox_Actions.TabStop = false;
             this.groupBox_Actions.Text = "Actions";
             // 
+            // pb_CarbonFreeLogo
+            // 
+            this.pb_CarbonFreeLogo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pb_CarbonFreeLogo.Image = global::EndpointChecker.Properties.Resources.logo_ZeroCarbon_Emmision;
+            this.pb_CarbonFreeLogo.Location = new System.Drawing.Point(792, 498);
+            this.pb_CarbonFreeLogo.Name = "pb_CarbonFreeLogo";
+            this.pb_CarbonFreeLogo.Size = new System.Drawing.Size(40, 40);
+            this.pb_CarbonFreeLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb_CarbonFreeLogo.TabIndex = 78;
+            this.pb_CarbonFreeLogo.TabStop = false;
+            // 
             // CheckerMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1134, 593);
+            this.Controls.Add(this.pb_CarbonFreeLogo);
             this.Controls.Add(this.groupBox_EndpointSelection);
             this.Controls.Add(this.groupBox_Actions);
             this.Controls.Add(this.MainMenuStrip);
@@ -1820,6 +1834,7 @@
             this.MainMenuStrip.PerformLayout();
             this.groupBox_Actions.ResumeLayout(false);
             this.groupBox_Actions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_CarbonFreeLogo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1957,6 +1972,7 @@
         public System.Windows.Forms.Label lbl_LoadList;
         public System.Windows.Forms.Button btn_LoadList;
         public System.Windows.Forms.GroupBox groupBox_Actions;
+        public System.Windows.Forms.PictureBox pb_CarbonFreeLogo;
     }
 }
 

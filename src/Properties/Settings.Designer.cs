@@ -890,7 +890,7 @@ namespace EndpointChecker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
-            "Chrome/111.0.0.0 Safari/537.36")]
+            "Chrome/112.0.0.0 Safari/537.36")]
         public string Config_HTTP_UserAgent {
             get {
                 return ((string)(this["Config_HTTP_UserAgent"]));
@@ -945,18 +945,6 @@ namespace EndpointChecker.Properties {
             }
             set {
                 this["VirusTotal_API_Key"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\"Google Chrome\";v=\"111\", \"Not(A:Brand\";v=\"8\", \"Chromium\";v=\"111\"")]
-        public string Config_HTTP_Sec_CH_UserAgent {
-            get {
-                return ((string)(this["Config_HTTP_Sec_CH_UserAgent"]));
-            }
-            set {
-                this["Config_HTTP_Sec_CH_UserAgent"] = value;
             }
         }
         
@@ -1077,31 +1065,6 @@ namespace EndpointChecker.Properties {
             }
             set {
                 this["Config_Resolve_MAC_Addresses"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\"111.0.5563.33\"")]
-        public string Config_HTTP_Sec_CH_UserAgent_FullVersion {
-            get {
-                return ((string)(this["Config_HTTP_Sec_CH_UserAgent_FullVersion"]));
-            }
-            set {
-                this["Config_HTTP_Sec_CH_UserAgent_FullVersion"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\"Google Chrome\";v=\"111.0.5563.33\", \"Not(A:Brand\";v=\"8.0.0.0\", \"Chromium\";v=\"111.0" +
-            ".5563.33\"")]
-        public string Config_HTTP_Sec_CH_UserAgent_FullVersionList {
-            get {
-                return ((string)(this["Config_HTTP_Sec_CH_UserAgent_FullVersionList"]));
-            }
-            set {
-                this["Config_HTTP_Sec_CH_UserAgent_FullVersionList"] = value;
             }
         }
     }

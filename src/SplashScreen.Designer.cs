@@ -36,8 +36,8 @@ namespace EndpointChecker
             this.lbl_Name = new System.Windows.Forms.Label();
             this.lbl_Copyright = new System.Windows.Forms.Label();
             this.lbl_Version_Date = new System.Windows.Forms.Label();
-            this.lbl_ReleaseType = new System.Windows.Forms.Label();
             this.pb_CloseDialog = new System.Windows.Forms.PictureBox();
+            this.lbl_ReleaseType = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pb_CloseDialog)).BeginInit();
             this.SuspendLayout();
             // 
@@ -90,20 +90,6 @@ namespace EndpointChecker
             this.lbl_Version_Date.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lbl_Version_Date.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Controls_MouseDown);
             // 
-            // lbl_ReleaseType
-            // 
-            this.lbl_ReleaseType.AutoSize = true;
-            this.lbl_ReleaseType.BackColor = System.Drawing.Color.Transparent;
-            this.lbl_ReleaseType.Font = new System.Drawing.Font("Agency FB", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_ReleaseType.ForeColor = System.Drawing.Color.Black;
-            this.lbl_ReleaseType.Location = new System.Drawing.Point(35, 13);
-            this.lbl_ReleaseType.Name = "lbl_ReleaseType";
-            this.lbl_ReleaseType.Size = new System.Drawing.Size(147, 25);
-            this.lbl_ReleaseType.TabIndex = 5;
-            this.lbl_ReleaseType.Text = "<< PACKAGE TYPE >>";
-            this.lbl_ReleaseType.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lbl_ReleaseType.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Controls_MouseDown);
-            // 
             // pb_CloseDialog
             // 
             this.pb_CloseDialog.BackColor = System.Drawing.Color.Transparent;
@@ -117,6 +103,18 @@ namespace EndpointChecker
             this.pb_CloseDialog.TabStop = false;
             this.pb_CloseDialog.Click += new System.EventHandler(this.pb_CloseDialog_Click);
             // 
+            // lbl_ReleaseType
+            // 
+            this.lbl_ReleaseType.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_ReleaseType.Font = new System.Drawing.Font("Agency FB", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ReleaseType.ForeColor = System.Drawing.Color.Black;
+            this.lbl_ReleaseType.Location = new System.Drawing.Point(0, 20);
+            this.lbl_ReleaseType.Name = "lbl_ReleaseType";
+            this.lbl_ReleaseType.Size = new System.Drawing.Size(326, 33);
+            this.lbl_ReleaseType.TabIndex = 9;
+            this.lbl_ReleaseType.Text = "<<PACKAGE TYPE>>";
+            this.lbl_ReleaseType.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // SplashScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -125,8 +123,8 @@ namespace EndpointChecker
             this.BackgroundImage = global::EndpointChecker.Properties.Resources.splash_Background_3;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1000, 378);
-            this.Controls.Add(this.pb_CloseDialog);
             this.Controls.Add(this.lbl_ReleaseType);
+            this.Controls.Add(this.pb_CloseDialog);
             this.Controls.Add(this.lbl_Version_Date);
             this.Controls.Add(this.lbl_Copyright);
             this.Controls.Add(this.lbl_Name);
@@ -145,7 +143,6 @@ namespace EndpointChecker
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Controls_MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.pb_CloseDialog)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -156,7 +153,7 @@ namespace EndpointChecker
         public System.Windows.Forms.Label lbl_Name;
         public System.Windows.Forms.Label lbl_Copyright;
         public System.Windows.Forms.Label lbl_Version_Date;
-        public System.Windows.Forms.Label lbl_ReleaseType;
         public System.Windows.Forms.PictureBox pb_CloseDialog;
+        public System.Windows.Forms.Label lbl_ReleaseType;
     }
 }

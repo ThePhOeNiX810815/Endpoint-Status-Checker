@@ -1,6 +1,6 @@
 # Endpoint Status Checker
 ### Homepage:
-https://endpoint-status-checker.webnode.com
+https://endpoint-status-checker.webnode.page
 
 ![image](https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/EndpointStatusCheckerImage.jpg)
 
@@ -19,6 +19,7 @@ This piece of software is safe to use on your host, ignore any false positives.
 Application have inteligent AutoUpdate method, using GitHub packages.
 
 # Requirements
+- Windows 7 / Server 2008 R2 or later
 - .NET Framework 4.5 or later
 - Application needs to be run As Administrator
 
@@ -61,7 +62,7 @@ Application is using following libraries:
 - HtmlAgilityPack (1.11.46)
 - IPAddressRange (4.2.0)
 - Nager.PublicSuffix (2.2.2)
-- Newtonsoft.Json (13.0.3-beta1)
+- Newtonsoft.Json (13.0.3)
 - System.IO.Compression (4.3.0)
 - System.Net.Http (4.3.4)
 - System.Runtime.InteropServices.RuntimeInformation (4.3.0)

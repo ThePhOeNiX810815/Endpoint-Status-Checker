@@ -21,8 +21,6 @@ namespace NSpeedTest
         {
             using (WebClient webClient = new WebClient())
             {
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
                 var data = webClient.DownloadString(url);
                 var xmlSerializer = new XmlSerializer(typeof(T));
                 using (var reader = new StringReader(data))

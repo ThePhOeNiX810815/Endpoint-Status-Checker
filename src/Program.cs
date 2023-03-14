@@ -16,44 +16,6 @@ using System.Windows.Forms;
 
 namespace EndpointChecker
 {
-    internal class GacApi
-    {
-        [DllImport("fusion.dll")]
-        internal static extern IntPtr CreateAssemblyCache(
-            out IAssemblyCache ppAsmCache, int reserved);
-    }
-
-    // GAC Interfaces - IAssemblyCache. As a sample, non used vtable entries     
-    [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-    Guid("e707dcde-d1cd-11d2-bab9-00c04f8eceae")]
-    internal interface IAssemblyCache
-    {
-        int Dummy1();
-        [PreserveSig()]
-        IntPtr QueryAssemblyInfo(
-            int flags,
-            [MarshalAs(UnmanagedType.LPWStr)]
-            string assemblyName,
-            ref ASSEMBLY_INFO assemblyInfo);
-
-        int Dummy2();
-        int Dummy3();
-        int Dummy4();
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct ASSEMBLY_INFO
-    {
-        public int cbAssemblyInfo;
-        public int assemblyFlags;
-        public long assemblySizeInKB;
-
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string currentAssemblyPath;
-
-        public int cchBuf;
-    }
-
     internal static class Program
     {
         // TEST MODE SWITCH
@@ -130,11 +92,8 @@ namespace EndpointChecker
         // VIRUSTOTAL API KEY
         public static string apiKey_VirusTotal;
 
-        // HTTP CLIENT USER-AGENT STRINGS
+        // HTTP CLIENT USER-AGENT STRING
         public static string http_UserAgent;
-        public static string http_Sec_CH_UserAgent;
-        public static string http_Sec_CH_UserAgent_FullVersion;
-        public static string http_Sec_CH_UserAgent_FullVersionList;
 
         // STRING FORMAT FOR 'NOT AVAILABLE' STATUS
         public static string status_NotAvailable = "N/A";
@@ -174,7 +133,7 @@ namespace EndpointChecker
         public static Version app_AutoUpdate_SkipVersion;
         public static bool app_AutoUpdateNow = false;
         public static bool app_UpdateAvailable = false;
-        public static Version app_LatestPackageVersion = new Version(0, 0, 0, 0);
+        public static Version app_LatestPackageVersion = app_Version;
         public static string app_LatestPackageLink = string.Empty;
         public static string app_LatestPackageDate = string.Empty;
         public static string app_LatestPackageReleaseNotes_RTF = string.Empty;
@@ -203,106 +162,163 @@ namespace EndpointChecker
             "WhoisClient.dll"
         };
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        private static void Main(string[] args)
+        // EMBEDDED CUSTOM FONTS LIST
+        public static string[] app_CustomFontsUsed = new string[]
         {
-            if (Settings.Default.UpgradeRequired)
+            "AGENCYB.TTF",
+            "AGENCYR.TTF",
+            "segoeui.ttf",
+            "segoeuib.ttf",
+            "segoeuil.ttf",
+            "segoeuisl.ttf",
+            "seguibl.ttf",
+            "seguisb.ttf"
+        };
+
+        // .NET FRAMEWORK VERSION ENUM
+        public enum DotNETFrameworkVersion
+        {
+            v4_8_1,
+            v4_8,
+            v4_7_2,
+            v4_7_1,
+            v4_7,
+            v4_6_2,
+            v4_6_1,
+            v4_6,
+            v4_5_2,
+            v4_5_1,
+            v4_5,
+            NONE
+        };
+
+        // LATEST .NET FRAMEWORK VERSION INSTALLED
+        public static DotNETFrameworkVersion app_latestDotNETFWKInstalled = DotNETFrameworkVersion.NONE;
+
+        public static void Main(string[] args)
+        {
+            // CHECK FOR MINIMAL REQUIRED OS AND .NET FRAMEWORK VERSIOMS
+            // MIN OS VERSION: 6.1 [Windows 7 / Server 2008 R2]
+            // MIN .NET FWK VERSION: 4.5
+            if (Environment.OSVersion.Version < new Version(6, 1))
             {
-                // UPGRADE SETTINGS FROM PREVIOUS VERSION
-                Settings.Default.Upgrade();
-                Settings.Default.UpgradeRequired = false;
-                Settings.Default.Save();
+                MessageBox.Show(
+                        "This application requires Windows 7 / Server 2008 R2 or later to run.",
+                        "Endpoint Status Checker v" +
+                        app_VersionString,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            // GET OS VERSION STRING
-            if (GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", out object reg_osVersion_ProductName))
+            else if (!IsRequiredNetFwkVersionInstalled(DotNETFrameworkVersion.v4_5))
             {
-                os_VersionString =
-                    (string)reg_osVersion_ProductName +
-                    " " +
-                    (Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit") +
-                    ", Build " +
-                    Environment.OSVersion.Version.Build.ToString();
-
-                if (GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion", "DisplayVersion", out object reg_osVersion_DisplayVersion))
-                {
-                    os_VersionString += " (" + reg_osVersion_DisplayVersion + ")";
-                }
-            }
-
-            // GET SETTINGS
-            LoadApplicationConfig();
-
-            // APP SETTINGS
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-
-            if (args.Length == 6 &&
-                args[0] == "/AutoUpdate" &&
-                Directory.Exists(args[1]) &&
-                !string.IsNullOrEmpty(args[2]) &&
-                !string.IsNullOrEmpty(args[3]) &&
-                !string.IsNullOrEmpty(args[4]) &&
-                !string.IsNullOrEmpty(args[5]))
-            {
-                // PASS ARGUMENTS
-                app_CurrentWorkingDir = args[1];
-                app_ApplicationExecutableName = args[2];
-                app_LatestPackageVersion = new Version(args[3]);
-                app_LatestPackageLink = args[4];
-                app_LatestPackageDate = args[5];
-
-                // AUTO UPDATE FROM GITHUB PACKAGE
-                Application.Run(new AutoUpdaterDialog());
+                MessageBox.Show(
+                         "This application requires .NET Framework 4.5 or later to run.",
+                         "Endpoint Status Checker v" +
+                         app_VersionString,
+                         MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
-                // GET SYSTEM MEMORY SIZE
-                GetPhysicallyInstalledSystemMemory(out long systemMemorySize_KB);
-                systemMemorySize = (systemMemorySize_KB / 1024 / 1024).ToString() + " GB";
+                // SET LATEST SUPPORTED SECURITY PROTOCOL FOR HTTP (TLS)
+                SetSecurityProtocol();
 
-                // CHECK APPLICATION INSTANCE
-                using (Mutex mainMutex = new Mutex(true, app_ApplicationName, out bool createdNew))
+                // PUBLISH EMBEDDED FONTS
+                PublishEmbeddedFonts();
+
+                if (Settings.Default.UpgradeRequired)
                 {
-                    if (!createdNew)
-                    {
-                        // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, RESTORE WINDOW
-                        IntPtr wdwIntPtr = FindWindow(null, app_Title);
-                        Windowplacement placement = new Windowplacement();
+                    // UPGRADE SETTINGS FROM PREVIOUS VERSION
+                    Settings.Default.Upgrade();
+                    Settings.Default.UpgradeRequired = false;
+                    Settings.Default.Save();
+                }
 
-                        GetWindowPlacement(wdwIntPtr, ref placement);
-                        ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
-                        SetForegroundWindow(wdwIntPtr);
+                // GET OS VERSION STRING
+                if (GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", out object reg_osVersion_ProductName))
+                {
+                    os_VersionString =
+                        (string)reg_osVersion_ProductName +
+                        " " +
+                        (Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit") +
+                        ", Build " +
+                        Environment.OSVersion.Version.Build.ToString();
+
+                    if (GetRegistryValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion", "DisplayVersion", out object reg_osVersion_DisplayVersion))
+                    {
+                        os_VersionString += " (" + reg_osVersion_DisplayVersion + ")";
                     }
-                    else if (RequiredLibrariesExists(app_RequiredLibsList))
+                }
+
+                // GET SETTINGS
+                LoadApplicationConfig();
+
+                // APP SETTINGS
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
+                if (args.Length == 6 &&
+                    args[0] == "/AutoUpdate" &&
+                    Directory.Exists(args[1]) &&
+                    !string.IsNullOrEmpty(args[2]) &&
+                    !string.IsNullOrEmpty(args[3]) &&
+                    !string.IsNullOrEmpty(args[4]) &&
+                    !string.IsNullOrEmpty(args[5]))
+                {
+                    // PASS ARGUMENTS
+                    app_CurrentWorkingDir = args[1];
+                    app_ApplicationExecutableName = args[2];
+                    app_LatestPackageVersion = new Version(args[3]);
+                    app_LatestPackageLink = args[4];
+                    app_LatestPackageDate = args[5];
+
+                    // AUTO UPDATE FROM GITHUB PACKAGE
+                    Application.Run(new AutoUpdaterDialog());
+                }
+                else
+                {
+                    // GET SYSTEM MEMORY SIZE
+                    GetPhysicallyInstalledSystemMemory(out long systemMemorySize_KB);
+                    systemMemorySize = (systemMemorySize_KB / 1024 / 1024).ToString() + " GB";
+
+                    // CHECK APPLICATION INSTANCE
+                    using (Mutex mainMutex = new Mutex(true, app_ApplicationName, out bool createdNew))
                     {
-                        CheckForUpdate();
-
-                        if (app_AutoUpdateNow)
+                        if (!createdNew)
                         {
-                            ExecuteUpdater();
+                            // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, RESTORE WINDOW
+                            IntPtr wdwIntPtr = FindWindow(null, app_Title);
+                            Windowplacement placement = new Windowplacement();
 
-                            Environment.Exit(0);
+                            GetWindowPlacement(wdwIntPtr, ref placement);
+                            ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
+                            SetForegroundWindow(wdwIntPtr);
                         }
-                        else
+                        else if (RequiredLibrariesExists(app_RequiredLibsList))
                         {
-                            if (app_ShowSplashScreen ||
-                                app_TestMode)
-                            {
-                                // SHOW SPLASH SCREEN
-                                Application.Run(new SplashScreen());
-                            }
+                            CheckForUpdate();
 
-                            // RUN NEW APPLICATION INSTANCE
-                            Application.Run(new CheckerMainForm());
+                            if (app_AutoUpdateNow)
+                            {
+                                ExecuteUpdater();
+
+                                Environment.Exit(0);
+                            }
+                            else
+                            {
+                                if (app_ShowSplashScreen ||
+                                    app_TestMode)
+                                {
+                                    // SHOW SPLASH SCREEN
+                                    Application.Run(new SplashScreen());
+                                }
+
+                                // RUN NEW APPLICATION INSTANCE
+                                Application.Run(new CheckerMainForm());
+                            }
                         }
                     }
                 }
-            }
+            }            
         }
 
         public static bool RequiredLibrariesExists(string[] librariesList)
@@ -424,8 +440,6 @@ namespace EndpointChecker
             {
                 using (WebClient updateWC = new WebClient())
                 {
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
                     // GET LATEST VERSION NUMBER
                     app_LatestPackageVersion = new Version(
                         updateWC
@@ -631,12 +645,130 @@ namespace EndpointChecker
             googleMapsZoomFactor = Settings.Default.GoogleMaps_API_ZoomFactor;
             apiKey_VirusTotal = Settings.Default.VirusTotal_API_Key;
             http_UserAgent = Settings.Default.Config_HTTP_UserAgent;
-            http_Sec_CH_UserAgent = Settings.Default.Config_HTTP_Sec_CH_UserAgent;
-            http_Sec_CH_UserAgent_FullVersion = Settings.Default.Config_HTTP_Sec_CH_UserAgent_FullVersion;
-            http_Sec_CH_UserAgent_FullVersionList = Settings.Default.Config_HTTP_Sec_CH_UserAgent_FullVersionList;
             http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
             app_AutoUpdate_SkipVersion = new Version(Settings.Default.AutoUpdate_SkipVersion);
             app_AutoUpdate_AutoUpdateInFuture = Settings.Default.AutoUpdate_AutoUpdateInFuture;
         }
+
+        public static void PublishEmbeddedFonts()
+        {
+            foreach (string fontFile in app_CustomFontsUsed)
+            {
+                FontPublisher.SaveAndPublishFont(fontFile);
+            }
+        }
+
+        public static bool IsRequiredNetFwkVersionInstalled(DotNETFrameworkVersion requiredVersion)
+        {
+            bool isInstalled = false;
+
+            try
+            {
+                using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\"))
+                {
+                    int releaseKey = Convert.ToInt32(ndpKey.GetValue("Release"));
+
+                    if (releaseKey >= 533320)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_8_1;
+                    if (releaseKey >= 528040)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_8;
+                    if (releaseKey >= 461808)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_7_2;
+                    if (releaseKey >= 461308)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_7_1;
+                    if (releaseKey >= 460798)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_7;
+                    if (releaseKey >= 394802)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_6_2;
+                    if (releaseKey >= 394254)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_6_1;
+                    if (releaseKey >= 393295)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_6;
+                    if (releaseKey >= 379893)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_5_2;
+                    if (releaseKey >= 378675)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_5_1;
+                    if (releaseKey >= 378389)
+                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_5;
+
+                    isInstalled = (app_latestDotNETFWKInstalled >= requiredVersion);
+                }
+            }
+            catch
+            {
+            }         
+
+            return isInstalled;
+        }
+
+        public static void SetSecurityProtocol()
+        {
+            try
+            {   // try TLS 1.3
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)12288
+                                                     | (SecurityProtocolType)3072
+                                                     | (SecurityProtocolType)768
+                                                     | SecurityProtocolType.Tls;
+            }
+            catch (NotSupportedException)
+            {
+                try
+                {   // try TLS 1.2
+                    ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072
+                                                         | (SecurityProtocolType)768
+                                                         | SecurityProtocolType.Tls;
+                }
+                catch (NotSupportedException)
+                {
+                    try
+                    {   // try TLS 1.1
+                        ServicePointManager.SecurityProtocol = (SecurityProtocolType)768
+                                                             | SecurityProtocolType.Tls;
+                    }
+                    catch (NotSupportedException)
+                    {   // set TLS 1.0
+                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
+                    }
+                }
+            }
+        }
+    }
+
+    internal class GacApi
+    {
+        [DllImport("fusion.dll")]
+        internal static extern IntPtr CreateAssemblyCache(
+            out IAssemblyCache ppAsmCache, int reserved);
+    }
+
+    // GAC Interfaces - IAssemblyCache. As a sample, non used vtable entries     
+    [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    Guid("e707dcde-d1cd-11d2-bab9-00c04f8eceae")]
+    internal interface IAssemblyCache
+    {
+        int Dummy1();
+        [PreserveSig()]
+        IntPtr QueryAssemblyInfo(
+            int flags,
+            [MarshalAs(UnmanagedType.LPWStr)]
+            string assemblyName,
+            ref ASSEMBLY_INFO assemblyInfo);
+
+        int Dummy2();
+        int Dummy3();
+        int Dummy4();
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct ASSEMBLY_INFO
+    {
+        public int cbAssemblyInfo;
+        public int assemblyFlags;
+        public long assemblySizeInKB;
+
+        [MarshalAs(UnmanagedType.LPWStr)]
+        public string currentAssemblyPath;
+
+        public int cchBuf;
     }
 }
