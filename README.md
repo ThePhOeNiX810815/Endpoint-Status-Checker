@@ -105,3 +105,13 @@ NSpeedTest project sources (adjusted) added to solution:
 
 ArpLookup project sources (adjusted) added to solution:
 - https://github.com/georg-jung/ArpLookup
+
+
+```
+ ____      _              __  __            _            _
+|  _ \ ___| |_ ___ _ __  |  \/  | __ _  ___| |__   __ _ (_)
+| |_) / _ \ __/ _ \ '__| | |\/| |/ _` |/ __| '_ \ / _` || |
+|  __/  __/ ||  __/ |    | |  | | (_| | (__| | | | (_| || |
+|_|   \___|\__\___|_|    |_|  |_|\__,_|\___|_| |_|\__,_|/ |
+                                                      |__/
+```
