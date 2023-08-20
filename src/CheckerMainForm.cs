@@ -275,14 +275,6 @@ namespace EndpointChecker
                 ToolTipTitle = "Terminate Check"
             };
             toolTip_Terminate.SetToolTip(btn_Terminate, "Terminate EndPoint status check process");
-
-            // SET TOOLTIP FOR 'CARBON NEGATIVE' LOGO PICTURE
-            ToolTip toolTip_CarbonNegative = new ToolTip {
-                ToolTipIcon = ToolTipIcon.Info,
-                IsBalloon = true,
-                ToolTipTitle = "Carbon Negative"
-            };
-            toolTip_CarbonNegative.SetToolTip(pb_CarbonFreeLogo, app_ApplicationName + " is committed to helping reduce the carbon emissions");
         }
 
         public void LoadConfiguration()
@@ -748,7 +740,7 @@ namespace EndpointChecker
                                                     // IF IS RELATIVE PATH
                                                     if (Uri.IsWellFormedUriString(locationHeaderValue, UriKind.Relative))
                                                     {
-                                                        locationHeaderValue = Url.Combine(_httpWebResponse.ResponseUri.AbsoluteUri, locationHeaderValue);
+                                                        locationHeaderValue = Url.Combine(_httpWebResponse.ResponseUri.OriginalString, locationHeaderValue);
                                                     }
 
                                                     // PREPARE WEBREQUEST
@@ -816,7 +808,7 @@ namespace EndpointChecker
                                                     endpointURI.Host != responseURI.Host ||
                                                     autoRedirect_Followed)
                                                 {
-                                                    endpoint.ResponseMessage += " (Redirected from \"" + endpointURI.AbsoluteUri + "\")";
+                                                    endpoint.ResponseMessage += " (Redirected from \"" + endpointURI.OriginalString + "\")";
                                                 }
                                             }
 
@@ -1024,7 +1016,7 @@ namespace EndpointChecker
                                         try
                                         {
                                             // CREATE REQUEST
-                                            ftpWebRequest = (FtpWebRequest)WebRequest.Create(endpointURI.AbsoluteUri);
+                                            ftpWebRequest = (FtpWebRequest)WebRequest.Create(endpointURI.OriginalString);
                                             ftpWebRequest.Method = WebRequestMethods.Ftp.PrintWorkingDirectory;
                                             ftpWebRequest.Timeout = ftpRequestTimeout;
                                             ftpWebRequest.ReadWriteTimeout = ftpRequestTimeout;
@@ -1259,7 +1251,7 @@ namespace EndpointChecker
                             }
 
                             // UPDATE ADDRESSES
-                            endpoint.Address = endpointURI.AbsoluteUri;
+                            endpoint.Address = endpointURI.OriginalString;
                             endpoint.ResponseAddress = responseURI.AbsoluteUri;
 
                             // UPDATE RESPONSE TIME
@@ -1324,14 +1316,14 @@ namespace EndpointChecker
                                       pingTimeout / 1000,
                                       httpRequestTimeout / 1000,
                                       ftpRequestTimeout / 1000,
-                                      autoRedirect_Enable.ToString(),
-                                      validateSSLCertificate.ToString(),
+                                      FormatBoolToString(autoRedirect_Enable),
+                                      FormatBoolToString(validateSSLCertificate),
                                       threadsCount.ToString(),
-                                      resolveNetworkShares.ToString(),
-                                      resolvePageMetaInfo.ToString(),
-                                      saveResponse.ToString(),
-                                      testPing.ToString(),
-                                      resolveDNSnames.ToString()
+                                      FormatBoolToString(resolveNetworkShares),
+                                      FormatBoolToString(resolvePageMetaInfo),
+                                      FormatBoolToString(saveResponse),
+                                      FormatBoolToString(testPing),
+                                      FormatBoolToString(resolveDNSnames)
                                       );
             }
             catch (Exception eX)
@@ -1340,6 +1332,18 @@ namespace EndpointChecker
                 {
                     ExceptionNotifier(this, eX, string.Empty, true);
                 });
+            }
+        }
+
+        public string FormatBoolToString(bool boolSwitch)
+        {
+            if (boolSwitch)
+            {
+                return "Enabled";
+            }
+            else
+            {
+                return "Disabled";
             }
         }
 
@@ -1436,6 +1440,13 @@ namespace EndpointChecker
                 { "path", endpointURI.AbsolutePath },
                 { "scheme", endpointURI.Scheme },
                 { "upgrade-insecure-requests", "1" },
+
+                { "Sec-Fetch-User", "?1" },
+                { "Sec-Fetch-Site", "same-origin" },
+                { "Sec-Fetch-Node", "navigate" },
+                { "Sec-Fetch-Dest", "empty" },
+                { "Sec-CH-UA-Mobile", "?0" },
+                { "Sec-CH-UA-Platform", "\"Windows\"" }
 
             };
             httpWebRequest.Headers.Add(requestHeadersCollection);
@@ -2374,8 +2385,9 @@ namespace EndpointChecker
                 // UPDATE LIST
                 ListEndpoints(ListViewRefreshMethod.CurrentState);
 
-                // LAST UPDATE LABEL
+                // LAST UPDATE LABEL AND ICON
                 lbl_LastUpdate.Text = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
+                pb_LastUpdate.Visible = true;
                 lbl_LastUpdate.Visible = true;
                 lbl_LastUpdate_Label.Visible = true;
 
@@ -4467,7 +4479,11 @@ namespace EndpointChecker
 
         public void btn_BrowseExportDir_MouseClick(object sender, MouseEventArgs e)
         {
-            folderBrowserExportDir.SelectedPath = statusExport_Directory;
+            if (Directory.Exists(statusExport_Directory))
+            {
+                folderBrowserExportDir.SelectedPath = statusExport_Directory;
+            }
+
             if (folderBrowserExportDir.ShowDialog() == DialogResult.OK)
             {
                 statusExport_Directory = folderBrowserExportDir.SelectedPath;
@@ -4652,7 +4668,7 @@ namespace EndpointChecker
                 ManagementObjectSearcher oSDNS = new ManagementObjectSearcher(oMs, oQDNS);
                 ManagementObjectCollection oRcDNS = oSDNS.Get();
 
-                foreach (ManagementObject oRDNS in oRcDNS)
+                foreach (ManagementBaseObject oRDNS in oRcDNS)
                 {
                     foreach (PropertyData property in oRDNS.Properties)
                     {
@@ -4677,7 +4693,7 @@ namespace EndpointChecker
                 ManagementObjectSearcher oSGW = new ManagementObjectSearcher(oMs, oQGW);
                 ManagementObjectCollection oRcGW = oSGW.Get();
 
-                foreach (ManagementObject oRGW in oRcGW)
+                foreach (ManagementBaseObject oRGW in oRcGW)
                 {
                     foreach (PropertyData property in oRGW.Properties)
                     {
@@ -5307,11 +5323,9 @@ namespace EndpointChecker
         public static string BuildUpConnectionString(EndpointDefinition endpointItem)
         {
             // BUILD-UP CONNECTION STRING
-            Uri endpointURI = new Uri(endpointItem.ResponseAddress);
+            string[] connectionData = endpointItem.ResponseAddress.Split(new string[] { Uri.SchemeDelimiter }, StringSplitOptions.None);
 
-            string connectionString =
-                endpointURI.Authority +
-                endpointURI.AbsolutePath;
+            string connectionString = connectionData[1];
 
             if (!string.IsNullOrEmpty(endpointItem.LoginName) &&
                 endpointItem.LoginName != status_NotAvailable)
@@ -5322,7 +5336,7 @@ namespace EndpointChecker
                     connectionString;
             }
 
-            return endpointItem.Protocol.ToLower() + Uri.SchemeDelimiter + connectionString;
+            return connectionData[0] + Uri.SchemeDelimiter + connectionString;
         }
 
         public void TIMER_ListAndLogsFilesWatcher_Tick(object sender, EventArgs e)
@@ -5574,7 +5588,7 @@ namespace EndpointChecker
         public void btn_LoadList_Click(object sender, EventArgs e)
         {
             if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
-                System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl))
+                System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl))
             {
                 SetControls(false, true);
                 lbl_EndpointsListLoading.Visible = true;

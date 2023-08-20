@@ -3,7 +3,6 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -192,15 +191,24 @@ namespace EndpointChecker
             NONE
         };
 
-        // LATEST .NET FRAMEWORK VERSION INSTALLED
-        public static DotNETFrameworkVersion app_latestDotNETFWKInstalled = DotNETFrameworkVersion.NONE;
+        // MINIMUM REQUIRED OS VERSION
+        // MIN OS VERSION: 6.1 [Windows 7 / Server 2008 R2]
+        public static Version app_Minimum_OS_Version = new Version(6, 1);
 
+        // MINIMUM REQUIRED .NET FRAMEWORK VERSION
+        // IN.NET FWK VERSION: 4.5
+        public static DotNETFrameworkVersion app_Minimum_DotNETFWK_Version = DotNETFrameworkVersion.v4_5;
+
+        // LATEST .NET FRAMEWORK VERSION INSTALLED
+        public static DotNETFrameworkVersion app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.NONE;
+
+        [STAThread]
         public static void Main(string[] args)
         {
             // CHECK FOR MINIMAL REQUIRED OS AND .NET FRAMEWORK VERSIOMS
-            // MIN OS VERSION: 6.1 [Windows 7 / Server 2008 R2]
-            // MIN .NET FWK VERSION: 4.5
-            if (Environment.OSVersion.Version < new Version(6, 1))
+            // 
+            // 
+            if (Environment.OSVersion.Version < app_Minimum_OS_Version)
             {
                 MessageBox.Show(
                         "This application requires Windows 7 / Server 2008 R2 or later to run.",
@@ -208,7 +216,7 @@ namespace EndpointChecker
                         app_VersionString,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else if (!IsRequiredNetFwkVersionInstalled(DotNETFrameworkVersion.v4_5))
+            else if (!IsRequiredNetFwkVersionInstalled(app_Minimum_DotNETFWK_Version))
             {
                 MessageBox.Show(
                          "This application requires .NET Framework 4.5 or later to run.",
@@ -669,29 +677,29 @@ namespace EndpointChecker
                     int releaseKey = Convert.ToInt32(ndpKey.GetValue("Release"));
 
                     if (releaseKey >= 533320)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_8_1;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_8_1;
                     if (releaseKey >= 528040)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_8;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_8;
                     if (releaseKey >= 461808)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_7_2;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_7_2;
                     if (releaseKey >= 461308)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_7_1;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_7_1;
                     if (releaseKey >= 460798)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_7;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_7;
                     if (releaseKey >= 394802)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_6_2;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_6_2;
                     if (releaseKey >= 394254)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_6_1;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_6_1;
                     if (releaseKey >= 393295)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_6;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_6;
                     if (releaseKey >= 379893)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_5_2;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_5_2;
                     if (releaseKey >= 378675)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_5_1;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_5_1;
                     if (releaseKey >= 378389)
-                        app_latestDotNETFWKInstalled = DotNETFrameworkVersion.v4_5;
+                        app_Latest_DotNETFWK_Version_Installed = DotNETFrameworkVersion.v4_5;
 
-                    isInstalled = (app_latestDotNETFWKInstalled >= requiredVersion);
+                    isInstalled = (app_Latest_DotNETFWK_Version_Installed >= requiredVersion);
                 }
             }
             catch

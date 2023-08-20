@@ -65,7 +65,7 @@
             this.lbl_Status.Name = "lbl_Status";
             this.lbl_Status.Size = new System.Drawing.Size(396, 46);
             this.lbl_Status.TabIndex = 1;
-            this.lbl_Status.Text = "Send improvement details to development team";
+            this.lbl_Status.Text = "Send improvement details to our development team";
             this.lbl_Status.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pb_Status
@@ -85,7 +85,7 @@
             this.lbl_UserEMailAddress.Name = "lbl_UserEMailAddress";
             this.lbl_UserEMailAddress.Size = new System.Drawing.Size(395, 20);
             this.lbl_UserEMailAddress.TabIndex = 3;
-            this.lbl_UserEMailAddress.Text = "You E-Mail Address where we can contact you (optional)";
+            this.lbl_UserEMailAddress.Text = "Your E-Mail Address where we can contact you (optional)";
             this.lbl_UserEMailAddress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tb_UserEMailAddress

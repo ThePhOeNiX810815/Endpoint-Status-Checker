@@ -265,11 +265,11 @@ namespace EndpointChecker
                             Color.LightSkyBlue,
                             true);
 
-                    int latencyTime = TestServerLatency();
+                    int latencyTime = TestServerLatency(true);
 
                     AppendTextToLogBox(
                                        rtb_SpeedTest_LogConsole,
-                                           "Average Server Latency (" +
+                                           "Server Latency (" +
                                            +testTakesCount + " takes): " +
                                            latencyTime + " ms",
                                        Color.Black,
@@ -297,11 +297,11 @@ namespace EndpointChecker
                                         true);
 
                     // TEST DOWNLOAD SPEED
-                    int downloadSpeed = TestServerDownloadSpeed();
+                    int downloadSpeed = TestServerDownloadSpeed(true);
 
                     AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
-                                "Average Download Speed (" +
+                                "Download Speed (" +
                                 +testTakesCount + " takes): " +
                                 downloadSpeed + " Mbps",
                             Color.Black,
@@ -361,11 +361,11 @@ namespace EndpointChecker
                             true);
 
                     // TEST UPLOAD SPEED
-                    int uploadSpeed = TestServerUploadSpeed();
+                    int uploadSpeed = TestServerUploadSpeed(true);
 
                     AppendTextToLogBox(
                            rtb_SpeedTest_LogConsole,
-                               "Average Upload Speed (" +
+                               "Upload Speed (" +
                                +testTakesCount + " takes): " +
                                uploadSpeed + " Mbps",
                            Color.Black,
@@ -443,17 +443,24 @@ namespace EndpointChecker
             });
         }
 
-        public int TestServerLatency()
+        public int TestServerLatency(bool getBestTime)
         {
             int currentRetryCount = 0;
-            int latencyTime = 0;
+            int totalLatencyTime = 0;
+            int bestLatencyTime = 1000000;
 
             for (int i = 1; i <= testTakesCount; i++)
             {
                 try
                 {
                     int currentlatencyTime = speedTestClient.TestServerLatency(targetServer);
-                    latencyTime += currentlatencyTime;
+                    totalLatencyTime += currentlatencyTime;
+
+                    if (currentlatencyTime < bestLatencyTime)
+                    {
+                        bestLatencyTime = currentlatencyTime;
+                    }
+
                     currentRetryCount = 0;
 
                     AppendTextToLogBox(
@@ -487,13 +494,21 @@ namespace EndpointChecker
                 }
             }
 
-            return latencyTime / testTakesCount;
+            if (getBestTime)
+            {
+                return bestLatencyTime;
+            }
+            else
+            {
+                return totalLatencyTime / testTakesCount;
+            }
         }
 
-        public int TestServerDownloadSpeed()
+        public int TestServerDownloadSpeed(bool getMaxSpeed)
         {
             int currentRetryCount = 0;
-            int downloadSpeed = 0;
+            int totalDownloadSpeed = 0;
+            int maxDownloadSpeed = 0;
             int progressStepValue = pBar_Download.Maximum / testTakesCount;
 
             ThreadSafeInvoke(() =>
@@ -506,7 +521,13 @@ namespace EndpointChecker
                 try
                 {
                     int currentDownloadSpeed = (int)Math.Round(speedTestClient.TestDownloadSpeed(targetServer, speedTestSettings.Download.ThreadsPerUrl) / 1024, 2);
-                    downloadSpeed += currentDownloadSpeed;
+                    totalDownloadSpeed += currentDownloadSpeed;
+
+                    if (currentDownloadSpeed > maxDownloadSpeed)
+                    {
+                        maxDownloadSpeed = currentDownloadSpeed;
+                    }
+
                     currentRetryCount = 0;
 
                     ThreadSafeInvoke(() =>
@@ -546,13 +567,21 @@ namespace EndpointChecker
                 }
             }
 
-            return downloadSpeed / testTakesCount;
+            if (getMaxSpeed)
+            {
+                return maxDownloadSpeed;
+            }
+            else
+            {
+                return totalDownloadSpeed / testTakesCount;
+            }
         }
 
-        public int TestServerUploadSpeed()
+        public int TestServerUploadSpeed(bool getMaxSpeed)
         {
             int currentRetryCount = 0;
-            int uploadSpeed = 0;
+            int totalUploadSpeed = 0;
+            int maxUploadSpeed = 0;
             int progressStepValue = pBar_Upload.Maximum / testTakesCount;
 
             ThreadSafeInvoke(() =>
@@ -565,7 +594,13 @@ namespace EndpointChecker
                 try
                 {
                     int currentUploadSpeed = (int)Math.Round(speedTestClient.TestUploadSpeed(targetServer, speedTestSettings.Upload.ThreadsPerUrl) / 1024, 2);
-                    uploadSpeed += currentUploadSpeed;
+                    totalUploadSpeed += currentUploadSpeed;
+
+                    if (currentUploadSpeed > maxUploadSpeed)
+                    {
+                        maxUploadSpeed = currentUploadSpeed;
+                    }
+
                     currentRetryCount = 0;
 
                     ThreadSafeInvoke(() =>
@@ -605,7 +640,14 @@ namespace EndpointChecker
                 }
             }
 
-            return uploadSpeed / testTakesCount;
+            if (getMaxSpeed)
+            {
+                return maxUploadSpeed;
+            }
+            else
+            {
+                return totalUploadSpeed / testTakesCount;
+            }
         }
 
         public IEnumerable<Server> GetServers()

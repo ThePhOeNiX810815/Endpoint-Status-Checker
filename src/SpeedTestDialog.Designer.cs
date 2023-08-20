@@ -426,16 +426,16 @@
             // 
             // label1
             // 
-            this.label1.BackColor = System.Drawing.Color.MidnightBlue;
+            this.label1.BackColor = System.Drawing.Color.LightSkyBlue;
             this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label1.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.Black;
             this.label1.Location = new System.Drawing.Point(7, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(676, 30);
             this.label1.TabIndex = 108;
-            this.label1.Text = "This feature is using OOKLA\'s SpeedTest API, therefore the funcionality depends o" +
-    "n it";
+            this.label1.Text = "This feature is using OOKLA\'s SpeedTest API, therefore the base measurement funci" +
+    "onality depends on it";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pBar_Upload
@@ -466,6 +466,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DimGray;
             this.ClientSize = new System.Drawing.Size(691, 662);
+            this.Controls.Add(this.pBar_Upload);
+            this.Controls.Add(this.pBar_Download);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pb_GO);
             this.Controls.Add(this.btn_SpeedTest_GetServers);
@@ -492,8 +494,6 @@
             this.Controls.Add(this.lbl_SpeedTest_Mbps_Upload_Label);
             this.Controls.Add(this.aGauge_UploadSpeed);
             this.Controls.Add(this.aGauge_DownloadSpeed);
-            this.Controls.Add(this.pBar_Upload);
-            this.Controls.Add(this.pBar_Download);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
