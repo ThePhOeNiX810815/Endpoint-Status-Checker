@@ -38,7 +38,7 @@ You can easily decompile the app, it's not obfuscated.
 
 This piece of software is safe to use on your host, ignore any false positives.
 
-Application have inteligent AutoUpdate method, using GitHub packages.
+Application have intelligent AutoUpdate method, using GitHub packages.
 
 # Requirements
 - Windows 7 / Server 2008 R2 or later
