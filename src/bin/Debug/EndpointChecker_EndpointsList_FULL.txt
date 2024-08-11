@@ -2,18 +2,6 @@
 #
 # Endpoint Definitions List
 
-# LOCAL DEVICES
-http://192.168.1.9
-http://192.168.1.100
-http://192.168.1.101
-http://192.168.1.102
-http://192.168.1.201
-http://192.168.1.200
-http://192.168.1.111
-http://192.168.1.220
-http://192.168.1.225
-http://192.168.1.250
-
 # TESTING
 HTTPBIN ->> HTTP Bin Basic Auth Test (unauthorized)|http://httpbin.org/basic-auth/auth/test
 HTTPBIN ->> HTTP Bin Basic Auth Test (authorized)|http://auth:test@httpbin.org/basic-auth/auth/test

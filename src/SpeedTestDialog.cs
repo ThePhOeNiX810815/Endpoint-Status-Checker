@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
+using Newtonsoft.Json;
 using NSpeedTest;
 using NSpeedTest.Models;
 using System;
@@ -38,6 +39,8 @@ namespace EndpointChecker
         public static IP_API_JSON_Response ipInfo;
 
         public static List<Server> testServersList = new List<Server>();
+
+        // SERVER SCOPE SETTING
         public enum TestServerSelectionMode
         {
             [Description("All Servers")]
@@ -49,6 +52,17 @@ namespace EndpointChecker
         }
 
         public TestServerSelectionMode testServerSelectionMode = TestServerSelectionMode.AllServers;
+
+        // VALUES CALCULATION SETTING
+        public enum ValuesCalculationMode
+        {
+            [Description("Best Values")]
+            BestValues = 0,
+            [Description("Average Values")]
+            AverageValues = 1,
+        }
+
+        public ValuesCalculationMode valuesCalculationMode = ValuesCalculationMode.BestValues;
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public SpeedTestDialog()
@@ -69,6 +83,17 @@ namespace EndpointChecker
 
             lbl_SpeedTest_ExternalIP_Value.Text = status_NotAvailable;
 
+            // ADD SETTINGS OPTIONS
+            cb_SpeedTest_ServerScope.Items.Add("All Servers");
+            cb_SpeedTest_ServerScope.Items.Add("All Except Current Country");
+            cb_SpeedTest_ServerScope.Items.Add("Current Country Only");
+
+            cb_SpeedTest_Calculation.Items.Add("Best Values");
+            cb_SpeedTest_Calculation.Items.Add("Average Values");
+
+            // RESTORE PREFERRED SETTINGS (IF SAVED)
+            RestorePreferredSettings();
+
             NewBackgroundThread(() =>
             {
                 try
@@ -76,7 +101,7 @@ namespace EndpointChecker
                     // GET SPEEDTEST SETTINGS
                     AppendTextToLogBox(
                                          rtb_SpeedTest_LogConsole,
-                                         "Retreiving OOKLA's SpeedTest API Configuration ...",
+                                         "Retrieving OOKLA's SpeedTest API Configuration ...",
                                          Color.Blue,
                                          true);
 
@@ -94,13 +119,12 @@ namespace EndpointChecker
                         lbl_SpeedTest_ExternalIP_Value.BackColor = Color.PaleGreen;
                         lbl_SpeedTest_ExternalIP_Value.Text = clientIP + " (" + clientISP + ")";
 
-                        // RESTORE PREFERRED SERVER SCOPE (IF SAVED)
-                        RestoreServerScopePreferredSetting();
+                        btn_SpeedTest_GetServers_Click(this, null);
                     });
                 }
                 catch (Exception exception)
                 {
-                    SetProgessState(false);
+                    SetProgressState(false);
 
                     ThreadSafeInvoke(() =>
                     {
@@ -118,36 +142,16 @@ namespace EndpointChecker
             });
         }
 
-        public void SaveServerScopePreferredSetting()
+        public void SavePreferredSettings()
         {
-            if (rb_AllServers.Checked == true)
-            {
-                Properties.Settings.Default.SpeedTest_ServerScope = 0;
-            }
-            else if (rb_AllServersExceptCurrCountry.Checked == true)
-            {
-                Properties.Settings.Default.SpeedTest_ServerScope = 1;
-            }
-            else if (rb_CurrentCountryServersOnly.Checked == true)
-            {
-                Properties.Settings.Default.SpeedTest_ServerScope = 2;
-            }
+            Properties.Settings.Default.SpeedTest_ServerScope = cb_SpeedTest_ServerScope.SelectedIndex;
+            Properties.Settings.Default.SpeedTest_ValuesCalculation = cb_SpeedTest_Calculation.SelectedIndex;
         }
 
-        public void RestoreServerScopePreferredSetting()
+        public void RestorePreferredSettings()
         {
-            if (Properties.Settings.Default.SpeedTest_ServerScope == 0)
-            {
-                rb_AllServers.Checked = true;
-            }
-            else if (Properties.Settings.Default.SpeedTest_ServerScope == 1)
-            {
-                rb_AllServersExceptCurrCountry.Checked = true;
-            }
-            else if (Properties.Settings.Default.SpeedTest_ServerScope == 2)
-            {
-                rb_CurrentCountryServersOnly.Checked = true;
-            }
+            cb_SpeedTest_ServerScope.SelectedIndex = Properties.Settings.Default.SpeedTest_ServerScope;
+            cb_SpeedTest_Calculation.SelectedIndex = Properties.Settings.Default.SpeedTest_ValuesCalculation;
         }
 
         public void SelectServer()
@@ -265,7 +269,7 @@ namespace EndpointChecker
                             Color.LightSkyBlue,
                             true);
 
-                    int latencyTime = TestServerLatency(true);
+                    int latencyTime = TestServerLatency();
 
                     AppendTextToLogBox(
                                        rtb_SpeedTest_LogConsole,
@@ -297,7 +301,7 @@ namespace EndpointChecker
                                         true);
 
                     // TEST DOWNLOAD SPEED
-                    int downloadSpeed = TestServerDownloadSpeed(true);
+                    int downloadSpeed = TestServerDownloadSpeed();
 
                     AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
@@ -361,7 +365,7 @@ namespace EndpointChecker
                             true);
 
                     // TEST UPLOAD SPEED
-                    int uploadSpeed = TestServerUploadSpeed(true);
+                    int uploadSpeed = TestServerUploadSpeed();
 
                     AppendTextToLogBox(
                            rtb_SpeedTest_LogConsole,
@@ -437,13 +441,13 @@ namespace EndpointChecker
                 {
                     ThreadSafeInvoke(() =>
                     {
-                        SetProgessState(false);
+                        SetProgressState(false);
                     });
                 }
             });
         }
 
-        public int TestServerLatency(bool getBestTime)
+        public int TestServerLatency()
         {
             int currentRetryCount = 0;
             int totalLatencyTime = 0;
@@ -453,12 +457,12 @@ namespace EndpointChecker
             {
                 try
                 {
-                    int currentlatencyTime = speedTestClient.TestServerLatency(targetServer);
-                    totalLatencyTime += currentlatencyTime;
+                    int currentLatencyTime = speedTestClient.TestServerLatency(targetServer);
+                    totalLatencyTime += currentLatencyTime;
 
-                    if (currentlatencyTime < bestLatencyTime)
+                    if (currentLatencyTime < bestLatencyTime)
                     {
-                        bestLatencyTime = currentlatencyTime;
+                        bestLatencyTime = currentLatencyTime;
                     }
 
                     currentRetryCount = 0;
@@ -467,7 +471,7 @@ namespace EndpointChecker
                            rtb_SpeedTest_LogConsole,
                                "Take " +
                                +i + " -> Latency (Ping Response Time): " +
-                               currentlatencyTime + " ms",
+                               currentLatencyTime + " ms",
                            Color.DarkGray,
                            false);
 
@@ -494,7 +498,7 @@ namespace EndpointChecker
                 }
             }
 
-            if (getBestTime)
+            if (valuesCalculationMode == ValuesCalculationMode.BestValues)
             {
                 return bestLatencyTime;
             }
@@ -504,7 +508,7 @@ namespace EndpointChecker
             }
         }
 
-        public int TestServerDownloadSpeed(bool getMaxSpeed)
+        public int TestServerDownloadSpeed()
         {
             int currentRetryCount = 0;
             int totalDownloadSpeed = 0;
@@ -567,7 +571,7 @@ namespace EndpointChecker
                 }
             }
 
-            if (getMaxSpeed)
+            if (valuesCalculationMode == ValuesCalculationMode.BestValues)
             {
                 return maxDownloadSpeed;
             }
@@ -577,7 +581,7 @@ namespace EndpointChecker
             }
         }
 
-        public int TestServerUploadSpeed(bool getMaxSpeed)
+        public int TestServerUploadSpeed()
         {
             int currentRetryCount = 0;
             int totalUploadSpeed = 0;
@@ -640,7 +644,7 @@ namespace EndpointChecker
                 }
             }
 
-            if (getMaxSpeed)
+            if (valuesCalculationMode == ValuesCalculationMode.BestValues)
             {
                 return maxUploadSpeed;
             }
@@ -692,7 +696,7 @@ namespace EndpointChecker
                 filteredServersList = serversList.Take(maxTestServersCount).ToList();
             }
 
-            foreach (Server server in filteredServersList.Take(maxTestServersCount))
+            foreach (Server server in filteredServersList)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -827,7 +831,7 @@ namespace EndpointChecker
 
                 ThreadSafeInvoke(() =>
                 {
-                    SetProgessState(false);
+                    SetProgressState(false);
                 });
             }
         }
@@ -861,58 +865,10 @@ namespace EndpointChecker
         {
             e.Cancel = pb_SpeedTestProgress.Visible;
 
-            SaveServerScopePreferredSetting();
+            SavePreferredSettings();
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
-        }
-
-        public void rb_AllServers_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rb_AllServers.Checked)
-            {
-                rb_AllServersExceptCurrCountry.Checked = false;
-                rb_CurrentCountryServersOnly.Checked = false;
-
-                testServerSelectionMode = TestServerSelectionMode.AllServers;
-
-                if (btn_SpeedTest_GetServers.Enabled)
-                {
-                    btn_SpeedTest_GetServers_Click(this, null);
-                }
-            }
-        }
-
-        public void rb_AllServersExceptCurrCountry_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rb_AllServersExceptCurrCountry.Checked)
-            {
-                rb_AllServers.Checked = false;
-                rb_CurrentCountryServersOnly.Checked = false;
-
-                testServerSelectionMode = TestServerSelectionMode.AllServersExceptCurrentCountry;
-
-                if (btn_SpeedTest_GetServers.Enabled)
-                {
-                    btn_SpeedTest_GetServers_Click(this, null);
-                }
-            }
-        }
-
-        public void rb_CurrentCountryServersOnly_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rb_CurrentCountryServersOnly.Checked)
-            {
-                rb_AllServers.Checked = false;
-                rb_AllServersExceptCurrCountry.Checked = false;
-
-                testServerSelectionMode = TestServerSelectionMode.OnlyServersFromCurrentCountry;
-
-                if (btn_SpeedTest_GetServers.Enabled)
-                {
-                    btn_SpeedTest_GetServers_Click(this, null);
-                }
-            }
         }
 
         public void btn_SpeedTest_GetServers_Click(object sender, EventArgs e)
@@ -921,7 +877,7 @@ namespace EndpointChecker
 
             SetAGaugeControlsCleanState();
 
-            SetProgessState(true);
+            SetProgressState(true);
 
             NewBackgroundThread(() =>
             {
@@ -978,7 +934,7 @@ namespace EndpointChecker
                     }
                     catch (Exception exception)
                     {
-                        SetProgessState(false);
+                        SetProgressState(false);
 
                         AppendTextToLogBox(
                                 rtb_SpeedTest_LogConsole,
@@ -992,7 +948,7 @@ namespace EndpointChecker
 
                 ThreadSafeInvoke(() =>
                 {
-                    SetProgessState(false);
+                    SetProgressState(false);
                 });
             });
         }
@@ -1047,13 +1003,12 @@ namespace EndpointChecker
             aGauge_UploadSpeed.ScaleLinesMajorStepValue = 10;
         }
 
-        public void SetProgessState(bool inProgress)
+        public void SetProgressState(bool inProgress)
         {
             ThreadSafeInvoke(() =>
             {
-                rb_AllServers.Enabled = !inProgress;
-                rb_AllServersExceptCurrCountry.Enabled = !inProgress;
-                rb_CurrentCountryServersOnly.Enabled = !inProgress;
+                cb_SpeedTest_ServerScope.Enabled = !inProgress;
+                cb_SpeedTest_Calculation.Enabled = !inProgress;
                 cb_SpeedTest_TestServer.Enabled = !inProgress && testServersList.Count > 1;
                 btn_SpeedTest_GetServers.Visible = !inProgress;
                 pb_SpeedTestProgress.Visible = inProgress;
@@ -1078,7 +1033,7 @@ namespace EndpointChecker
 
         public void pb_GO_Click(object sender, EventArgs e)
         {
-            SetProgessState(true);
+            SetProgressState(true);
             SelectServer();
             SpeedTestToServer();
         }
@@ -1107,7 +1062,7 @@ namespace EndpointChecker
             return exceptionMessage;
         }
 
-        public void cb_SpeedTest_TestServer_DrawItem(object sender, DrawItemEventArgs e)
+        public void Custom_ComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             // By using Sender, one method could handle multiple ComboBoxes
             ComboBox cbx = (ComboBox)sender;
@@ -1185,6 +1140,44 @@ namespace EndpointChecker
         public static Color GetColorByLatencyTime(int latencyTime)
         {
             return latencyTime <= 10 ? Color.LimeGreen : latencyTime <= 20 ? Color.Orange : Color.Red;
+        }
+
+        public void cb_SpeedTest_ServerScope_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cb_SpeedTest_ServerScope.SelectedIndex == 0)
+            {
+                testServerSelectionMode = TestServerSelectionMode.AllServers;
+            }
+            else if (cb_SpeedTest_ServerScope.SelectedIndex == 1)
+            {
+                testServerSelectionMode = TestServerSelectionMode.AllServersExceptCurrentCountry;
+            }
+            else if (cb_SpeedTest_ServerScope.SelectedIndex == 2)
+            {
+                testServerSelectionMode = TestServerSelectionMode.OnlyServersFromCurrentCountry;
+            }
+
+            if (btn_SpeedTest_GetServers.Visible)
+            {
+                btn_SpeedTest_GetServers_Click(this, null);
+            }
+        }
+
+        public void cb_SpeedTest_Calculation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cb_SpeedTest_Calculation.SelectedIndex == 0)
+            {
+                valuesCalculationMode = ValuesCalculationMode.BestValues;
+            }
+            else if (cb_SpeedTest_Calculation.SelectedIndex == 1)
+            {
+                valuesCalculationMode = ValuesCalculationMode.AverageValues;
+            }
+
+            if (pb_GO.Visible)
+            {
+                pb_GO_Click(this, null);
+            }
         }
     }
 

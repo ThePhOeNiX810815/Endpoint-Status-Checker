@@ -122,8 +122,8 @@ namespace EndpointChecker
         // ENDPOINTS LISTVIEW SELECTED ITEM(S) INDEXES [FOR PRESERVING ITEM(S) SELECTION AFTER LIST UPDATE]
         private readonly List<int> lv_Endpoints_SelectedItems = new List<int>();
 
-        // ENDPOINTS LISTVIEW SELECTED ITEM
-        public static EndpointDefinition lv_Endpoints_SelectedEndpoint = null;
+        // ENDPOINTS LISTVIEW SELECTED ITEM(S) LIST
+        public static List<EndpointDefinition> lv_Endpoints_SelectedEndpointsList = new List<EndpointDefinition>();
 
         // GET LOCAL GATEWAY IP AND MAC ADDRESSES
         public static List<string> localDNSAndGWIPAddresses;
@@ -275,6 +275,24 @@ namespace EndpointChecker
                 ToolTipTitle = "Terminate Check"
             };
             toolTip_Terminate.SetToolTip(btn_Terminate, "Terminate EndPoint status check process");
+
+            // SET TOOLTIP FOR 'SET FILTER' TEXTBOX
+            ToolTip toolTip_Filter = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Endpoint Filter"
+            };
+            toolTip_Filter.SetToolTip(tb_ListFilter, "Enter EndPoints filter text. You can enter multiple filter values, separated by ; character.");
+
+            // SET TOOLTIP FOR 'CLEAR FILTER' BUTTON
+            ToolTip toolTip_ClearFilter = new ToolTip
+            {
+                ToolTipIcon = ToolTipIcon.Info,
+                IsBalloon = true,
+                ToolTipTitle = "Endpoint Filter"
+            };
+            toolTip_ClearFilter.SetToolTip(pb_ListFilterClear, "Clear EndPoints filter text");
         }
 
         public void LoadConfiguration()
@@ -491,7 +509,16 @@ namespace EndpointChecker
                     _endpointsList_Disabled.Add(refreshedItem.Text);
                 }
 
-                if (refreshedItem.Text.ToLower().Contains(tb_ListFilter.Text.ToLower()))
+                bool filterMatch = true;
+                foreach (string filterValue in tb_ListFilter.Text.ToLower().Split(';'))
+                {
+                    if (!refreshedItem.Text.ToLower().Contains(filterValue))
+                    {
+                        filterMatch = false;
+                    }
+                }
+
+                if (filterMatch)
                 {
                     lv_Endpoints.Items.Add(refreshedItem);
                 }
@@ -2308,8 +2335,7 @@ namespace EndpointChecker
                 // CLEAR PROGRESS COUNTER INFORMATION LABEL
                 SetProgressStatus(0, 0, string.Empty);
             }
-            else if (Visible &&
-                     Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.IsPlatformSupported)
+            else if (Visible && Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.IsPlatformSupported)
             {
                 // SET TASKBAR PROGRESS TO 'NO PROGRESS'
                 Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance
@@ -3716,11 +3742,13 @@ namespace EndpointChecker
                 {
                     // TEXT
                     string infoText = Environment.NewLine;
-                    infoText += "Left mouse button doubleclick for select / unselect EndPoint";
+                    infoText += "Left mouse button doubleclick for check / uncheck EndPoint";
+                    infoText += Environment.NewLine;
                     infoText += Environment.NewLine;
                     infoText += "Right mouse button click for more EndPoint options context menu";
-                    infoText += Environment.NewLine + Environment.NewLine;
-                    infoText += "Select single or more EndPoints and press CTRL+C to copy details to clipboard";
+                    infoText += Environment.NewLine;
+                    infoText += Environment.NewLine;
+                    infoText += "Select single or more EndPoints and press CTRL+C keys to copy details to clipboard";
                     endpointToolTip.ToolTipTitle = hitTestItem.Item.Text;
                     endpointToolTip.Show(infoText, hitTestItem.Item.ListView, e.X + 20, e.Y + 25, 20000);
                 }
@@ -4745,14 +4773,14 @@ namespace EndpointChecker
         {
             if (e.Button == MouseButtons.Right &&
                 lv_Endpoints.FocusedItem.Bounds.Contains(e.Location) &&
-                lv_Endpoints_SelectedEndpoint != null)
+                lv_Endpoints_SelectedEndpointsList.Count > 0)
             {
                 // IF ENDPOINT STATUS IN N/A, REMOVE 'DETAILS' FROM CONTEXT MENU
                 if ((validationMethod == ValidationMethod.Protocol &&
-                     lv_Endpoints_SelectedEndpoint.ResponseCode != status_NotAvailable &&
-                     lv_Endpoints_SelectedEndpoint.ResponseCode != status_Error) ||
+                     lv_Endpoints_SelectedEndpointsList.First().ResponseCode != status_NotAvailable &&
+                     lv_Endpoints_SelectedEndpointsList.First().ResponseCode != status_Error) ||
                     (validationMethod == ValidationMethod.Ping &&
-                     lv_Endpoints_SelectedEndpoint.PingRoundtripTime != status_NotAvailable))
+                     lv_Endpoints_SelectedEndpointsList.First().PingRoundtripTime != status_NotAvailable))
                 {
                     toolStripSeparator_2.Visible = true;
                     toolStripMenuItem_Details.Visible = true;
@@ -4776,12 +4804,12 @@ namespace EndpointChecker
 
             dialog_EndpointDetails = new EndpointDetailsDialog(
                 (int)num_PingTimeout.Value * 1000,
-                lv_Endpoints_SelectedEndpoint,
+                lv_Endpoints_SelectedEndpointsList.First(),
                 imageList_Icons_32pix
                         .Images[GetStatusImageIndex(
-                            lv_Endpoints_SelectedEndpoint.ResponseCode,
-                            lv_Endpoints_SelectedEndpoint.PingRoundtripTime,
-                            lv_Endpoints_SelectedEndpoint.ResponseMessage)]);
+                            lv_Endpoints_SelectedEndpointsList.First().ResponseCode,
+                            lv_Endpoints_SelectedEndpointsList.First().PingRoundtripTime,
+                            lv_Endpoints_SelectedEndpointsList.First().ResponseMessage)]);
 
             dialog_EndpointDetails.ShowDialog();
             dialog_EndpointDetails = null;
@@ -4799,41 +4827,82 @@ namespace EndpointChecker
 
         private void toolStripMenuItem_AdminBrowse_Click(object sender, EventArgs e)
         {
-            BrowseEndpoint_WindowsExplorer(
-                new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress).Host + @"\C$",
-                lv_Endpoints_SelectedEndpoint.LoginName,
-                lv_Endpoints_SelectedEndpoint.LoginPass);
+            foreach (EndpointDefinition selectedEndpointDefinition in lv_Endpoints_SelectedEndpointsList)
+            {
+                BrowseEndpoint_WindowsExplorer(
+                    new Uri(selectedEndpointDefinition.ResponseAddress).Host + @"\C$",
+                            selectedEndpointDefinition.LoginName,
+                            selectedEndpointDefinition.LoginPass);
+
+                WindowState = FormWindowState.Minimized;
+            }
         }
 
         public void toolStripMenuItem_Browse_Click(object sender, EventArgs e)
         {
-            BrowseEndpoint_WindowsExplorer(
-                new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress).Host,
-                lv_Endpoints_SelectedEndpoint.LoginName,
-                lv_Endpoints_SelectedEndpoint.LoginPass);
+            foreach (EndpointDefinition selectedEndpointDefinition in lv_Endpoints_SelectedEndpointsList)
+            {
+                BrowseEndpoint_WindowsExplorer(
+                    new Uri(selectedEndpointDefinition.ResponseAddress).Host,
+                            selectedEndpointDefinition.LoginName,
+                            selectedEndpointDefinition.LoginPass);
+
+                WindowState = FormWindowState.Minimized;
+            }            
         }
 
         public void toolStripMenuItem_HTTP_Click(object sender, EventArgs e)
         {
-            OpenEndpoint_HTTP(lv_Endpoints_SelectedEndpoint);
+            foreach (EndpointDefinition selectedEndpointDefinition in lv_Endpoints_SelectedEndpointsList)
+            {
+                OpenEndpoint_HTTP(selectedEndpointDefinition);
+
+                WindowState = FormWindowState.Minimized;
+            }
         }
 
         public void toolStripMenuItem_FTP_Click(object sender, EventArgs e)
         {
-            OpenEndpoint_FTP(lv_Endpoints_SelectedEndpoint);
+            foreach (EndpointDefinition selectedEndpointDefinition in lv_Endpoints_SelectedEndpointsList)
+            {
+                OpenEndpoint_FTP(selectedEndpointDefinition);
+
+                WindowState = FormWindowState.Minimized;
+
+            }            
         }
 
         public void toolStripMenuItem_RDP_Click(object sender, EventArgs e)
         {
-            ConnectEndpoint_RDP(new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress).Host);
+            foreach (EndpointDefinition selectedEndpointDefinition in lv_Endpoints_SelectedEndpointsList)
+            {
+                ConnectEndpoint_RDP(new Uri(selectedEndpointDefinition.ResponseAddress).Host);
+
+                WindowState = FormWindowState.Minimized;
+            }            
         }
 
         public void toolStripMenuItem_VNC_Click(object sender, EventArgs e)
         {
-            ConnectEndpoint_VNC(new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress).Host);
+            foreach (EndpointDefinition selectedEndpointDefinition in lv_Endpoints_SelectedEndpointsList)
+            {
+                ConnectEndpoint_VNC(new Uri(selectedEndpointDefinition.ResponseAddress).Host);
+
+                WindowState = FormWindowState.Minimized;
+            }            
         }
 
-        public static void BrowseEndpoint_WindowsExplorer(
+        public void toolStripMenuItem_SSH_Click(object sender, EventArgs e)
+        {
+            foreach (EndpointDefinition selectedEndpointDefinition in lv_Endpoints_SelectedEndpointsList)
+            {
+                ConnectEndpoint_Putty(new Uri(selectedEndpointDefinition.ResponseAddress).Host);
+
+                WindowState = FormWindowState.Minimized;
+            }
+        }
+
+        public void BrowseEndpoint_WindowsExplorer(
                                                           string endpointAddress,
                                                           string userName,
                                                           string userPassword)
@@ -4854,7 +4923,7 @@ namespace EndpointChecker
             }
         }
 
-        public static void ConnectEndpoint_RDP(string endpointAddress)
+        public void ConnectEndpoint_RDP(string endpointAddress)
         {
             try
             {
@@ -4870,7 +4939,7 @@ namespace EndpointChecker
             }
         }
 
-        public static void ConnectEndpoint_VNC(string endpointAddress)
+        public void ConnectEndpoint_VNC(string endpointAddress)
         {
             if (!string.IsNullOrEmpty(appExecutable_VNC) &&
                 File.Exists(appExecutable_VNC))
@@ -4906,7 +4975,7 @@ namespace EndpointChecker
             }
         }
 
-        public static void ConnectEndpoint_Putty(string endpointAddress)
+        public void ConnectEndpoint_Putty(string endpointAddress)
         {
             if (!string.IsNullOrEmpty(appExecutable_Putty) &&
                 File.Exists(appExecutable_Putty))
@@ -4942,7 +5011,7 @@ namespace EndpointChecker
             }
         }
 
-        public static void BrowseEndpoint(
+        public void BrowseEndpoint(
             string endpointAddress,
             string arguments,
             string userName,
@@ -4962,7 +5031,7 @@ namespace EndpointChecker
             }
         }
 
-        public static void OpenEndpoint_HTTP(EndpointDefinition endpoint)
+        public void OpenEndpoint_HTTP(EndpointDefinition endpoint)
         {
             // ENDPOINT URI
             Uri _endpointURI = new Uri(endpoint.Address);
@@ -5003,7 +5072,7 @@ namespace EndpointChecker
                 null);
         }
 
-        public static void OpenEndpoint_FTP(EndpointDefinition endpoint)
+        public void OpenEndpoint_FTP(EndpointDefinition endpoint)
         {
             Uri _endpointURI = new Uri(endpoint.Address);
 
@@ -5044,72 +5113,80 @@ namespace EndpointChecker
 
         public void lv_Endpoints_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            if (lv_Endpoints.SelectedItems.Count == 1)
+            lv_Endpoints_SelectedEndpointsList.Clear();
+
+            foreach (ListViewItem selectedItem in lv_Endpoints.SelectedItems)
             {
-                lv_Endpoints_SelectedEndpoint = e.IsSelected ? endpointsList.Where(endpointItem => endpointItem.Name == e.Item.Text).First() : null;
+                lv_Endpoints_SelectedEndpointsList.Add(endpointsList.Where(item => item.Name == selectedItem.Text).First());
             }
         }
 
-        public static void StartBackgroundProcess(
+        public void StartBackgroundProcess(
                                         string fileName,
                                         string arguments,
                                         string userName,
                                         string userPassword)
         {
-            try
+            NewBackgroundThread(() =>
             {
-                ProcessStartInfo psInfo = new ProcessStartInfo
+                try
                 {
-                    FileName = fileName,
-                    UseShellExecute = true,
-                    ErrorDialog = true
-                };
-
-                if (!string.IsNullOrEmpty(arguments))
-                {
-                    psInfo.Arguments = arguments;
-                }
-
-                if (!string.IsNullOrEmpty(userName) &&
-                    !string.IsNullOrEmpty(userPassword) &&
-                    userName != status_NotAvailable &&
-                    userPassword != status_NotAvailable)
-                {
-                    NetworkConnection netConnection = null;
-
-                    try
+                    ProcessStartInfo psInfo = new ProcessStartInfo
                     {
-                        netConnection = new NetworkConnection(fileName, new NetworkCredential(userName, userPassword));
+                        FileName = fileName,
+                        UseShellExecute = true,
+                        ErrorDialog = true
+                    };
 
-                        using (netConnection)
+                    if (!string.IsNullOrEmpty(arguments))
+                    {
+                        psInfo.Arguments = arguments;
+                    }
+
+                    if (!string.IsNullOrEmpty(userName) &&
+                        !string.IsNullOrEmpty(userPassword) &&
+                        userName != status_NotAvailable &&
+                        userPassword != status_NotAvailable)
+                    {
+                        NetworkConnection netConnection = null;
+
+                        try
                         {
-                            Process.Start(psInfo);
+                            netConnection = new NetworkConnection(fileName, new NetworkCredential(userName, userPassword));
+
+                            using (netConnection)
+                            {
+                                Process.Start(psInfo);
+                            }
+                        }
+                        catch
+                        {
+                        }
+                        finally
+                        {
+                            if (netConnection != null)
+                            {
+                                netConnection.Dispose();
+                            }
                         }
                     }
-                    catch
+                    else
                     {
-                    }
-                    finally
-                    {
-                        if (netConnection != null)
-                        {
-                            netConnection.Dispose();
-                        }
+                        Process.Start(psInfo);
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Process.Start(psInfo);
+                    ThreadSafeInvoke(() =>
+                    {
+                        MessageBox.Show(
+                        ex.Message,
+                        "Open Network Connection",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    });
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    ex.Message,
-                    "Open Network Connection",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
+            });
         }
 
         public static Image ResizeImage(Image imgPhoto, int Width, int Height)
@@ -5348,11 +5425,6 @@ namespace EndpointChecker
             mainMenu_ConfigFile.Enabled = File.Exists(appConfigFile);
         }
 
-        public void toolStripMenuItem_SSH_Click(object sender, EventArgs e)
-        {
-            ConnectEndpoint_Putty(new Uri(lv_Endpoints_SelectedEndpoint.ResponseAddress).Host);
-        }
-
         public void tb_ListFilter_TextChanged(object sender, EventArgs e)
         {
             ListEndpoints(ListViewRefreshMethod.CurrentState);
@@ -5588,7 +5660,7 @@ namespace EndpointChecker
         public void btn_LoadList_Click(object sender, EventArgs e)
         {
             if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
-                System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl))
+                System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl))
             {
                 SetControls(false, true);
                 lbl_EndpointsListLoading.Visible = true;

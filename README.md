@@ -38,7 +38,7 @@ You can easily decompile the app, it's not obfuscated.
 
 This piece of software is safe to use on your host, ignore any false positives.
 
-Application have intelligent AutoUpdate method, using GitHub packages.
+Application have inteligent AutoUpdate method, using GitHub packages.
 
 # Requirements
 - Windows 7 / Server 2008 R2 or later
@@ -81,7 +81,7 @@ Application is using following libraries:
 - FastMember (1.3.0)
 - Flurl (3.0.0-pre4)
 - FreeSpire.XLS (12.7.0)
-- HtmlAgilityPack (1.11.51)
+- HtmlAgilityPack (1.11.62)
 - IPAddressRange (4.2.0)
 - Nager.PublicSuffix (2.2.2)
 - Newtonsoft.Json (13.0.3)

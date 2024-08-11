@@ -40,9 +40,6 @@
             this.lbl_SpeedTest_Mbps_Upload_Label = new System.Windows.Forms.Label();
             this.lbl_SpeedTest_Download_Label = new System.Windows.Forms.Label();
             this.lbl_SpeedTest_Upload_Label = new System.Windows.Forms.Label();
-            this.rb_AllServers = new System.Windows.Forms.RadioButton();
-            this.rb_AllServersExceptCurrCountry = new System.Windows.Forms.RadioButton();
-            this.rb_CurrentCountryServersOnly = new System.Windows.Forms.RadioButton();
             this.lbl_SpeedTest_ExternalIP = new System.Windows.Forms.Label();
             this.aGauge_DownloadSpeed = new System.Windows.Forms.AGauge();
             this.aGauge_UploadSpeed = new System.Windows.Forms.AGauge();
@@ -55,6 +52,10 @@
             this.btn_SpeedTest_GetServers = new System.Windows.Forms.Button();
             this.pb_GO = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.lbl_SpeedTest_ServerScope = new System.Windows.Forms.Label();
+            this.lbl_SpeedTest_Calculation = new System.Windows.Forms.Label();
+            this.cb_SpeedTest_ServerScope = new System.Windows.Forms.ComboBox();
+            this.cb_SpeedTest_Calculation = new System.Windows.Forms.ComboBox();
             this.pBar_Upload = new EndpointChecker.ProgressBar_Red();
             this.pBar_Download = new EndpointChecker.ProgressBar_Green();
             ((System.ComponentModel.ISupportInitialize)(this.pb_SpeedTestProgress)).BeginInit();
@@ -65,7 +66,7 @@
             // 
             this.lbl_SpeedTest_Latency.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_Latency.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_Latency.Location = new System.Drawing.Point(7, 183);
+            this.lbl_SpeedTest_Latency.Location = new System.Drawing.Point(7, 184);
             this.lbl_SpeedTest_Latency.Name = "lbl_SpeedTest_Latency";
             this.lbl_SpeedTest_Latency.Size = new System.Drawing.Size(134, 25);
             this.lbl_SpeedTest_Latency.TabIndex = 78;
@@ -76,7 +77,7 @@
             // 
             this.lbl_SpeedTest_Distance.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_Distance.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_Distance.Location = new System.Drawing.Point(7, 154);
+            this.lbl_SpeedTest_Distance.Location = new System.Drawing.Point(7, 155);
             this.lbl_SpeedTest_Distance.Name = "lbl_SpeedTest_Distance";
             this.lbl_SpeedTest_Distance.Size = new System.Drawing.Size(134, 25);
             this.lbl_SpeedTest_Distance.TabIndex = 76;
@@ -87,7 +88,7 @@
             // 
             this.lbl_SpeedTest_HostedBy.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_HostedBy.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_HostedBy.Location = new System.Drawing.Point(7, 125);
+            this.lbl_SpeedTest_HostedBy.Location = new System.Drawing.Point(7, 126);
             this.lbl_SpeedTest_HostedBy.Name = "lbl_SpeedTest_HostedBy";
             this.lbl_SpeedTest_HostedBy.Size = new System.Drawing.Size(134, 25);
             this.lbl_SpeedTest_HostedBy.TabIndex = 74;
@@ -98,7 +99,7 @@
             // 
             this.lbl_SpeedTest_TestServer.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_TestServer.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_TestServer.Location = new System.Drawing.Point(7, 96);
+            this.lbl_SpeedTest_TestServer.Location = new System.Drawing.Point(7, 97);
             this.lbl_SpeedTest_TestServer.Name = "lbl_SpeedTest_TestServer";
             this.lbl_SpeedTest_TestServer.Size = new System.Drawing.Size(134, 25);
             this.lbl_SpeedTest_TestServer.TabIndex = 70;
@@ -120,7 +121,7 @@
             // 
             this.lbl_SpeedTest_CurrentCountry.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_CurrentCountry.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_CurrentCountry.Location = new System.Drawing.Point(7, 67);
+            this.lbl_SpeedTest_CurrentCountry.Location = new System.Drawing.Point(7, 68);
             this.lbl_SpeedTest_CurrentCountry.Name = "lbl_SpeedTest_CurrentCountry";
             this.lbl_SpeedTest_CurrentCountry.Size = new System.Drawing.Size(134, 25);
             this.lbl_SpeedTest_CurrentCountry.TabIndex = 88;
@@ -134,10 +135,10 @@
             this.rtb_SpeedTest_LogConsole.DetectUrls = false;
             this.rtb_SpeedTest_LogConsole.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtb_SpeedTest_LogConsole.ForeColor = System.Drawing.Color.Black;
-            this.rtb_SpeedTest_LogConsole.Location = new System.Drawing.Point(7, 240);
+            this.rtb_SpeedTest_LogConsole.Location = new System.Drawing.Point(7, 244);
             this.rtb_SpeedTest_LogConsole.Name = "rtb_SpeedTest_LogConsole";
             this.rtb_SpeedTest_LogConsole.ReadOnly = true;
-            this.rtb_SpeedTest_LogConsole.Size = new System.Drawing.Size(676, 161);
+            this.rtb_SpeedTest_LogConsole.Size = new System.Drawing.Size(676, 157);
             this.rtb_SpeedTest_LogConsole.TabIndex = 73;
             this.rtb_SpeedTest_LogConsole.Text = "";
             // 
@@ -189,50 +190,11 @@
             this.lbl_SpeedTest_Upload_Label.Text = "Upload Speed";
             this.lbl_SpeedTest_Upload_Label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // rb_AllServers
-            // 
-            this.rb_AllServers.AutoSize = true;
-            this.rb_AllServers.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.rb_AllServers.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rb_AllServers.Location = new System.Drawing.Point(7, 214);
-            this.rb_AllServers.Name = "rb_AllServers";
-            this.rb_AllServers.Size = new System.Drawing.Size(185, 21);
-            this.rb_AllServers.TabIndex = 90;
-            this.rb_AllServers.Text = "Servers from All Countries";
-            this.rb_AllServers.UseVisualStyleBackColor = true;
-            this.rb_AllServers.CheckedChanged += new System.EventHandler(this.rb_AllServers_CheckedChanged);
-            // 
-            // rb_AllServersExceptCurrCountry
-            // 
-            this.rb_AllServersExceptCurrCountry.AutoSize = true;
-            this.rb_AllServersExceptCurrCountry.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.rb_AllServersExceptCurrCountry.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rb_AllServersExceptCurrCountry.Location = new System.Drawing.Point(220, 214);
-            this.rb_AllServersExceptCurrCountry.Name = "rb_AllServersExceptCurrCountry";
-            this.rb_AllServersExceptCurrCountry.Size = new System.Drawing.Size(238, 21);
-            this.rb_AllServersExceptCurrCountry.TabIndex = 91;
-            this.rb_AllServersExceptCurrCountry.Text = "All Servers Except Current Country";
-            this.rb_AllServersExceptCurrCountry.UseVisualStyleBackColor = true;
-            this.rb_AllServersExceptCurrCountry.CheckedChanged += new System.EventHandler(this.rb_AllServersExceptCurrCountry_CheckedChanged);
-            // 
-            // rb_CurrentCountryServersOnly
-            // 
-            this.rb_CurrentCountryServersOnly.AutoSize = true;
-            this.rb_CurrentCountryServersOnly.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.rb_CurrentCountryServersOnly.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rb_CurrentCountryServersOnly.Location = new System.Drawing.Point(481, 214);
-            this.rb_CurrentCountryServersOnly.Name = "rb_CurrentCountryServersOnly";
-            this.rb_CurrentCountryServersOnly.Size = new System.Drawing.Size(207, 21);
-            this.rb_CurrentCountryServersOnly.TabIndex = 92;
-            this.rb_CurrentCountryServersOnly.Text = "Current Country Servers Only";
-            this.rb_CurrentCountryServersOnly.UseVisualStyleBackColor = true;
-            this.rb_CurrentCountryServersOnly.CheckedChanged += new System.EventHandler(this.rb_CurrentCountryServersOnly_CheckedChanged);
-            // 
             // lbl_SpeedTest_ExternalIP
             // 
             this.lbl_SpeedTest_ExternalIP.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_ExternalIP.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_ExternalIP.Location = new System.Drawing.Point(7, 38);
+            this.lbl_SpeedTest_ExternalIP.Location = new System.Drawing.Point(7, 39);
             this.lbl_SpeedTest_ExternalIP.Name = "lbl_SpeedTest_ExternalIP";
             this.lbl_SpeedTest_ExternalIP.Size = new System.Drawing.Size(134, 25);
             this.lbl_SpeedTest_ExternalIP.TabIndex = 93;
@@ -332,12 +294,12 @@
             this.cb_SpeedTest_TestServer.Enabled = false;
             this.cb_SpeedTest_TestServer.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cb_SpeedTest_TestServer.FormattingEnabled = true;
-            this.cb_SpeedTest_TestServer.Location = new System.Drawing.Point(147, 96);
+            this.cb_SpeedTest_TestServer.Location = new System.Drawing.Point(147, 97);
             this.cb_SpeedTest_TestServer.MaxDropDownItems = 100;
             this.cb_SpeedTest_TestServer.Name = "cb_SpeedTest_TestServer";
             this.cb_SpeedTest_TestServer.Size = new System.Drawing.Size(537, 26);
             this.cb_SpeedTest_TestServer.TabIndex = 97;
-            this.cb_SpeedTest_TestServer.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cb_SpeedTest_TestServer_DrawItem);
+            this.cb_SpeedTest_TestServer.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.Custom_ComboBox_DrawItem);
             this.cb_SpeedTest_TestServer.SelectedIndexChanged += new System.EventHandler(this.cb_SpeedTest_TestServer_SelectedIndexChanged);
             // 
             // lbl_SpeedTest_ExternalIP_Value
@@ -345,7 +307,7 @@
             this.lbl_SpeedTest_ExternalIP_Value.BackColor = System.Drawing.Color.DimGray;
             this.lbl_SpeedTest_ExternalIP_Value.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_ExternalIP_Value.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_ExternalIP_Value.Location = new System.Drawing.Point(148, 38);
+            this.lbl_SpeedTest_ExternalIP_Value.Location = new System.Drawing.Point(148, 39);
             this.lbl_SpeedTest_ExternalIP_Value.Name = "lbl_SpeedTest_ExternalIP_Value";
             this.lbl_SpeedTest_ExternalIP_Value.Size = new System.Drawing.Size(535, 25);
             this.lbl_SpeedTest_ExternalIP_Value.TabIndex = 103;
@@ -356,7 +318,7 @@
             this.lbl_SpeedTest_CurrentCountry_Value.BackColor = System.Drawing.Color.DimGray;
             this.lbl_SpeedTest_CurrentCountry_Value.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_CurrentCountry_Value.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_CurrentCountry_Value.Location = new System.Drawing.Point(148, 67);
+            this.lbl_SpeedTest_CurrentCountry_Value.Location = new System.Drawing.Point(148, 68);
             this.lbl_SpeedTest_CurrentCountry_Value.Name = "lbl_SpeedTest_CurrentCountry_Value";
             this.lbl_SpeedTest_CurrentCountry_Value.Size = new System.Drawing.Size(536, 25);
             this.lbl_SpeedTest_CurrentCountry_Value.TabIndex = 102;
@@ -366,7 +328,7 @@
             // 
             this.lbl_SpeedTest_Latency_Value.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_Latency_Value.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_Latency_Value.Location = new System.Drawing.Point(148, 183);
+            this.lbl_SpeedTest_Latency_Value.Location = new System.Drawing.Point(148, 184);
             this.lbl_SpeedTest_Latency_Value.Name = "lbl_SpeedTest_Latency_Value";
             this.lbl_SpeedTest_Latency_Value.Size = new System.Drawing.Size(536, 25);
             this.lbl_SpeedTest_Latency_Value.TabIndex = 101;
@@ -377,7 +339,7 @@
             this.lbl_SpeedTest_Distance_Value.BackColor = System.Drawing.Color.DimGray;
             this.lbl_SpeedTest_Distance_Value.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_Distance_Value.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_Distance_Value.Location = new System.Drawing.Point(148, 154);
+            this.lbl_SpeedTest_Distance_Value.Location = new System.Drawing.Point(148, 155);
             this.lbl_SpeedTest_Distance_Value.Name = "lbl_SpeedTest_Distance_Value";
             this.lbl_SpeedTest_Distance_Value.Size = new System.Drawing.Size(536, 25);
             this.lbl_SpeedTest_Distance_Value.TabIndex = 100;
@@ -388,7 +350,7 @@
             this.lbl_SpeedTest_HostedBy_Value.BackColor = System.Drawing.Color.DimGray;
             this.lbl_SpeedTest_HostedBy_Value.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lbl_SpeedTest_HostedBy_Value.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_SpeedTest_HostedBy_Value.Location = new System.Drawing.Point(148, 125);
+            this.lbl_SpeedTest_HostedBy_Value.Location = new System.Drawing.Point(148, 126);
             this.lbl_SpeedTest_HostedBy_Value.Name = "lbl_SpeedTest_HostedBy_Value";
             this.lbl_SpeedTest_HostedBy_Value.Size = new System.Drawing.Size(536, 25);
             this.lbl_SpeedTest_HostedBy_Value.TabIndex = 99;
@@ -438,6 +400,62 @@
     "onality depends on it";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // lbl_SpeedTest_ServerScope
+            // 
+            this.lbl_SpeedTest_ServerScope.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_SpeedTest_ServerScope.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_SpeedTest_ServerScope.Location = new System.Drawing.Point(7, 213);
+            this.lbl_SpeedTest_ServerScope.Name = "lbl_SpeedTest_ServerScope";
+            this.lbl_SpeedTest_ServerScope.Size = new System.Drawing.Size(134, 25);
+            this.lbl_SpeedTest_ServerScope.TabIndex = 110;
+            this.lbl_SpeedTest_ServerScope.Text = "Server Scope";
+            this.lbl_SpeedTest_ServerScope.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_SpeedTest_Calculation
+            // 
+            this.lbl_SpeedTest_Calculation.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_SpeedTest_Calculation.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_SpeedTest_Calculation.Location = new System.Drawing.Point(388, 213);
+            this.lbl_SpeedTest_Calculation.Name = "lbl_SpeedTest_Calculation";
+            this.lbl_SpeedTest_Calculation.Size = new System.Drawing.Size(134, 25);
+            this.lbl_SpeedTest_Calculation.TabIndex = 112;
+            this.lbl_SpeedTest_Calculation.Text = "Values Calculation";
+            this.lbl_SpeedTest_Calculation.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cb_SpeedTest_ServerScope
+            // 
+            this.cb_SpeedTest_ServerScope.BackColor = System.Drawing.Color.DimGray;
+            this.cb_SpeedTest_ServerScope.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cb_SpeedTest_ServerScope.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cb_SpeedTest_ServerScope.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_SpeedTest_ServerScope.Enabled = false;
+            this.cb_SpeedTest_ServerScope.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_SpeedTest_ServerScope.FormattingEnabled = true;
+            this.cb_SpeedTest_ServerScope.Location = new System.Drawing.Point(147, 213);
+            this.cb_SpeedTest_ServerScope.MaxDropDownItems = 100;
+            this.cb_SpeedTest_ServerScope.Name = "cb_SpeedTest_ServerScope";
+            this.cb_SpeedTest_ServerScope.Size = new System.Drawing.Size(206, 26);
+            this.cb_SpeedTest_ServerScope.TabIndex = 113;
+            this.cb_SpeedTest_ServerScope.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.Custom_ComboBox_DrawItem);
+            this.cb_SpeedTest_ServerScope.SelectedIndexChanged += new System.EventHandler(this.cb_SpeedTest_ServerScope_SelectedIndexChanged);
+            // 
+            // cb_SpeedTest_Calculation
+            // 
+            this.cb_SpeedTest_Calculation.BackColor = System.Drawing.Color.DimGray;
+            this.cb_SpeedTest_Calculation.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cb_SpeedTest_Calculation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cb_SpeedTest_Calculation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_SpeedTest_Calculation.Enabled = false;
+            this.cb_SpeedTest_Calculation.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cb_SpeedTest_Calculation.FormattingEnabled = true;
+            this.cb_SpeedTest_Calculation.Location = new System.Drawing.Point(528, 213);
+            this.cb_SpeedTest_Calculation.MaxDropDownItems = 100;
+            this.cb_SpeedTest_Calculation.Name = "cb_SpeedTest_Calculation";
+            this.cb_SpeedTest_Calculation.Size = new System.Drawing.Size(156, 26);
+            this.cb_SpeedTest_Calculation.TabIndex = 114;
+            this.cb_SpeedTest_Calculation.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.Custom_ComboBox_DrawItem);
+            this.cb_SpeedTest_Calculation.SelectedIndexChanged += new System.EventHandler(this.cb_SpeedTest_Calculation_SelectedIndexChanged);
+            // 
             // pBar_Upload
             // 
             this.pBar_Upload.Location = new System.Drawing.Point(444, 629);
@@ -466,6 +484,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DimGray;
             this.ClientSize = new System.Drawing.Size(691, 662);
+            this.Controls.Add(this.cb_SpeedTest_Calculation);
+            this.Controls.Add(this.cb_SpeedTest_ServerScope);
+            this.Controls.Add(this.lbl_SpeedTest_Calculation);
+            this.Controls.Add(this.lbl_SpeedTest_ServerScope);
             this.Controls.Add(this.pBar_Upload);
             this.Controls.Add(this.pBar_Download);
             this.Controls.Add(this.label1);
@@ -480,9 +502,6 @@
             this.Controls.Add(this.lbl_SpeedTest_Download_Label);
             this.Controls.Add(this.lbl_SpeedTest_Upload_Label);
             this.Controls.Add(this.lbl_SpeedTest_ExternalIP);
-            this.Controls.Add(this.rb_CurrentCountryServersOnly);
-            this.Controls.Add(this.rb_AllServersExceptCurrCountry);
-            this.Controls.Add(this.rb_AllServers);
             this.Controls.Add(this.lbl_SpeedTest_CurrentCountry);
             this.Controls.Add(this.lbl_SpeedTest_Latency);
             this.Controls.Add(this.lbl_SpeedTest_Distance);
@@ -509,7 +528,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_SpeedTestProgress)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_GO)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -525,9 +543,6 @@
         public System.Windows.Forms.Label lbl_SpeedTest_Mbps_Upload_Label;
         public System.Windows.Forms.Label lbl_SpeedTest_Download_Label;
         public System.Windows.Forms.Label lbl_SpeedTest_Upload_Label;
-        public System.Windows.Forms.RadioButton rb_AllServers;
-        public System.Windows.Forms.RadioButton rb_AllServersExceptCurrCountry;
-        public System.Windows.Forms.RadioButton rb_CurrentCountryServersOnly;
         public System.Windows.Forms.Label lbl_SpeedTest_ExternalIP;
         public System.Windows.Forms.AGauge aGauge_DownloadSpeed;
         public System.Windows.Forms.AGauge aGauge_UploadSpeed;
@@ -542,5 +557,9 @@
         public ProgressBar_Green pBar_Download;
         public ProgressBar_Red pBar_Upload;
         public System.Windows.Forms.Label label1;
+        public System.Windows.Forms.Label lbl_SpeedTest_ServerScope;
+        public System.Windows.Forms.Label lbl_SpeedTest_Calculation;
+        public System.Windows.Forms.ComboBox cb_SpeedTest_ServerScope;
+        public System.Windows.Forms.ComboBox cb_SpeedTest_Calculation;
     }
 }

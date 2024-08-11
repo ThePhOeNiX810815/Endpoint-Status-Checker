@@ -97,6 +97,8 @@ namespace EndpointChecker
         public Image _selectedEndpointIcon;
         public int _pingTimeout;
 
+        CheckerMainForm checkerMainForm = new CheckerMainForm();
+
         // STANDARD PORTS LIST DICTIONARY
         private readonly Dictionary<int, string> portsList = new Dictionary<int, string>
         {
@@ -195,22 +197,22 @@ namespace EndpointChecker
             }
 
             // ADD RESIZED [16x16] IMAGES TO TAB CONTROL IMAGE LIST
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.browse_FTP, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.browse_HTTP, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.browse_Share, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.pingHop, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.requestHeaderProperty, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.responseHeaderProperty, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.information.ToBitmap(), 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.wmi, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.port, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.whoIs, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.geoLocation, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.ssl, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.virusTotal, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.category, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.link_16x16, 16, 16));
-            imageList_Tabs.Images.Add(ResizeImage(Properties.Resources.main, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.browse_FTP, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.browse_HTTP, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.browse_Share, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.pingHop, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.requestHeaderProperty, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.responseHeaderProperty, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.information.ToBitmap(), 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.wmi, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.port, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.whoIs, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.geoLocation, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.ssl, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.virusTotal, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.category, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.link_16x16, 16, 16));
+            imageList_Tabs.Images.Add(ResizeImage(Resources.main, 16, 16));
 
             // ASSIGN IMAGES TO TABS
             tabPage_FTPInfo.ImageIndex = 0;
@@ -231,13 +233,13 @@ namespace EndpointChecker
             tabPage_MainInfo.ImageIndex = 15;
 
             // ASSIGN RESIZED IMAGES TO BUTTONS PICTURE BOX CONTROLS
-            pb_Browse_WindowsExplorer.Image = ResizeImage(Properties.Resources.browse_Share, pb_Browse_WindowsExplorer.Width, pb_Browse_WindowsExplorer.Height);
-            pb_AdminBrowse_WindowsExplorer.Image = ResizeImage(Properties.Resources.browse_Admin_Share, pb_AdminBrowse_WindowsExplorer.Width, pb_AdminBrowse_WindowsExplorer.Height);
-            pb_FTP.Image = ResizeImage(Properties.Resources.browse_FTP, pb_FTP.Width, pb_FTP.Height);
-            pb_HTTP.Image = ResizeImage(Properties.Resources.browse_HTTP, pb_HTTP.Width, pb_HTTP.Height);
-            pb_RDP.Image = ResizeImage(Properties.Resources.connect_RDP, pb_RDP.Width, pb_RDP.Height);
-            pb_VNC.Image = ResizeImage(Properties.Resources.connect_VNC, pb_VNC.Width, pb_VNC.Height);
-            pb_SSH.Image = ResizeImage(Properties.Resources.ssh_2, pb_SSH.Width, pb_SSH.Height);
+            pb_Browse_WindowsExplorer.Image = ResizeImage(Resources.browse_Share, pb_Browse_WindowsExplorer.Width, pb_Browse_WindowsExplorer.Height);
+            pb_AdminBrowse_WindowsExplorer.Image = ResizeImage(Resources.browse_Admin_Share, pb_AdminBrowse_WindowsExplorer.Width, pb_AdminBrowse_WindowsExplorer.Height);
+            pb_FTP.Image = ResizeImage(Resources.browse_FTP, pb_FTP.Width, pb_FTP.Height);
+            pb_HTTP.Image = ResizeImage(Resources.browse_HTTP, pb_HTTP.Width, pb_HTTP.Height);
+            pb_RDP.Image = ResizeImage(Resources.connect_RDP, pb_RDP.Width, pb_RDP.Height);
+            pb_VNC.Image = ResizeImage(Resources.connect_VNC, pb_VNC.Width, pb_VNC.Height);
+            pb_SSH.Image = ResizeImage(Resources.ssh_2, pb_SSH.Width, pb_SSH.Height);
 
             ipAddress_ComboboxTooltip.SetToolTip(cb_IPAddress, "Click to select desired IP Address");
             livePingIconTooltip.SetToolTip(pb_PingRefresh, "Click for Live 1 second Ping Refresh");
@@ -694,7 +696,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    StartBackgroundProcess(
+                    checkerMainForm.StartBackgroundProcess(
                                                  address,
                                                  null,
                                                  null,
@@ -715,7 +717,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    StartBackgroundProcess(
+                    checkerMainForm.StartBackgroundProcess(
                                                  share,
                                                  null,
                                                  _selectedEndpoint.LoginName,
@@ -730,7 +732,7 @@ namespace EndpointChecker
 
         public void pb_Browse_WindowsExplorer_MouseClick(object sender, MouseEventArgs e)
         {
-            BrowseEndpoint_WindowsExplorer(
+            checkerMainForm.BrowseEndpoint_WindowsExplorer(
                 new Uri(_selectedEndpoint.ResponseAddress).Host,
                 _selectedEndpoint.LoginName,
                 _selectedEndpoint.LoginPass);
@@ -738,7 +740,7 @@ namespace EndpointChecker
 
         public void pb_AdminBrowse_WindowsExplorer_MouseClick(object sender, MouseEventArgs e)
         {
-            BrowseEndpoint_WindowsExplorer(
+            checkerMainForm.BrowseEndpoint_WindowsExplorer(
                 new Uri(_selectedEndpoint.ResponseAddress).Host + @"\C$",
                 _selectedEndpoint.LoginName,
                 _selectedEndpoint.LoginPass);
@@ -746,24 +748,24 @@ namespace EndpointChecker
 
         public void pb_RDP_MouseClick(object sender, MouseEventArgs e)
         {
-            ConnectEndpoint_RDP(
+            checkerMainForm.ConnectEndpoint_RDP(
                 new Uri(_selectedEndpoint.ResponseAddress).Host);
         }
 
         public void pb_VNC_MouseClick(object sender, MouseEventArgs e)
         {
-            ConnectEndpoint_VNC(
+            checkerMainForm.ConnectEndpoint_VNC(
                 new Uri(_selectedEndpoint.ResponseAddress).Host);
         }
 
         public void pb_HTTP_MouseClick(object sender, MouseEventArgs e)
         {
-            OpenEndpoint_HTTP(_selectedEndpoint);
+            checkerMainForm.OpenEndpoint_HTTP(_selectedEndpoint);
         }
 
         public void pb_FTP_MouseClick(object sender, MouseEventArgs e)
         {
-            OpenEndpoint_FTP(_selectedEndpoint);
+            checkerMainForm.OpenEndpoint_FTP(_selectedEndpoint);
         }
 
         public void pb_PingRefresh_Click(object sender, EventArgs e)
@@ -1488,7 +1490,7 @@ namespace EndpointChecker
         {
             try
             {
-                StartBackgroundProcess(
+                checkerMainForm.StartBackgroundProcess(
                     "https://www.google.com/maps/@?api=1&map_action=map&center=" +
                     tb_GeoLocation_Latitude.Text +
                     "," +
@@ -1514,7 +1516,7 @@ namespace EndpointChecker
                 : string.Join(", ", _selectedEndpoint.DNSName);
 
             // MAC ADDRESS
-            pb_Vendor.Image = Properties.Resources.vendor;
+            pb_Vendor.Image = Resources.vendor;
             pb_Vendor.Cursor = Cursors.Default;
             macVendorIconTooltip.SetToolTip(pb_Vendor, string.Empty);
             macVendorWebPage = string.Empty;
@@ -1624,7 +1626,7 @@ namespace EndpointChecker
             {
                 try
                 {
-                    StartBackgroundProcess(
+                    checkerMainForm.StartBackgroundProcess(
                                                  macVendorWebPage,
                                                  null,
                                                  null,
@@ -1647,7 +1649,7 @@ namespace EndpointChecker
                 {
                     if (File.Exists(appConfigFile))
                     {
-                        BrowseEndpoint(
+                        checkerMainForm.BrowseEndpoint(
                         appConfigFile,
                         null,
                         null,
@@ -1748,7 +1750,7 @@ namespace EndpointChecker
 
         public void tb_VirusTotal_Permalink_MouseClick(object sender, MouseEventArgs e)
         {
-            BrowseEndpoint(
+            checkerMainForm.BrowseEndpoint(
                 tb_VirusTotal_Permalink.Text,
                 null,
                 null,
@@ -1790,12 +1792,12 @@ namespace EndpointChecker
                             if (virusTotalReport.Positives == 0)
                             {
                                 // CLEAN
-                                pb_VirusTotal_Status.Image = Properties.Resources.virusClean;
+                                pb_VirusTotal_Status.Image = Resources.virusClean;
                             }
                             else
                             {
                                 // INFECTED
-                                pb_VirusTotal_Status.Image = Properties.Resources.virusIcon;
+                                pb_VirusTotal_Status.Image = Resources.virusIcon;
 
                             }
 
@@ -1848,7 +1850,7 @@ namespace EndpointChecker
 
                 try
                 {
-                    StartBackgroundProcess(
+                    checkerMainForm.StartBackgroundProcess(
                                                  address,
                                                  null,
                                                  null,
@@ -1983,7 +1985,7 @@ namespace EndpointChecker
                             }
                         }
 
-                        pb_PageLinks_CommonLinksStatus.Image = isAnyInvalid ? Properties.Resources.linkStatus_Invalid : (Image)Properties.Resources.linkStatus_Valid;
+                        pb_PageLinks_CommonLinksStatus.Image = isAnyInvalid ? Resources.linkStatus_Invalid : (Image)Resources.linkStatus_Valid;
 
                         pb_PageLinks_CommonLinksStatus.Visible = true;
                     }
@@ -1997,7 +1999,7 @@ namespace EndpointChecker
 
             foreach (ListViewItem selectedItem in selectedItems)
             {
-                BrowseEndpoint(
+                checkerMainForm.BrowseEndpoint(
                     "https://www.google.com/search?source=hp&q=" +
                     selectedItem.Text + "&oq=" +
                     selectedItem.Text,
@@ -2033,13 +2035,13 @@ namespace EndpointChecker
 
         public void pb_SSH_MouseClick(object sender, MouseEventArgs e)
         {
-            ConnectEndpoint_Putty(
+            checkerMainForm.ConnectEndpoint_Putty(
                 new Uri(_selectedEndpoint.ResponseAddress).Host);
         }
 
         public void rtb_WhoIsInfo_LinkClicked(object sender, LinkClickedEventArgs e)
         {
-            BrowseEndpoint(
+            checkerMainForm.BrowseEndpoint(
                     e.LinkText,
                     null,
                     null,
@@ -2050,6 +2052,18 @@ namespace EndpointChecker
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
+        }
+
+        private void tabControl_Selected(object sender, TabControlEventArgs e)
+        {
+            if (e.TabPageIndex != 0)
+            {
+                TIMER_PingRefresh.Stop();
+                TIMER_PingRefresh.Enabled = false;
+                pb_PingRefresh.Image = Resources.refresh.ToBitmap();
+
+                DoPing(false);
+            }
         }
     }
 

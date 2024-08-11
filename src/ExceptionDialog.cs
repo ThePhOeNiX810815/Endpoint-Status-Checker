@@ -403,12 +403,12 @@ namespace EndpointChecker
         {
             tb_UserEMailAddress.BackColor = string.IsNullOrEmpty(tb_UserEMailAddress.Text)
                 ? SystemColors.Info
-                : !IsMailAddressValid(tb_UserEMailAddress.Text) ? System.Drawing.Color.Pink : System.Drawing.Color.Honeydew;
+                : !IsMailAddressValid(tb_UserEMailAddress.Text) ? Color.Pink : Color.Honeydew;
         }
 
         public void tb_OptionalComment_TextChanged(object sender, EventArgs e)
         {
-            tb_OptionalComment.BackColor = string.IsNullOrEmpty(tb_OptionalComment.Text) ? SystemColors.Info : System.Drawing.Color.Honeydew;
+            tb_OptionalComment.BackColor = string.IsNullOrEmpty(tb_OptionalComment.Text) ? SystemColors.Info : Color.Honeydew;
         }
 
         public void SetDialogSize(bool allControls)
@@ -425,7 +425,7 @@ namespace EndpointChecker
         public void ExceptionDialog_Paint(object sender, PaintEventArgs e)
         {
             Graphics graphicsObj = CreateGraphics();
-            Pen myPen = new Pen(System.Drawing.Color.Red, 20);
+            Pen myPen = new Pen(Color.Red, 20);
             Rectangle myRectangle = new Rectangle(0, 0, Width, Height);
             graphicsObj.DrawRectangle(myPen, myRectangle);
         }
