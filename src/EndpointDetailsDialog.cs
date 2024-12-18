@@ -27,6 +27,9 @@ namespace EndpointChecker
 {
     public partial class EndpointDetailsDialog : Form
     {
+        // MAIN FORM INSTANCE
+        CheckerMainForm checkerMainForm = new CheckerMainForm();
+
         // WMI CONNECTION SCOPE
         private readonly ManagementScope wmiConnectionScope = new ManagementScope();
 
@@ -53,6 +56,11 @@ namespace EndpointChecker
 
         // MAC VENDOR WEBPAGE URL
         private string macVendorWebPage = string.Empty;
+
+        // SELECTED ENDPOINT
+        public EndpointDefinition _selectedEndpoint;
+        public Image _selectedEndpointIcon;
+        public int _pingTimeout;
 
         // WMI MANAGEMENT CLASSES ENUM
         private enum WMIManagementClass
@@ -92,12 +100,6 @@ namespace EndpointChecker
             VideoController,
             VoltageProbe
         }
-
-        public EndpointDefinition _selectedEndpoint;
-        public Image _selectedEndpointIcon;
-        public int _pingTimeout;
-
-        CheckerMainForm checkerMainForm = new CheckerMainForm();
 
         // STANDARD PORTS LIST DICTIONARY
         private readonly Dictionary<int, string> portsList = new Dictionary<int, string>
@@ -487,7 +489,7 @@ namespace EndpointChecker
                     tb_HTTPInfo_AutoRedirects.Text = _selectedEndpoint.HTTPautoRedirects;
                     tb_HTTPInfo_ContentType.Text = _selectedEndpoint.HTTPcontentType;
                     tb_HTTPInfo_Encoding.Text = GetEncodingName(_selectedEndpoint.HTTPencoding);
-                    tb_HTTPInfo_ContentLenght.Text = _selectedEndpoint.HTTPcontentLenght;
+                    tb_HTTPInfo_ContentLength.Text = _selectedEndpoint.HTTPcontentLength;
                     tb_HTTPInfo_Expires.Text = _selectedEndpoint.HTTPexpires;
                     tb_HTTPInfo_ETag.Text = _selectedEndpoint.HTTPetag.TrimStart('W').TrimStart('/').TrimStart('"').TrimEnd('"');
                     pb_HTTPInfo_WeakETag.Visible = _selectedEndpoint.HTTPetag.ToLower().StartsWith("w/");
@@ -496,7 +498,7 @@ namespace EndpointChecker
                         tb_HTTPInfo_AutoRedirects.Text != status_NotAvailable ||
                         tb_HTTPInfo_ContentType.Text != status_NotAvailable ||
                         tb_HTTPInfo_Encoding.Text != status_NotAvailable ||
-                        tb_HTTPInfo_ContentLenght.Text != status_NotAvailable ||
+                        tb_HTTPInfo_ContentLength.Text != status_NotAvailable ||
                         tb_HTTPInfo_Expires.Text != status_NotAvailable ||
                         tb_HTTPInfo_ETag.Text != status_NotAvailable)
                     {
@@ -704,7 +706,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(this, exception, string.Empty, true);
+                    ExceptionNotify(this, exception, string.Empty, true);
                 }
             }
         }
@@ -725,7 +727,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(this, exception, string.Empty, true);
+                    ExceptionNotify(this, exception, string.Empty, true);
                 }
             }
         }
@@ -1305,7 +1307,7 @@ namespace EndpointChecker
                     {
                         try
                         {
-                            string info = new WebClient().DownloadString("http://ip-api.com/json/" + ipAddress);
+                            string info = new CustomWebClient().DownloadString("http://ip-api.com/json/" + ipAddress);
                             IP_API_JSON_Response ipInfo = JsonConvert.DeserializeObject<IP_API_JSON_Response>(info);
 
                             if (ipInfo.Service_Status == "success")
@@ -1332,15 +1334,15 @@ namespace EndpointChecker
 
                                     tb_GeoLocation_Latitude.Text = ipInfo.Geo_Lat;
                                     tb_GeoLocation_Longitude.Text = ipInfo.Geo_Lon;
-                                    tb_GeoLocation_ISP.Text = NotAvailable_IfNullorEmpty(ipInfo.ISP);
-                                    tb_GeoLocation_AS.Text = NotAvailable_IfNullorEmpty(ipInfo.ISP_AS.Replace(ipInfo.ISP, string.Empty).TrimEnd());
-                                    tb_GeoLocation_RegionName.Text = NotAvailable_IfNullorEmpty(ipInfo.Region_Name);
-                                    tb_GeoLocation_TimeZone.Text = NotAvailable_IfNullorEmpty(ipInfo.TimeZone);
-                                    tb_GeoLocation_ZipCode.Text = NotAvailable_IfNullorEmpty(ipInfo.City_ZIP_Code);
-                                    tb_GeoLocation_City.Text = NotAvailable_IfNullorEmpty(ipInfo.City);
-                                    tb_GeoLocation_ORG.Text = NotAvailable_IfNullorEmpty(ipInfo.ISP_ORG);
-                                    tb_GeoLocation_CountryName.Text = NotAvailable_IfNullorEmpty(ipInfo.Country_Name + " (" + ipInfo.Country_Code + ")");
-                                    tb_GeoLocation_RegionName.Text = NotAvailable_IfNullorEmpty(ipInfo.Region_Name + " (" + ipInfo.Region_Code + ")");
+                                    tb_GeoLocation_ISP.Text = NotAvailable_IfNullOrEmpty(ipInfo.ISP);
+                                    tb_GeoLocation_AS.Text = NotAvailable_IfNullOrEmpty(ipInfo.ISP_AS.Replace(ipInfo.ISP, string.Empty).TrimEnd());
+                                    tb_GeoLocation_RegionName.Text = NotAvailable_IfNullOrEmpty(ipInfo.Region_Name);
+                                    tb_GeoLocation_TimeZone.Text = NotAvailable_IfNullOrEmpty(ipInfo.TimeZone);
+                                    tb_GeoLocation_ZipCode.Text = NotAvailable_IfNullOrEmpty(ipInfo.City_ZIP_Code);
+                                    tb_GeoLocation_City.Text = NotAvailable_IfNullOrEmpty(ipInfo.City);
+                                    tb_GeoLocation_ORG.Text = NotAvailable_IfNullOrEmpty(ipInfo.ISP_ORG);
+                                    tb_GeoLocation_CountryName.Text = NotAvailable_IfNullOrEmpty(ipInfo.Country_Name + " (" + ipInfo.Country_Code + ")");
+                                    tb_GeoLocation_RegionName.Text = NotAvailable_IfNullOrEmpty(ipInfo.Region_Name + " (" + ipInfo.Region_Code + ")");
 
                                     tb_GeoLocation_IP.Text = cb_IPAddress.GetItemText(cb_IPAddress.SelectedItem);
                                     pb_GeoLocationProgress.Visible = false;
@@ -1504,7 +1506,7 @@ namespace EndpointChecker
             }
             catch (Exception exception)
             {
-                ExceptionNotifier(this, exception, string.Empty, true);
+                ExceptionNotify(this, exception, string.Empty, true);
             }
         }
 
@@ -1634,7 +1636,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(this, exception, string.Empty, true);
+                    ExceptionNotify(this, exception, string.Empty, true);
                 }
             }
         }
@@ -1858,7 +1860,7 @@ namespace EndpointChecker
                 }
                 catch (Exception exception)
                 {
-                    ExceptionNotifier(this, exception, string.Empty, true);
+                    ExceptionNotify(this, exception, string.Empty, true);
                 }
             }
         }
@@ -2050,6 +2052,9 @@ namespace EndpointChecker
 
         public void EndpointDetailsDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
+            checkerMainForm.Close();
+            checkerMainForm = null;
+
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }

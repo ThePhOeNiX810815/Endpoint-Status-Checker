@@ -20,7 +20,7 @@ namespace NSpeedTest
 
         public T GetConfig<T>(string url)
         {
-            using (WebClient webClient = new WebClient())
+            using (CustomWebClient webClient = new CustomWebClient())
             {
                 var data = webClient.DownloadString(url);
                 var xmlSerializer = new XmlSerializer(typeof(T));

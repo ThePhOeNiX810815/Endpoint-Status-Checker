@@ -12,7 +12,7 @@ namespace EndpointChecker.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.11.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.13.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -710,24 +710,24 @@ namespace EndpointChecker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
-        public int ListView_DisplayIndex_ContentLenght {
+        public int ListView_DisplayIndex_ContentLength {
             get {
-                return ((int)(this["ListView_DisplayIndex_ContentLenght"]));
+                return ((int)(this["ListView_DisplayIndex_ContentLength"]));
             }
             set {
-                this["ListView_DisplayIndex_ContentLenght"] = value;
+                this["ListView_DisplayIndex_ContentLength"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
-        public int ListView_ColWidth_ContentLenght {
+        public int ListView_ColWidth_ContentLength {
             get {
-                return ((int)(this["ListView_ColWidth_ContentLenght"]));
+                return ((int)(this["ListView_ColWidth_ContentLength"]));
             }
             set {
-                this["ListView_ColWidth_ContentLenght"] = value;
+                this["ListView_ColWidth_ContentLength"] = value;
             }
         }
         
@@ -890,7 +890,7 @@ namespace EndpointChecker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
-            "Chrome/128.0.0.0 Safari/537.36")]
+            "Chrome/132.0.0.0 Safari/537.36")]
         public string Config_HTTP_UserAgent {
             get {
                 return ((string)(this["Config_HTTP_UserAgent"]));
@@ -903,12 +903,12 @@ namespace EndpointChecker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5242880")]
-        public int Config_HTTP_SaveResponse_MaxLenght_Bytes {
+        public int Config_HTTP_SaveResponse_MaxLength_Bytes {
             get {
-                return ((int)(this["Config_HTTP_SaveResponse_MaxLenght_Bytes"]));
+                return ((int)(this["Config_HTTP_SaveResponse_MaxLength_Bytes"]));
             }
             set {
-                this["Config_HTTP_SaveResponse_MaxLenght_Bytes"] = value;
+                this["Config_HTTP_SaveResponse_MaxLength_Bytes"] = value;
             }
         }
         

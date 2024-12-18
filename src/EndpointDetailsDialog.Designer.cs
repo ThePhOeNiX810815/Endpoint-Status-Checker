@@ -178,8 +178,8 @@
             this.lbl_HTTPInfo_ETag = new System.Windows.Forms.Label();
             this.tb_HTTPInfo_Expires = new System.Windows.Forms.TextBox();
             this.lbl_HTTPInfo_Expires = new System.Windows.Forms.Label();
-            this.tb_HTTPInfo_ContentLenght = new System.Windows.Forms.TextBox();
-            this.lbl_HTTPInfo_ContentLenght = new System.Windows.Forms.Label();
+            this.tb_HTTPInfo_ContentLength = new System.Windows.Forms.TextBox();
+            this.lbl_HTTPInfo_ContentLength = new System.Windows.Forms.Label();
             this.tb_HTTPInfo_Encoding = new System.Windows.Forms.TextBox();
             this.lbl_HTTPInfo_Encoding = new System.Windows.Forms.Label();
             this.tabPage_HTTPRequestHeaders = new System.Windows.Forms.TabPage();
@@ -2091,8 +2091,8 @@
             this.tabPage_HTTPInfo.Controls.Add(this.lbl_HTTPInfo_ETag);
             this.tabPage_HTTPInfo.Controls.Add(this.tb_HTTPInfo_Expires);
             this.tabPage_HTTPInfo.Controls.Add(this.lbl_HTTPInfo_Expires);
-            this.tabPage_HTTPInfo.Controls.Add(this.tb_HTTPInfo_ContentLenght);
-            this.tabPage_HTTPInfo.Controls.Add(this.lbl_HTTPInfo_ContentLenght);
+            this.tabPage_HTTPInfo.Controls.Add(this.tb_HTTPInfo_ContentLength);
+            this.tabPage_HTTPInfo.Controls.Add(this.lbl_HTTPInfo_ContentLength);
             this.tabPage_HTTPInfo.Controls.Add(this.tb_HTTPInfo_ServerName);
             this.tabPage_HTTPInfo.Controls.Add(this.lbl_HTTPInfo_AutoRedirects);
             this.tabPage_HTTPInfo.Controls.Add(this.tb_HTTPInfo_ContentType);
@@ -2170,28 +2170,28 @@
             this.lbl_HTTPInfo_Expires.Text = "Expires";
             this.lbl_HTTPInfo_Expires.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // tb_HTTPInfo_ContentLenght
+            // tb_HTTPInfo_ContentLength
             // 
-            this.tb_HTTPInfo_ContentLenght.BackColor = System.Drawing.SystemColors.Info;
-            this.tb_HTTPInfo_ContentLenght.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tb_HTTPInfo_ContentLenght.Font = new System.Drawing.Font("Calibri", 11.25F);
-            this.tb_HTTPInfo_ContentLenght.Location = new System.Drawing.Point(516, 68);
-            this.tb_HTTPInfo_ContentLenght.Multiline = true;
-            this.tb_HTTPInfo_ContentLenght.Name = "tb_HTTPInfo_ContentLenght";
-            this.tb_HTTPInfo_ContentLenght.ReadOnly = true;
-            this.tb_HTTPInfo_ContentLenght.Size = new System.Drawing.Size(258, 23);
-            this.tb_HTTPInfo_ContentLenght.TabIndex = 45;
+            this.tb_HTTPInfo_ContentLength.BackColor = System.Drawing.SystemColors.Info;
+            this.tb_HTTPInfo_ContentLength.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tb_HTTPInfo_ContentLength.Font = new System.Drawing.Font("Calibri", 11.25F);
+            this.tb_HTTPInfo_ContentLength.Location = new System.Drawing.Point(516, 68);
+            this.tb_HTTPInfo_ContentLength.Multiline = true;
+            this.tb_HTTPInfo_ContentLength.Name = "tb_HTTPInfo_ContentLength";
+            this.tb_HTTPInfo_ContentLength.ReadOnly = true;
+            this.tb_HTTPInfo_ContentLength.Size = new System.Drawing.Size(258, 23);
+            this.tb_HTTPInfo_ContentLength.TabIndex = 45;
             // 
-            // lbl_HTTPInfo_ContentLenght
+            // lbl_HTTPInfo_ContentLength
             // 
-            this.lbl_HTTPInfo_ContentLenght.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_HTTPInfo_ContentLenght.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_HTTPInfo_ContentLenght.Location = new System.Drawing.Point(405, 68);
-            this.lbl_HTTPInfo_ContentLenght.Name = "lbl_HTTPInfo_ContentLenght";
-            this.lbl_HTTPInfo_ContentLenght.Size = new System.Drawing.Size(105, 23);
-            this.lbl_HTTPInfo_ContentLenght.TabIndex = 44;
-            this.lbl_HTTPInfo_ContentLenght.Text = "Content Lenght";
-            this.lbl_HTTPInfo_ContentLenght.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lbl_HTTPInfo_ContentLength.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_HTTPInfo_ContentLength.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_HTTPInfo_ContentLength.Location = new System.Drawing.Point(405, 68);
+            this.lbl_HTTPInfo_ContentLength.Name = "lbl_HTTPInfo_ContentLength";
+            this.lbl_HTTPInfo_ContentLength.Size = new System.Drawing.Size(105, 23);
+            this.lbl_HTTPInfo_ContentLength.TabIndex = 44;
+            this.lbl_HTTPInfo_ContentLength.Text = "Content Length";
+            this.lbl_HTTPInfo_ContentLength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tb_HTTPInfo_Encoding
             // 
@@ -2811,8 +2811,8 @@
         public System.Windows.Forms.ColumnHeader roundTripTimeHeader;
         public System.Windows.Forms.Button btn_TraceRoute_Refresh;
         public System.Windows.Forms.PictureBox pb_TraceRouteProgress;
-        public System.Windows.Forms.TextBox tb_HTTPInfo_ContentLenght;
-        public System.Windows.Forms.Label lbl_HTTPInfo_ContentLenght;
+        public System.Windows.Forms.TextBox tb_HTTPInfo_ContentLength;
+        public System.Windows.Forms.Label lbl_HTTPInfo_ContentLength;
         public System.Windows.Forms.TabPage tabPage_FTPInfo;
         public System.Windows.Forms.TabPage tabPage_HTTPRequestHeaders;
         public System.Windows.Forms.ListView lv_HTTP_RequestHeaders;

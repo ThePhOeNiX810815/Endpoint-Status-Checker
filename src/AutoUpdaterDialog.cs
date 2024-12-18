@@ -17,11 +17,11 @@ namespace EndpointChecker
     public partial class AutoUpdaterDialog : Form
     {
         // TEMPORARY PACKAGE FILE
-        private static readonly string tempPackageZIPfileName = Path.GetFileName(new Uri(app_LatestPackageLink).AbsolutePath);
+        private static readonly string tempPackageZIPFileName = Path.GetFileName(new Uri(app_LatestPackageLink).AbsolutePath);
         private static string tempPackageFolderName = string.Empty;
 
         // SUCCESS SWITCH
-        private static bool updateSucess = false;
+        private static bool updateSuccess = false;
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
@@ -70,7 +70,11 @@ namespace EndpointChecker
                 Thread.Sleep(1000);
 
                 // DOWNLOAD UPDATE PACKAGE
-                lbl_Progress.Text = "Downloading Package from GitHub ...";
+                ThreadSafeInvoke(() =>
+                {
+                    lbl_Progress.Text = "Downloading Package from GitHub ...";
+                });
+                
                 Thread.Sleep(1000);
 
                 int downloadPackage_MaxAttemptCount = 20;
@@ -86,15 +90,15 @@ namespace EndpointChecker
                     try
                     {
                         // TRY TO DOWNLOAD PACKAGE
-                        using (WebClient webClient = new WebClient())
+                        using (CustomWebClient webClient = new CustomWebClient())
                         {
-                            webClient.DownloadFile(new Uri(app_LatestPackageLink), Path.Combine(app_TempDir, tempPackageZIPfileName));
+                            webClient.DownloadFile(new Uri(app_LatestPackageLink), Path.Combine(app_TempDir, tempPackageZIPFileName));
 
                             // SUCCESS, JUMP OUT OF WHILE CYCLE AND CONTINUE CODE
                             downloadPackage_Success = true;
                         }
                     }
-                    catch (Exception webClientEX)
+                    catch (Exception CustomWebClientEX)
                     {
                         // CLEAN TEMPORARY PACKAGE FILE
                         CleanTempPackageArchive();
@@ -105,53 +109,75 @@ namespace EndpointChecker
                         // IF CURRENT ATTEMPT COUNT EQUALS MAX ATTEMPTS COUNT, THROW EXCEPTION 
                         if (downloadPackage_CurrentAttempt == downloadPackage_MaxAttemptCount)
                         {
-                            throw (webClientEX);
+                            throw (CustomWebClientEX);
                         }
                     }
                 }
 
                 // UNZIP UPDATE PACKAGE
-                lbl_Progress.Text = "Exctracting Package ...";
+                ThreadSafeInvoke(() =>
+                {
+                    lbl_Progress.Text = "Extracting Package ...";
+                });
+                
                 Thread.Sleep(1000);
                 UnzipUpdatePackage();
 
                 // CLEANUP OLD APPLICATION EXECUTABLE AND LIBRARIES
-                lbl_Progress.Text = "Old Files Cleanup ...";
+                ThreadSafeInvoke(() =>
+                {
+                    lbl_Progress.Text = "Old Files Cleanup ...";
+                });
+                
                 Thread.Sleep(1000);
                 CleanOldLibraries();
 
                 // UPDATE
-                lbl_Progress.Text = "Copying New Files ...";
+                ThreadSafeInvoke(() =>
+                {
+                    lbl_Progress.Text = "Copying New Files ...";
+                });
+
                 Thread.Sleep(1000);
                 CopyNewLibraries();
 
                 // CLEANUP
-                lbl_Progress.Text = "Cleaning Up Temporary Files ...";
+                ThreadSafeInvoke(() =>
+                {
+                    lbl_Progress.Text = "Cleaning Up Temporary Files ...";
+                });
+                
                 Thread.Sleep(1000);
                 CleanTempPackageArchive();
                 CleanTempPackageDirectory();
 
                 // COMPLETE
-                lbl_Progress.Visible = false;
-                lbl_UpdateStatus_Wait.Visible = false;
-                lbl_UpdateStatus.ForeColor = Color.Lime;
-                lbl_UpdateStatus.Text = "SUCCESSFULLY UPDATED";
+                ThreadSafeInvoke(() =>
+                {
+                    lbl_Progress.Visible = false;
+                    lbl_UpdateStatus_Wait.Visible = false;
+                    lbl_UpdateStatus.ForeColor = Color.Lime;
+                    lbl_UpdateStatus.Text = "SUCCESSFULLY UPDATED";
+                });
 
-                updateSucess = true;
+                updateSuccess = true;
 
                 Thread.Sleep(3000);
             }
             catch (Exception exception)
             {
                 // FAILED
-                lbl_Progress.Visible = false;
-                lbl_UpdateStatus_Wait.Visible = false;
-                lbl_UpdateStatus.ForeColor = Color.Red;
-                lbl_UpdateStatus.Text = "UPDATE FAILED";
+                ThreadSafeInvoke(() =>
+                {
+                    lbl_Progress.Visible = false;
+                    lbl_UpdateStatus_Wait.Visible = false;
+                    lbl_UpdateStatus.ForeColor = Color.Red;
+                    lbl_UpdateStatus.Text = "UPDATE FAILED";
+                });
 
                 Thread.Sleep(2000);
 
-                ExceptionNotifier(this, exception, "Package Link: " + app_LatestPackageLink, true);
+                ExceptionNotify(this, exception, "Package Link: " + app_LatestPackageLink, true);
             }
         }
 
@@ -171,9 +197,9 @@ namespace EndpointChecker
 
         public static void CleanTempPackageArchive()
         {
-            if (File.Exists(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPfileName))))
+            if (File.Exists(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPFileName))))
             {
-                File.Delete(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPfileName)));
+                File.Delete(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPFileName)));
             }
         }
 
@@ -191,9 +217,9 @@ namespace EndpointChecker
             }
 
 
-            if (File.Exists(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPfileName))))
+            if (File.Exists(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPFileName))))
             {
-                File.Delete(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPfileName)));
+                File.Delete(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPFileName)));
             }
         }
 
@@ -213,7 +239,7 @@ namespace EndpointChecker
 
         public static void UnzipUpdatePackage()
         {
-            using (ZipArchive zipArchive = ZipFile.OpenRead(Path.Combine(app_TempDir, tempPackageZIPfileName)))
+            using (ZipArchive zipArchive = ZipFile.OpenRead(Path.Combine(app_TempDir, tempPackageZIPFileName)))
             {
                 tempPackageFolderName = zipArchive.Entries.First().FullName;
 
@@ -239,7 +265,7 @@ namespace EndpointChecker
             }
             else
             {
-                if (updateSucess)
+                if (updateSuccess)
                 {
                     // EXECUTE UPDATED APPLICATION
                     ProcessStartInfo startApp = new ProcessStartInfo(Path.Combine(app_CurrentWorkingDir, app_ApplicationExecutableName));
@@ -247,6 +273,19 @@ namespace EndpointChecker
                 }
 
                 Environment.Exit(0);
+            }
+        }
+
+        public void ThreadSafeInvoke(Action action)
+        {
+            try
+            {
+                Application.DoEvents();
+
+                Invoke(action);
+            }
+            catch
+            {
             }
         }
     }

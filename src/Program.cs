@@ -36,7 +36,7 @@ namespace EndpointChecker
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetWindowPlacement(IntPtr hWnd, ref Windowplacement lpwndpl);
+        private static extern bool GetWindowPlacement(IntPtr hWnd, ref WindowPlacement lpwndpl);
 
         private enum ShowWindowEnum
         {
@@ -47,7 +47,7 @@ namespace EndpointChecker
             Restore = 9, ShowDefault = 10, ForceMinimized = 11
         };
 
-        private struct Windowplacement
+        private struct WindowPlacement
         {
             public int length;
             public int flags;
@@ -79,7 +79,7 @@ namespace EndpointChecker
         public static string anonymousFTPPassword = "anonymous";
 
         // ENDPOINTS DEFINITIONS FILE NAME
-        public static string endpointDefinitonsFile = "EndpointChecker_EndpointsList.txt";
+        public static string endpointDefinitionsFile = "EndpointChecker_EndpointsList.txt";
 
         // GOOGLE MAPS API KEY & ZOOM FACTOR
         public static string apiKey_GoogleMaps;
@@ -113,7 +113,7 @@ namespace EndpointChecker
         public static string endpointsList_Duplicities = "_ERRORS - Invalid Endpoint Definitions - Duplicities.txt";
 
         // ERRORS [INVALID ENDPOINT DEFINITIONS] LIST FILE NAME
-        public static string endpointsList_InvalidDefs = "_ERRORS - Invalid Endpoint Definitions - Invalid URL format.txt";
+        public static string endpointsList_InvalidDefinitions = "_ERRORS - Invalid Endpoint Definitions - Invalid URL format.txt";
 
         // DEFAULT STATUS EXPORT DIRECTORY AND FILENAMES
         public static string statusExport_Directory = app_CurrentWorkingDir;
@@ -124,8 +124,8 @@ namespace EndpointChecker
         public static string statusExport_HTMLFile_HTTPPage = "EndpointsStatus_HTTP.html";
         public static string statusExport_HTMLFile_FTPPage = "EndpointsStatus_FTP.html";
 
-        // MAXIMUM LENGHT OF HTTP RESPONSE TO READ
-        public static long http_SaveResponse_MaxLenght_Bytes;
+        // MAXIMUM Length OF HTTP RESPONSE TO READ
+        public static long http_SaveResponse_MaxLength_Bytes;
 
         // AUTO UPDATE VARIABLES
         public static bool app_AutoUpdate_AutoUpdateInFuture;
@@ -295,7 +295,7 @@ namespace EndpointChecker
                         {
                             // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, RESTORE WINDOW
                             IntPtr wdwIntPtr = FindWindow(null, app_Title);
-                            Windowplacement placement = new Windowplacement();
+                            WindowPlacement placement = new WindowPlacement();
 
                             GetWindowPlacement(wdwIntPtr, ref placement);
                             ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
@@ -331,7 +331,7 @@ namespace EndpointChecker
 
         public static bool RequiredLibrariesExists(string[] librariesList)
         {
-            bool libabriesPresent = true;
+            bool librariesPresent = true;
 
             foreach (string library in librariesList)
             {
@@ -350,30 +350,30 @@ namespace EndpointChecker
                         app_VersionString,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    libabriesPresent = false;
+                    librariesPresent = false;
                     break;
                 }
             }
 
-            return libabriesPresent;
+            return librariesPresent;
         }
 
         // If assemblyName is not fully qualified, a random matching may be 
         public static string QueryAssemblyInfo(string assemblyName)
         {
-            ASSEMBLY_INFO assembyInfo = new ASSEMBLY_INFO
+            ASSEMBLY_INFO assemblyInfo = new ASSEMBLY_INFO
             {
                 cchBuf = 512
             };
-            assembyInfo.currentAssemblyPath = new string('\0',
-                assembyInfo.cchBuf);
+            assemblyInfo.currentAssemblyPath = new string('\0',
+                assemblyInfo.cchBuf);
 
 
             // Get IAssemblyCache pointer
             IntPtr hr = GacApi.CreateAssemblyCache(out IAssemblyCache assemblyCache, 0);
             if (hr == IntPtr.Zero)
             {
-                hr = assemblyCache.QueryAssemblyInfo(1, assemblyName, ref assembyInfo);
+                hr = assemblyCache.QueryAssemblyInfo(1, assemblyName, ref assemblyInfo);
                 if (hr != IntPtr.Zero)
                 {
                     Marshal.ThrowExceptionForHR(hr.ToInt32());
@@ -383,7 +383,7 @@ namespace EndpointChecker
             {
                 Marshal.ThrowExceptionForHR(hr.ToInt32());
             }
-            return assembyInfo.currentAssemblyPath;
+            return assemblyInfo.currentAssemblyPath;
         }
 
         private static string RetrieveLinkerTimestamp(bool appendTime)
@@ -446,7 +446,7 @@ namespace EndpointChecker
         {
             try
             {
-                using (WebClient updateWC = new WebClient())
+                using (CustomWebClient updateWC = new CustomWebClient())
                 {
                     // GET LATEST VERSION NUMBER
                     app_LatestPackageVersion = new Version(
@@ -524,13 +524,13 @@ namespace EndpointChecker
             try
             {
                 // GET SIGNING CERT
-                X509Certificate2 app_SigningAuthCertificate = new X509Certificate2(X509Certificate.CreateFromSignedFile(app_Assembly.Location));
+                X509Certificate2 app_SigningAUTHCertificate = new X509Certificate2(X509Certificate.CreateFromSignedFile(app_Assembly.Location));
 
                 // VALIDATE SIGNING CERT
                 isOriginalSignedExecutable =
-                    app_SigningAuthCertificate.GetSerialNumberString().Equals("4C0D5A65225EE4A0") &&
-                    app_SigningAuthCertificate.Issuer.Equals("CN=Peter Machaj Root CA") &&
-                    app_SigningAuthCertificate.Subject.Equals("CN=Peter Machaj");
+                    app_SigningAUTHCertificate.GetSerialNumberString().Equals("4C0D5A65225EE4A0") &&
+                    app_SigningAUTHCertificate.Issuer.Equals("CN=Peter Machaj Root CA") &&
+                    app_SigningAUTHCertificate.Subject.Equals("CN=Peter Machaj");
             }
             catch
             {
@@ -541,12 +541,12 @@ namespace EndpointChecker
 
         public static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
-            ExceptionNotifier(null, (Exception)args.ExceptionObject, "Raised by UnhandledExceptionHandler", true);
+            ExceptionNotify(null, (Exception)args.ExceptionObject, "Raised by UnhandledExceptionHandler", true);
         }
 
         public static void ThreadExceptionHandler(object sender, ThreadExceptionEventArgs args)
         {
-            ExceptionNotifier(null, args.Exception, "Raised by ThreadExceptionHandler", true);
+            ExceptionNotify(null, args.Exception, "Raised by ThreadExceptionHandler", true);
         }
 
         public static bool GetRegistryValue(string fullKeyName, string valueName, out object value)
@@ -569,7 +569,7 @@ namespace EndpointChecker
             }
         }
 
-        public static void ExceptionNotifier(object sender, Exception exception, string additionalInfo, bool autoCloseApp, string callerName = "")
+        public static void ExceptionNotify(object sender, Exception exception, string additionalInfo, bool autoCloseApp, string callerName = "")
         {
             Form senderForm = null;
 
@@ -598,7 +598,7 @@ namespace EndpointChecker
                 callingMethod,
                 additionalInfo,
                 new List<MailAddress> { report_Recipient },
-                new List<string> { endpointDefinitonsFile },
+                new List<string> { endpointDefinitionsFile },
                 autoCloseApp);
 
             exDialog.ShowDialog();
@@ -610,7 +610,7 @@ namespace EndpointChecker
             }
         }
 
-        public static string NotAvailable_IfNullorEmpty(string input)
+        public static string NotAvailable_IfNullOrEmpty(string input)
         {
             return string.IsNullOrEmpty(input) ? status_NotAvailable : input;
         }
@@ -653,7 +653,7 @@ namespace EndpointChecker
             googleMapsZoomFactor = Settings.Default.GoogleMaps_API_ZoomFactor;
             apiKey_VirusTotal = Settings.Default.VirusTotal_API_Key;
             http_UserAgent = Settings.Default.Config_HTTP_UserAgent;
-            http_SaveResponse_MaxLenght_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLenght_Bytes;
+            http_SaveResponse_MaxLength_Bytes = Settings.Default.Config_HTTP_SaveResponse_MaxLength_Bytes;
             app_AutoUpdate_SkipVersion = new Version(Settings.Default.AutoUpdate_SkipVersion);
             app_AutoUpdate_AutoUpdateInFuture = Settings.Default.AutoUpdate_AutoUpdateInFuture;
         }
@@ -741,7 +741,15 @@ namespace EndpointChecker
             }
         }
     }
-
+    public class CustomWebClient : WebClient
+    {
+        protected override WebRequest GetWebRequest(Uri uri)
+        {
+            WebRequest w = base.GetWebRequest(uri);
+            w.Timeout = 10000;
+            return w;
+        }
+    }
     internal class GacApi
     {
         [DllImport("fusion.dll")]

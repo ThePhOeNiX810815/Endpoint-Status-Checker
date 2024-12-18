@@ -1,4 +1,6 @@
-﻿using NSpeedTest.Models;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using EndpointChecker;
+using NSpeedTest.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -13,10 +15,16 @@ namespace NSpeedTest
 {
     public class SpeedTestClient : ISpeedTestClient
     {
-        private const string ConfigUrl = "http://www.speedtest.net/speedtest-config.php";
-        private const string ServersUrl = "http://www.speedtest.net/speedtest-servers.php";
-        //private readonly int[] downloadSizes = { 350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000 };
-        private readonly int[] downloadSizes = { 350, 750, 1500 };
+        private string ConfigUrl = "http://www.speedtest.net/speedtest-config.php";
+        private List<string> ServersUrlsList = new List<string>()
+        {
+            { "https://www.speedtest.net/speedtest-servers-static.php" },
+            { "https://c.speedtest.net/speedtest-servers.php" },
+            { "https://c.speedtest.net/speedtest-servers-static.php" }
+        };
+
+        //private int[] downloadSizes = { 350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000 };
+        private int[] downloadSizes = { 350, 750, 1500 };
         private const string Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         private const int MaxUploadSize = 4; // 400 KB
 
@@ -31,7 +39,32 @@ namespace NSpeedTest
             using (var client = new SpeedTestWebClient())
             {
                 var settings = client.GetConfig<Settings>(ConfigUrl);
-                var serversConfig = client.GetConfig<ServersList>(ServersUrl);
+                ServersList serversConfig = new ServersList();
+
+                foreach (string serverURL in ServersUrlsList)
+                {
+                    ServersList serverConfig = new ServersList();
+
+                    try
+                    {
+                        serverConfig = client.GetConfig<ServersList>(serverURL);
+                    }
+                    catch
+                    {
+                    }
+
+                    foreach (Server server in serverConfig.Servers)
+                    {
+                        if (serversConfig.Servers.Where(srv =>
+                                srv.Name == server.Name &&
+                                srv.Country == server.Country &&
+                                srv.Sponsor == server.Sponsor)
+                                    .Count() == 0)
+                        {
+                            serversConfig.Servers.Add(server);
+                        }
+                    }
+                }
 
                 serversConfig.CalculateDistances(settings.Client.GeoCoordinate);
                 settings.Servers = serversConfig.Servers.OrderBy(s => s.Distance).ToList();

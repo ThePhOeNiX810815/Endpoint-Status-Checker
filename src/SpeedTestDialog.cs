@@ -760,7 +760,7 @@ namespace EndpointChecker
                             true);
 
                 // GET IP INFO / COUNTRY
-                string info = new WebClient().DownloadString("http://ip-api.com/json");
+                string info = new CustomWebClient().DownloadString("http://ip-api.com/json");
                 ipInfo = JsonConvert.DeserializeObject<IP_API_JSON_Response>(info);
 
                 if (ipInfo.Service_Status != "success")
@@ -772,48 +772,48 @@ namespace EndpointChecker
                 {
                     lbl_SpeedTest_CurrentCountry_Value.BackColor = Color.BlanchedAlmond;
                     lbl_SpeedTest_CurrentCountry_Value.Text =
-                        ipInfo.City +
+                        GetStringCorrectEncoding(ipInfo.City) +
                         "/" +
-                        ipInfo.Country_Name;
+                        GetStringCorrectEncoding(ipInfo.Country_Name);
                 });
 
                 AppendTextToLogBox(
                             rtb_SpeedTest_LogConsole,
                                 "Country: " +
-                                ipInfo.Country_Name +
+                                GetStringCorrectEncoding(ipInfo.Country_Name) +
                                 Environment.NewLine +
                                 "Country Code: " +
-                                ipInfo.Country_Code +
+                                GetStringCorrectEncoding(ipInfo.Country_Code) +
                                 Environment.NewLine +
                                 "Region: " +
-                                ipInfo.Region_Code +
+                                GetStringCorrectEncoding(ipInfo.Region_Code) +
                                 Environment.NewLine +
                                 "Region Name: " +
-                                ipInfo.Region_Name +
+                                GetStringCorrectEncoding(ipInfo.Region_Name) +
                                 Environment.NewLine +
                                 "City: " +
-                                ipInfo.City +
+                                GetStringCorrectEncoding(ipInfo.City) +
                                 Environment.NewLine +
                                 "ZIP Code: " +
-                                ipInfo.City_ZIP_Code +
+                                GetStringCorrectEncoding(ipInfo.City_ZIP_Code) +
                                 Environment.NewLine +
                                 "GEO Latitude: " +
-                                ipInfo.Geo_Lat +
+                                GetStringCorrectEncoding(ipInfo.Geo_Lat) +
                                 Environment.NewLine +
                                 "GEO Longitude: " +
-                                ipInfo.Geo_Lon +
+                                GetStringCorrectEncoding(ipInfo.Geo_Lon) +
                                 Environment.NewLine +
                                 "Time Zone: " +
-                                ipInfo.TimeZone +
+                                GetStringCorrectEncoding(ipInfo.TimeZone) +
                                 Environment.NewLine +
                                 "ISP: " +
-                                ipInfo.ISP +
+                                GetStringCorrectEncoding(ipInfo.ISP) +
                                 Environment.NewLine +
                                 "ISP Organization: " +
-                                ipInfo.ISP_ORG +
+                                GetStringCorrectEncoding(ipInfo.ISP_ORG) +
                                 Environment.NewLine +
                                 "ISP AS: " +
-                                ipInfo.ISP_AS +
+                                GetStringCorrectEncoding(ipInfo.ISP_AS) +
                                 Environment.NewLine,
                             Color.Yellow,
                             true);
@@ -913,6 +913,16 @@ namespace EndpointChecker
 
                         if (servers.Count() > 0)
                         {
+                            AppendTextToLogBox(
+                                                         rtb_SpeedTest_LogConsole,
+                                                             "There are " + servers.Count() +
+                                                             " unique Test Server(s) available" +
+                                                             Environment.NewLine +
+                                                             "Server Scope: " +
+                                                             GetEnumDescriptionString(testServerSelectionMode),
+                                                         Color.LimeGreen,
+                                                         true);
+
                             ThreadSafeInvoke(() =>
                             {
                                 cb_SpeedTest_TestServer.SelectedIndex = 0;
@@ -924,9 +934,10 @@ namespace EndpointChecker
                         {
                             AppendTextToLogBox(
                                                          rtb_SpeedTest_LogConsole,
-                                                             "Not any test Server available (" +
+                                                             "Not any Test Server available" +
+                                                             Environment.NewLine +
+                                                             "Server Scope: " +
                                                              GetEnumDescriptionString(testServerSelectionMode) +
-                                                             ")" +
                                                              Environment.NewLine,
                                                          Color.Red,
                                                          true);

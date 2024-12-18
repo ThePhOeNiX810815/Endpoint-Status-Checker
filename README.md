@@ -81,7 +81,7 @@ Application is using following libraries:
 - FastMember (1.3.0)
 - Flurl (3.0.0-pre4)
 - FreeSpire.XLS (12.7.0)
-- HtmlAgilityPack (1.11.62)
+- HtmlAgilityPack (1.11.71)
 - IPAddressRange (4.2.0)
 - Nager.PublicSuffix (2.2.2)
 - Newtonsoft.Json (13.0.3)

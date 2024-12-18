@@ -47,7 +47,7 @@
             this.ch_NetworkShares = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ch_DNSName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ch_HTTPContentType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ch_HTTPContentLenght = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ch_HTTPContentLength = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ch_HTTPExpires = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ch_HTTPETag = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList_ListViewIcons_20pix = new System.Windows.Forms.ImageList(this.components);
@@ -205,7 +205,7 @@
             this.ch_NetworkShares,
             this.ch_DNSName,
             this.ch_HTTPContentType,
-            this.ch_HTTPContentLenght,
+            this.ch_HTTPContentLength,
             this.ch_HTTPExpires,
             this.ch_HTTPETag});
             this.lv_Endpoints.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -304,9 +304,9 @@
             // 
             this.ch_HTTPContentType.Text = "HTTP Content Type";
             // 
-            // ch_HTTPContentLenght
+            // ch_HTTPContentLength
             // 
-            this.ch_HTTPContentLenght.Text = "HTTP Content Lenght";
+            this.ch_HTTPContentLength.Text = "HTTP Content Length";
             // 
             // ch_HTTPExpires
             // 
@@ -1874,7 +1874,7 @@
         public System.Windows.Forms.ColumnHeader ch_NetworkShares;
         public System.Windows.Forms.FolderBrowserDialog folderBrowserExportDir;
         public System.Windows.Forms.ColumnHeader ch_DNSName;
-        public System.Windows.Forms.ColumnHeader ch_HTTPContentLenght;
+        public System.Windows.Forms.ColumnHeader ch_HTTPContentLength;
         public System.Windows.Forms.Button btn_BrowseExportDir;
         public System.Windows.Forms.ColumnHeader ch_HTTPContentType;
         public System.Windows.Forms.NumericUpDown num_PingTimeout;
