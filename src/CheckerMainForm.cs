@@ -2761,6 +2761,7 @@ namespace EndpointChecker
             lbl_CheckAllAvailable.Enabled = enabled;
             lbl_CheckAllErrors.Enabled = enabled;
             groupBox_EndpointSelection.Enabled = enabled;
+            groupBox_Actions.Enabled = enabled;
         }
 
         public void cb_ValidateSSLCertificate_CheckedChanged(object sender, EventArgs e)
@@ -5532,6 +5533,9 @@ namespace EndpointChecker
 
         public void mainMenu_UpdateCheck_Click(object sender, EventArgs e)
         {
+            mainMenu_UpdateCheck.Enabled = false;
+            tray_CheckForUpdate.Enabled = false;
+
             NewBackgroundThread(() =>
             {
                 CheckForUpdate();
@@ -5540,8 +5544,6 @@ namespace EndpointChecker
                 {
                     if (app_AutoUpdateNow)
                     {
-                        tray_CheckForUpdate.Visible = false;
-
                         Close();
                     }
                     else if (!app_UpdateAvailable)
@@ -5561,52 +5563,19 @@ namespace EndpointChecker
                             "Check for Update",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
-                        }                        
+                        }
+
+                        mainMenu_UpdateCheck.Enabled = true;
+                        tray_CheckForUpdate.Enabled = true;
                     }
                 });
             });
         }
 
-        public void mainMenu_SoftPedia_Click(object sender, EventArgs e)
-        {
-            BrowseEndpoint(
-               "https://www.softpedia.com/get/PORTABLE-SOFTWARE/Network/Endpoint-Status-Checker.shtml",
-               null,
-               null,
-               null);
-        }
-
-        public void mainMenu_ITNetwork_Click(object sender, EventArgs e)
-        {
-            BrowseEndpoint(
-                "https://www.itnetwork.cz/csharp/winforms/csharp-windows-forms-zdrojove-kody/endpoint-status-checker",
-                null,
-                null,
-                null);
-        }
-
-        public void mainMenu_GitHub_Click(object sender, EventArgs e)
-        {
-            BrowseEndpoint(
-                "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/",
-                null,
-                null,
-                null);
-        }
-
-        public void mainMenu_GitLab_Click(object sender, EventArgs e)
-        {
-            BrowseEndpoint(
-                "https://gitlab.com/ThePhOeNiX810815/Endpoint-Status-Checker/",
-                null,
-                null,
-                null);
-        }
-
         public void mainMenu_HomePage_Click(object sender, EventArgs e)
         {
             BrowseEndpoint(
-               "https://endpoint-status-checker.webnode.com",
+               "https://endpoint-status-checker.webnode.page",
                null,
                null,
                null);

@@ -152,10 +152,6 @@
             this.mainMenu_ConfigFile = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu_EndpointsList = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu_HomePage = new System.Windows.Forms.ToolStripMenuItem();
-            this.mainMenu_SoftPedia = new System.Windows.Forms.ToolStripMenuItem();
-            this.mainMenu_ITNetwork = new System.Windows.Forms.ToolStripMenuItem();
-            this.mainMenu_GitHub = new System.Windows.Forms.ToolStripMenuItem();
-            this.mainMenu_GitLab = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu_FeatureRequest = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu_Exit = new System.Windows.Forms.ToolStripMenuItem();
             this.lbl_LoadList = new System.Windows.Forms.Label();
@@ -1572,28 +1568,24 @@
             // 
             // MainMenuStrip
             // 
-            this.MainMenuStrip.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.MainMenuStrip.AutoSize = false;
             this.MainMenuStrip.BackColor = System.Drawing.Color.Silver;
             this.MainMenuStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.MainMenuStrip.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MainMenuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.MainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mainMenu_UpdateCheck,
-            this.mainMenu_SpeedTest,
             this.mainMenu_ConfigFile,
             this.mainMenu_EndpointsList,
+            this.mainMenu_SpeedTest,
+            this.mainMenu_UpdateCheck,
             this.mainMenu_HomePage,
-            this.mainMenu_SoftPedia,
-            this.mainMenu_ITNetwork,
-            this.mainMenu_GitHub,
-            this.mainMenu_GitLab,
             this.mainMenu_FeatureRequest,
             this.mainMenu_Exit});
-            this.MainMenuStrip.Location = new System.Drawing.Point(21, 7);
+            this.MainMenuStrip.Location = new System.Drawing.Point(4, 5);
             this.MainMenuStrip.Name = "MainMenuStrip";
             this.MainMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.MainMenuStrip.ShowItemToolTips = true;
-            this.MainMenuStrip.Size = new System.Drawing.Size(1103, 32);
+            this.MainMenuStrip.Size = new System.Drawing.Size(1120, 32);
             this.MainMenuStrip.TabIndex = 73;
             this.MainMenuStrip.Text = "Main Menu Strip";
             // 
@@ -1646,48 +1638,6 @@
             this.mainMenu_HomePage.Text = "Home Page";
             this.mainMenu_HomePage.ToolTipText = "Open application home web page on WebNode.";
             this.mainMenu_HomePage.Click += new System.EventHandler(this.mainMenu_HomePage_Click);
-            // 
-            // mainMenu_SoftPedia
-            // 
-            this.mainMenu_SoftPedia.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_SoftPedia.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_SoftPedia.Image")));
-            this.mainMenu_SoftPedia.Name = "mainMenu_SoftPedia";
-            this.mainMenu_SoftPedia.Size = new System.Drawing.Size(93, 28);
-            this.mainMenu_SoftPedia.Text = "SoftPedia";
-            this.mainMenu_SoftPedia.ToolTipText = "Open project page on SoftPedia portal.";
-            this.mainMenu_SoftPedia.Click += new System.EventHandler(this.mainMenu_SoftPedia_Click);
-            // 
-            // mainMenu_ITNetwork
-            // 
-            this.mainMenu_ITNetwork.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_ITNetwork.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_ITNetwork.Image")));
-            this.mainMenu_ITNetwork.Name = "mainMenu_ITNetwork";
-            this.mainMenu_ITNetwork.Size = new System.Drawing.Size(100, 28);
-            this.mainMenu_ITNetwork.Text = "IT Network";
-            this.mainMenu_ITNetwork.ToolTipText = "Open project page on IT Network CZ portal.";
-            this.mainMenu_ITNetwork.Click += new System.EventHandler(this.mainMenu_ITNetwork_Click);
-            // 
-            // mainMenu_GitHub
-            // 
-            this.mainMenu_GitHub.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_GitHub.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_GitHub.Image")));
-            this.mainMenu_GitHub.Name = "mainMenu_GitHub";
-            this.mainMenu_GitHub.Size = new System.Drawing.Size(81, 28);
-            this.mainMenu_GitHub.Text = "GitHub";
-            this.mainMenu_GitHub.ToolTipText = "Open project repository on GitHub portal. Entire source code and releases are ope" +
-    "n for public.";
-            this.mainMenu_GitHub.Click += new System.EventHandler(this.mainMenu_GitHub_Click);
-            // 
-            // mainMenu_GitLab
-            // 
-            this.mainMenu_GitLab.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainMenu_GitLab.Image = ((System.Drawing.Image)(resources.GetObject("mainMenu_GitLab.Image")));
-            this.mainMenu_GitLab.Name = "mainMenu_GitLab";
-            this.mainMenu_GitLab.Size = new System.Drawing.Size(77, 28);
-            this.mainMenu_GitLab.Text = "GitLab";
-            this.mainMenu_GitLab.ToolTipText = "Open project repository on GitLab portal. Entire source code and releases are ope" +
-    "n for public.";
-            this.mainMenu_GitLab.Click += new System.EventHandler(this.mainMenu_GitLab_Click);
             // 
             // mainMenu_FeatureRequest
             // 
@@ -1963,10 +1913,6 @@
         public System.Windows.Forms.ToolStripMenuItem mainMenu_ConfigFile;
         public System.Windows.Forms.ToolStripMenuItem mainMenu_EndpointsList;
         public System.Windows.Forms.ToolStripMenuItem mainMenu_HomePage;
-        public System.Windows.Forms.ToolStripMenuItem mainMenu_SoftPedia;
-        public System.Windows.Forms.ToolStripMenuItem mainMenu_ITNetwork;
-        public System.Windows.Forms.ToolStripMenuItem mainMenu_GitHub;
-        public System.Windows.Forms.ToolStripMenuItem mainMenu_GitLab;
         public System.Windows.Forms.ToolStripMenuItem mainMenu_FeatureRequest;
         public System.Windows.Forms.ToolStripMenuItem mainMenu_Exit;
         public System.Windows.Forms.Label lbl_LoadList;

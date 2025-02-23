@@ -69,8 +69,8 @@
     <Reference Include="Flurl, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Flurl.3.0.0-pre4\lib\net40\Flurl.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.11.71.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>packages\HtmlAgilityPack.1.11.71\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.11.72.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>packages\HtmlAgilityPack.1.11.72\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="IPAddressRange, Version=4.2.0.0, Culture=neutral, PublicKeyToken=578e3c3d17e7c751, processorArchitecture=MSIL">
       <HintPath>packages\IPAddressRange.4.2.0\lib\net45\IPAddressRange.dll</HintPath>
@@ -377,7 +377,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF EXIST "$(ProjectDir)..\ExecutableSelfSign\SelfSignUtils\bin\Debug\signtool.exe" IF EXIST "$(ProjectDir)..\ExecutableSelfSign\Certificates [to 01-01-2025]\Peter Machaj.pfx" "$(ProjectDir)..\ExecutableSelfSign\SelfSignUtils\bin\Debug\signtool.exe" sign /f "$(ProjectDir)..\ExecutableSelfSign\Certificates [to 01-01-2025]\Peter Machaj.pfx" "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent>IF EXIST "$(ProjectDir)..\ExecutableSelfSign\SelfSignUtils\bin\Debug\signtool.exe" IF EXIST "$(ProjectDir)..\ExecutableSelfSign\Certificates [to 31-12-2025]\Peter Machaj.pfx" "$(ProjectDir)..\ExecutableSelfSign\SelfSignUtils\bin\Debug\signtool.exe" sign /f "$(ProjectDir)..\ExecutableSelfSign\Certificates [to 31-12-2025]\Peter Machaj.pfx" "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

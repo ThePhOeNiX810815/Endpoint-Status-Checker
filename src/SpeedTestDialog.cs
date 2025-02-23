@@ -128,6 +128,9 @@ namespace EndpointChecker
 
                     ThreadSafeInvoke(() =>
                     {
+                        cb_SpeedTest_TestServer.Items.Add(status_NotAvailable);
+                        cb_SpeedTest_TestServer.SelectedIndex = 1;
+
                         btn_SpeedTest_GetServers.Enabled = false;
                     });
 

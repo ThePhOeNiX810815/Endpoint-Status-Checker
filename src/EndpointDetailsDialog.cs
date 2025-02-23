@@ -1083,33 +1083,38 @@ namespace EndpointChecker
                     DomainParser domainParser = new DomainParser(new WebTldRuleProvider());
                     registrableDomainName = domainParser.Parse(registrableDomainName).RegistrableDomain;
 
-                    // FIND WHOIS SERVER
-                    whoISserver_ServerAddress = DomainToWhoisServerList.Default.FindWhoisServer(registrableDomainName);
-
-                    if (!string.IsNullOrEmpty(whoISserver_ServerAddress))
+                    if (registrableDomainName.ToLower().EndsWith(".com") ||
+                        registrableDomainName.ToLower().EndsWith(".net") ||
+                        registrableDomainName.ToLower().EndsWith(".edu"))
                     {
-                        // GET RESPONSE FROM WHOIS SERVER
-                        whoISserver_RAWresponse = WhoisClient.RawQuery(
-                                                                registrableDomainName,
-                                                                whoISserver_ServerAddress,
-                                                                43,
-                                                                Encoding.UTF8)
-                                                                    .TrimStart()
-                                                                    .TrimEnd();
+                        // FIND WHOIS SERVER
+                        whoISserver_ServerAddress = DomainToWhoisServerList.Default.FindWhoisServer(registrableDomainName);
 
-                        if (!string.IsNullOrEmpty(whoISserver_RAWresponse))
+                        if (!string.IsNullOrEmpty(whoISserver_ServerAddress))
                         {
-                            ThreadSafeInvoke(() =>
+                            // GET RESPONSE FROM WHOIS SERVER
+                            whoISserver_RAWresponse = WhoisClient.RawQuery(
+                                                                    registrableDomainName,
+                                                                    whoISserver_ServerAddress,
+                                                                    43,
+                                                                    Encoding.UTF8)
+                                                                        .TrimStart()
+                                                                        .TrimEnd();
+
+                            if (!string.IsNullOrEmpty(whoISserver_RAWresponse))
                             {
-                                tb_WhoIs_RegistrableDomain.Text = registrableDomainName;
-                                tb_WhoIs_Server.Text = whoISserver_ServerAddress;
+                                ThreadSafeInvoke(() =>
+                                {
+                                    tb_WhoIs_RegistrableDomain.Text = registrableDomainName;
+                                    tb_WhoIs_Server.Text = whoISserver_ServerAddress;
 
-                                rtb_WhoIsInfo.Text = whoISserver_RAWresponse;
-                                rtb_WhoIsInfo.Visible = true;
-                                pb_WhoIsProgress.Visible = false;
+                                    rtb_WhoIsInfo.Text = whoISserver_RAWresponse;
+                                    rtb_WhoIsInfo.Visible = true;
+                                    pb_WhoIsProgress.Visible = false;
 
-                                tabControl.TabPages.Add(tabPage_WhoIs);
-                            });
+                                    tabControl.TabPages.Add(tabPage_WhoIs);
+                                });
+                            }
                         }
                     }
                 }

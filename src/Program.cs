@@ -528,7 +528,7 @@ namespace EndpointChecker
 
                 // VALIDATE SIGNING CERT
                 isOriginalSignedExecutable =
-                    app_SigningAUTHCertificate.GetSerialNumberString().Equals("4C0D5A65225EE4A0") &&
+                    app_SigningAUTHCertificate.GetSerialNumberString().Equals("492E6814E26FA7CA") &&
                     app_SigningAUTHCertificate.Issuer.Equals("CN=Peter Machaj Root CA") &&
                     app_SigningAUTHCertificate.Subject.Equals("CN=Peter Machaj");
             }
