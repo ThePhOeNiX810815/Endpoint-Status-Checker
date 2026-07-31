@@ -37,6 +37,8 @@
             this.tb_OptionalComment = new System.Windows.Forms.TextBox();
             this.lbl_OptionalComment = new System.Windows.Forms.Label();
             this.btn_Send = new System.Windows.Forms.Button();
+            this.btn_DontSend = new System.Windows.Forms.Button();
+            this.lbl_ExceptionMessage = new System.Windows.Forms.Label();
             this.cb_SystemInfo = new System.Windows.Forms.CheckBox();
             this.cb_AdditionalLogs = new System.Windows.Forms.CheckBox();
             this.cb_AttachScreenshot = new System.Windows.Forms.CheckBox();
@@ -118,19 +120,46 @@
             this.lbl_OptionalComment.TabIndex = 5;
             this.lbl_OptionalComment.Text = "Additional Comment (optional)";
             this.lbl_OptionalComment.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
+            // lbl_ExceptionMessage
+            //
+            this.lbl_ExceptionMessage.AutoEllipsis = true;
+            this.lbl_ExceptionMessage.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_ExceptionMessage.ForeColor = System.Drawing.Color.DarkRed;
+            this.lbl_ExceptionMessage.Location = new System.Drawing.Point(11, 168);
+            this.lbl_ExceptionMessage.Name = "lbl_ExceptionMessage";
+            this.lbl_ExceptionMessage.Size = new System.Drawing.Size(422, 22);
+            this.lbl_ExceptionMessage.TabIndex = 11;
+            this.lbl_ExceptionMessage.Text = string.Empty;
+            this.lbl_ExceptionMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            //
             // btn_Send
-            // 
+            //
             this.btn_Send.BackColor = System.Drawing.Color.DarkGray;
             this.btn_Send.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_Send.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Send.Location = new System.Drawing.Point(141, 482);
+            this.btn_Send.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_Send.Location = new System.Drawing.Point(12, 482);
             this.btn_Send.Name = "btn_Send";
-            this.btn_Send.Size = new System.Drawing.Size(160, 36);
+            this.btn_Send.Size = new System.Drawing.Size(204, 36);
             this.btn_Send.TabIndex = 7;
             this.btn_Send.Text = "Send Error Report";
             this.btn_Send.UseVisualStyleBackColor = false;
             this.btn_Send.Click += new System.EventHandler(this.btn_Send_Click);
+            //
+            // btn_DontSend
+            //
+            this.btn_DontSend.BackColor = System.Drawing.Color.FromArgb(80, 20, 20);
+            this.btn_DontSend.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btn_DontSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_DontSend.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_DontSend.ForeColor = System.Drawing.Color.White;
+            this.btn_DontSend.Location = new System.Drawing.Point(224, 482);
+            this.btn_DontSend.Name = "btn_DontSend";
+            this.btn_DontSend.Size = new System.Drawing.Size(207, 36);
+            this.btn_DontSend.TabIndex = 12;
+            this.btn_DontSend.Text = "Don't Send / Close";
+            this.btn_DontSend.UseVisualStyleBackColor = false;
+            this.btn_DontSend.Click += new System.EventHandler(this.btn_DontSend_Click);
             // 
             // cb_SystemInfo
             // 
@@ -177,7 +206,9 @@
             this.Controls.Add(this.cb_AttachScreenshot);
             this.Controls.Add(this.cb_AdditionalLogs);
             this.Controls.Add(this.cb_SystemInfo);
+            this.Controls.Add(this.btn_DontSend);
             this.Controls.Add(this.btn_Send);
+            this.Controls.Add(this.lbl_ExceptionMessage);
             this.Controls.Add(this.tb_OptionalComment);
             this.Controls.Add(this.lbl_OptionalComment);
             this.Controls.Add(this.tb_UserEMailAddress);
@@ -211,6 +242,8 @@
         public System.Windows.Forms.TextBox tb_OptionalComment;
         public System.Windows.Forms.Label lbl_OptionalComment;
         public System.Windows.Forms.Button btn_Send;
+        public System.Windows.Forms.Button btn_DontSend;
+        public System.Windows.Forms.Label lbl_ExceptionMessage;
         public System.Windows.Forms.PictureBox pb_Status;
         public System.Windows.Forms.CheckBox cb_SystemInfo;
         public System.Windows.Forms.CheckBox cb_AdditionalLogs;

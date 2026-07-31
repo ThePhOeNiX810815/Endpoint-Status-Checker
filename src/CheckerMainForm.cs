@@ -162,6 +162,11 @@ namespace EndpointChecker
             ThreadPool.GetMinThreads(out int minWorker, out int minIOC);
             ThreadPool.SetMinThreads(100, minIOC);
 
+            // Ensure the system proxy uses Windows credentials — required in .NET 5+ where
+            // SocketsHttpHandler backs HttpWebRequest and may not inherit proxy auth automatically.
+            if (WebRequest.DefaultWebProxy != null)
+                WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+
             // MAIN PROCESS PRIORITY
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
@@ -198,6 +203,19 @@ namespace EndpointChecker
 
             // SET CONTROLS TOOLTIPS
             SetControlsTooltips();
+
+            // ADD CLOUDFLARE BYPASS SETTINGS TO MAIN MENU (before Exit item)
+            ToolStripMenuItem mainMenu_CfBypass = new ToolStripMenuItem
+            {
+                Text = "CF BYPASS",
+                ToolTipText = "Configure Cloudflare challenge bypass (Playwright / FlareSolverr)",
+                Image = ResizeImage(Resources.robot, 16, 16)
+            };
+            mainMenu_CfBypass.Click += (s, e) => mainMenu_CfBypass_Click(s, e);
+            MainMenuStrip.Items.Insert(MainMenuStrip.Items.IndexOf(mainMenu_Exit), mainMenu_CfBypass);
+
+            // APPLY PREMIUM VISUAL THEME
+            ApplyPremiumTheme();
 
             // LOAD 'LAST SEEN ONLINE' LIST
             RestoreLastSeenOnlineList();
@@ -461,8 +479,9 @@ namespace EndpointChecker
                 refreshedItem.SubItems[17].Name = "HTTP Expires";
                 refreshedItem.SubItems[18].Name = "HTTP ETag";
 
-                // SET BACKGROUND COLOR BY STATUS CODE
+                // SET BACKGROUND AND TEXT COLOR BY STATUS CODE
                 refreshedItem.BackColor = GetColorByStatus(endpointItem.ResponseCode, endpointItem.PingRoundtripTime, endpointItem.ResponseMessage);
+                refreshedItem.ForeColor = GetForeColorByStatus(endpointItem.ResponseCode, endpointItem.PingRoundtripTime, endpointItem.ResponseMessage);
 
                 // SET CHECKED [ENABLED] STATUS - DEPENDING ON REFRESH METHOD
                 if (refreshMethod == ListViewRefreshMethod.CurrentState)
@@ -585,30 +604,58 @@ namespace EndpointChecker
                 SetProgressStatus(0, 0, "Initializing Endpoints Status refresh ...", Color.DarkOrchid);
 
                 // WORKING VARIABLES
+                // UI control properties are captured on the UI thread via ThreadSafeInvoke
+                // to avoid cross-thread violations under .NET 5+ strict enforcement.
                 ConcurrentBag<EndpointDefinition> updatedEndpointsList = new ConcurrentBag<EndpointDefinition>();
-                bool autoRedirect_Enable = cb_AllowAutoRedirect.Checked;
-                bool validateSSLCertificate = cb_ValidateSSLCertificate.Checked;
-                bool autoAdjustRefreshTimer = cb_RefreshAutoSet.Checked;
-                bool resolveNetworkShares = cb_ResolveNetworkShares.Checked;
-                bool resolvePageMetaInfo = cb_ResolvePageMetaInfo.Checked;
-                bool removeURLParameters = cb_RemoveURLParameters.Checked;
-                bool resolvePageLinks = cb_ResolvePageLinks.Checked;
-                bool saveResponse = cb_SaveResponse.Checked;
-                bool testPing = cb_TestPing.Checked;
-                bool resolveDNSNames = cb_Resolve_DNS_Names.Checked;
-                bool resolveIPAddresses = cb_Resolve_IPAddresses.Checked;
-                bool resolveMACAddresses = cb_Resolve_NIC_MACs.Checked;
-                int threadsCount = (int)num_ParallelThreadsCount.Value;
-                int pingTimeout = (int)num_PingTimeout.Value * 1000;
-                int httpRequestTimeout = (int)num_HTTPRequestTimeout.Value * 1000;
-                int ftpRequestTimeout = (int)num_FTPRequestTimeout.Value * 1000;
+                bool autoRedirect_Enable      = false;
+                bool validateSSLCertificate   = false;
+                bool autoAdjustRefreshTimer   = false;
+                bool resolveNetworkShares     = false;
+                bool resolvePageMetaInfo      = false;
+                bool removeURLParameters      = false;
+                bool resolvePageLinks         = false;
+                bool saveResponse             = false;
+                bool testPing                 = false;
+                bool resolveDNSNames          = false;
+                bool resolveIPAddresses       = false;
+                bool resolveMACAddresses      = false;
+                int  threadsCount             = 1;
+                int  pingTimeout              = 3000;
+                int  httpRequestTimeout       = 30000;
+                int  ftpRequestTimeout        = 30000;
+                ThreadSafeInvoke(() =>
+                {
+                    autoRedirect_Enable    = cb_AllowAutoRedirect.Checked;
+                    validateSSLCertificate = cb_ValidateSSLCertificate.Checked;
+                    autoAdjustRefreshTimer = cb_RefreshAutoSet.Checked;
+                    resolveNetworkShares   = cb_ResolveNetworkShares.Checked;
+                    resolvePageMetaInfo    = cb_ResolvePageMetaInfo.Checked;
+                    removeURLParameters    = cb_RemoveURLParameters.Checked;
+                    resolvePageLinks       = cb_ResolvePageLinks.Checked;
+                    saveResponse           = cb_SaveResponse.Checked;
+                    testPing               = cb_TestPing.Checked;
+                    resolveDNSNames        = cb_Resolve_DNS_Names.Checked;
+                    resolveIPAddresses     = cb_Resolve_IPAddresses.Checked;
+                    resolveMACAddresses    = cb_Resolve_NIC_MACs.Checked;
+                    threadsCount           = (int)num_ParallelThreadsCount.Value;
+                    pingTimeout            = (int)num_PingTimeout.Value * 1000;
+                    httpRequestTimeout     = (int)num_HTTPRequestTimeout.Value * 1000;
+                    ftpRequestTimeout      = (int)num_FTPRequestTimeout.Value * 1000;
+                });
 
                 int endpointsCount_Current = 0;
+
+                // TextBox.Text calls GetWindowText (Win32) and throws
+                // InvalidOperationException from non-UI threads in .NET 5+.
+                // Capture the filter value on the UI thread before going parallel.
+                string listFilter = string.Empty;
+                ThreadSafeInvoke(() => listFilter = tb_ListFilter.Text.ToLower());
+
                 int endpointsCount_Enabled =
                     endpointsList.Where(
                         eItem =>
                                  !endpointsList_Disabled.Contains(eItem.Name) &&
-                                 eItem.Name.ToLower().Contains(tb_ListFilter.Text.ToLower())).Count();
+                                 eItem.Name.ToLower().Contains(listFilter)).Count();
 
                 // FLUSH LOCAL DNS CACHE
                 DnsFlushResolverCache();
@@ -639,7 +686,7 @@ namespace EndpointChecker
                     new ParallelOptions { MaxDegreeOfParallelism = threadsCount },
                     endpointItem =>
                     {
-                        if (!endpointItem.Name.ToLower().Contains(tb_ListFilter.Text.ToLower()))
+                        if (!endpointItem.Name.ToLower().Contains(listFilter))
                         {
                             // ADD CURRENT STATUS DEFINITION TO LIST
                             // [NOT VISIBLE ON THE LIST, IS FILTERED OUT]
@@ -647,6 +694,8 @@ namespace EndpointChecker
                         }
                         else
                         {
+                            try
+                            {
                             // RESCAN ENDPOINT STATUS
                             Uri endpointURI = new Uri(endpointItem.Address);
                             Uri responseURI = new Uri(endpointItem.ResponseAddress);
@@ -826,7 +875,8 @@ namespace EndpointChecker
                                             if (autoRedirect_Enable)
                                             {
                                                 FieldInfo fieldInfo = httpWebRequest.GetType().GetField("_AutoRedirects", BindingFlags.NonPublic | BindingFlags.Instance);
-                                                int httpAutoRedirects = (int)fieldInfo.GetValue(httpWebRequest);
+                                                // _AutoRedirects was removed in .NET 10; guard against null fieldInfo
+                                                int httpAutoRedirects = fieldInfo != null ? (int)fieldInfo.GetValue(httpWebRequest) : 0;
                                                 endpoint.HTTPautoRedirects = httpAutoRedirects.ToString();
 
                                                 // CHECK AUTO REDIRECT URL [COMPARE REQUEST AND RESPONSE ENDPOINT URIs]
@@ -950,6 +1000,8 @@ namespace EndpointChecker
 
                                             if (httpWebResponse != null)
                                             {
+                                            try
+                                            {
                                                 // RESPONSE CODE
                                                 endpoint.ResponseCode = ((int)httpWebResponse.StatusCode).ToString();
 
@@ -982,6 +1034,60 @@ namespace EndpointChecker
 
                                                 // GET SSL INFO
                                                 GetSSLCertificateInfo(httpWebRequest, endpoint);
+
+                                                // CLOUDFLARE BOT-PROTECTION DETECTION
+                                                // CF-RAY header is present on all Cloudflare-proxied responses.
+                                                // A 403/429/503 with CF headers means the endpoint exists but is
+                                                // behind a security challenge that cannot be solved automatically.
+                                                if (IsCloudflareProtected(httpWebResponse))
+                                                {
+                                                    string cfRay = httpWebResponse.Headers["CF-RAY"];
+                                                    endpoint.ResponseMessage +=
+                                                        " [Cloudflare Bot Protection" +
+                                                        (!string.IsNullOrEmpty(cfRay) ? " | CF-RAY: " + cfRay : string.Empty) +
+                                                        "]";
+
+                                                    // ATTEMPT BYPASS VIA CONFIGURED METHOD
+                                                    CloudflareBypassMethod cfBypassMethod =
+                                                        (CloudflareBypassMethod)Settings.Default.Config_CloudflareBypass_Method;
+                                                    if (cfBypassMethod != CloudflareBypassMethod.Disabled)
+                                                    {
+                                                        try
+                                                        {
+                                                            CloudflareBypassResult cfBypassResult =
+                                                                CloudflareBypassChecker.Check(
+                                                                    endpoint.ResponseAddress ?? endpoint.Address,
+                                                                    cfBypassMethod,
+                                                                    Settings.Default.Config_FlareSolverr_URL);
+                                                            if (cfBypassResult != null && cfBypassResult.Success)
+                                                            {
+                                                                endpoint.ResponseCode = cfBypassResult.StatusCode.ToString();
+                                                                endpoint.ResponseMessage = cfBypassResult.StatusMessage;
+                                                            }
+                                                            else if (cfBypassResult != null)
+                                                            {
+                                                                endpoint.ResponseMessage +=
+                                                                    " | Bypass(" + cfBypassResult.MethodUsed + "): " +
+                                                                    cfBypassResult.StatusMessage;
+                                                            }
+                                                        }
+                                                        catch (Exception bypassEx)
+                                                        {
+                                                            endpoint.ResponseMessage += " | Bypass error: " + bypassEx.Message;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            catch (Exception responseEx)
+                                            {
+                                                // Any unexpected exception inside the WebException handler
+                                                // (e.g. reflection, SSL cert reading) marks the endpoint as error
+                                                // instead of crashing the whole scan.
+                                                endpoint.ResponseCode = status_Error;
+                                                endpoint.ResponseMessage =
+                                                    responseEx.GetType().Name.Replace("Exception", string.Empty) +
+                                                    " -> " + responseEx.Message;
+                                            }
                                             }
                                             else
                                             {
@@ -992,12 +1098,16 @@ namespace EndpointChecker
                                                 endpoint.ResponseMessage = webException.Status.ToString();
                                                 endpoint.ResponseMessage += " -> " + webException.Message;
 
-                                                // INNER EXCEPTION MESSAGE
-                                                if (webException.InnerException != null &&
-                                                    !string.IsNullOrEmpty(webException.InnerException.Message) &&
-                                                    !endpoint.ResponseMessage.Contains(webException.InnerException.Message))
+                                                // Walk the full inner exception chain to expose the root cause.
+                                                // In .NET 10, WebException wraps HttpRequestException wraps
+                                                // AuthenticationException/IOException — one level isn't enough.
+                                                Exception innerEx = webException.InnerException;
+                                                while (innerEx != null)
                                                 {
-                                                    endpoint.ResponseMessage += " -> " + webException.InnerException.Message;
+                                                    if (!string.IsNullOrEmpty(innerEx.Message) &&
+                                                        !endpoint.ResponseMessage.Contains(innerEx.Message))
+                                                        endpoint.ResponseMessage += " -> " + innerEx.Message;
+                                                    innerEx = innerEx.InnerException;
                                                 }
                                             }
                                         }
@@ -1305,6 +1415,50 @@ namespace EndpointChecker
 
                             // ADD UPDATED STATUS DEFINITION TO LIST
                             updatedEndpointsList.Add(endpoint);
+                            }
+                            catch (Exception lambdaEx)
+                            {
+                                // Top-level safety net: no exception should escape the lambda and
+                                // crash the whole scan — mark this endpoint as error and continue.
+                                try
+                                {
+                                    updatedEndpointsList.Add(new EndpointDefinition
+                                    {
+                                        Name             = endpointItem.Name,
+                                        Address          = endpointItem.Address,
+                                        ResponseAddress  = endpointItem.ResponseAddress ?? endpointItem.Address,
+                                        Protocol         = endpointItem.Protocol ?? status_NotAvailable,
+                                        Port             = endpointItem.Port ?? status_NotAvailable,
+                                        ResponseCode     = status_Error,
+                                        ResponseMessage  = lambdaEx.GetType().Name + " -> " + lambdaEx.Message,
+                                        ResponseTime     = status_NotAvailable,
+                                        LastSeenOnline   = endpointItem.LastSeenOnline ?? status_NotAvailable,
+                                        PingRoundtripTime= status_NotAvailable,
+                                        ServerID         = status_NotAvailable,
+                                        LoginName        = endpointItem.LoginName ?? status_NotAvailable,
+                                        LoginPass        = endpointItem.LoginPass ?? status_NotAvailable,
+                                        IPAddress        = endpointItem.IPAddress ?? new string[] { status_NotAvailable },
+                                        DNSName          = endpointItem.DNSName ?? new string[] { status_NotAvailable },
+                                        NetworkShare     = endpointItem.NetworkShare ?? new string[] { status_NotAvailable },
+                                        MACAddress       = endpointItem.MACAddress ?? new string[] { status_NotAvailable },
+                                        HTMLMetaInfo     = new PropertyItems { PropertyItem = new List<Property>() },
+                                        HTMLPageLinks    = new PropertyItems { PropertyItem = new List<Property>() },
+                                        HTTPRequestHeaders  = new PropertyItems { PropertyItem = new List<Property>() },
+                                        HTTPResponseHeaders = new PropertyItems { PropertyItem = new List<Property>() },
+                                        SSLCertificateProperties = new PropertyItems { PropertyItem = new List<Property>() },
+                                        HTTPautoRedirects = status_NotAvailable,
+                                        HTTPcontentType   = status_NotAvailable,
+                                        HTTPcontentLength = status_NotAvailable,
+                                        HTTPexpires       = status_NotAvailable,
+                                        HTTPetag          = status_NotAvailable,
+                                        FTPBannerMessage  = status_NotAvailable,
+                                        FTPWelcomeMessage = status_NotAvailable,
+                                        FTPExitMessage    = status_NotAvailable,
+                                        FTPStatusDescription = status_NotAvailable
+                                    });
+                                }
+                                catch { /* if even the fallback fails, skip this endpoint */ }
+                            }
                         }
                     });
 
@@ -1445,7 +1599,7 @@ namespace EndpointChecker
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(endpointURI.AbsoluteUri);
             httpWebRequest.Method = httpWebRequest_Method;
             httpWebRequest.UserAgent = http_UserAgent;
-            httpWebRequest.Accept = @"*/*";
+            httpWebRequest.Accept = @"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7";
             httpWebRequest.Timeout = httpRequestTimeout;
             httpWebRequest.ReadWriteTimeout = httpRequestTimeout;
             httpWebRequest.AllowAutoRedirect = allowAutoRedirect;
@@ -1457,21 +1611,22 @@ namespace EndpointChecker
             httpWebRequest.MaximumAutomaticRedirections = 100;
 
             // CUSTOM HEADERS
+            // Note: "accept-encoding" is intentionally omitted — AutomaticDecompression
+            // manages that header automatically; manually setting it alongside
+            // AutomaticDecompression throws InvalidOperationException on .NET 5+.
+            // HTTP/2 pseudo-headers (:authority/:path/:scheme) are also omitted —
+            // they are not valid HTTP/1.1 headers and HttpWebRequest rejects them on .NET 10.
             WebHeaderCollection requestHeadersCollection = new WebHeaderCollection
             {
-                { "accept-encoding", @"gzip, deflate, br" },
                 { "accept-language", @"*;*" },
                 { "cache-control", "max-age=0" },
                 { "dnt", "1" },
-                { "authority", endpointURI.Authority },
-                { "path", endpointURI.AbsolutePath },
-                { "scheme", endpointURI.Scheme },
                 { "upgrade-insecure-requests", "1" },
 
                 { "Sec-Fetch-User", "?1" },
-                { "Sec-Fetch-Site", "same-origin" },
-                { "Sec-Fetch-Node", "navigate" },
-                { "Sec-Fetch-Dest", "empty" },
+                { "Sec-Fetch-Site", "none" },
+                { "Sec-Fetch-Mode", "navigate" },
+                { "Sec-Fetch-Dest", "document" },
                 { "Sec-CH-UA-Mobile", "?0" },
                 { "Sec-CH-UA-Platform", "\"Windows\"" }
 
@@ -1498,6 +1653,21 @@ namespace EndpointChecker
             GetHTTPWebHeaders(endpoint.HTTPRequestHeaders.PropertyItem, httpWebRequest.Headers);
 
             return httpWebRequest;
+        }
+
+        // CF-RAY is injected by Cloudflare's edge on every proxied response, including
+        // bot-challenge pages.  Its presence + a non-2xx status means the origin is
+        // reachable but Cloudflare's security layer is blocking automated access —
+        // the endpoint is NOT truly down.
+        private static bool IsCloudflareProtected(HttpWebResponse response)
+        {
+            if (response == null) return false;
+
+            bool hasCfRay = !string.IsNullOrEmpty(response.Headers["CF-RAY"]);
+            bool hasCfServer = !string.IsNullOrEmpty(response.Server) &&
+                               response.Server.IndexOf("cloudflare", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            return hasCfRay || hasCfServer;
         }
 
         public void GetHTTPWebHeaders(
@@ -2185,19 +2355,24 @@ namespace EndpointChecker
                 if (Visible &&
                     Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.IsPlatformSupported)
                 {
-                    Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager taskBarInstance = Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance;
+                    // TaskbarManager uses STA COM; guard against failures on MTA thread-pool threads
+                    try
+                    {
+                        Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager taskBarInstance = Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance;
 
-                    if (BW_GetStatus.CancellationPending ||
-                        onClose)
-                    {
-                        taskBarInstance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.Paused);
-                        taskBarInstance.SetProgressValue(100, 100);
+                        if (BW_GetStatus.CancellationPending ||
+                            onClose)
+                        {
+                            taskBarInstance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.Paused);
+                            taskBarInstance.SetProgressValue(100, 100);
+                        }
+                        else
+                        {
+                            taskBarInstance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.Normal);
+                            taskBarInstance.SetProgressValue(endpointsCount_Current, endpointsCount_Enabled);
+                        }
                     }
-                    else
-                    {
-                        taskBarInstance.SetProgressState(Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState.Normal);
-                        taskBarInstance.SetProgressValue(endpointsCount_Current, endpointsCount_Enabled);
-                    }
+                    catch { }
                 }
             }
 
@@ -2632,13 +2807,20 @@ namespace EndpointChecker
 
         public void SetTrayTooltipText(string text)
         {
-            Type t = typeof(NotifyIcon);
-            BindingFlags hidden = BindingFlags.NonPublic | BindingFlags.Instance;
-            t.GetField("text", hidden).SetValue(trayIcon, Text + Environment.NewLine + text);
-            if ((bool)t.GetField("added", hidden).GetValue(trayIcon))
+            try
             {
-                t.GetMethod("UpdateIcon", hidden).Invoke(trayIcon, new object[] { true });
+                Type t = typeof(NotifyIcon);
+                BindingFlags hidden = BindingFlags.NonPublic | BindingFlags.Instance;
+                // .NET 5+ renamed "text"→"_text" and "added"→"_added"; try new name first
+                FieldInfo textField  = t.GetField("_text",  hidden) ?? t.GetField("text",  hidden);
+                FieldInfo addedField = t.GetField("_added", hidden) ?? t.GetField("added", hidden);
+                MethodInfo updateMethod = t.GetMethod("UpdateIcon", hidden);
+                if (textField != null)
+                    textField.SetValue(trayIcon, Text + Environment.NewLine + text);
+                if (addedField != null && updateMethod != null && (bool)addedField.GetValue(trayIcon))
+                    updateMethod.Invoke(trayIcon, new object[] { true });
             }
+            catch { }
         }
 
         public void ShowTrayBalloonTip(List<string> itemsList, string title, ToolTipIcon icon, int timeout)
@@ -3094,7 +3276,7 @@ namespace EndpointChecker
                         endpointsStatusExport_HTTP_WorkSheet.RangeUsed().SetAutoFilter();
                         endpointsStatusExport_HTTP_WorkSheet.Rows().AdjustToContents();
                         endpointsStatusExport_HTTP_WorkSheet.Columns().AdjustToContents(10, (double)70);
-                        endpointsStatusExport_HTTP_WorkSheet.CellsUsed().SetDataType(XLDataType.Text);
+                        endpointsStatusExport_HTTP_WorkSheet.CellsUsed().Style.NumberFormat.Format = "@";
                         endpointsStatusExport_HTTP_WorkSheet.Row(1).CellsUsed().Style.Fill.BackgroundColor = XLColor.CoolGrey;
                         endpointsStatusExport_HTTP_WorkSheet.CellsUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
@@ -3107,7 +3289,7 @@ namespace EndpointChecker
                         endpointsStatusExport_FTP_WorkSheet.RangeUsed().SetAutoFilter();
                         endpointsStatusExport_FTP_WorkSheet.Rows().AdjustToContents();
                         endpointsStatusExport_FTP_WorkSheet.Columns().AdjustToContents(10, (double)70);
-                        endpointsStatusExport_FTP_WorkSheet.CellsUsed().SetDataType(XLDataType.Text);
+                        endpointsStatusExport_FTP_WorkSheet.CellsUsed().Style.NumberFormat.Format = "@";
                         endpointsStatusExport_FTP_WorkSheet.Row(1).CellsUsed().Style.Fill.BackgroundColor = XLColor.CoolGrey;
                         endpointsStatusExport_FTP_WorkSheet.CellsUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
@@ -3441,58 +3623,61 @@ namespace EndpointChecker
             if (statusCode == status_NotAvailable)
             {
                 if (statusMessage == GetEnumDescriptionString(EndpointStatus.TERMINATED))
-                {
-                    // TERMINATED
-                    return Color.LightSkyBlue;
-                }
-                else if (statusMessage == GetEnumDescriptionString(EndpointStatus.NOTCHECKED) ||
-                         statusMessage == GetEnumDescriptionString(EndpointStatus.DISABLED))
-                {
-                    // DISABLED / NOT CHECKED
-                    return Color.Gray;
-                }
+                    return Color.FromArgb(10, 40, 84);    // dark steel blue
+                if (statusMessage == GetEnumDescriptionString(EndpointStatus.NOTCHECKED) ||
+                    statusMessage == GetEnumDescriptionString(EndpointStatus.DISABLED))
+                    return Color.FromArgb(38, 42, 62);    // dark slate (disabled)
             }
 
             if (validationMethod == ValidationMethod.Protocol)
             {
                 if (statusMessage == GetEnumDescriptionString(EndpointStatus.PINGCHECK))
-                {
-                    // NOT CHECKED
-                    return Color.LightGray;
-                }
-                else if (statusCode == status_Error)
-                {
-                    // ERROR
-                    return Color.Crimson;
-                }
-                else if (statusCode[0].ToString() == "2")
-                {
-                    // SUCCESS
-                    return Color.PaleGreen;
-                }
-                else if (statusCode[0].ToString() == "4")
-                {
-                    // PROTOCOL ERROR
-                    return Color.HotPink;
-                }
-                else
-                {
-                    // WARNING
-                    return Color.SandyBrown;
-                }
+                    return Color.FromArgb(34, 38, 58);    // near-surface (not checked)
+                if (statusCode == status_Error)
+                    return Color.FromArgb(90, 14, 14);    // dark crimson
+                if (statusCode[0].ToString() == "2")
+                    return Color.FromArgb(20, 61, 30);    // dark forest green
+                if (statusCode[0].ToString() == "4")
+                    return Color.FromArgb(71, 16, 58);    // dark magenta (4xx / CF-blocked)
+                return Color.FromArgb(74, 48, 8);         // dark amber (3xx / other)
             }
             else
             {
                 if (pingTime == status_NotAvailable)
-                {
-                    // ERROR
-                    return Color.Crimson;
-                }
-                else
-                {
-                    // SUCCESS
-                    return Color.PaleGreen;
-                }
+                    return Color.FromArgb(90, 14, 14);    // dark crimson
+                return Color.FromArgb(20, 61, 30);        // dark forest green
+            }
+        }
+
+        public Color GetForeColorByStatus(string statusCode, string pingTime, string statusMessage)
+        {
+            Color muted  = Color.FromArgb( 90, 105, 140);  // dimmed — for disabled/not-checked
+            Color bright = Color.FromArgb(220, 235, 255);  // off-white — default readable text
+
+            if (statusCode == status_NotAvailable)
+            {
+                if (statusMessage == GetEnumDescriptionString(EndpointStatus.TERMINATED))
+                    return Color.FromArgb(102, 204, 255);  // bright cyan
+                return muted;
+            }
+
+            if (validationMethod == ValidationMethod.Protocol)
+            {
+                if (statusMessage == GetEnumDescriptionString(EndpointStatus.PINGCHECK))
+                    return muted;
+                if (statusCode == status_Error)
+                    return Color.FromArgb(255, 130, 130);  // bright red
+                if (statusCode[0].ToString() == "2")
+                    return Color.FromArgb(130, 255, 160);  // bright green
+                if (statusCode[0].ToString() == "4")
+                    return Color.FromArgb(255, 160, 230);  // bright pink
+                return Color.FromArgb(255, 210, 100);      // bright amber
+            }
+            else
+            {
+                if (pingTime == status_NotAvailable)
+                    return Color.FromArgb(255, 130, 130);  // bright red
+                return Color.FromArgb(130, 255, 160);      // bright green
             }
         }
 
@@ -4021,20 +4206,19 @@ namespace EndpointChecker
                                 "Loading Endpoints References [" + lineNumber + "] ...", Color.Blue);
 
                             // CHECK DEFINITION FOR NAME PARAMETER
-                            if (!line.Contains("|"))
-                            {
-                                // CREATE DEFAULT DEFINITION WITH DEFAULT NAME [ENDPOINT URL]
-                                line = line + "|" + line;
-                            }
+                            // Split on the FIRST pipe only so URLs containing '|' are preserved (issue #35)
+                            string[] lineParts = line.Split(new char[] { '|' }, 2);
+                            string lineAddress = lineParts.Length > 1 ? lineParts[1].Trim() : lineParts[0].Trim();
+                            string lineName    = lineParts[0].Trim();
 
                             // CREATE ENDPOINT STATUS DEFINITION
                             EndpointDefinition endpointStatusDefiniton = new EndpointDefinition()
                             {
-                                Name = line.Split('|')[0].Trim(),
+                                Name = lineName,
                                 Protocol = status_NotAvailable,
                                 Port = status_NotAvailable,
-                                Address = line.Split('|')[1].Trim(),
-                                ResponseAddress = line.Split('|')[1].Trim(),
+                                Address = lineAddress,
+                                ResponseAddress = lineAddress,
                                 IPAddress = new string[] { status_NotAvailable },
                                 ResponseTime = status_NotAvailable,
                                 ResponseCode = status_NotAvailable,
@@ -4124,6 +4308,18 @@ namespace EndpointChecker
 
                                 try
                                 {
+                                    // Normalise special characters (e.g. commas, spaces) that are legal in
+                                    // URLs but cause Uri() to throw a UriFormatException (issue #35).
+                                    if (!Uri.IsWellFormedUriString(endpointStatusDefiniton.Address, UriKind.Absolute))
+                                    {
+                                        string escaped = Uri.EscapeUriString(endpointStatusDefiniton.Address);
+                                        if (Uri.IsWellFormedUriString(escaped, UriKind.Absolute))
+                                        {
+                                            endpointStatusDefiniton.Address = escaped;
+                                            endpointStatusDefiniton.ResponseAddress = escaped;
+                                        }
+                                    }
+
                                     // CHECK URL FORMAT [TRY TO CREATE ENDPOINT URI]
                                     Uri endpointURI = new Uri(endpointStatusDefiniton.Address, UriKind.Absolute);
 
@@ -5637,10 +5833,159 @@ namespace EndpointChecker
             }
         }
 
+        public void mainMenu_CfBypass_Click(object sender, EventArgs e)
+        {
+            using (CloudflareBypassSettingsDialog dlg = new CloudflareBypassSettingsDialog())
+            {
+                dlg.ShowDialog(this);
+            }
+        }
+
+        // ── Premium visual theme ──────────────────────────────────────────────────
+
+        private void ApplyPremiumTheme()
+        {
+            // ── Palette ──────────────────────────────────────────────────────────
+            Color bg       = Color.FromArgb( 22,  25,  44);  // deep navy body
+            Color surface  = Color.FromArgb( 30,  34,  58);  // card / GroupBox fill
+            Color input    = Color.FromArgb( 38,  43,  75);  // textbox / spinner
+            Color accent   = Color.FromArgb( 88, 121, 224);  // GroupBox titles
+            Color textMain = Color.FromArgb(200, 212, 240);  // primary text
+            Color textMute = Color.FromArgb( 96, 110, 155);  // secondary / footer
+            Color menuBg   = Color.FromArgb( 12,  14,  30);  // near-black nav bar
+
+            // Form
+            BackColor = bg;
+
+            // Menu strip
+            MainMenuStrip.BackColor = menuBg;
+            MainMenuStrip.ForeColor = textMain;
+            MainMenuStrip.Renderer  = new DarkMenuStripRenderer();
+            foreach (ToolStripItem item in MainMenuStrip.Items)
+            {
+                item.BackColor = menuBg;
+                item.ForeColor = textMain;
+            }
+
+            // Walk every descendant control
+            foreach (Control ctrl in DescendantControls(this))
+            {
+                switch (ctrl)
+                {
+                    case GroupBox gb:
+                        gb.BackColor = surface;
+                        gb.ForeColor = accent;
+                        break;
+
+                    case Label lbl when lbl.Name != "lbl_EndpointsListLoading":
+                        lbl.ForeColor = (lbl == lbl_Copyright || lbl == lbl_Version)
+                            ? textMute
+                            : textMain;
+                        break;
+
+                    case CheckBox cb:
+                        cb.UseVisualStyleBackColor = false;  // must be false or Windows ignores explicit colors
+                        cb.BackColor = surface;
+                        cb.ForeColor = textMain;
+                        break;
+
+                    case TextBox tb:
+                        tb.BackColor = input;
+                        tb.ForeColor = textMain;
+                        tb.BorderStyle = BorderStyle.FixedSingle;
+                        break;
+
+                    case NumericUpDown nud:
+                        nud.BackColor = input;
+                        nud.ForeColor = textMain;
+                        break;
+
+                    case ComboBox cbo:
+                        cbo.BackColor = input;
+                        cbo.ForeColor = textMain;
+                        break;
+
+                    case ListView lv:
+                        lv.BackColor = surface;
+                        lv.ForeColor = textMain;
+                        break;
+
+                    case Button btn when btn.Image == null && btn.BackgroundImage == null:
+                        btn.FlatStyle = FlatStyle.Flat;
+                        btn.BackColor = input;
+                        btn.ForeColor = textMain;
+                        btn.FlatAppearance.BorderColor = accent;
+                        break;
+                }
+            }
+
+            // Explicit overrides for the main list
+            lv_Endpoints.BackColor = surface;
+            lv_Endpoints.ForeColor = textMain;
+
+            // Right-click context menus — DescendantControls() does not reach components,
+            // so they must be styled explicitly.
+            foreach (ContextMenuStrip cms in new[] { lv_Endpoints_ContextMenuStrip, trayContextMenu })
+            {
+                cms.BackColor = menuBg;
+                cms.ForeColor = textMain;
+                cms.Renderer  = new DarkMenuStripRenderer();
+                foreach (ToolStripItem item in cms.Items)
+                {
+                    item.BackColor = menuBg;
+                    item.ForeColor = textMain;
+                }
+            }
+        }
+
+        private static IEnumerable<Control> DescendantControls(Control parent)
+        {
+            foreach (Control c in parent.Controls)
+            {
+                yield return c;
+                foreach (Control child in DescendantControls(c))
+                    yield return child;
+            }
+        }
+
+        private sealed class DarkMenuStripRenderer : ToolStripProfessionalRenderer
+        {
+            public DarkMenuStripRenderer() : base(new DarkMenuColorTable()) { }
+
+            protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+            {
+                Color bg = e.Item.Selected
+                    ? Color.FromArgb(55, 75, 145)
+                    : Color.FromArgb(12, 14, 30);
+                using (SolidBrush brush = new SolidBrush(bg))
+                    e.Graphics.FillRectangle(brush, new Rectangle(Point.Empty, e.Item.Size));
+            }
+        }
+
+        private sealed class DarkMenuColorTable : ProfessionalColorTable
+        {
+            private static readonly Color _dark   = Color.FromArgb(12,  14,  30);
+            private static readonly Color _hover  = Color.FromArgb(55,  75, 145);
+            private static readonly Color _border = Color.FromArgb(65,  90, 170);
+
+            public override Color MenuStripGradientBegin        => _dark;
+            public override Color MenuStripGradientEnd          => _dark;
+            public override Color MenuItemSelectedGradientBegin => _hover;
+            public override Color MenuItemSelectedGradientEnd   => _hover;
+            public override Color MenuItemSelected              => _hover;
+            public override Color MenuItemBorder                => _border;
+            public override Color MenuBorder                    => _border;
+            public override Color ToolStripDropDownBackground   => _dark;
+            public override Color ImageMarginGradientBegin      => _dark;
+            public override Color ImageMarginGradientMiddle     => _dark;
+            public override Color ImageMarginGradientEnd        => _dark;
+            public override Color SeparatorDark                 => _border;
+            public override Color SeparatorLight                => _hover;
+        }
+
         public void btn_LoadList_Click(object sender, EventArgs e)
         {
-            if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
-                System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl))
+            if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
             {
                 SetControls(false, true);
                 lbl_EndpointsListLoading.Visible = true;

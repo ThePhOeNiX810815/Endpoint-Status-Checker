@@ -14,8 +14,6 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Windows.Forms;
 using static EndpointChecker.Program;
 
@@ -51,6 +49,14 @@ namespace EndpointChecker
             _callingMethod = callingMethod;
             _recipientsAddressesList = recipientsAddressesList;
             _attachmentsList = attachmentsList;
+
+            // Show a short exception summary; stack trace in tooltip for debugging
+            if (exception != null)
+            {
+                lbl_ExceptionMessage.Text = exception.GetType().Name + ": " + exception.Message;
+                var tip = new System.Windows.Forms.ToolTip();
+                tip.SetToolTip(lbl_ExceptionMessage, exception.StackTrace ?? "(no stack trace)");
+            }
         }
 
         public void SendNotificationMail(
@@ -105,31 +111,20 @@ namespace EndpointChecker
             string eMailMessageSubject = app_ApplicationName + " Unhandled Exception Report";
             string eMailMessageBody = string.Empty;
 
-            HtmlTable table = new HtmlTable
-            {
-                Border = 3,
-                BorderColor = "#FF0000",
-                BgColor = "#FFC0CB",
-                CellPadding = 5,
-                CellSpacing = 10
-            };
-
             StringBuilder mailMessageString = new StringBuilder();
+            mailMessageString.Append("<table border=\"3\" bordercolor=\"#FF0000\" bgcolor=\"#FFC0CB\" cellpadding=\"5\" cellspacing=\"10\">");
 
             foreach (Property reportItem in reportItems)
             {
-                HtmlTableRow row = new HtmlTableRow();
-                row.Cells.Add(new HtmlTableCell { InnerText = reportItem.ItemName });
-                row.Cells.Add(new HtmlTableCell { InnerText = reportItem.ItemValue });
-                table.Rows.Add(row);
+                mailMessageString.Append("<tr>");
+                mailMessageString.AppendFormat("<td>{0}</td><td>{1}</td>",
+                    WebUtility.HtmlEncode(reportItem.ItemName),
+                    WebUtility.HtmlEncode(reportItem.ItemValue));
+                mailMessageString.Append("</tr>");
             }
 
-            using (StringWriter sw = new StringWriter())
-            {
-                table.RenderControl(new HtmlTextWriter(sw));
-                mailMessageString.AppendFormat(sw.ToString());
-                eMailMessageBody = mailMessageString.ToString();
-            }
+            mailMessageString.Append("</table>");
+            eMailMessageBody = mailMessageString.ToString();
 
             try
             {
@@ -352,6 +347,14 @@ namespace EndpointChecker
             catch
             {
             }
+        }
+
+        public void btn_DontSend_Click(object sender, EventArgs e)
+        {
+            if (_autoCloseApp)
+                Environment.Exit(0);
+            else
+                Close();
         }
 
         public void btn_Send_Click(object sender, EventArgs e)

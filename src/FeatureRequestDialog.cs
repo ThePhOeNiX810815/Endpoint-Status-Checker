@@ -8,8 +8,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
+using System.Net;
 using System.Windows.Forms;
 using static EndpointChecker.Program;
 
@@ -47,31 +46,20 @@ namespace EndpointChecker
             string eMailMessageSubject = app_ApplicationName + " Feature Request";
             string eMailMessageBody = string.Empty;
 
-            HtmlTable table = new HtmlTable
-            {
-                Border = 3,
-                BorderColor = "#003CFF",
-                BgColor = "#91ABFF",
-                CellPadding = 5,
-                CellSpacing = 10
-            };
-
             StringBuilder mailMessageString = new StringBuilder();
+            mailMessageString.Append("<table border=\"3\" bordercolor=\"#003CFF\" bgcolor=\"#91ABFF\" cellpadding=\"5\" cellspacing=\"10\">");
 
             foreach (Property reportItem in reportItems)
             {
-                HtmlTableRow row = new HtmlTableRow();
-                row.Cells.Add(new HtmlTableCell { InnerText = reportItem.ItemName });
-                row.Cells.Add(new HtmlTableCell { InnerText = reportItem.ItemValue });
-                table.Rows.Add(row);
+                mailMessageString.Append("<tr>");
+                mailMessageString.AppendFormat("<td>{0}</td><td>{1}</td>",
+                    WebUtility.HtmlEncode(reportItem.ItemName),
+                    WebUtility.HtmlEncode(reportItem.ItemValue));
+                mailMessageString.Append("</tr>");
             }
 
-            using (StringWriter sw = new StringWriter())
-            {
-                table.RenderControl(new HtmlTextWriter(sw));
-                mailMessageString.AppendFormat(sw.ToString());
-                eMailMessageBody = mailMessageString.ToString();
-            }
+            mailMessageString.Append("</table>");
+            eMailMessageBody = mailMessageString.ToString();
 
             try
             {

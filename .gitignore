@@ -1,2 +1,14 @@
 
+# Build outputs
+src/bin/
+src/obj/
+
+# Runtime data files
+src/EndpointChecker_LastSeenOnline.json
 src/bin/Debug/EndpointChecker_LastSeenOnline.json
+
+# IDE
+.vscode/
+
+# Changelog (managed separately)
+CHANGELOG.md

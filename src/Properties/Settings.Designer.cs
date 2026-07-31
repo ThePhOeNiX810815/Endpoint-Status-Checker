@@ -1079,5 +1079,29 @@ namespace EndpointChecker.Properties {
                 this["SpeedTest_ValuesCalculation"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Config_CloudflareBypass_Method {
+            get {
+                return ((int)(this["Config_CloudflareBypass_Method"]));
+            }
+            set {
+                this["Config_CloudflareBypass_Method"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:8191")]
+        public string Config_FlareSolverr_URL {
+            get {
+                return ((string)(this["Config_FlareSolverr_URL"]));
+            }
+            set {
+                this["Config_FlareSolverr_URL"] = value;
+            }
+        }
     }
 }

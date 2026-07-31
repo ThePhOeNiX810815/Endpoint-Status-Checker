@@ -1,0 +1,67 @@
+# Endpoint Status Checker
+#
+# Test Endpoint Definitions — dummy list for local testing
+# Format: Name|URL   (or just URL for address-only entries)
+#         Lines starting with # are comments; blank lines are ignored.
+
+# ──────────────────────────────────────────────────────────────────────────────
+# GENERAL HTTP / HTTPS  (should all return 200)
+# ──────────────────────────────────────────────────────────────────────────────
+Google|https://www.google.com
+Microsoft|https://www.microsoft.com
+GitHub|https://github.com
+Stack Overflow|https://stackoverflow.com
+Wikipedia|https://en.wikipedia.org
+DuckDuckGo|https://duckduckgo.com
+OpenAI|https://openai.com
+Anthropic|https://anthropic.com
+
+# ──────────────────────────────────────────────────────────────────────────────
+# HTTP TEST UTILITIES  (httpbin.org & httpstat.us)
+# ──────────────────────────────────────────────────────────────────────────────
+HTTPBIN ->> Anything (HTTP)|http://httpbin.org/anything
+HTTPBIN ->> Anything (HTTPS)|https://httpbin.org/anything
+HTTPBIN ->> Get (HTTP)|http://httpbin.org/get
+HTTPBIN ->> Get (HTTPS)|https://httpbin.org/get
+HTTPBIN ->> Cookies (HTTPS)|https://httpbin.org/cookies
+HTTPSTAT ->> Code 200|https://httpstat.us/200
+HTTPSTAT ->> Code 301 Redirect|https://httpstat.us/301
+HTTPSTAT ->> Code 403 Forbidden|https://httpstat.us/403
+HTTPSTAT ->> Code 404 Not Found|https://httpstat.us/404
+HTTPSTAT ->> Code 500 Server Error|https://httpstat.us/500
+HTTPSTAT ->> Code 503 Unavailable|https://httpstat.us/503
+
+# ──────────────────────────────────────────────────────────────────────────────
+# CLOUDFLARE-PROTECTED SITES  (CF detection expected; bypass may be needed)
+# ──────────────────────────────────────────────────────────────────────────────
+CF ->> Cloudflare.com (main site)|https://www.cloudflare.com
+CF ->> Cloudflare 1.1.1.1 DNS|https://1.1.1.1
+CF ->> Discord|https://discord.com
+CF ->> Shopify|https://www.shopify.com
+CF ->> NPM Registry|https://www.npmjs.com
+CF ->> Medium|https://medium.com
+CF ->> Steam Store|https://store.steampowered.com
+CF ->> Twitch|https://www.twitch.tv
+CF ->> Crunchbase|https://www.crunchbase.com
+CF ->> Feedly|https://feedly.com
+
+# ──────────────────────────────────────────────────────────────────────────────
+# HTTPS — CERTIFICATE VALIDATION  (test with ValidateSSLCertificate on/off)
+# ──────────────────────────────────────────────────────────────────────────────
+SSL ->> Self-signed (expired cert)|https://expired.badssl.com
+SSL ->> Wrong host cert|https://wrong.host.badssl.com
+SSL ->> Valid cert|https://sha256.badssl.com
+
+# ──────────────────────────────────────────────────────────────────────────────
+# FTP ENDPOINTS  (public anonymous FTP)
+# ──────────────────────────────────────────────────────────────────────────────
+ftp://ftp.gnu.org/pub
+ftp://ftp.debian.org/debian
+ftp://ftp.freebsd.org/pub
+
+# ──────────────────────────────────────────────────────────────────────────────
+# ENDPOINTS EXPECTED TO FAIL  (non-existent or unreachable — for testing error handling)
+# ──────────────────────────────────────────────────────────────────────────────
+FAIL ->> Non-existent domain|https://this-domain-does-not-exist-12345xyzabc.com
+FAIL ->> Refused port|http://localhost:19999
+FAIL ->> IP with no route|http://192.0.2.1
