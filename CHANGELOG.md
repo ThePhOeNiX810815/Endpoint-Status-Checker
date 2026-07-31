@@ -2,7 +2,20 @@
 
 ---
 
-## v3.0.0 — 2026-07-31
+## v3.0.0 — 2026-07-31 *(updated)*
+
+### Patch — 2026-07-31
+
+- **Fix: animated progress bar crash on scan start** — `ArgumentException: Parameter is not valid`
+  was thrown by GDI+ inside `PremiumProgressBar.OnPaint` when the animation timer fired a
+  repaint tick during a transient control layout phase (zero or near-zero control size).
+  Fixed by:
+  - Adding a top-level dimension guard (`Width ≤ 2 || Height ≤ 2 → return`) so paint is
+    skipped entirely until the control is properly sized.
+  - Wrapping each `LinearGradientBrush` construction in `try/catch (ArgumentException)` so
+    isolated GDI+ failures are silently swallowed rather than propagating to the scan thread.
+
+---
 
 ### Platform
 
