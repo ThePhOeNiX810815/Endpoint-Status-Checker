@@ -5,6 +5,16 @@
 #         Lines starting with # are comments; blank lines are ignored.
 
 # ──────────────────────────────────────────────────────────────────────────────
+# USER ENDPOINTS  (returning 403 — CF or bot-protection suspected)
+# ──────────────────────────────────────────────────────────────────────────────
+Spread-It|http://www.spread-it.com
+DownDetector|https://downdetector.com
+FDown|https://fdown.net
+Revolut|https://www.revolut.com
+Softpedia|https://www.softpedia.com
+WhoSampled|https://www.whosampled.com
+
+# ──────────────────────────────────────────────────────────────────────────────
 # GENERAL HTTP / HTTPS  (should all return 200)
 # ──────────────────────────────────────────────────────────────────────────────
 Google|https://www.google.com

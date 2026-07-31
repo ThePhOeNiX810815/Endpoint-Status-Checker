@@ -9,6 +9,3 @@ src/bin/Debug/EndpointChecker_LastSeenOnline.json
 
 # IDE
 .vscode/
-
-# Changelog (managed separately)
-CHANGELOG.md

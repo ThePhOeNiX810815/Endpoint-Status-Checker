@@ -2382,6 +2382,11 @@ namespace EndpointChecker
                 Application.DoEvents();
                 lbl_ProgressCount.ForeColor = statusColor;
                 lbl_ProgressCount.Text = statusMessage;
+                if (endpointsCount_Enabled > 0)
+                {
+                    pb_RefreshProcess.Maximum = endpointsCount_Enabled;
+                    pb_RefreshProcess.Value   = endpointsCount_Current;
+                }
                 Application.DoEvents();
             });
         }
@@ -2412,6 +2417,10 @@ namespace EndpointChecker
             lbl_Terminate.Enabled = inProgress && locked;
             lbl_ProgressCount.Visible = inProgress && locked;
             pb_RefreshProcess.Visible = inProgress && locked;
+            if (inProgress && locked)
+                pb_RefreshProcess.StartAnimation();
+            else
+                pb_RefreshProcess.StopAnimation();
 
             // NOT VISIBLE OR ENABLED DURING PROGRESS
             SetCheckButtons(!inProgress && !locked);
@@ -5993,6 +6002,101 @@ namespace EndpointChecker
                 lv_Endpoints.Visible = false;
                 LoadEndpointReferences();
             }
+        }
+    }
+
+    public sealed class PremiumProgressBar : Panel
+    {
+        private int   _value   = 0;
+        private int   _maximum = 100;
+        private float _sweep   = -0.3f;
+        private readonly System.Windows.Forms.Timer _anim;
+
+        private static readonly Color ColBg     = Color.FromArgb( 15,  18,  38);
+        private static readonly Color ColFillA  = Color.FromArgb( 38,  65, 175);
+        private static readonly Color ColFillB  = Color.FromArgb( 88, 126, 232);
+        private static readonly Color ColBorder = Color.FromArgb( 55,  85, 200);
+
+        public PremiumProgressBar()
+        {
+            SetStyle(ControlStyles.OptimizedDoubleBuffer |
+                     ControlStyles.AllPaintingInWmPaint  |
+                     ControlStyles.UserPaint             |
+                     ControlStyles.ResizeRedraw, true);
+            BackColor = ColBg;
+            _anim = new System.Windows.Forms.Timer { Interval = 16 };
+            _anim.Tick += (_, __) => { _sweep += 0.008f; if (_sweep > 1.3f) _sweep = -0.3f; Invalidate(); };
+        }
+
+        public int Value   { get => _value;   set { _value   = Math.Clamp(value, 0, _maximum); Invalidate(); } }
+        public int Maximum { get => _maximum; set { _maximum = Math.Max(1, value); Invalidate(); } }
+
+        public void StartAnimation() { _sweep = -0.3f; _anim.Start(); }
+        public void StopAnimation()  { _anim.Stop(); _value = 0; Invalidate(); }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            var g = e.Graphics;
+
+            using (var bg = new SolidBrush(ColBg))
+                g.FillRectangle(bg, ClientRectangle);
+
+            int fillW = _maximum > 0 ? (int)((double)_value / _maximum * (Width - 2)) : 0;
+
+            if (fillW > 0)
+            {
+                var fillRect = new Rectangle(1, 1, fillW, Height - 2);
+
+                using (var lg = new System.Drawing.Drawing2D.LinearGradientBrush(
+                    fillRect, ColFillA, ColFillB,
+                    System.Drawing.Drawing2D.LinearGradientMode.Horizontal))
+                {
+                    g.FillRectangle(lg, fillRect);
+                }
+
+                int hlH = Math.Max(1, (Height - 2) / 3);
+                using (var hl = new System.Drawing.Drawing2D.LinearGradientBrush(
+                    new Rectangle(1, 1, fillW, hlH),
+                    Color.FromArgb(55, 255, 255, 255), Color.FromArgb(0, 255, 255, 255),
+                    System.Drawing.Drawing2D.LinearGradientMode.Vertical))
+                {
+                    g.FillRectangle(hl, 1, 1, fillW, hlH);
+                }
+
+                float cx  = 1f + _sweep * fillW;
+                float bw  = fillW * 0.20f + 8f;
+                var   pt1 = new System.Drawing.PointF(cx - bw, 1f);
+                var   pt2 = new System.Drawing.PointF(cx + bw, 1f);
+
+                using (var sb = new System.Drawing.Drawing2D.LinearGradientBrush(
+                    pt1, pt2,
+                    Color.FromArgb(0, 200, 220, 255),
+                    Color.FromArgb(0, 200, 220, 255)))
+                {
+                    sb.WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp;
+                    sb.InterpolationColors = new System.Drawing.Drawing2D.ColorBlend(3)
+                    {
+                        Colors    = new[] { Color.FromArgb(  0, 200, 220, 255),
+                                            Color.FromArgb( 50, 200, 220, 255),
+                                            Color.FromArgb(  0, 200, 220, 255) },
+                        Positions = new[] { 0f, 0.5f, 1f }
+                    };
+
+                    var state = g.Save();
+                    g.SetClip(fillRect);
+                    g.FillRectangle(sb, cx - bw, 1, bw * 2, Height - 2);
+                    g.Restore(state);
+                }
+            }
+
+            using (var pen = new Pen(ColBorder, 1))
+                g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) _anim?.Dispose();
+            base.Dispose(disposing);
         }
     }
 

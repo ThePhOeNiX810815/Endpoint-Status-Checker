@@ -84,4 +84,11 @@
     </None>
   </ItemGroup>
 
+  <!-- Default endpoints list — copied next to the exe so the app finds it on first run -->
+  <ItemGroup>
+    <Content Include="EndpointChecker_EndpointsList.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

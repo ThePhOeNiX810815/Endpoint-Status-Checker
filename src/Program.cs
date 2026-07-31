@@ -79,7 +79,9 @@ namespace EndpointChecker
         public static string anonymousFTPPassword = "anonymous";
 
         // ENDPOINTS DEFINITIONS FILE NAME
-        public static string endpointDefinitionsFile = "EndpointChecker_EndpointsList.txt";
+        // AppContext.BaseDirectory resolves to the exe folder regardless of the working directory.
+        public static string endpointDefinitionsFile = System.IO.Path.Combine(
+            AppContext.BaseDirectory, "EndpointChecker_EndpointsList.txt");
 
         // GOOGLE MAPS API KEY & ZOOM FACTOR
         public static string apiKey_GoogleMaps;
