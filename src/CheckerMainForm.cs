@@ -5796,13 +5796,17 @@ namespace EndpointChecker
 
         public void mainMenu_EndpointsList_Click(object sender, EventArgs e)
         {
-            if (File.Exists(endpointDefinitionsFile))
+            using (EndpointManagementDialog dlg = new EndpointManagementDialog(this))
             {
-                BrowseEndpoint(
-                endpointDefinitionsFile,
-                null,
-                null,
-                null);
+                dlg.ShowDialog(this);
+                if (dlg.FileWasModified)
+                {
+                    SetControls(false, true);
+                    lbl_EndpointsListLoading.Visible = true;
+                    lbl_ProgressCount.Visible = true;
+                    lv_Endpoints.Visible = false;
+                    LoadEndpointReferences();
+                }
             }
         }
 
@@ -5832,13 +5836,9 @@ namespace EndpointChecker
 
         public void mainMenu_ConfigFile_Click(object sender, EventArgs e)
         {
-            if (File.Exists(appConfigFile))
+            using (ConfigDialog dlg = new ConfigDialog(this))
             {
-                BrowseEndpoint(
-                appConfigFile,
-                null,
-                null,
-                null);
+                dlg.ShowDialog(this);
             }
         }
 
@@ -5947,13 +5947,87 @@ namespace EndpointChecker
             }
         }
 
-        private static IEnumerable<Control> DescendantControls(Control parent)
+        public static IEnumerable<Control> DescendantControls(Control parent)
         {
             foreach (Control c in parent.Controls)
             {
                 yield return c;
                 foreach (Control child in DescendantControls(c))
                     yield return child;
+            }
+        }
+
+        public static void ApplyDarkTheme(Control root)
+        {
+            Color bg       = Color.FromArgb( 22,  25,  44);
+            Color surface  = Color.FromArgb( 30,  34,  58);
+            Color input    = Color.FromArgb( 38,  43,  75);
+            Color accent   = Color.FromArgb( 88, 121, 224);
+            Color textMain = Color.FromArgb(200, 212, 240);
+
+            root.BackColor = bg;
+
+            foreach (Control ctrl in DescendantControls(root))
+            {
+                switch (ctrl)
+                {
+                    case TabPage tp:
+                        tp.BackColor = surface;
+                        break;
+                    case Panel p:
+                        p.BackColor = bg;
+                        break;
+                    case TabControl tc:
+                        tc.BackColor = surface;
+                        break;
+                    case GroupBox gb:
+                        gb.BackColor = surface;
+                        gb.ForeColor = accent;
+                        break;
+                    case Label lbl:
+                        lbl.ForeColor = textMain;
+                        break;
+                    case CheckBox cb:
+                        cb.UseVisualStyleBackColor = false;
+                        cb.BackColor = surface;
+                        cb.ForeColor = textMain;
+                        break;
+                    case TextBox tb:
+                        tb.BackColor = input;
+                        tb.ForeColor = textMain;
+                        tb.BorderStyle = BorderStyle.FixedSingle;
+                        break;
+                    case NumericUpDown nud:
+                        nud.BackColor = input;
+                        nud.ForeColor = textMain;
+                        break;
+                    case ComboBox cbo:
+                        cbo.BackColor = input;
+                        cbo.ForeColor = textMain;
+                        break;
+                    case ListView lv:
+                        lv.BackColor = surface;
+                        lv.ForeColor = textMain;
+                        break;
+                    case DataGridView dgv:
+                        dgv.BackgroundColor = surface;
+                        dgv.ForeColor = textMain;
+                        dgv.GridColor = accent;
+                        dgv.DefaultCellStyle.BackColor = input;
+                        dgv.DefaultCellStyle.ForeColor = textMain;
+                        dgv.ColumnHeadersDefaultCellStyle.BackColor = surface;
+                        dgv.ColumnHeadersDefaultCellStyle.ForeColor = accent;
+                        dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(55, 75, 145);
+                        dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(32, 37, 62);
+                        dgv.AlternatingRowsDefaultCellStyle.ForeColor = textMain;
+                        break;
+                    case Button btn when btn.Image == null && btn.BackgroundImage == null:
+                        btn.FlatStyle = FlatStyle.Flat;
+                        btn.BackColor = input;
+                        btn.ForeColor = textMain;
+                        btn.FlatAppearance.BorderColor = accent;
+                        break;
+                }
             }
         }
 
