@@ -144,7 +144,7 @@
             this.lbl_ListFilter = new System.Windows.Forms.Label();
             this.tb_ListFilter = new System.Windows.Forms.TextBox();
             this.pb_ListFilterClear = new System.Windows.Forms.PictureBox();
-            this.pb_RefreshProcess = new System.Windows.Forms.PictureBox();
+            this.pb_RefreshProcess = new PremiumProgressBar();
             this.TIMER_ContinuousRefresh = new System.Windows.Forms.Timer(this.components);
             this.MainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.mainMenu_UpdateCheck = new System.Windows.Forms.ToolStripMenuItem();
@@ -170,7 +170,6 @@
             this.groupBox_CommonOptions.SuspendLayout();
             this.groupBox_HTTPOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).BeginInit();
             this.MainMenuStrip.SuspendLayout();
             this.groupBox_Actions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_LastUpdate)).BeginInit();
@@ -1552,11 +1551,9 @@
             // pb_RefreshProcess
             // 
             this.pb_RefreshProcess.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.pb_RefreshProcess.Image = ((System.Drawing.Image)(resources.GetObject("pb_RefreshProcess.Image")));
             this.pb_RefreshProcess.Location = new System.Drawing.Point(310, 532);
             this.pb_RefreshProcess.Name = "pb_RefreshProcess";
             this.pb_RefreshProcess.Size = new System.Drawing.Size(467, 23);
-            this.pb_RefreshProcess.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pb_RefreshProcess.TabIndex = 71;
             this.pb_RefreshProcess.TabStop = false;
             this.pb_RefreshProcess.Visible = false;
@@ -1779,7 +1776,6 @@
             this.groupBox_CommonOptions.ResumeLayout(false);
             this.groupBox_HTTPOptions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pb_ListFilterClear)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb_RefreshProcess)).EndInit();
             this.MainMenuStrip.ResumeLayout(false);
             this.MainMenuStrip.PerformLayout();
             this.groupBox_Actions.ResumeLayout(false);
@@ -1898,7 +1894,7 @@
         public System.Windows.Forms.ToolStripMenuItem tray_SpeedTest;
         public System.Windows.Forms.CheckBox cb_TestPing;
         public System.Windows.Forms.CheckBox cb_Resolve_DNS_Names;
-        public System.Windows.Forms.PictureBox pb_RefreshProcess;
+        public PremiumProgressBar pb_RefreshProcess;
         public System.Windows.Forms.Timer TIMER_ContinuousRefresh;
         public System.Windows.Forms.ToolStripMenuItem tray_Notifications_Enable;
         public System.Windows.Forms.ToolStripSeparator tray_Separator_2;

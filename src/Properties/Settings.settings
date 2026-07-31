@@ -266,5 +266,11 @@
     <Setting Name="SpeedTest_ValuesCalculation" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="Config_CloudflareBypass_Method" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="Config_FlareSolverr_URL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://localhost:8191</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

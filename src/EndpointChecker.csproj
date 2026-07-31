@@ -1,389 +1,94 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E343995B-85E3-4AD1-8CD0-16AB3C7201C4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>EndpointChecker</RootNamespace>
     <AssemblyName>EndpointChecker</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationIcon>app.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup>
     <StartupObject>EndpointChecker.Program</StartupObject>
+    <PlatformTarget>x86</PlatformTarget>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <!-- The project already has Properties\AssemblyInfo.cs with hand-authored attributes -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- WFO1000: .NET 10 WinForms designer serialization check; not applicable to this legacy-Designer project -->
+    <NoWarn>$(NoWarn);WFO1000</NoWarn>
+    <!-- Self-contained: bundles the x86 runtime so no .NET installation is required on the target machine -->
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
   </PropertyGroup>
+
+  <!-- NuGet packages -->
   <ItemGroup>
-    <Reference Include="AGauge, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\AGauge.2.0.1\lib\NET45\AGauge.dll</HintPath>
-    </Reference>
-    <Reference Include="ClosedXML, Version=0.96.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
-      <HintPath>packages\ClosedXML.0.96.0\lib\net40\ClosedXML.dll</HintPath>
-    </Reference>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.20.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
-      <HintPath>packages\DocumentFormat.OpenXml.2.20.0\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
-    </Reference>
-    <Reference Include="ExcelNumberFormat, Version=1.1.0.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
-      <HintPath>packages\ExcelNumberFormat.1.1.0\lib\net20\ExcelNumberFormat.dll</HintPath>
-    </Reference>
-    <Reference Include="FastMember, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\FastMember.1.3.0\lib\net45\FastMember.dll</HintPath>
-    </Reference>
-    <Reference Include="Flurl, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Flurl.3.0.0-pre4\lib\net40\Flurl.dll</HintPath>
-    </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.11.72.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>packages\HtmlAgilityPack.1.11.72\lib\Net45\HtmlAgilityPack.dll</HintPath>
-    </Reference>
-    <Reference Include="IPAddressRange, Version=4.2.0.0, Culture=neutral, PublicKeyToken=578e3c3d17e7c751, processorArchitecture=MSIL">
-      <HintPath>packages\IPAddressRange.4.2.0\lib\net45\IPAddressRange.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\WindowsAPICodePack-Core.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-    </Reference>
-    <Reference Include="Nager.PublicSuffix, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Nager.PublicSuffix.2.2.2\lib\net45\Nager.PublicSuffix.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="Spire.Pdf, Version=8.7.2.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <HintPath>packages\FreeSpire.XLS.12.7.0\lib\net40\Spire.Pdf.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.XLS, Version=12.7.0.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <HintPath>packages\FreeSpire.XLS.12.7.0\lib\net40\Spire.XLS.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.DirectoryServices.AccountManagement" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="tracert, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <PackageReference Include="AGauge" Version="2.0.1"><NoWarn>NU1701</NoWarn></PackageReference>
+    <PackageReference Include="ClosedXML" Version="0.102.3" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
+    <PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
+    <PackageReference Include="FastMember" Version="1.5.0" />
+    <PackageReference Include="Flurl" Version="3.0.6" />
+    <PackageReference Include="FreeSpire.XLS" Version="12.7.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.72" />
+    <PackageReference Include="IPAddressRange" Version="4.2.0" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.5" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
+    <PackageReference Include="Nager.PublicSuffix" Version="2.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="WhoisClient.NET" Version="1.0.2.0"><NoWarn>NU1701</NoWarn></PackageReference>
+  </ItemGroup>
+
+  <!-- Local DLLs not available on NuGet -->
+  <ItemGroup>
+    <Reference Include="tracert">
       <HintPath>bin\Debug\tracert.dll</HintPath>
     </Reference>
-    <Reference Include="VirusTotal.NET, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="VirusTotal.NET">
       <HintPath>bin\Debug\VirusTotal.NET.dll</HintPath>
     </Reference>
-    <Reference Include="WhoisClient, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\WhoisClient.NET.1.0.2.0\lib\net40\WhoisClient.dll</HintPath>
-    </Reference>
-    <Reference Include="WindowsBase" />
   </ItemGroup>
+
+  <!-- Ensure local DLLs are copied to the framework-versioned output directory -->
   <ItemGroup>
-    <Compile Include="ArpLookup\Extensions.cs" />
-    <Compile Include="ArpLookup\WindowsLookupService.cs" />
-    <Compile Include="AutoUpdaterDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AutoUpdaterDialog.Designer.cs">
-      <DependentUpon>AutoUpdaterDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CheckerMainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CheckerMainForm.Designer.cs">
-      <DependentUpon>CheckerMainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EndpointDetailsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="EndpointDetailsDialog.Designer.cs">
-      <DependentUpon>EndpointDetailsDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ExceptionDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ExceptionDialog.Designer.cs">
-      <DependentUpon>ExceptionDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FeatureRequestDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FeatureRequestDialog.Designer.cs">
-      <DependentUpon>FeatureRequestDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FontPublisher.cs" />
-    <Compile Include="NewVersionDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="NewVersionDialog.Designer.cs">
-      <DependentUpon>NewVersionDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="NSpeedTest\ISpeedTestClient.cs" />
-    <Compile Include="NSpeedTest\Models\Client.cs" />
-    <Compile Include="NSpeedTest\Models\Coordinate.cs" />
-    <Compile Include="NSpeedTest\Models\Download.cs" />
-    <Compile Include="NSpeedTest\Models\Server.cs" />
-    <Compile Include="NSpeedTest\Models\ServerConfig.cs" />
-    <Compile Include="NSpeedTest\Models\ServersList.cs" />
-    <Compile Include="NSpeedTest\Models\Settings.cs" />
-    <Compile Include="NSpeedTest\Models\Times.cs" />
-    <Compile Include="NSpeedTest\Models\Upload.cs" />
-    <Compile Include="NSpeedTest\SpeedTestClient.cs" />
-    <Compile Include="NSpeedTest\SpeedTestWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="SpeedTestDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SpeedTestDialog.Designer.cs">
-      <DependentUpon>SpeedTestDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SplashScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SplashScreen.Designer.cs">
-      <DependentUpon>SplashScreen.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="AutoUpdaterDialog.resx">
-      <DependentUpon>AutoUpdaterDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CheckerMainForm.resx">
-      <DependentUpon>CheckerMainForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EndpointDetailsDialog.resx">
-      <DependentUpon>EndpointDetailsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ExceptionDialog.resx">
-      <DependentUpon>ExceptionDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FeatureRequestDialog.resx">
-      <DependentUpon>FeatureRequestDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="NewVersionDialog.resx">
-      <DependentUpon>NewVersionDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SpeedTestDialog.resx">
-      <DependentUpon>SpeedTestDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SplashScreen.resx">
-      <DependentUpon>SplashScreen.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="app.config" />
-    <None Include="app.manifest" />
-    <EmbeddedResource Include="Fonts\AGENCYB.TTF" />
-    <EmbeddedResource Include="Fonts\AGENCYR.TTF" />
-    <EmbeddedResource Include="Fonts\segoeui.ttf" />
-    <EmbeddedResource Include="Fonts\segoeuib.ttf" />
-    <EmbeddedResource Include="Fonts\segoeuil.ttf" />
-    <EmbeddedResource Include="Fonts\segoeuisl.ttf" />
-    <EmbeddedResource Include="Fonts\seguibl.ttf" />
-    <EmbeddedResource Include="Fonts\seguisb.ttf" />
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    <None Include="bin\Debug\tracert.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
+    <None Include="bin\Debug\VirusTotal.NET.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+
+  <!-- Embedded font resources (TTF files are not auto-included) -->
   <ItemGroup>
-    <Content Include="app.ico" />
-    <Content Include="Images\appConfig.png" />
-    <Content Include="Images\appError.ico" />
-    <Content Include="Images\apple.png" />
-    <Content Include="Images\appLink.png" />
-    <Content Include="Images\appWebPage.png" />
-    <Content Include="Images\article.png" />
-    <Content Include="Images\author.png" />
-    <Content Include="Images\bing.png" />
-    <Content Include="Images\browseFolder_16x16.png" />
-    <Content Include="Images\browseFolder_24x24.png" />
-    <Content Include="Images\browse_Admin_Share.png" />
-    <Content Include="Images\browse_FTP.png" />
-    <Content Include="Images\browse_Share.png" />
-    <Content Include="Images\category.png" />
-    <Content Include="Images\close.png" />
-    <Content Include="Images\computer.png" />
-    <Content Include="Images\description.png" />
-    <Content Include="Images\eMailEnvelope.png" />
-    <Content Include="Images\endpointsList.ico" />
-    <Content Include="Images\endpointsList_Icon.ico" />
-    <Content Include="Images\ErrorReport.png" />
-    <Content Include="Images\error_report.png" />
-    <Content Include="Images\exit_Icon.ico" />
-    <Content Include="Images\faceBook.png" />
-    <Content Include="Images\Failed.png" />
-    <Content Include="Images\featureRequest_Icon.ico" />
-    <Content Include="Images\generator.png" />
-    <Content Include="Images\GitHubLogo.png" />
-    <Content Include="Images\gitHub_Icon.ico" />
-    <Content Include="Images\GitLabLogo.png" />
-    <Content Include="Images\gitLab_Logo.png" />
-    <Content Include="Images\glass_transparent_cross.png" />
-    <Content Include="Images\goLogo.png" />
-    <Content Include="Images\google.png" />
-    <Content Include="Images\icon_LoadList.png" />
-    <Content Include="Images\icon_RunCheck.png" />
-    <Content Include="Images\itNetwork_Logo.png" />
-    <Content Include="Images\itnetwork_logo_text.png" />
-    <Content Include="Images\linkStatus_Invalid.png" />
-    <Content Include="Images\linkStatus_Valid.png" />
-    <Content Include="Images\link_16x16.png" />
-    <Content Include="Images\loading-colorful.gif" />
-    <Content Include="Images\loadingProgress_Violet.gif" />
-    <Content Include="Images\location.png" />
-    <Content Include="Images\logo_LastUpdate.png" />
-    <Content Include="Images\main.png" />
-    <Content Include="Images\microsoft.png" />
-    <Content Include="Images\newUpdateLogo.png" />
-    <Content Include="Images\norton.png" />
-    <Content Include="Images\notifications_OFF.ico" />
-    <Content Include="Images\notifications_ON.ico" />
-    <Content Include="Images\openGraph.png" />
-    <Content Include="Images\password.png" />
-    <Content Include="Images\progressWheel_GreenDots.gif" />
-    <Content Include="Images\rails.png" />
-    <Content Include="Images\robot.jpg" />
-    <Content Include="Images\softPedia_Logo.png" />
-    <Content Include="Images\speedTest.ico" />
-    <Content Include="Images\speedTest_Icon.ico" />
-    <Content Include="Images\splash_Background.jpg" />
-    <Content Include="Images\splash_Background_2.jpg" />
-    <Content Include="Images\splash_Background_3.jpg" />
-    <Content Include="Images\splash_Circle.gif" />
-    <Content Include="Images\ssh 2.png" />
-    <Content Include="Images\ssh.png" />
-    <Content Include="Images\star.png" />
-    <Content Include="Images\subCategory.png" />
-    <Content Include="Images\Success.png" />
-    <Content Include="Images\twitter.png" />
-    <Content Include="Images\updateIcon.png" />
-    <Content Include="Images\updater_Background.jpg" />
-    <Content Include="Images\updater_Progress.gif" />
-    <Content Include="Images\virusClean.png" />
-    <Content Include="Images\debug.png" />
-    <Content Include="Images\debug_16x16.png" />
-    <Content Include="Images\disabled.ico" />
-    <Content Include="Images\error.ico" />
-    <Content Include="Images\folderBrowse.png" />
-    <Content Include="Images\geoLocation.png" />
-    <Content Include="Images\http.png" />
-    <Content Include="Images\information.ico" />
-    <Content Include="Images\key.png" />
-    <Content Include="Images\key_blue.png" />
-    <Content Include="Images\key_green.png" />
-    <Content Include="Images\key_red.png" />
-    <Content Include="Images\key_yellow.png" />
-    <Content Include="Images\loadingProgress.gif" />
-    <Content Include="Images\loadingProgressSmall.gif" />
-    <Content Include="Images\loadingProgressWheel.gif" />
-    <Content Include="Images\minus.ico" />
-    <Content Include="Images\netShare_Admin.png" />
-    <Content Include="Images\netShare_Folder.png" />
-    <Content Include="Images\netShare_Printer.png" />
-    <Content Include="Images\notAvailable.ico" />
-    <Content Include="Images\notKnown.ico" />
-    <Content Include="Images\passed.ico" />
-    <Content Include="Images\pingHop.png" />
-    <Content Include="Images\plus.ico" />
-    <Content Include="Images\port.png" />
-    <Content Include="Images\radioactive.ico" />
-    <Content Include="Images\refresh.ico" />
-    <Content Include="Images\requestHeaderProperty.png" />
-    <Content Include="Images\responseHeaderProperty.png" />
-    <Content Include="Images\ssl.png" />
-    <Content Include="Images\star.ico" />
-    <Content Include="Images\vendor.png" />
-    <Content Include="Images\virusIcon.png" />
-    <Content Include="Images\virusTotal.png" />
-    <Content Include="Images\warning.ico" />
-    <Content Include="Images\connect_VNC.png" />
-    <Content Include="Images\connect_RDP.png" />
-    <Content Include="Images\browse_HTTP.png" />
-    <Content Include="Images\weak eTag.png" />
-    <Content Include="Images\whoIs.png" />
-    <Content Include="Images\wmi.png" />
-    <Content Include="Images\wmiClass.png" />
-    <Content Include="Images\wmiProperty.png" />
+    <EmbeddedResource Include="Fonts\**\*" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>IF EXIST "$(ProjectDir)..\ExecutableSelfSign\SelfSignUtils\bin\Debug\signtool.exe" IF EXIST "$(ProjectDir)..\ExecutableSelfSign\Certificates [to 31-12-2025]\Peter Machaj.pfx" "$(ProjectDir)..\ExecutableSelfSign\SelfSignUtils\bin\Debug\signtool.exe" sign /f "$(ProjectDir)..\ExecutableSelfSign\Certificates [to 31-12-2025]\Peter Machaj.pfx" "$(TargetPath)"</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <!-- Image content files copied to output -->
+  <ItemGroup>
+    <Content Include="Images\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="app.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- App config -->
+  <ItemGroup>
+    <None Update="app.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Default endpoints list — copied next to the exe so the app finds it on first run -->
+  <ItemGroup>
+    <Content Include="EndpointChecker_EndpointsList.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
