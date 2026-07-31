@@ -86,11 +86,11 @@ See [CHANGELOG.md](CHANGELOG.md) for the full technical change log.
 
 ## Installation
 
-1. Download `EndpointChecker.exe` from the [latest release](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/latest).
-2. Place the executable in any folder — it will create its data files (`EndpointChecker_EndpointsList.txt`, `EndpointChecker_LastSeenOnline.json`) alongside itself on first run.
-3. Run as Administrator.
+1. Download [**EndpointChecker-v3.0.0-win-x86.zip**](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.0.0/EndpointChecker-v3.0.0-win-x86.zip) from the [latest release](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/latest) (~102 MB — the .NET 10 runtime is bundled).
+2. Extract the archive to any folder. It will create its data files (`EndpointChecker_EndpointsList.txt`, `EndpointChecker_LastSeenOnline.json`) alongside `EndpointChecker.exe` on first run.
+3. Run `EndpointChecker.exe` as Administrator.
 
-No installer, no registry keys, no additional dependencies.
+No installer, no registry keys, no separate runtime — the self-contained build bundles everything.
 
 ---
 

@@ -3,6 +3,13 @@
 src/bin/
 src/obj/
 
+# Referenced dependency assemblies (not build output — required to compile)
+!src/bin/Debug/VirusTotal.NET.dll
+!src/bin/Debug/tracert.dll
+
+# Packaged release artifacts (built locally, published as GitHub Release assets)
+release/
+
 # Runtime data files
 src/EndpointChecker_LastSeenOnline.json
 src/bin/Debug/EndpointChecker_LastSeenOnline.json
