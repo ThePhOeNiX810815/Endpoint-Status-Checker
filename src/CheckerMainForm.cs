@@ -6110,57 +6110,73 @@ namespace EndpointChecker
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            // Guard against degenerate control size during layout/animation ticks
+            if (Width <= 2 || Height <= 2) return;
+
             var g = e.Graphics;
 
             using (var bg = new SolidBrush(ColBg))
                 g.FillRectangle(bg, ClientRectangle);
 
-            int fillW = _maximum > 0 ? (int)((double)_value / _maximum * (Width - 2)) : 0;
+            int barH  = Height - 2;
+            int fillW = _maximum > 0
+                ? Math.Max(0, (int)((double)_value / _maximum * (Width - 2)))
+                : 0;
 
-            if (fillW > 0)
+            if (fillW >= 1 && barH >= 1)
             {
-                var fillRect = new Rectangle(1, 1, fillW, Height - 2);
+                var fillRect = new Rectangle(1, 1, fillW, barH);
 
-                using (var lg = new System.Drawing.Drawing2D.LinearGradientBrush(
-                    fillRect, ColFillA, ColFillB,
-                    System.Drawing.Drawing2D.LinearGradientMode.Horizontal))
+                // Main gradient fill
+                try
                 {
-                    g.FillRectangle(lg, fillRect);
+                    using (var lg = new System.Drawing.Drawing2D.LinearGradientBrush(
+                        fillRect, ColFillA, ColFillB,
+                        System.Drawing.Drawing2D.LinearGradientMode.Horizontal))
+                        g.FillRectangle(lg, fillRect);
                 }
+                catch (ArgumentException) { /* skip on degenerate rect */ }
 
-                int hlH = Math.Max(1, (Height - 2) / 3);
-                using (var hl = new System.Drawing.Drawing2D.LinearGradientBrush(
-                    new Rectangle(1, 1, fillW, hlH),
-                    Color.FromArgb(55, 255, 255, 255), Color.FromArgb(0, 255, 255, 255),
-                    System.Drawing.Drawing2D.LinearGradientMode.Vertical))
+                // Highlight strip
+                int hlH = Math.Max(1, barH / 3);
+                try
                 {
-                    g.FillRectangle(hl, 1, 1, fillW, hlH);
+                    using (var hl = new System.Drawing.Drawing2D.LinearGradientBrush(
+                        new Rectangle(1, 1, fillW, hlH),
+                        Color.FromArgb(55, 255, 255, 255), Color.FromArgb(0, 255, 255, 255),
+                        System.Drawing.Drawing2D.LinearGradientMode.Vertical))
+                        g.FillRectangle(hl, 1, 1, fillW, hlH);
                 }
+                catch (ArgumentException) { /* skip */ }
 
-                float cx  = 1f + _sweep * fillW;
-                float bw  = fillW * 0.20f + 8f;
-                var   pt1 = new System.Drawing.PointF(cx - bw, 1f);
-                var   pt2 = new System.Drawing.PointF(cx + bw, 1f);
+                // Shimmer sweep
+                float cx = 1f + _sweep * fillW;
+                float bw = fillW * 0.20f + 8f;
+                var   pt1 = new System.Drawing.PointF(cx - bw, 0f);
+                var   pt2 = new System.Drawing.PointF(cx + bw, 0f);
 
-                using (var sb = new System.Drawing.Drawing2D.LinearGradientBrush(
-                    pt1, pt2,
-                    Color.FromArgb(0, 200, 220, 255),
-                    Color.FromArgb(0, 200, 220, 255)))
+                try
                 {
-                    sb.WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp;
-                    sb.InterpolationColors = new System.Drawing.Drawing2D.ColorBlend(3)
+                    using (var sb = new System.Drawing.Drawing2D.LinearGradientBrush(
+                        pt1, pt2,
+                        Color.FromArgb(0, 200, 220, 255),
+                        Color.FromArgb(60, 200, 220, 255)))
                     {
-                        Colors    = new[] { Color.FromArgb(  0, 200, 220, 255),
-                                            Color.FromArgb( 50, 200, 220, 255),
-                                            Color.FromArgb(  0, 200, 220, 255) },
-                        Positions = new[] { 0f, 0.5f, 1f }
-                    };
-
-                    var state = g.Save();
-                    g.SetClip(fillRect);
-                    g.FillRectangle(sb, cx - bw, 1, bw * 2, Height - 2);
-                    g.Restore(state);
+                        sb.WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp;
+                        sb.InterpolationColors = new System.Drawing.Drawing2D.ColorBlend(3)
+                        {
+                            Colors    = new[] { Color.FromArgb(  0, 200, 220, 255),
+                                                Color.FromArgb( 60, 200, 220, 255),
+                                                Color.FromArgb(  0, 200, 220, 255) },
+                            Positions = new[] { 0f, 0.5f, 1f }
+                        };
+                        var state = g.Save();
+                        g.SetClip(fillRect);
+                        g.FillRectangle(sb, cx - bw, 1, bw * 2, barH);
+                        g.Restore(state);
+                    }
                 }
+                catch (ArgumentException) { /* skip shimmer on degenerate gradient */ }
             }
 
             using (var pen = new Pen(ColBorder, 1))
