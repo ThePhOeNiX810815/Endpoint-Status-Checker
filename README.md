@@ -29,7 +29,7 @@
 
 <https://endpoint-status-checker.webnode.page>
 
-![screenshot](https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/main/EndpointStatusCheckerImage.jpg)
+![screenshot](https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/EndpointStatusCheckerImage.png)
 
 A Windows desktop tool that monitors a user-defined list of network endpoints and reports
 their availability, response times, SSL state, DNS/IP/MAC resolution, and more — all in
