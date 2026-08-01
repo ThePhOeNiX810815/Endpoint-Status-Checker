@@ -54,6 +54,18 @@ a single scan with configurable automation.
 
 ---
 
+## What's New in v3.1
+
+| Area | Change |
+| --- | --- |
+| **Premium UI** | Refined Endpoint List and SpeedTest screens with compact top controls, cleaner icon buttons, balanced spacing, and resize-resistant panels |
+| **Endpoint grid** | Softer grey grid lines, darker headers, readable pre-scan text, and preserved row separation |
+| **Column chooser** | New persistent column visibility chooser for the endpoint list |
+| **Scan progress** | Compact Scan Progress section with last update text and a gradient progress bar |
+| **Settings layout** | List, Common, HTTP, Status Export, and Output Folder controls reorganized to avoid clipping and wasted space |
+
+---
+
 ## What's New in v3.0
 
 | Area | Change |
@@ -79,7 +91,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the full technical change log.
 - **Runtime:** None — the application bundles the .NET 10 runtime (self-contained build)
 - **Privileges:** Run as Administrator for ARP/MAC lookups and some network operations
 
-> Versions up to 2.15 required .NET Framework 4.5. Version 3.0 targets .NET 10 and ships
+> Versions up to 2.15 required .NET Framework 4.5. Versions 3.0 and newer target .NET 10 and ship
 > the runtime bundled in the executable — no separate installation is needed.
 
 ---
@@ -88,7 +100,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the full technical change log.
 
 ### Fresh install
 
-1. Download [**EndpointChecker-v3.0.0-win-x86.zip**](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.0.0/EndpointChecker-v3.0.0-win-x86.zip) from the [latest release](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/latest) (~100 MB — the .NET 10 runtime is bundled).
+1. Download [**EndpointChecker-v3.1.0-win-x86.zip**](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.1.0/EndpointChecker-v3.1.0-win-x86.zip) from the [latest release](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/latest) (~100 MB — the .NET 10 runtime is bundled).
 2. Extract the archive to any folder. It will create its data files (`EndpointChecker_EndpointsList.txt`, `EndpointChecker_LastSeenOnline.json`) alongside `EndpointChecker.exe` on first run.
 3. Run `EndpointChecker.exe` as Administrator.
 
@@ -96,17 +108,17 @@ No installer, no registry keys, no separate runtime — the self-contained build
 
 ### Upgrading from v2.15 or earlier
 
-Download and run [**EndpointChecker-Updater-v3.0.0-win-x86.exe**](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.0.0/EndpointChecker-Updater-v3.0.0-win-x86.exe) (~46 MB, also self-contained).
+Download and run [**EndpointChecker-Updater-v3.1.0-win-x86.exe**](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.1.0/EndpointChecker-Updater-v3.1.0-win-x86.exe) (~46 MB, also self-contained).
 
 The updater will:
 
 - Auto-detect your existing install directory (or let you browse to it)
 - Stop the running application if open
-- Download and extract the new v3.0.0 package
+- Download and extract the new v3.1.0 package
 - Preserve your endpoint list and last-seen-online data
 - Launch the updated application when done
 
-> **Note:** v3.0.0 requires Windows 10 (build 1607) or later. Machines running Windows 7 / Server 2008 R2 can continue using v2.15.
+> **Note:** v3.1.0 requires Windows 10 (build 1607) or later. Machines running Windows 7 / Server 2008 R2 can continue using v2.15.
 
 ---
 

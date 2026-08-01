@@ -1,2 +1,2 @@
-https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.0.0/EndpointChecker-v3.0.0-legacy-update.zip
+https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.1.0/EndpointChecker-v3.1.0-legacy-update.zip
 2026-08-01

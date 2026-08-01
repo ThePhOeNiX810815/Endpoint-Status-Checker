@@ -866,6 +866,18 @@ namespace EndpointChecker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Config_VisibleColumns {
+            get {
+                return ((string)(this["Config_VisibleColumns"]));
+            }
+            set {
+                this["Config_VisibleColumns"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string Config_Executable_VNCViewer {
             get {
                 return ((string)(this["Config_Executable_VNCViewer"]));

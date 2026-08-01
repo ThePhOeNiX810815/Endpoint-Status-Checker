@@ -15,7 +15,7 @@ namespace NSpeedTest
 
         public SpeedTestWebClient()
         {
-            ConnectionLimit = 10;
+            ConnectionLimit = 32;
         }
 
         public T GetConfig<T>(string url)
@@ -37,6 +37,7 @@ namespace NSpeedTest
 
             request.Timeout = 5000;
             request.ReadWriteTimeout = 5000;
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             request.UserAgent = Program.http_UserAgent;
             request.Accept = "text/html, application/xhtml+xml, */*";
             request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
