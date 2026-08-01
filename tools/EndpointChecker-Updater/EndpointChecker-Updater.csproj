@@ -14,5 +14,9 @@
     <Description>Standalone updater — upgrades Endpoint Status Checker from any previous version to v3.0.0</Description>
     <Copyright>Peter Machaj</Copyright>
     <ApplicationIcon>..\..\src\app.ico</ApplicationIcon>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
 </Project>
