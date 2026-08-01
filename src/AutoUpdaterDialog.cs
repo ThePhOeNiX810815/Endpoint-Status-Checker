@@ -1,13 +1,12 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using static EndpointChecker.Program;
@@ -16,52 +15,42 @@ namespace EndpointChecker
 {
     public partial class AutoUpdaterDialog : Form
     {
-        // TEMPORARY PACKAGE FILE
-        private static readonly string tempPackageZIPFileName = Path.GetFileName(new Uri(app_LatestPackageLink).AbsolutePath);
-        private static string tempPackageFolderName = string.Empty;
-
-        // SUCCESS SWITCH
-        private static bool updateSuccess = false;
+        // Derived lazily so the class can be referenced before CheckForUpdate() sets the link.
+        private static string _zipFileName   => Path.GetFileName(new Uri(app_LatestPackageLink).AbsolutePath);
+        private static string _extractFolder => "EndpointChecker_Update";
+        private static string _updateScript  =  string.Empty;
+        private static bool   _updateSuccess =  false;
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
+        public const int HT_CAPTION       = 0x2;
 
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
+        [DllImport("user32.dll")] public static extern int  SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImport("user32.dll")] public static extern bool ReleaseCapture();
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public AutoUpdaterDialog()
         {
             InitializeComponent();
 
-            // COMMON EXCEPTION HANDLERS
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
-            Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
+            Application.ThreadException                += new ThreadExceptionEventHandler(ThreadExceptionHandler);
 
-            // SET DOUBLE BUFFER
             DoubleBuffered = true;
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
-            // SET LABELS
-            lbl_Name.Text = app_ApplicationName;
+            lbl_Name.Text    = app_ApplicationName;
             lbl_Copyright.Text = app_Copyright;
 
             lbl_UpdateVersion.Text =
                 "Version " +
-                    GetVersionString(
-                        app_LatestPackageVersion,
-                        app_LatestPackageVersion.Build != 0,
-                        false);
+                GetVersionString(app_LatestPackageVersion, app_LatestPackageVersion.Build != 0, false);
 
-            lbl_ReleaseDate.Text =
-                "Released " +
-                app_LatestPackageDate;
+            lbl_ReleaseDate.Text = "Released " + app_LatestPackageDate;
 
             BW_Update.RunWorkerAsync();
         }
+
+        // ── Background worker ────────────────────────────────────────────────────
 
         public void bw_Update_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -69,193 +58,80 @@ namespace EndpointChecker
             {
                 Thread.Sleep(1000);
 
-                // DOWNLOAD UPDATE PACKAGE
-                ThreadSafeInvoke(() =>
-                {
-                    lbl_Progress.Text = "Downloading Package from GitHub ...";
-                });
-                
+                // 1. DOWNLOAD
+                ThreadSafeInvoke(() => lbl_Progress.Text = "Downloading Package from GitHub ...");
                 Thread.Sleep(1000);
 
-                int downloadPackage_MaxAttemptCount = 20;
-                int downloadPackage_CurrentAttempt = 0;
-                bool downloadPackage_Success = false;
+                int  maxAttempts = 20;
+                int  attempt     = 0;
+                bool downloaded  = false;
 
-                while (!downloadPackage_Success &&
-                       downloadPackage_CurrentAttempt <= downloadPackage_MaxAttemptCount)
+                while (!downloaded && attempt < maxAttempts)
                 {
-                    // INCREASE ATTEMP COUNTER
-                    downloadPackage_CurrentAttempt++;
-
+                    attempt++;
                     try
                     {
-                        // TRY TO DOWNLOAD PACKAGE
-                        using (CustomWebClient webClient = new CustomWebClient())
-                        {
-                            webClient.DownloadFile(new Uri(app_LatestPackageLink), Path.Combine(app_TempDir, tempPackageZIPFileName));
-
-                            // SUCCESS, JUMP OUT OF WHILE CYCLE AND CONTINUE CODE
-                            downloadPackage_Success = true;
-                        }
+                        using (CustomWebClient wc = new CustomWebClient())
+                            wc.DownloadFile(new Uri(app_LatestPackageLink),
+                                            Path.Combine(app_TempDir, _zipFileName));
+                        downloaded = true;
                     }
-                    catch (Exception CustomWebClientEX)
+                    catch (Exception ex)
                     {
-                        // CLEAN TEMPORARY PACKAGE FILE
                         CleanTempPackageArchive();
-
-                        // WAIT FOR 1 SECOND
                         Thread.Sleep(1000);
-
-                        // IF CURRENT ATTEMPT COUNT EQUALS MAX ATTEMPTS COUNT, THROW EXCEPTION 
-                        if (downloadPackage_CurrentAttempt == downloadPackage_MaxAttemptCount)
-                        {
-                            throw (CustomWebClientEX);
-                        }
+                        if (attempt == maxAttempts) throw ex;
                     }
                 }
 
-                // UNZIP UPDATE PACKAGE
-                ThreadSafeInvoke(() =>
-                {
-                    lbl_Progress.Text = "Extracting Package ...";
-                });
-                
+                // 2. EXTRACT
+                ThreadSafeInvoke(() => lbl_Progress.Text = "Extracting Package ...");
                 Thread.Sleep(1000);
                 UnzipUpdatePackage();
 
-                // CLEANUP OLD APPLICATION EXECUTABLE AND LIBRARIES
-                ThreadSafeInvoke(() =>
-                {
-                    lbl_Progress.Text = "Old Files Cleanup ...";
-                });
-                
+                // 3. WRITE UPDATE SCRIPT
+                ThreadSafeInvoke(() => lbl_Progress.Text = "Preparing Update ...");
                 Thread.Sleep(1000);
-                CleanOldLibraries();
+                WriteUpdateScript();
 
-                // UPDATE
-                ThreadSafeInvoke(() =>
-                {
-                    lbl_Progress.Text = "Copying New Files ...";
-                });
-
-                Thread.Sleep(1000);
-                CopyNewLibraries();
-
-                // CLEANUP
-                ThreadSafeInvoke(() =>
-                {
-                    lbl_Progress.Text = "Cleaning Up Temporary Files ...";
-                });
-                
+                // 4. CLEANUP ZIP
+                ThreadSafeInvoke(() => lbl_Progress.Text = "Cleaning Up ...");
                 Thread.Sleep(1000);
                 CleanTempPackageArchive();
-                CleanTempPackageDirectory();
 
-                // COMPLETE
+                // 5. SUCCESS
                 ThreadSafeInvoke(() =>
                 {
-                    lbl_Progress.Visible = false;
+                    lbl_Progress.Visible         = false;
                     lbl_UpdateStatus_Wait.Visible = false;
-                    lbl_UpdateStatus.ForeColor = Color.Lime;
-                    lbl_UpdateStatus.Text = "SUCCESSFULLY UPDATED";
+                    lbl_UpdateStatus.ForeColor    = Color.Lime;
+                    lbl_UpdateStatus.Text         = "SUCCESSFULLY UPDATED";
                 });
 
-                updateSuccess = true;
-
+                _updateSuccess = true;
                 Thread.Sleep(3000);
             }
             catch (Exception exception)
             {
-                // FAILED
                 ThreadSafeInvoke(() =>
                 {
-                    lbl_Progress.Visible = false;
+                    lbl_Progress.Visible         = false;
                     lbl_UpdateStatus_Wait.Visible = false;
-                    lbl_UpdateStatus.ForeColor = Color.Red;
-                    lbl_UpdateStatus.Text = "UPDATE FAILED";
+                    lbl_UpdateStatus.ForeColor    = Color.Red;
+                    lbl_UpdateStatus.Text         = "UPDATE FAILED";
                 });
 
                 Thread.Sleep(2000);
-
                 ExceptionNotify(this, exception, "Package Link: " + app_LatestPackageLink, true);
             }
         }
 
         public void bw_Update_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            // FADE OUT AND CLOSE
             TIMER_FadeOutAndClose.Start();
         }
 
-        public static void CleanTempPackageDirectory()
-        {
-            if (Directory.Exists(Path.Combine(app_TempDir, tempPackageFolderName)))
-            {
-                Directory.Delete(Path.Combine(app_TempDir, tempPackageFolderName), true);
-            }
-        }
-
-        public static void CleanTempPackageArchive()
-        {
-            if (File.Exists(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPFileName))))
-            {
-                File.Delete(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPFileName)));
-            }
-        }
-
-        public static void CleanOldLibraries()
-        {
-            foreach (string appFile in Directory.GetFiles(app_CurrentWorkingDir))
-            {
-                // EXECUTABLE, LIBRARIES, DEBUG DBS
-                if (Path.GetExtension(appFile).ToLower() == ".exe" ||
-                    Path.GetExtension(appFile).ToLower() == ".dll" ||
-                    Path.GetExtension(appFile).ToLower() == ".pdb")
-                {
-                    File.Delete(appFile);
-                }
-            }
-
-
-            if (File.Exists(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPFileName))))
-            {
-                File.Delete(Path.Combine(app_TempDir, Path.Combine(app_TempDir, tempPackageZIPFileName)));
-            }
-        }
-
-        public static void CopyNewLibraries()
-        {
-            foreach (string appFile in Directory.GetFiles(Path.Combine(app_TempDir, tempPackageFolderName)))
-            {
-                if (Path.GetExtension(appFile) == ".exe" ||
-                    Path.GetExtension(appFile) == ".dll" ||
-                    Path.GetExtension(appFile) == ".pdb" ||
-                    Path.GetExtension(appFile) == ".config")
-                {
-                    File.Copy(appFile, Path.Combine(app_CurrentWorkingDir, Path.GetFileName(appFile)), true);
-                }
-            }
-        }
-
-        public static void UnzipUpdatePackage()
-        {
-            using (ZipArchive zipArchive = ZipFile.OpenRead(Path.Combine(app_TempDir, tempPackageZIPFileName)))
-            {
-                tempPackageFolderName = zipArchive.Entries.First().FullName;
-
-                CleanTempPackageDirectory();
-
-                zipArchive.ExtractToDirectory(app_TempDir);
-            }
-        }
-
-        public void Controls_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left) {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
-        }
+        // ── Fade-out / close ─────────────────────────────────────────────────────
 
         public void TIMER_FadeOutAndClose_Tick(object sender, EventArgs e)
         {
@@ -265,14 +141,82 @@ namespace EndpointChecker
             }
             else
             {
-                if (updateSuccess)
+                if (_updateSuccess && File.Exists(_updateScript))
                 {
-                    // EXECUTE UPDATED APPLICATION
-                    ProcessStartInfo startApp = new ProcessStartInfo(Path.Combine(app_CurrentWorkingDir, app_ApplicationExecutableName));
-                    Process.Start(startApp);
+                    // Launch the update script minimised; it waits 3 s for this process to exit,
+                    // then xcopy all new files, restores user data, and relaunches the app.
+                    Process.Start(new ProcessStartInfo(_updateScript)
+                    {
+                        UseShellExecute = true,
+                        WindowStyle     = ProcessWindowStyle.Minimized
+                    });
                 }
 
                 Environment.Exit(0);
+            }
+        }
+
+        // ── Helpers ──────────────────────────────────────────────────────────────
+
+        public static void UnzipUpdatePackage()
+        {
+            string extractDir = Path.Combine(app_TempDir, _extractFolder);
+            CleanTempPackageDirectory();
+            Directory.CreateDirectory(extractDir);
+            ZipFile.ExtractToDirectory(Path.Combine(app_TempDir, _zipFileName), extractDir);
+        }
+
+        private static void WriteUpdateScript()
+        {
+            string extractDir = Path.Combine(app_TempDir, _extractFolder);
+            string appDir     = app_CurrentWorkingDir;
+            string appExe     = Path.Combine(appDir, "EndpointChecker.exe");
+            string backupDir  = Path.Combine(app_TempDir, "EndpointChecker_UserData");
+            _updateScript     = Path.Combine(app_TempDir, "EndpointChecker_Update.cmd");
+
+            var sb = new StringBuilder();
+            sb.AppendLine("@echo off");
+            // Wait for the main process to release file locks
+            sb.AppendLine("timeout /t 3 /nobreak > nul");
+            // Backup user data files that should not be overwritten
+            sb.AppendLine($"if not exist \"{backupDir}\" mkdir \"{backupDir}\"");
+            sb.AppendLine($"if exist \"{appDir}\\EndpointChecker_EndpointsList.txt\" copy /y \"{appDir}\\EndpointChecker_EndpointsList.txt\" \"{backupDir}\\\" >nul 2>&1");
+            sb.AppendLine($"if exist \"{appDir}\\EndpointChecker_LastSeenOnline.json\" copy /y \"{appDir}\\EndpointChecker_LastSeenOnline.json\" \"{backupDir}\\\" >nul 2>&1");
+            // Copy all new files (overwrites everything including runtime DLLs)
+            sb.AppendLine($"xcopy /s /y /e \"{extractDir}\\*.*\" \"{appDir}\\\"");
+            // Restore user data
+            sb.AppendLine($"if exist \"{backupDir}\\EndpointChecker_EndpointsList.txt\" copy /y \"{backupDir}\\EndpointChecker_EndpointsList.txt\" \"{appDir}\\\" >nul 2>&1");
+            sb.AppendLine($"if exist \"{backupDir}\\EndpointChecker_LastSeenOnline.json\" copy /y \"{backupDir}\\EndpointChecker_LastSeenOnline.json\" \"{appDir}\\\" >nul 2>&1");
+            // Relaunch the updated app
+            sb.AppendLine($"start \"\" \"{appExe}\"");
+            // Cleanup
+            sb.AppendLine($"rmdir /s /q \"{extractDir}\" >nul 2>&1");
+            sb.AppendLine($"rmdir /s /q \"{backupDir}\" >nul 2>&1");
+            sb.AppendLine("(goto) 2>nul & del /f \"%~f0\"");
+
+            File.WriteAllText(_updateScript, sb.ToString(), Encoding.ASCII);
+        }
+
+        public static void CleanTempPackageDirectory()
+        {
+            string dir = Path.Combine(app_TempDir, _extractFolder);
+            if (Directory.Exists(dir))
+                Directory.Delete(dir, true);
+        }
+
+        public static void CleanTempPackageArchive()
+        {
+            string zip = Path.Combine(app_TempDir, _zipFileName);
+            if (File.Exists(zip))
+                File.Delete(zip);
+        }
+
+        public void Controls_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
 
@@ -281,12 +225,9 @@ namespace EndpointChecker
             try
             {
                 Application.DoEvents();
-
                 Invoke(action);
             }
-            catch
-            {
-            }
+            catch { }
         }
     }
 }

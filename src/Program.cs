@@ -266,65 +266,44 @@ namespace EndpointChecker
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
-                if (args.Length == 6 &&
-                    args[0] == "/AutoUpdate" &&
-                    Directory.Exists(args[1]) &&
-                    !string.IsNullOrEmpty(args[2]) &&
-                    !string.IsNullOrEmpty(args[3]) &&
-                    !string.IsNullOrEmpty(args[4]) &&
-                    !string.IsNullOrEmpty(args[5]))
-                {
-                    // PASS ARGUMENTS
-                    app_CurrentWorkingDir = args[1];
-                    app_ApplicationExecutableName = args[2];
-                    app_LatestPackageVersion = new Version(args[3]);
-                    app_LatestPackageLink = args[4];
-                    app_LatestPackageDate = args[5];
+                // GET SYSTEM MEMORY SIZE
+                GetPhysicallyInstalledSystemMemory(out long systemMemorySize_KB);
+                systemMemorySize = (systemMemorySize_KB / 1024 / 1024).ToString() + " GB";
 
-                    // AUTO UPDATE FROM GITHUB PACKAGE
-                    Application.Run(new AutoUpdaterDialog());
-                }
-                else
+                // CHECK APPLICATION INSTANCE
+                using (Mutex mainMutex = new Mutex(true, app_ApplicationName, out bool createdNew))
                 {
-                    // GET SYSTEM MEMORY SIZE
-                    GetPhysicallyInstalledSystemMemory(out long systemMemorySize_KB);
-                    systemMemorySize = (systemMemorySize_KB / 1024 / 1024).ToString() + " GB";
-
-                    // CHECK APPLICATION INSTANCE
-                    using (Mutex mainMutex = new Mutex(true, app_ApplicationName, out bool createdNew))
+                    if (!createdNew)
                     {
-                        if (!createdNew)
-                        {
-                            // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, RESTORE WINDOW
-                            IntPtr wdwIntPtr = FindWindow(null, app_Title);
-                            WindowPlacement placement = new WindowPlacement();
+                        // ANOTHER APPLICATION INSTANCE IS ALREADY RUNNING, RESTORE WINDOW
+                        IntPtr wdwIntPtr = FindWindow(null, app_Title);
+                        WindowPlacement placement = new WindowPlacement();
 
-                            GetWindowPlacement(wdwIntPtr, ref placement);
-                            ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
-                            SetForegroundWindow(wdwIntPtr);
+                        GetWindowPlacement(wdwIntPtr, ref placement);
+                        ShowWindow(wdwIntPtr, ShowWindowEnum.Show);
+                        SetForegroundWindow(wdwIntPtr);
+                    }
+                    else if (RequiredLibrariesExists(app_RequiredLibsList))
+                    {
+                        CheckForUpdate();
+
+                        if (app_AutoUpdateNow)
+                        {
+                            ExecuteUpdater();
+
+                            Environment.Exit(0);
                         }
-                        else if (RequiredLibrariesExists(app_RequiredLibsList))
+                        else
                         {
-                            CheckForUpdate();
-
-                            if (app_AutoUpdateNow)
+                            if (app_ShowSplashScreen ||
+                                app_TestMode)
                             {
-                                ExecuteUpdater();
-
-                                Environment.Exit(0);
+                                // SHOW SPLASH SCREEN
+                                Application.Run(new SplashScreen());
                             }
-                            else
-                            {
-                                if (app_ShowSplashScreen ||
-                                    app_TestMode)
-                                {
-                                    // SHOW SPLASH SCREEN
-                                    Application.Run(new SplashScreen());
-                                }
 
-                                // RUN NEW APPLICATION INSTANCE
-                                Application.Run(new CheckerMainForm());
-                            }
+                            // RUN NEW APPLICATION INSTANCE
+                            Application.Run(new CheckerMainForm());
                         }
                     }
                 }
@@ -467,8 +446,8 @@ namespace EndpointChecker
                             new string[] { "\n" },
                             StringSplitOptions.None);
 
-                    app_LatestPackageLink = app_LatestPackageInfo[0];
-                    app_LatestPackageDate = app_LatestPackageInfo[1];
+                    app_LatestPackageLink = app_LatestPackageInfo[0].Trim();
+                    app_LatestPackageDate = app_LatestPackageInfo[1].Trim();
 
                     // GET LATEST VERSION RELEASE NOTES
                     app_LatestPackageReleaseNotes_RTF =
@@ -619,32 +598,10 @@ namespace EndpointChecker
 
         public static void ExecuteUpdater()
         {
-            string currentExecutable = app_Assembly.Location;
-            string updaterExecutable = Path.Combine(app_TempDir, "EndpointChecker_AutoUpdater.exe");
-
-            // COPY UPDATER TO TEMP DIRECORY
-            File.Copy(currentExecutable, updaterExecutable, true);
-
-            // UPDATER ARGUMENTS
-            List<string> updaterArgs = new List<string>
-                            {
-                                "/AutoUpdate",
-                                "\"" + Path.GetDirectoryName(currentExecutable) + "\"",
-                                app_ApplicationExecutableName,
-                                app_LatestPackageVersion.ToString(),
-                                app_LatestPackageLink,
-                                app_LatestPackageDate
-                            };
-
-            // PREPARE UPDATER
-            ProcessStartInfo startUpdater = new ProcessStartInfo(updaterExecutable)
-            {
-                Arguments = string.Join(" ", updaterArgs),
-                UseShellExecute = true
-            };
-
-            // EXECUTE UPDATE PROCESS
-            Process.Start(startUpdater);
+            // Show the updater dialog in-process. It downloads the new zip, extracts it to a
+            // temp folder, then writes a .cmd script that (after this process exits) xcopy-copies
+            // all new files into the app directory and relaunches EndpointChecker.exe.
+            Application.Run(new AutoUpdaterDialog());
         }
 
         public static void LoadApplicationConfig()
