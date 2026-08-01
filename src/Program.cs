@@ -483,14 +483,26 @@ namespace EndpointChecker
 
             try
             {
-                // GET SIGNING CERT
-                X509Certificate2 app_SigningAUTHCertificate = new X509Certificate2(X509Certificate.CreateFromSignedFile(app_Assembly.Location));
+                X509Certificate2 cert = new X509Certificate2(X509Certificate.CreateFromSignedFile(app_Assembly.Location));
 
-                // VALIDATE SIGNING CERT
+                string serial  = cert.GetSerialNumberString();
+                string issuer  = cert.Issuer;
+                string subject = cert.Subject;
+
+                // Peter Machaj (original developer)
                 isOriginalSignedExecutable =
-                    app_SigningAUTHCertificate.GetSerialNumberString().Equals("492E6814E26FA7CA") &&
-                    app_SigningAUTHCertificate.Issuer.Equals("CN=Peter Machaj Root CA") &&
-                    app_SigningAUTHCertificate.Subject.Equals("CN=Peter Machaj");
+                    serial.Equals("492E6814E26FA7CA") &&
+                    issuer.Equals("CN=Peter Machaj Root CA") &&
+                    subject.Equals("CN=Peter Machaj");
+
+                // David Smidke (co-developer)
+                if (!isOriginalSignedExecutable)
+                {
+                    isOriginalSignedExecutable =
+                        serial.Equals("5CAB0103B598FFB948B94D9E1B1DBFF9") &&
+                        issuer.Equals("CN=David Smidke") &&
+                        subject.Equals("CN=David Smidke");
+                }
             }
             catch
             {
