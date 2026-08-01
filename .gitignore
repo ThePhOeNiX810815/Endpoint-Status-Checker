@@ -10,6 +10,10 @@ src/obj/
 # Packaged release artifacts (built locally, published as GitHub Release assets)
 release/
 
+# Updater tool build output
+tools/EndpointChecker-Updater/bin/
+tools/EndpointChecker-Updater/obj/
+
 # Runtime data files
 src/EndpointChecker_LastSeenOnline.json
 src/bin/Debug/EndpointChecker_LastSeenOnline.json
