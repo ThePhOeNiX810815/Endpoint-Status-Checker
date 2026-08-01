@@ -145,6 +145,14 @@ namespace EndpointChecker
         private SpeedTestDialog dialog_SpeedTest = null;
         private readonly System.Windows.Forms.Timer premiumUiPulseTimer = new System.Windows.Forms.Timer();
         private int premiumUiPulseTick = 0;
+        private GroupBox groupBox_ListOptions;
+        private ContextMenuStrip endpointColumnsContextMenu;
+        private readonly Dictionary<ColumnHeader, int> endpointColumnWidths = new Dictionary<ColumnHeader, int>();
+        private bool adjustingEndpointFillerColumn = false;
+        private Button btn_ColumnsChooser;
+        private Label lbl_ColumnsChooser;
+        private Panel endpointHeaderCornerPatch;
+        private GroupBox groupBox_ScanProgress;
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public CheckerMainForm()
@@ -198,6 +206,7 @@ namespace EndpointChecker
 
             // SET VERSION / BUILD LABELS
             Text = app_Title;
+            ApplyApplicationIcon();
 
             lbl_Copyright.Text = app_Copyright;
             lbl_Version.Text += "Version: " + app_VersionString +
@@ -216,10 +225,22 @@ namespace EndpointChecker
             mainMenu_CfBypass.Click += (s, e) => mainMenu_CfBypass_Click(s, e);
             MainMenuStrip.Items.Insert(MainMenuStrip.Items.IndexOf(mainMenu_Exit), mainMenu_CfBypass);
 
+            ToolStripMenuItem mainMenu_Columns = new ToolStripMenuItem
+            {
+                Text = "Columns",
+                ToolTipText = "Choose visible endpoint list columns",
+                Image = CreateCommandIcon(CommandIcon.Columns, Color.FromArgb(80, 200, 255), 16)
+            };
+            mainMenu_Columns.Click += (s, e) => ShowEndpointColumnChooser(new Point(16, 20));
+            MainMenuStrip.Items.Insert(MainMenuStrip.Items.IndexOf(mainMenu_CfBypass), mainMenu_Columns);
+
             // APPLY PREMIUM VISUAL THEME
             ApplyPremiumTheme();
+            InitializeEndpointListOptions();
             InitializePremiumMotionEffects();
             Resize += CheckerMainForm_Resize;
+            MouseUp += CheckerMainForm_MouseUp;
+            HandleCreated += (s, e) => TryUseDarkTitleBar();
             ApplyBottomPanelsLayout();
 
             // LOAD 'LAST SEEN ONLINE' LIST
@@ -316,6 +337,28 @@ namespace EndpointChecker
                 ToolTipTitle = "Endpoint Filter"
             };
             toolTip_ClearFilter.SetToolTip(pb_ListFilterClear, "Clear EndPoints filter text");
+        }
+
+        private void ApplyApplicationIcon()
+        {
+            try
+            {
+                string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
+                if (!File.Exists(iconPath))
+                {
+                    iconPath = Path.Combine(Application.StartupPath, "app.ico");
+                }
+
+                if (File.Exists(iconPath))
+                {
+                    Icon appIcon = new Icon(iconPath);
+                    Icon = appIcon;
+                    trayIcon.Icon = appIcon;
+                }
+            }
+            catch
+            {
+            }
         }
 
         public void LoadConfiguration()
@@ -582,7 +625,7 @@ namespace EndpointChecker
                 ThreadSafeInvoke(() =>
                 {
                     SetControls(false, false);
-                    btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+                    btn_RunCheck.Enabled = lv_Endpoints.Items.Count > 0;
                     lbl_EndpointsListLoading.Visible = false;
                     lv_Endpoints.Visible = true;
                 });
@@ -2404,6 +2447,18 @@ namespace EndpointChecker
                 dialog_EndpointDetails == null &&
                 dialog_SpeedTest == null)
             {
+                if (lv_Endpoints.Items.Count > 0 && lv_Endpoints.CheckedItems.Count == 0)
+                {
+                    SetCheckButtons(false);
+                    ListEndpoints(ListViewRefreshMethod.CheckAll);
+                    SetCheckButtons(true);
+                }
+
+                if (lv_Endpoints.CheckedItems.Count == 0)
+                {
+                    return;
+                }
+
                 btn_RunCheck.Enabled = false;
 
                 SetControls(true, true);
@@ -2422,6 +2477,11 @@ namespace EndpointChecker
             lbl_Terminate.Enabled = inProgress && locked;
             lbl_ProgressCount.Visible = inProgress && locked;
             pb_RefreshProcess.Visible = inProgress && locked;
+            if (groupBox_ScanProgress != null)
+            {
+                groupBox_ScanProgress.Enabled = true;
+            }
+            LayoutEndpointListOverlays();
             if (inProgress && locked)
                 pb_RefreshProcess.StartAnimation();
             else
@@ -2431,9 +2491,9 @@ namespace EndpointChecker
             SetCheckButtons(!inProgress && !locked);
             lbl_LoadList.Enabled = !inProgress && !locked;
             btn_LoadList.Enabled = !inProgress && !locked;
-            groupBox_Export.Enabled = !inProgress && !locked;
-            groupBox_CommonOptions.Enabled = !inProgress && !locked;
-            groupBox_HTTPOptions.Enabled = !inProgress && !locked;
+            groupBox_Export.Enabled = true;
+            groupBox_CommonOptions.Enabled = true;
+            groupBox_HTTPOptions.Enabled = true;
             lv_Endpoints.CheckBoxes = !inProgress;
             comboBox_Validate.Enabled = !inProgress && !locked;
             lbl_Validate.Enabled = !inProgress && !locked;
@@ -2486,6 +2546,8 @@ namespace EndpointChecker
             pb_ListFilterClear.Visible = !inProgress && !locked && endpointsList.Count > 0 && !string.IsNullOrEmpty(tb_ListFilter.Text);
 
             tb_ListFilter.BackColor = string.IsNullOrEmpty(tb_ListFilter.Text) ? Color.LightGray : lv_Endpoints.Items.Count > 0 ? Color.Honeydew : Color.MistyRose;
+            ApplyPremiumControlState(inProgress, locked);
+            ApplyBottomPanelsLayout();
         }
 
         public void SetTrayControls(bool inProgress)
@@ -2815,7 +2877,7 @@ namespace EndpointChecker
                 }
 
                 RefreshTrayIcon();
-                btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+                btn_RunCheck.Enabled = lv_Endpoints.Items.Count > 0;
             }
         }
 
@@ -2913,7 +2975,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+            btn_RunCheck.Enabled = lv_Endpoints.Items.Count > 0;
         }
 
         public void btn_UncheckAll_Click(object sender, EventArgs e)
@@ -2923,7 +2985,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+            btn_RunCheck.Enabled = lv_Endpoints.Items.Count > 0;
         }
 
         public void btn_CheckAllAvailable_Click(object sender, EventArgs e)
@@ -2933,7 +2995,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+            btn_RunCheck.Enabled = lv_Endpoints.Items.Count > 0;
         }
 
         public void btn_CheckAllErrors_Click(object sender, EventArgs e)
@@ -2943,7 +3005,7 @@ namespace EndpointChecker
             SetCheckButtons(true);
 
             RefreshTrayIcon();
-            btn_RunCheck.Enabled = lv_Endpoints.CheckedItems.Count > 0;
+            btn_RunCheck.Enabled = lv_Endpoints.Items.Count > 0;
         }
 
         public void SetCheckButtons(bool enabled)
@@ -3672,6 +3734,9 @@ namespace EndpointChecker
             {
                 if (statusMessage == GetEnumDescriptionString(EndpointStatus.TERMINATED))
                     return Color.FromArgb(102, 204, 255);  // bright cyan
+                if (statusMessage == GetEnumDescriptionString(EndpointStatus.NOTCHECKED) ||
+                    statusMessage == GetEnumDescriptionString(EndpointStatus.DISABLED))
+                    return Color.FromArgb(218, 228, 245);
                 return muted;
             }
 
@@ -4046,25 +4111,26 @@ namespace EndpointChecker
                 if (comboBox_Validate.SelectedIndex == 0)
                 {
                     // SAVE COLUMNS WIDTH
-                    Settings.Default.ListView_ColWidth_Service = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointName)].Width;
-                    Settings.Default.ListView_ColWidth_Protocol = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Protocol)].Width;
-                    Settings.Default.ListView_ColWidth_Port = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Port)].Width;
-                    Settings.Default.ListView_ColWidth_Endpoint = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointURL)].Width;
-                    Settings.Default.ListView_ColWidth_IPAddress = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_IPAddress)].Width;
-                    Settings.Default.ListView_ColWidth_ResponseTime = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_ResponseTime)].Width;
-                    Settings.Default.ListView_ColWidth_Code = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Code)].Width;
-                    Settings.Default.ListView_ColWidth_Message = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Message)].Width;
-                    Settings.Default.ListView_ColWidth_LastSeenOnline = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_LastSeenOnline)].Width;
-                    Settings.Default.ListView_ColWidth_MACAddress = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_MACAddress)].Width;
-                    Settings.Default.ListView_ColWidth_PingTime = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_PingTime)].Width;
-                    Settings.Default.ListView_ColWidth_Server = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_Server)].Width;
-                    Settings.Default.ListView_ColWidth_UserName = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_UserName)].Width;
-                    Settings.Default.ListView_ColWidth_NetworkShares = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_NetworkShares)].Width;
-                    Settings.Default.ListView_ColWidth_DNSName = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_DNSName)].Width;
-                    Settings.Default.ListView_ColWidth_ContentLength = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPContentLength)].Width;
-                    Settings.Default.ListView_ColWidth_ContentType = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPContentType)].Width;
-                    Settings.Default.ListView_ColWidth_Expires = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPExpires)].Width;
-                    Settings.Default.ListView_ColWidth_ETag = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_HTTPETag)].Width;
+                    Settings.Default.ListView_ColWidth_Service = GetEndpointColumnWidthForSave(ch_EndpointName);
+                    Settings.Default.ListView_ColWidth_Protocol = GetEndpointColumnWidthForSave(ch_Protocol);
+                    Settings.Default.ListView_ColWidth_Port = GetEndpointColumnWidthForSave(ch_Port);
+                    Settings.Default.ListView_ColWidth_Endpoint = GetEndpointColumnWidthForSave(ch_EndpointURL);
+                    Settings.Default.ListView_ColWidth_IPAddress = GetEndpointColumnWidthForSave(ch_IPAddress);
+                    Settings.Default.ListView_ColWidth_ResponseTime = GetEndpointColumnWidthForSave(ch_ResponseTime);
+                    Settings.Default.ListView_ColWidth_Code = GetEndpointColumnWidthForSave(ch_Code);
+                    Settings.Default.ListView_ColWidth_Message = GetEndpointColumnWidthForSave(ch_Message);
+                    Settings.Default.ListView_ColWidth_LastSeenOnline = GetEndpointColumnWidthForSave(ch_LastSeenOnline);
+                    Settings.Default.ListView_ColWidth_MACAddress = GetEndpointColumnWidthForSave(ch_MACAddress);
+                    Settings.Default.ListView_ColWidth_PingTime = GetEndpointColumnWidthForSave(ch_PingTime);
+                    Settings.Default.ListView_ColWidth_Server = GetEndpointColumnWidthForSave(ch_Server);
+                    Settings.Default.ListView_ColWidth_UserName = GetEndpointColumnWidthForSave(ch_UserName);
+                    Settings.Default.ListView_ColWidth_NetworkShares = GetEndpointColumnWidthForSave(ch_NetworkShares);
+                    Settings.Default.ListView_ColWidth_DNSName = GetEndpointColumnWidthForSave(ch_DNSName);
+                    Settings.Default.ListView_ColWidth_ContentLength = GetEndpointColumnWidthForSave(ch_HTTPContentLength);
+                    Settings.Default.ListView_ColWidth_ContentType = GetEndpointColumnWidthForSave(ch_HTTPContentType);
+                    Settings.Default.ListView_ColWidth_Expires = GetEndpointColumnWidthForSave(ch_HTTPExpires);
+                    Settings.Default.ListView_ColWidth_ETag = GetEndpointColumnWidthForSave(ch_HTTPETag);
+                    Settings.Default.Config_VisibleColumns = string.Join(",", GetUserEndpointColumns().Where(column => column.Width > 0).Select(column => column.Name));
 
                     // SAVE COLUMNS DISPLAY INDEX [ORDER]
                     Settings.Default.ListView_DisplayIndex_Service = lv_Endpoints.Columns[lv_Endpoints.Columns.IndexOf(ch_EndpointName)].DisplayIndex;
@@ -4567,6 +4633,18 @@ namespace EndpointChecker
             catch
             {
             }
+        }
+
+        private int GetEndpointColumnWidthForSave(ColumnHeader column)
+        {
+            if (column.Width > 0)
+            {
+                return column.Width;
+            }
+
+            return endpointColumnWidths.TryGetValue(column, out int width)
+                ? Math.Max(40, width)
+                : 80;
         }
 
         public void RestoreDisabledItemsListAndFilter()
@@ -5678,6 +5756,7 @@ namespace EndpointChecker
             comboBox_Validate.SelectedIndex = 0;
 
             RestoreListViewColumnsWidthAndOrder();
+            RestoreVisibleEndpointColumns();
             RestoreWindowSizeAndPosition();
             LoadConfiguration();
             LoadEndpointReferences();
@@ -5867,28 +5946,31 @@ namespace EndpointChecker
         private void ApplyPremiumTheme()
         {
             // ── Palette ──────────────────────────────────────────────────────────
-            Color bg          = Color.FromArgb( 10,  16,  31);
-            Color surface     = Color.FromArgb( 18,  27,  45);
-            Color surfaceAlt  = Color.FromArgb( 24,  35,  58);
-            Color input       = Color.FromArgb( 14,  23,  39);
-            Color accent      = Color.FromArgb( 74, 132, 255);
-            Color accentAlt   = Color.FromArgb( 43,  91, 211);
-            Color success     = Color.FromArgb( 50, 201, 118);
-            Color warning     = Color.FromArgb(255, 181,  71);
-            Color danger      = Color.FromArgb(255,  94,  98);
-            Color textMain    = Color.FromArgb(224, 233, 248);
-            Color textMute    = Color.FromArgb(133, 149, 184);
-            Color menuBg      = Color.FromArgb(  9,  15,  28);
-            Color cardBorder  = Color.FromArgb(50, 72, 124);
+            Color bg          = Color.FromArgb(  8,  14,  27);
+            Color surface     = Color.FromArgb( 16,  26,  43);
+            Color surfaceAlt  = Color.FromArgb( 23,  36,  61);
+            Color input       = Color.FromArgb( 12,  21,  36);
+            Color accent      = Color.FromArgb( 70, 143, 255);
+            Color accentAlt   = Color.FromArgb( 42,  96, 214);
+            Color success     = Color.FromArgb( 59, 218, 128);
+            Color warning     = Color.FromArgb(255, 183,  67);
+            Color danger      = Color.FromArgb(255,  99, 107);
+            Color textMain    = Color.FromArgb(230, 238, 252);
+            Color textMute    = Color.FromArgb(142, 158, 190);
+            Color menuBg      = Color.FromArgb(  7,  13,  25);
+            Color cardBorder  = Color.FromArgb(55, 77, 122);
 
             // Form
             BackColor = bg;
+            MinimumSize = new Size(Math.Max(MinimumSize.Width, 1150), Math.Max(MinimumSize.Height, 740));
 
             // Menu strip
             MainMenuStrip.BackColor = menuBg;
             MainMenuStrip.ForeColor = textMain;
             MainMenuStrip.Renderer  = new DarkMenuStripRenderer();
             MainMenuStrip.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            MainMenuStrip.ImageScalingSize = new Size(18, 18);
+            MainMenuStrip.Padding = new Padding(8, 5, 8, 5);
             foreach (ToolStripItem item in MainMenuStrip.Items)
             {
                 item.BackColor = menuBg;
@@ -5955,14 +6037,7 @@ namespace EndpointChecker
                         break;
 
                     case ListView lv:
-                        lv.BackColor = surface;
-                        lv.ForeColor = textMain;
-                        lv.BorderStyle = BorderStyle.FixedSingle;
-                        lv.HeaderStyle = ColumnHeaderStyle.Clickable;
-                        lv.GridLines = true;
-                        lv.HideSelection = false;
-                        lv.FullRowSelect = true;
-                        lv.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+                        ConfigurePremiumListView(lv, surface, textMain);
                         break;
 
                     case ProgressBar progressBar:
@@ -5996,9 +6071,7 @@ namespace EndpointChecker
             }
 
             // Explicit overrides for the main list
-            lv_Endpoints.BackColor = surface;
-            lv_Endpoints.ForeColor = textMain;
-            lv_Endpoints.BorderStyle = BorderStyle.FixedSingle;
+            ConfigurePremiumListView(lv_Endpoints, Color.FromArgb(13, 29, 38), textMain);
 
             // Status / action specific treatment to match dashboard styling
             foreach (Button btn in new[]
@@ -6010,33 +6083,20 @@ namespace EndpointChecker
                 btn_CheckAllAvailable,
                 btn_CheckAllErrors,
                 btn_RunCheck,
-                btn_Terminate
+                btn_Terminate,
+                btn_ColumnsChooser
             })
             {
-                btn.FlatStyle = FlatStyle.Flat;
-                btn.FlatAppearance.BorderSize = 1;
-                btn.FlatAppearance.MouseOverBackColor = surfaceAlt;
-                btn.FlatAppearance.MouseDownBackColor = input;
-                btn.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold, GraphicsUnit.Point);
-                btn.ForeColor = textMain;
+                if (btn == null)
+                {
+                    continue;
+                }
+
+                StyleInlineCommandButton(btn);
             }
 
-            btn_LoadList.BackColor = input;
-            btn_LoadList.FlatAppearance.BorderColor = accent;
-            btn_BrowseExportDir.BackColor = input;
-            btn_BrowseExportDir.FlatAppearance.BorderColor = accent;
-            btn_CheckAll.BackColor = accentAlt;
-            btn_CheckAll.FlatAppearance.BorderColor = accent;
-            btn_UncheckAll.BackColor = surfaceAlt;
-            btn_UncheckAll.FlatAppearance.BorderColor = Color.FromArgb(70, 84, 118);
-            btn_CheckAllAvailable.BackColor = Color.FromArgb(24, 68, 49);
-            btn_CheckAllAvailable.FlatAppearance.BorderColor = success;
-            btn_CheckAllErrors.BackColor = Color.FromArgb(74, 31, 39);
-            btn_CheckAllErrors.FlatAppearance.BorderColor = danger;
-            btn_RunCheck.BackColor = accentAlt;
-            btn_RunCheck.FlatAppearance.BorderColor = accent;
-            btn_Terminate.BackColor = Color.FromArgb(53, 57, 67);
-            btn_Terminate.FlatAppearance.BorderColor = Color.FromArgb(111, 119, 138);
+            ApplyPremiumActionIcons(accent, success, danger, textMute);
+            WireCommandLabelsAsButtons();
 
             lbl_CheckAll.ForeColor = textMain;
             lbl_UncheckAll.ForeColor = textMute;
@@ -6045,6 +6105,11 @@ namespace EndpointChecker
             lbl_RunCheck.ForeColor = accent;
             lbl_Terminate.ForeColor = textMute;
             lbl_BrowseExportDir.ForeColor = textMute;
+            if (lbl_ColumnsChooser != null)
+            {
+                lbl_ColumnsChooser.ForeColor = Color.FromArgb(80, 200, 255);
+                lbl_ColumnsChooser.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            }
             lbl_LastUpdate_Label.ForeColor = success;
             lbl_LastUpdate.ForeColor = textMain;
 
@@ -6059,6 +6124,7 @@ namespace EndpointChecker
                 cms.ForeColor = textMain;
                 cms.Renderer  = new DarkMenuStripRenderer();
                 cms.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+                cms.ImageScalingSize = new Size(18, 18);
                 foreach (ToolStripItem item in cms.Items)
                 {
                     item.BackColor = menuBg;
@@ -6078,10 +6144,183 @@ namespace EndpointChecker
             pb_LastUpdate.ForeColor = success;
             pb_RefreshProcess.ForeColor = accent;
 
-            foreach (GroupBox groupBox in new[] { groupBox_CommonOptions, groupBox_HTTPOptions, groupBox_Export, groupBox_EndpointSelection, groupBox_Actions })
+            StyleGroupBoxAsCard(groupBox_Actions, surface, cardBorder, Color.FromArgb(96, 169, 255));
+            StyleGroupBoxAsCard(groupBox_EndpointSelection, surface, cardBorder, Color.FromArgb(88, 225, 150));
+            StyleGroupBoxAsCard(groupBox_Export, surface, cardBorder, Color.FromArgb(121, 151, 255));
+            StyleGroupBoxAsCard(groupBox_ScanProgress, surface, cardBorder, Color.FromArgb(92, 219, 255));
+            StyleGroupBoxAsCard(groupBox_ListOptions, surface, cardBorder, Color.FromArgb(80, 200, 255));
+            StyleGroupBoxAsCard(groupBox_CommonOptions, surface, cardBorder, Color.FromArgb(122, 231, 166));
+            StyleGroupBoxAsCard(groupBox_HTTPOptions, surface, cardBorder, Color.FromArgb(255, 197, 101));
+
+            ApplyPremiumControlState(inProgress: false, locked: false);
+        }
+
+        private static void StyleInlineCommandButton(Button button)
+        {
+            if (button == null)
             {
-                StyleGroupBoxAsCard(groupBox, surface, cardBorder, accent);
+                return;
             }
+
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 0;
+            button.FlatAppearance.MouseOverBackColor = Color.FromArgb(24, 39, 64);
+            button.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 52, 84);
+            button.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold, GraphicsUnit.Point);
+            button.ForeColor = Color.FromArgb(230, 238, 252);
+            button.BackColor = Color.FromArgb(16, 26, 43);
+        }
+
+        private void InitializeEndpointListOptions()
+        {
+            if (groupBox_ListOptions == null)
+            {
+                groupBox_ListOptions = new GroupBox
+                {
+                    Name = "groupBox_ListOptions",
+                    Text = "List Options",
+                    TabStop = false
+                };
+                Controls.Add(groupBox_ListOptions);
+                groupBox_ListOptions.BringToFront();
+
+                foreach (Control control in new Control[]
+                {
+                    lbl_ListFilter,
+                    tb_ListFilter,
+                    pb_ListFilterClear,
+                    lbl_AutomaticRefresh,
+                    num_RefreshInterval,
+                    lbl_TimerIntervalMinutesText,
+                    lbl_PingTimeout,
+                    num_PingTimeout,
+                    lbl_PingTimeoutSecondsText,
+                    lbl_RequestTimeout,
+                    num_HTTPRequestTimeout,
+                    lbl_RequestTimeoutSecondsText,
+                    lbl_FTPRequestTimeout,
+                    num_FTPRequestTimeout,
+                    lbl_FTPRequestTimeoutSecondsText,
+                    lbl_ParallelThreadsCount,
+                    num_ParallelThreadsCount,
+                    lbl_Validate,
+                    comboBox_Validate
+                })
+                {
+                    groupBox_ListOptions.Controls.Add(control);
+                }
+
+                StyleGroupBoxAsCard(
+                    groupBox_ListOptions,
+                    Color.FromArgb(16, 26, 43),
+                    Color.FromArgb(61, 84, 125),
+                    Color.FromArgb(80, 200, 255));
+            }
+
+            InitializeEndpointColumnChooser();
+        }
+
+        private void InitializeEndpointColumnChooser()
+        {
+            endpointColumnsContextMenu = new ContextMenuStrip
+            {
+                Name = "endpointColumnsContextMenu",
+                BackColor = Color.FromArgb(10, 18, 31),
+                ForeColor = Color.FromArgb(230, 238, 252),
+                Renderer = new DarkMenuStripRenderer()
+            };
+
+            foreach (ColumnHeader column in GetUserEndpointColumns())
+            {
+                if (!endpointColumnWidths.ContainsKey(column))
+                {
+                    endpointColumnWidths[column] = Math.Max(40, column.Width);
+                }
+
+                ToolStripMenuItem menuItem = new ToolStripMenuItem
+                {
+                    Text = column.Text,
+                    Checked = column.Width > 0,
+                    CheckOnClick = true,
+                    Tag = column
+                };
+                menuItem.CheckedChanged += EndpointColumnMenuItem_CheckedChanged;
+                endpointColumnsContextMenu.Items.Add(menuItem);
+            }
+
+            if (btn_ColumnsChooser == null)
+            {
+                btn_ColumnsChooser = new Button
+                {
+                    Name = "btn_ColumnsChooser",
+                    Cursor = Cursors.Hand,
+                    Enabled = true,
+                    TabStop = false
+                };
+                btn_ColumnsChooser.Click += (s, e) => ShowEndpointColumnChooser(btn_ColumnsChooser, new Point(0, btn_ColumnsChooser.Height + 2));
+                groupBox_Export.Controls.Add(btn_ColumnsChooser);
+
+                lbl_ColumnsChooser = new Label
+                {
+                    Name = "lbl_ColumnsChooser",
+                    Text = "Columns",
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Cursor = Cursors.Hand,
+                    Enabled = true
+                };
+                lbl_ColumnsChooser.Click += (s, e) => ShowEndpointColumnChooser(lbl_ColumnsChooser, new Point(0, lbl_ColumnsChooser.Height + 2));
+                groupBox_Export.Controls.Add(lbl_ColumnsChooser);
+                StyleInlineCommandButton(btn_ColumnsChooser);
+                SetPremiumButtonIcon(btn_ColumnsChooser, CreateCommandIcon(CommandIcon.Columns, Color.FromArgb(80, 200, 255), 20), 20);
+                lbl_ColumnsChooser.ForeColor = Color.FromArgb(80, 200, 255);
+                lbl_ColumnsChooser.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+
+                endpointHeaderCornerPatch = new Panel
+                {
+                    Name = "endpointHeaderCornerPatch",
+                    BackColor = Color.FromArgb(13, 23, 38),
+                    Visible = true
+                };
+                Controls.Add(endpointHeaderCornerPatch);
+            }
+
+            InitializeScanProgressSection();
+
+            lv_Endpoints.MouseUp -= Lv_Endpoints_HeaderMouseUp;
+            lv_Endpoints.MouseUp += Lv_Endpoints_HeaderMouseUp;
+            lv_Endpoints.MouseDown -= Lv_Endpoints_HeaderMouseDown;
+            lv_Endpoints.MouseDown += Lv_Endpoints_HeaderMouseDown;
+            lv_Endpoints.ColumnWidthChanged -= Lv_Endpoints_ColumnWidthChanged;
+            lv_Endpoints.ColumnWidthChanged += Lv_Endpoints_ColumnWidthChanged;
+        }
+
+        private void InitializeScanProgressSection()
+        {
+            if (groupBox_ScanProgress != null)
+            {
+                return;
+            }
+
+            groupBox_ScanProgress = new GroupBox
+            {
+                Name = "groupBox_ScanProgress",
+                Text = "Scan Progress",
+                TabStop = false
+            };
+            Controls.Add(groupBox_ScanProgress);
+
+            groupBox_ScanProgress.Controls.Add(lbl_ProgressCount);
+            groupBox_ScanProgress.Controls.Add(pb_RefreshProcess);
+            groupBox_ScanProgress.Controls.Add(pb_LastUpdate);
+            groupBox_ScanProgress.Controls.Add(lbl_LastUpdate_Label);
+            groupBox_ScanProgress.Controls.Add(lbl_LastUpdate);
+
+            StyleGroupBoxAsCard(
+                groupBox_ScanProgress,
+                Color.FromArgb(16, 26, 43),
+                Color.FromArgb(61, 84, 125),
+                Color.FromArgb(92, 219, 255));
         }
 
         private static void StyleGroupBoxAsCard(GroupBox groupBox, Color fill, Color border, Color accent)
@@ -6091,13 +6330,7 @@ namespace EndpointChecker
                 return;
             }
 
-            bool isCompactActionGroup =
-                string.Equals(groupBox.Name, nameof(groupBox_EndpointSelection), StringComparison.Ordinal) ||
-                string.Equals(groupBox.Name, nameof(groupBox_Actions), StringComparison.Ordinal);
-            if (isCompactActionGroup)
-            {
-                EnsureGroupBoxHeaderClearance(groupBox, 24);
-            }
+            EnsureGroupBoxHeaderClearance(groupBox, 28);
 
             groupBox.BackColor = fill;
             groupBox.ForeColor = accent;
@@ -6106,6 +6339,420 @@ namespace EndpointChecker
             groupBox.Paint += PremiumGroupBoxPaint;
             groupBox.Tag = new GroupBoxPaintTheme(fill, border, accent);
             groupBox.Invalidate();
+        }
+
+        private static void ConfigurePremiumListView(
+            ListView listView,
+            Color backColor,
+            Color textColor)
+        {
+            if (listView == null)
+            {
+                return;
+            }
+
+            listView.BackColor = backColor;
+            listView.ForeColor = textColor;
+            listView.BorderStyle = BorderStyle.FixedSingle;
+            listView.HeaderStyle = ColumnHeaderStyle.Clickable;
+            listView.GridLines = false;
+            listView.HideSelection = false;
+            listView.FullRowSelect = true;
+            listView.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            listView.OwnerDraw = true;
+            listView.DrawColumnHeader -= PremiumListView_DrawColumnHeader;
+            listView.DrawItem -= PremiumListView_DrawItem;
+            listView.DrawSubItem -= PremiumListView_DrawSubItem;
+            listView.DrawColumnHeader += PremiumListView_DrawColumnHeader;
+            listView.DrawItem += PremiumListView_DrawItem;
+            listView.DrawSubItem += PremiumListView_DrawSubItem;
+
+            try
+            {
+                typeof(Control)
+                    .GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?.SetValue(listView, true, null);
+            }
+            catch
+            {
+            }
+        }
+
+        private static void PremiumListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            Color headerBack = Color.FromArgb(13, 23, 38);
+            Color headerLine = Color.FromArgb(67, 82, 106);
+            Color headerText = Color.FromArgb(230, 238, 252);
+
+            using (SolidBrush backBrush = new SolidBrush(headerBack))
+            using (Pen linePen = new Pen(headerLine))
+            {
+                e.Graphics.FillRectangle(backBrush, e.Bounds);
+                e.Graphics.DrawLine(linePen, e.Bounds.Left, e.Bounds.Bottom - 1, e.Bounds.Right, e.Bounds.Bottom - 1);
+                e.Graphics.DrawLine(linePen, e.Bounds.Right - 1, e.Bounds.Top + 3, e.Bounds.Right - 1, e.Bounds.Bottom - 4);
+            }
+
+            Rectangle textBounds = new Rectangle(e.Bounds.Left + 7, e.Bounds.Top + 1, Math.Max(0, e.Bounds.Width - 10), e.Bounds.Height - 2);
+            if (string.IsNullOrEmpty(e.Header.Text))
+            {
+                return;
+            }
+
+            using (Font headerFont = new Font("Segoe UI Semibold", 8.5F, FontStyle.Regular, GraphicsUnit.Point))
+            {
+                TextRenderer.DrawText(
+                    e.Graphics,
+                    e.Header.Text,
+                    headerFont,
+                    textBounds,
+                    headerText,
+                    TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
+            }
+        }
+
+        private static void PremiumListView_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            // Subitems own all painting in Details view.
+        }
+
+        private static void PremiumListView_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            if (!(sender is ListView listView))
+            {
+                e.DrawDefault = true;
+                return;
+            }
+
+            Color baseBack = e.Item.BackColor.IsEmpty ? listView.BackColor : e.Item.BackColor;
+            Color selectedBack = Color.FromArgb(42, 82, 138);
+            Color gridLine = Color.FromArgb(74, 88, 110);
+            Color textColor = e.SubItem.ForeColor.IsEmpty || e.SubItem.ForeColor.ToArgb() == Color.Black.ToArgb()
+                ? e.Item.ForeColor
+                : e.SubItem.ForeColor;
+
+            if (textColor.IsEmpty || textColor.ToArgb() == Color.Black.ToArgb())
+            {
+                textColor = listView.ForeColor;
+            }
+
+            Rectangle bounds = e.Bounds;
+            bool selected = e.Item.Selected;
+
+            using (SolidBrush backBrush = new SolidBrush(selected ? selectedBack : baseBack))
+            using (Pen gridPen = new Pen(gridLine))
+            {
+                e.Graphics.FillRectangle(backBrush, bounds);
+                e.Graphics.DrawLine(gridPen, bounds.Left, bounds.Bottom - 1, bounds.Right, bounds.Bottom - 1);
+                e.Graphics.DrawLine(gridPen, bounds.Right - 1, bounds.Top, bounds.Right - 1, bounds.Bottom);
+            }
+
+            Rectangle textBounds = new Rectangle(bounds.Left + 7, bounds.Top + 1, Math.Max(0, bounds.Width - 10), bounds.Height - 2);
+
+            if (e.ColumnIndex == 0)
+            {
+                int x = bounds.Left + 4;
+
+                if (listView.CheckBoxes)
+                {
+                    System.Windows.Forms.VisualStyles.CheckBoxState state = e.Item.Checked
+                        ? System.Windows.Forms.VisualStyles.CheckBoxState.CheckedNormal
+                        : System.Windows.Forms.VisualStyles.CheckBoxState.UncheckedNormal;
+                    Size checkboxSize = CheckBoxRenderer.GetGlyphSize(e.Graphics, state);
+                    Point checkboxPoint = new Point(x, bounds.Top + (bounds.Height - checkboxSize.Height) / 2);
+                    CheckBoxRenderer.DrawCheckBox(e.Graphics, checkboxPoint, state);
+                    x += checkboxSize.Width + 5;
+                }
+
+                if (listView.SmallImageList != null &&
+                    e.Item.ImageIndex >= 0 &&
+                    e.Item.ImageIndex < listView.SmallImageList.Images.Count)
+                {
+                    Image image = listView.SmallImageList.Images[e.Item.ImageIndex];
+                    int imageY = bounds.Top + (bounds.Height - image.Height) / 2;
+                    e.Graphics.DrawImage(image, new Rectangle(x, imageY, image.Width, image.Height));
+                    x += image.Width + 5;
+                }
+
+                textBounds = new Rectangle(x, bounds.Top + 1, Math.Max(0, bounds.Right - x - 6), bounds.Height - 2);
+            }
+
+            TextRenderer.DrawText(
+                e.Graphics,
+                e.SubItem.Text,
+                listView.Font,
+                textBounds,
+                selected ? Color.White : textColor,
+                TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
+        }
+
+        private void ApplyPremiumControlState(bool inProgress, bool locked)
+        {
+            Color textMain = Color.FromArgb(230, 238, 252);
+            Color textMute = Color.FromArgb(142, 158, 190);
+            Color surface = Color.FromArgb(16, 26, 43);
+            Color input = Color.FromArgb(12, 21, 36);
+            Color accent = Color.FromArgb(70, 143, 255);
+            Color success = Color.FromArgb(59, 218, 128);
+            Color danger = Color.FromArgb(255, 99, 107);
+
+            foreach (GroupBox groupBox in new[] { groupBox_CommonOptions, groupBox_HTTPOptions, groupBox_Export, groupBox_EndpointSelection, groupBox_Actions, groupBox_ListOptions, groupBox_ScanProgress })
+            {
+                if (groupBox == null)
+                {
+                    continue;
+                }
+
+                groupBox.Enabled = true;
+            }
+
+            foreach (Label label in new[]
+            {
+                lbl_ListFilter,
+                lbl_AutomaticRefresh,
+                lbl_PingTimeout,
+                lbl_PingTimeoutSecondsText,
+                lbl_RequestTimeout,
+                lbl_RequestTimeoutSecondsText,
+                lbl_FTPRequestTimeout,
+                lbl_FTPRequestTimeoutSecondsText,
+                lbl_TimerIntervalMinutesText,
+                lbl_ParallelThreadsCount,
+                lbl_Validate,
+                lbl_BrowseExportDir
+            })
+            {
+                label.Enabled = true;
+                label.ForeColor = textMute;
+            }
+
+            lbl_CheckAll.Enabled = true;
+            lbl_UncheckAll.Enabled = true;
+            lbl_CheckAllAvailable.Enabled = true;
+            lbl_CheckAllErrors.Enabled = true;
+            lbl_LoadList.Enabled = true;
+            lbl_RunCheck.Enabled = true;
+            lbl_Terminate.Enabled = true;
+
+            lbl_CheckAll.ForeColor = textMain;
+            lbl_UncheckAll.ForeColor = textMute;
+            lbl_CheckAllAvailable.ForeColor = success;
+            lbl_CheckAllErrors.ForeColor = danger;
+            lbl_LoadList.ForeColor = textMain;
+            lbl_RunCheck.ForeColor = !inProgress && !locked ? accent : textMute;
+            lbl_Terminate.ForeColor = inProgress && locked ? danger : textMute;
+
+            foreach (CheckBox checkBox in new[]
+            {
+                cb_RefreshOnStartup,
+                cb_AutomaticRefresh,
+                cb_ContinuousRefresh,
+                cb_TrayBalloonNotify,
+                cb_RefreshAutoSet,
+                cb_ResolveNetworkShares,
+                cb_TestPing,
+                cb_Resolve_IPAddresses,
+                cb_AllowAutoRedirect,
+                cb_ValidateSSLCertificate,
+                cb_RemoveURLParameters,
+                cb_ResolvePageMetaInfo,
+                cb_ResolvePageLinks,
+                cb_SaveResponse,
+                cb_Resolve_DNS_Names,
+                cb_Resolve_NIC_MACs,
+                cb_ExportEndpointsStatus_XLSX,
+                cb_ExportEndpointsStatus_XML,
+                cb_ExportEndpointsStatus_HTML,
+                cb_ExportEndpointsStatus_JSON
+            })
+            {
+                checkBox.BackColor = surface;
+                checkBox.ForeColor = checkBox.Enabled ? textMain : textMute;
+            }
+
+            foreach (Control inputControl in new Control[] { tb_ListFilter, num_RefreshInterval, num_PingTimeout, num_HTTPRequestTimeout, num_FTPRequestTimeout, num_ParallelThreadsCount, comboBox_Validate })
+            {
+                inputControl.BackColor = input;
+                inputControl.ForeColor = inputControl.Enabled ? textMain : textMute;
+            }
+        }
+
+        private void TryUseDarkTitleBar()
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
+
+            try
+            {
+                int useDarkMode = 1;
+                DwmSetWindowAttribute(Handle, 20, ref useDarkMode, sizeof(int));
+                DwmSetWindowAttribute(Handle, 19, ref useDarkMode, sizeof(int));
+            }
+            catch
+            {
+            }
+        }
+
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+
+        private void ApplyPremiumActionIcons(Color accent, Color success, Color danger, Color muted)
+        {
+            SetPremiumButtonIcon(btn_LoadList, CreateCommandIcon(CommandIcon.Refresh, success, 22), 22);
+            SetPremiumButtonIcon(btn_RunCheck, CreateCommandIcon(CommandIcon.Play, accent, 22), 22);
+            SetPremiumButtonIcon(btn_Terminate, CreateCommandIcon(CommandIcon.Stop, danger, 22), 22);
+            SetPremiumButtonIcon(btn_BrowseExportDir, CreateCommandIcon(CommandIcon.Folder, Color.FromArgb(255, 197, 101), 20), 20);
+            SetPremiumButtonIcon(btn_CheckAll, CreateCommandIcon(CommandIcon.Plus, accent, 22), 22);
+            SetPremiumButtonIcon(btn_UncheckAll, CreateCommandIcon(CommandIcon.Minus, muted, 22), 22);
+            SetPremiumButtonIcon(btn_CheckAllAvailable, CreateCommandIcon(CommandIcon.Check, success, 22), 22);
+            SetPremiumButtonIcon(btn_CheckAllErrors, CreateCommandIcon(CommandIcon.X, danger, 22), 22);
+            SetPremiumButtonIcon(btn_ColumnsChooser, CreateCommandIcon(CommandIcon.Columns, Color.FromArgb(80, 200, 255), 20), 20);
+        }
+
+        private enum CommandIcon
+        {
+            Refresh,
+            Play,
+            Stop,
+            Folder,
+            Plus,
+            Minus,
+            Check,
+            X,
+            Columns
+        }
+
+        private static Bitmap CreateCommandIcon(CommandIcon icon, Color color, int size)
+        {
+            Bitmap bitmap = new Bitmap(size, size);
+            using (Graphics graphics = Graphics.FromImage(bitmap))
+            using (Pen pen = new Pen(color, Math.Max(2F, size / 10F)))
+            using (SolidBrush brush = new SolidBrush(color))
+            {
+                graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                pen.StartCap = LineCap.Round;
+                pen.EndCap = LineCap.Round;
+
+                float pad = size * 0.22F;
+                RectangleF r = new RectangleF(pad, pad, size - pad * 2, size - pad * 2);
+
+                switch (icon)
+                {
+                    case CommandIcon.Refresh:
+                        graphics.DrawArc(pen, r, 35, 285);
+                        PointF a = new PointF(size * 0.74F, size * 0.20F);
+                        graphics.FillPolygon(brush, new[]
+                        {
+                            a,
+                            new PointF(a.X - size * 0.03F, a.Y + size * 0.22F),
+                            new PointF(a.X - size * 0.20F, a.Y + size * 0.09F)
+                        });
+                        break;
+                    case CommandIcon.Play:
+                        graphics.FillPolygon(brush, new[]
+                        {
+                            new PointF(size * 0.34F, size * 0.24F),
+                            new PointF(size * 0.34F, size * 0.76F),
+                            new PointF(size * 0.76F, size * 0.50F)
+                        });
+                        break;
+                    case CommandIcon.Stop:
+                        graphics.FillRectangle(brush, size * 0.30F, size * 0.30F, size * 0.40F, size * 0.40F);
+                        break;
+                    case CommandIcon.Folder:
+                        graphics.DrawLines(pen, new[]
+                        {
+                            new PointF(size * 0.16F, size * 0.72F),
+                            new PointF(size * 0.16F, size * 0.30F),
+                            new PointF(size * 0.42F, size * 0.30F),
+                            new PointF(size * 0.50F, size * 0.40F),
+                            new PointF(size * 0.84F, size * 0.40F),
+                            new PointF(size * 0.84F, size * 0.72F),
+                            new PointF(size * 0.16F, size * 0.72F)
+                        });
+                        break;
+                    case CommandIcon.Plus:
+                        graphics.DrawLine(pen, size * 0.50F, size * 0.24F, size * 0.50F, size * 0.76F);
+                        graphics.DrawLine(pen, size * 0.24F, size * 0.50F, size * 0.76F, size * 0.50F);
+                        break;
+                    case CommandIcon.Minus:
+                        graphics.DrawLine(pen, size * 0.24F, size * 0.50F, size * 0.76F, size * 0.50F);
+                        break;
+                    case CommandIcon.Check:
+                        graphics.DrawLines(pen, new[]
+                        {
+                            new PointF(size * 0.20F, size * 0.52F),
+                            new PointF(size * 0.42F, size * 0.72F),
+                            new PointF(size * 0.80F, size * 0.28F)
+                        });
+                        break;
+                    case CommandIcon.X:
+                        graphics.DrawLine(pen, size * 0.28F, size * 0.28F, size * 0.72F, size * 0.72F);
+                        graphics.DrawLine(pen, size * 0.72F, size * 0.28F, size * 0.28F, size * 0.72F);
+                        break;
+                    case CommandIcon.Columns:
+                        graphics.DrawRectangle(pen, size * 0.18F, size * 0.24F, size * 0.64F, size * 0.52F);
+                        graphics.DrawLine(pen, size * 0.40F, size * 0.25F, size * 0.40F, size * 0.75F);
+                        graphics.DrawLine(pen, size * 0.60F, size * 0.25F, size * 0.60F, size * 0.75F);
+                        break;
+                }
+            }
+
+            return bitmap;
+        }
+
+        private static void SetPremiumButtonIcon(Button button, Image sourceImage, int iconSize)
+        {
+            if (button == null || sourceImage == null)
+            {
+                return;
+            }
+
+            button.Image = null;
+            button.BackgroundImage = ResizeImage(sourceImage, iconSize, iconSize);
+            button.BackgroundImageLayout = ImageLayout.Center;
+            button.EnabledChanged -= PremiumIconButton_EnabledChanged;
+            button.EnabledChanged += PremiumIconButton_EnabledChanged;
+            button.Tag = button.BackgroundImage;
+        }
+
+        private static void PremiumIconButton_EnabledChanged(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.Tag is Image image)
+            {
+                button.BackgroundImage = image;
+            }
+        }
+
+        private void WireCommandLabelsAsButtons()
+        {
+            WireLabelButton(lbl_LoadList, btn_LoadList);
+            WireLabelButton(lbl_RunCheck, btn_RunCheck);
+            WireLabelButton(lbl_Terminate, btn_Terminate);
+            WireLabelButton(lbl_CheckAll, btn_CheckAll);
+            WireLabelButton(lbl_UncheckAll, btn_UncheckAll);
+            WireLabelButton(lbl_CheckAllAvailable, btn_CheckAllAvailable);
+            WireLabelButton(lbl_CheckAllErrors, btn_CheckAllErrors);
+            WireLabelButton(lbl_BrowseExportDir, btn_BrowseExportDir);
+        }
+
+        private static void WireLabelButton(Label label, Button button)
+        {
+            if (label == null || button == null || label.Tag == button)
+            {
+                return;
+            }
+
+            label.Tag = button;
+            label.Cursor = Cursors.Hand;
+            label.Click += (s, e) =>
+            {
+                if (button.Enabled)
+                {
+                    button.PerformClick();
+                }
+            };
         }
 
         private static void EnsureGroupBoxHeaderClearance(GroupBox groupBox, int minimumContentTop)
@@ -6138,63 +6785,468 @@ namespace EndpointChecker
         private void ApplyBottomPanelsLayout()
         {
             if (lv_Endpoints == null ||
+                groupBox_ListOptions == null ||
                 groupBox_CommonOptions == null ||
                 groupBox_HTTPOptions == null ||
                 groupBox_EndpointSelection == null ||
                 groupBox_Actions == null ||
                 groupBox_Export == null ||
+                groupBox_ScanProgress == null ||
                 pb_RefreshProcess == null)
             {
                 return;
             }
 
-            const int horizontalGap = 10;
-            const int verticalGap = 8;
-            const int rightMargin = 14;
+            const int margin = 12;
+            const int gap = 10;
+            const int footerHeight = 28;
+            const int commandHeight = 76;
+            const int bottomBandHeight = 188;
 
-            int rowTop = lv_Endpoints.Bottom + verticalGap;
-            int rightColumnWidth = groupBox_EndpointSelection.Width;
-            int rightColumnX = ClientSize.Width - rightMargin - rightColumnWidth;
+            int contentTop = MainMenuStrip.Bottom + 8;
+            int commandTop = contentTop;
+            int bottomBandTop = Math.Max(commandTop + commandHeight + 260, ClientSize.Height - footerHeight - bottomBandHeight);
+            int listTop = commandTop + commandHeight + gap;
+            int listBottom = bottomBandTop - gap;
 
-            int middleColumnWidth = groupBox_CommonOptions.Width + horizontalGap + groupBox_HTTPOptions.Width;
-            int minimumMiddleX = Math.Max(302, tb_ListFilter.Right + 24);
-            int middleColumnX = minimumMiddleX;
-            int maxMiddleX = rightColumnX - horizontalGap - middleColumnWidth;
-            if (middleColumnX > maxMiddleX)
+            LayoutTopCommandRow(margin, commandTop, commandHeight);
+
+            lv_Endpoints.Location = new Point(margin, listTop);
+            lv_Endpoints.Size = new Size(Math.Max(420, ClientSize.Width - margin * 2), Math.Max(220, listBottom - listTop));
+            FillEndpointListHeaderWidth();
+            LayoutEndpointListOverlays();
+
+            lbl_EndpointsListLoading.Location = lv_Endpoints.Location;
+            lbl_EndpointsListLoading.Size = lv_Endpoints.Size;
+
+            int leftWidth = Math.Min(560, Math.Max(500, (ClientSize.Width - margin * 2 - gap * 2) / 3));
+            int middleX = margin + leftWidth + gap;
+            int middleWidth = Math.Max(560, ClientSize.Width - margin - middleX);
+            int optionWidth = Math.Max(220, (middleWidth - gap) / 2);
+
+            groupBox_ListOptions.Location = new Point(margin, bottomBandTop);
+            groupBox_ListOptions.Size = new Size(leftWidth, 166);
+            LayoutFilterAndTimeoutControls(groupBox_ListOptions);
+
+            groupBox_CommonOptions.Location = new Point(middleX, bottomBandTop);
+            groupBox_CommonOptions.Size = new Size(optionWidth, 166);
+            groupBox_HTTPOptions.Location = new Point(groupBox_CommonOptions.Right + gap, bottomBandTop);
+            groupBox_HTTPOptions.Size = new Size(optionWidth, 166);
+            LayoutOptionsGroup(groupBox_CommonOptions, new Control[]
             {
-                middleColumnX = Math.Max(302, maxMiddleX);
+                cb_RefreshOnStartup,
+                cb_ContinuousRefresh,
+                cb_AutomaticRefresh,
+                cb_RefreshAutoSet,
+                cb_TrayBalloonNotify,
+                cb_ResolveNetworkShares,
+                cb_TestPing,
+                cb_Resolve_IPAddresses
+            });
+            LayoutOptionsGroup(groupBox_HTTPOptions, new Control[]
+            {
+                cb_AllowAutoRedirect,
+                cb_ValidateSSLCertificate,
+                cb_RemoveURLParameters,
+                cb_ResolvePageMetaInfo,
+                cb_ResolvePageLinks,
+                cb_SaveResponse,
+                cb_Resolve_DNS_Names,
+                cb_Resolve_NIC_MACs
+            });
+
+            lbl_Copyright.Location = new Point(margin, ClientSize.Height - footerHeight + 2);
+            lbl_Version.Location = new Point(Math.Max(margin, ClientSize.Width - lbl_Version.Width - margin), ClientSize.Height - footerHeight + 2);
+        }
+
+        private void LayoutTopCommandRow(int margin, int top, int height)
+        {
+            const int gap = 10;
+            int commandWidth = 374;
+            int selectionWidth = 400;
+            int exportWidth = 500;
+
+            groupBox_Actions.Size = new Size(commandWidth, height);
+            groupBox_EndpointSelection.Size = new Size(selectionWidth, height);
+            groupBox_Actions.Location = new Point(margin, top);
+            groupBox_EndpointSelection.Location = new Point(groupBox_Actions.Right + gap, top);
+
+            int exportX = groupBox_EndpointSelection.Right + gap;
+            groupBox_Export.Location = new Point(exportX, top);
+            groupBox_Export.Size = new Size(exportWidth, height);
+
+            int progressX = groupBox_Export.Right + gap;
+            int progressWidth = ClientSize.Width - margin - progressX;
+            groupBox_ScanProgress.Location = new Point(progressX, top);
+            groupBox_ScanProgress.Size = new Size(Math.Max(0, progressWidth), height);
+            groupBox_ScanProgress.Visible = progressWidth >= 260;
+
+            LayoutActionsGroup();
+            LayoutEndpointSelectionGroup();
+            LayoutExportGroup();
+            LayoutScanProgressGroup();
+        }
+
+        private void LayoutFilterAndTimeoutControls(GroupBox container)
+        {
+            const int outer = 12;
+            const int labelWidth = 122;
+            const int inputWidth = 60;
+            const int rowHeight = 24;
+            const int rowGap = 3;
+            const int columnGap = 16;
+            int columnWidth = Math.Max(220, (container.ClientSize.Width - outer * 2 - columnGap) / 2);
+
+            Control[,] rows =
+            {
+                { lbl_AutomaticRefresh, num_RefreshInterval, lbl_TimerIntervalMinutesText },
+                { lbl_PingTimeout, num_PingTimeout, lbl_PingTimeoutSecondsText },
+                { lbl_RequestTimeout, num_HTTPRequestTimeout, lbl_RequestTimeoutSecondsText },
+                { lbl_FTPRequestTimeout, num_FTPRequestTimeout, lbl_FTPRequestTimeoutSecondsText },
+                { lbl_ParallelThreadsCount, num_ParallelThreadsCount, null },
+                { lbl_Validate, comboBox_Validate, null }
+            };
+
+            int filterY = 36;
+            lbl_ListFilter.AutoSize = false;
+            lbl_ListFilter.Location = new Point(outer, filterY + 4);
+            lbl_ListFilter.Size = new Size(labelWidth, 18);
+
+            tb_ListFilter.Location = new Point(lbl_ListFilter.Right + 8, filterY);
+            tb_ListFilter.Size = new Size(Math.Max(120, container.ClientSize.Width - tb_ListFilter.Left - outer - 28), 24);
+
+            pb_ListFilterClear.Location = new Point(tb_ListFilter.Right + 4, filterY + 3);
+            pb_ListFilterClear.Size = new Size(18, 18);
+
+            int gridTop = filterY + rowHeight + 18;
+            for (int i = 0; i < rows.GetLength(0); i++)
+            {
+                int column = i / 3;
+                int row = i % 3;
+                int columnX = outer + column * (columnWidth + columnGap);
+                int rowY = gridTop + row * (rowHeight + rowGap);
+                Control label = rows[i, 0];
+                Control input = rows[i, 1];
+                Control suffix = rows[i, 2];
+
+                label.AutoSize = false;
+                label.Location = new Point(columnX, rowY + 4);
+                label.Size = new Size(labelWidth, 18);
+
+                input.Location = new Point(columnX + labelWidth + 6, rowY);
+                input.Size = input == comboBox_Validate || input == tb_ListFilter
+                    ? new Size(Math.Min(124, Math.Max(90, columnX + columnWidth - input.Left)), 24)
+                    : new Size(inputWidth, 24);
+
+                if (suffix != null)
+                {
+                    suffix.Location = new Point(input.Right + 6, rowY + 4);
+                    suffix.Size = suffix == pb_ListFilterClear ? new Size(18, 18) : new Size(70, 18);
+                }
+            }
+        }
+
+        private void LayoutExportGroup()
+        {
+            int x = 12;
+            int y = 34;
+            CheckBox[] exports = { cb_ExportEndpointsStatus_XLSX, cb_ExportEndpointsStatus_XML, cb_ExportEndpointsStatus_HTML, cb_ExportEndpointsStatus_JSON };
+            foreach (CheckBox export in exports)
+            {
+                export.AutoSize = false;
+                export.Location = new Point(x, y);
+                export.Size = new Size(56, 18);
+                x += 58;
             }
 
-            groupBox_EndpointSelection.Height = 86;
-            groupBox_Actions.Height = 86;
+            lbl_BrowseExportDir.AutoSize = false;
+            int folderX = x + 10;
+            btn_BrowseExportDir.Location = new Point(folderX, 30);
+            btn_BrowseExportDir.Size = new Size(24, 24);
+            lbl_BrowseExportDir.Location = new Point(btn_BrowseExportDir.Right + 6, 34);
+            lbl_BrowseExportDir.Size = new Size(96, 18);
 
-            groupBox_CommonOptions.Location = new Point(middleColumnX, rowTop);
-            groupBox_HTTPOptions.Location = new Point(groupBox_CommonOptions.Right + horizontalGap, rowTop);
+            if (btn_ColumnsChooser != null && lbl_ColumnsChooser != null)
+            {
+                int columnsX = lbl_BrowseExportDir.Right + 14;
+                btn_ColumnsChooser.Location = new Point(columnsX, 30);
+                btn_ColumnsChooser.Size = new Size(24, 24);
+                lbl_ColumnsChooser.Location = new Point(btn_ColumnsChooser.Right + 6, 34);
+                lbl_ColumnsChooser.Size = new Size(72, 18);
+            }
+        }
 
-            groupBox_EndpointSelection.Location = new Point(rightColumnX, rowTop);
-            groupBox_Actions.Location = new Point(rightColumnX, groupBox_EndpointSelection.Bottom + verticalGap);
-            LayoutEndpointSelectionGroup();
-            LayoutActionsGroup();
+        private void LayoutEndpointListOverlays()
+        {
+            if (endpointHeaderCornerPatch != null)
+            {
+                int patchWidth = SystemInformation.VerticalScrollBarWidth + 2;
+                int patchHeight = Math.Max(22, lv_Endpoints.Font.Height + 10);
+                endpointHeaderCornerPatch.Location = new Point(lv_Endpoints.Right - patchWidth - 1, lv_Endpoints.Top + 1);
+                endpointHeaderCornerPatch.Size = new Size(patchWidth, patchHeight);
+                endpointHeaderCornerPatch.BringToFront();
+            }
+        }
 
-            int exportTop = Math.Max(groupBox_CommonOptions.Bottom, groupBox_HTTPOptions.Bottom) + verticalGap;
-            groupBox_Export.Location = new Point(middleColumnX, exportTop);
-            groupBox_Export.Size = new Size(middleColumnWidth, groupBox_Export.Height);
+        private void LayoutScanProgressGroup()
+        {
+            if (groupBox_ScanProgress == null)
+            {
+                return;
+            }
 
-            pb_RefreshProcess.Location = new Point(middleColumnX, groupBox_Export.Bottom + 3);
-            pb_RefreshProcess.Size = new Size(middleColumnWidth, pb_RefreshProcess.Height);
+            int innerX = 12;
+            int innerWidth = Math.Max(80, groupBox_ScanProgress.ClientSize.Width - innerX * 2);
 
-            int statusTop = groupBox_Export.Top + 6;
-            pb_LastUpdate.Location = new Point(rightColumnX + 8, statusTop);
-            lbl_LastUpdate_Label.Location = new Point(pb_LastUpdate.Right + 6, statusTop + 12);
-            lbl_LastUpdate.Location = new Point(lbl_LastUpdate_Label.Right + 4, statusTop + 12);
+            lbl_ProgressCount.TextAlign = ContentAlignment.MiddleLeft;
+            lbl_ProgressCount.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            lbl_ProgressCount.BackColor = Color.Transparent;
+
+            pb_LastUpdate.Location = new Point(innerX, 24);
+            pb_LastUpdate.Size = new Size(18, 18);
+            lbl_LastUpdate_Label.Location = new Point(pb_LastUpdate.Right + 6, 24);
+            lbl_LastUpdate_Label.Size = new Size(112, 18);
+            lbl_LastUpdate.Location = new Point(lbl_LastUpdate_Label.Right + 4, 24);
+            lbl_LastUpdate.Size = new Size(Math.Max(90, innerWidth - (lbl_LastUpdate.Left - innerX)), 18);
+
+            lbl_ProgressCount.Location = new Point(innerX, 43);
+            lbl_ProgressCount.Size = new Size(innerWidth, 16);
+
+            pb_RefreshProcess.Location = new Point(innerX, 61);
+            pb_RefreshProcess.Size = new Size(innerWidth, 9);
+            pb_RefreshProcess.BackColor = Color.FromArgb(13, 29, 38);
+        }
+
+        private void FillEndpointListHeaderWidth()
+        {
+            if (lv_Endpoints == null || lv_Endpoints.Columns.Count == 0)
+            {
+                return;
+            }
+
+            ColumnHeader lastVisibleColumn = GetUserEndpointColumns().LastOrDefault(column => column.Width > 0);
+            if (lastVisibleColumn == null)
+            {
+                return;
+            }
+
+            int currentWidth = lastVisibleColumn.Width;
+            int usedWidth = 0;
+            foreach (ColumnHeader column in GetUserEndpointColumns())
+            {
+                if (column != lastVisibleColumn)
+                {
+                    usedWidth += column.Width;
+                }
+            }
+
+            int availableWidth = lv_Endpoints.ClientSize.Width - SystemInformation.VerticalScrollBarWidth - 2;
+            int stretchedWidth = Math.Max(currentWidth, availableWidth - usedWidth);
+
+            if (lastVisibleColumn.Width == stretchedWidth)
+            {
+                return;
+            }
+
+            adjustingEndpointFillerColumn = true;
+            lastVisibleColumn.Width = stretchedWidth;
+            adjustingEndpointFillerColumn = false;
+            lv_Endpoints.Invalidate();
+        }
+
+        private IEnumerable<ColumnHeader> GetUserEndpointColumns()
+        {
+            foreach (ColumnHeader column in lv_Endpoints.Columns)
+            {
+                yield return column;
+            }
+        }
+
+        private void RestoreVisibleEndpointColumns()
+        {
+            string visibleColumns = Settings.Default.Config_VisibleColumns;
+            if (string.IsNullOrWhiteSpace(visibleColumns))
+            {
+                return;
+            }
+
+            HashSet<string> visibleNames = new HashSet<string>(
+                visibleColumns.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(item => item.Trim()),
+                StringComparer.OrdinalIgnoreCase);
+
+            if (visibleNames.Count == 0)
+            {
+                return;
+            }
+
+            foreach (ColumnHeader column in GetUserEndpointColumns())
+            {
+                if (!endpointColumnWidths.ContainsKey(column) && column.Width > 0)
+                {
+                    endpointColumnWidths[column] = column.Width;
+                }
+
+                if (!visibleNames.Contains(column.Name))
+                {
+                    column.Width = 0;
+                }
+            }
+        }
+
+        private void SaveVisibleEndpointColumns()
+        {
+            Settings.Default.Config_VisibleColumns = string.Join(
+                ",",
+                GetUserEndpointColumns()
+                    .Where(column => column.Width > 0)
+                    .Select(column => column.Name));
+            Settings.Default.Save();
+        }
+
+        private void Lv_Endpoints_HeaderMouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right || !IsEndpointHeaderPoint(e.Location))
+            {
+                return;
+            }
+
+            ShowEndpointColumnChooser(e.Location);
+        }
+
+        private void Lv_Endpoints_HeaderMouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && IsEndpointHeaderPoint(e.Location))
+            {
+                ShowEndpointColumnChooser(e.Location);
+            }
+        }
+
+        private void CheckerMainForm_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right || endpointColumnsContextMenu == null || lv_Endpoints == null)
+            {
+                return;
+            }
+
+            Rectangle headerBounds = new Rectangle(lv_Endpoints.Left, lv_Endpoints.Top, lv_Endpoints.Width, Math.Max(24, lv_Endpoints.Font.Height + 10));
+            if (headerBounds.Contains(e.Location))
+            {
+                ShowEndpointColumnChooser(new Point(e.X - lv_Endpoints.Left, e.Y - lv_Endpoints.Top));
+            }
+        }
+
+        private bool IsEndpointHeaderPoint(Point location)
+        {
+            int headerHeight = Math.Max(22, lv_Endpoints.Font.Height + 10);
+            return location.Y >= 0 && location.Y <= headerHeight;
+        }
+
+        private void ShowEndpointColumnChooser(Point location)
+        {
+            ShowEndpointColumnChooser(lv_Endpoints, location);
+        }
+
+        private void ShowEndpointColumnChooser(Control owner, Point location)
+        {
+            foreach (ToolStripMenuItem item in endpointColumnsContextMenu.Items.OfType<ToolStripMenuItem>())
+            {
+                if (item.Tag is ColumnHeader column)
+                {
+                    item.CheckedChanged -= EndpointColumnMenuItem_CheckedChanged;
+                    item.Checked = column.Width > 0;
+                    item.CheckedChanged += EndpointColumnMenuItem_CheckedChanged;
+                }
+            }
+
+            endpointColumnsContextMenu.Show(owner, location);
+        }
+
+        private void Lv_Endpoints_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+        {
+            if (adjustingEndpointFillerColumn)
+            {
+                return;
+            }
+
+            if (e.ColumnIndex < 0 || e.ColumnIndex >= lv_Endpoints.Columns.Count)
+            {
+                return;
+            }
+
+            ColumnHeader column = lv_Endpoints.Columns[e.ColumnIndex];
+            if (column.Width > 0)
+            {
+                endpointColumnWidths[column] = column.Width;
+            }
+
+            FillEndpointListHeaderWidth();
+        }
+
+        private void EndpointColumnMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!(sender is ToolStripMenuItem item) || !(item.Tag is ColumnHeader column))
+            {
+                return;
+            }
+
+            if (!item.Checked && GetUserEndpointColumns().Count(c => c.Width > 0) <= 1)
+            {
+                item.CheckedChanged -= EndpointColumnMenuItem_CheckedChanged;
+                item.Checked = true;
+                item.CheckedChanged += EndpointColumnMenuItem_CheckedChanged;
+                return;
+            }
+
+            if (item.Checked)
+            {
+                column.Width = endpointColumnWidths.TryGetValue(column, out int width)
+                    ? Math.Max(40, width)
+                    : 80;
+            }
+            else
+            {
+                if (column.Width > 0)
+                {
+                    endpointColumnWidths[column] = column.Width;
+                }
+                column.Width = 0;
+            }
+
+            FillEndpointListHeaderWidth();
+            SaveVisibleEndpointColumns();
+        }
+
+        private void LayoutOptionsGroup(GroupBox groupBox, Control[] controls)
+        {
+            if (groupBox == null || controls == null)
+            {
+                return;
+            }
+
+            int columnGap = 16;
+            int columnWidth = Math.Max(150, (groupBox.ClientSize.Width - 24 - columnGap) / 2);
+            int rowHeight = 21;
+            int startY = 36;
+
+            for (int i = 0; i < controls.Length; i++)
+            {
+                Control control = controls[i];
+                int column = i / 4;
+                int row = i % 4;
+                int x = 12 + column * (columnWidth + columnGap);
+                int y = startY + row * rowHeight;
+
+                control.AutoSize = false;
+                control.Location = new Point(x, y);
+                control.Size = new Size(columnWidth, 19);
+            }
         }
 
         private void LayoutEndpointSelectionGroup()
         {
-            const int groupInnerMargin = 12;
-            const int buttonSize = 36;
-            const int topOffset = 22;
-            const int labelY = 60;
+            const int groupInnerMargin = 10;
+            const int buttonSize = 24;
+            const int topOffset = 19;
 
             int availableWidth = groupBox_EndpointSelection.ClientSize.Width - groupInnerMargin * 2;
             int slotWidth = Math.Max(buttonSize + 6, availableWidth / 4);
@@ -6205,24 +7257,23 @@ namespace EndpointChecker
             for (int i = 0; i < buttons.Length; i++)
             {
                 int slotX = groupInnerMargin + i * slotWidth;
-                int buttonX = slotX + Math.Max(0, (slotWidth - buttonSize) / 2);
+                int buttonX = slotX + 2;
 
                 buttons[i].Location = new Point(buttonX, topOffset);
                 buttons[i].Size = new Size(buttonSize, buttonSize);
 
                 labels[i].AutoSize = false;
-                labels[i].TextAlign = ContentAlignment.TopCenter;
-                labels[i].Location = new Point(slotX, labelY);
-                labels[i].Size = new Size(slotWidth, 16);
+                labels[i].TextAlign = ContentAlignment.MiddleLeft;
+                labels[i].Location = new Point(buttonX + buttonSize + 4, topOffset + 2);
+                labels[i].Size = new Size(Math.Max(34, slotWidth - buttonSize - 6), 18);
             }
         }
 
         private void LayoutActionsGroup()
         {
-            const int groupInnerMargin = 16;
-            const int buttonSize = 36;
-            const int topOffset = 22;
-            const int labelY = 60;
+            const int groupInnerMargin = 10;
+            const int buttonSize = 24;
+            const int topOffset = 19;
 
             int availableWidth = groupBox_Actions.ClientSize.Width - groupInnerMargin * 2;
             int slotWidth = Math.Max(buttonSize + 10, availableWidth / 3);
@@ -6233,15 +7284,15 @@ namespace EndpointChecker
             for (int i = 0; i < buttons.Length; i++)
             {
                 int slotX = groupInnerMargin + i * slotWidth;
-                int buttonX = slotX + Math.Max(0, (slotWidth - buttonSize) / 2);
+                int buttonX = slotX + 2;
 
                 buttons[i].Location = new Point(buttonX, topOffset);
                 buttons[i].Size = new Size(buttonSize, buttonSize);
 
                 labels[i].AutoSize = false;
-                labels[i].TextAlign = ContentAlignment.TopCenter;
-                labels[i].Location = new Point(slotX, labelY);
-                labels[i].Size = new Size(slotWidth, 16);
+                labels[i].TextAlign = ContentAlignment.MiddleLeft;
+                labels[i].Location = new Point(buttonX + buttonSize + 4, topOffset + 2);
+                labels[i].Size = new Size(Math.Max(56, slotWidth - buttonSize - 6), 18);
             }
         }
 
@@ -6268,14 +7319,9 @@ namespace EndpointChecker
                 e.Graphics.DrawPath(borderPen, path);
             }
 
-            SizeF textSize = e.Graphics.MeasureString(groupBox.Text, groupBox.Font);
-            float textBandHeight = Math.Max(14F, textSize.Height + 1F);
-            RectangleF textBg = new RectangleF(10, -1, textSize.Width + 16, textBandHeight);
-            using (SolidBrush textBgBrush = new SolidBrush(theme.Fill))
             using (SolidBrush textBrush = new SolidBrush(theme.Accent))
             {
-                e.Graphics.FillRectangle(textBgBrush, textBg);
-                e.Graphics.DrawString(groupBox.Text, groupBox.Font, textBrush, 16, -1);
+                e.Graphics.DrawString(groupBox.Text, groupBox.Font, textBrush, 16, 2);
             }
         }
 

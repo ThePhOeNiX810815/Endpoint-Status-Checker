@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading;
@@ -157,6 +158,7 @@ namespace EndpointChecker
 
             InitializePremiumUi();
             InitializePremiumMotionEffects();
+            HandleCreated += (s, e) => TryUseDarkTitleBar();
 
             NewBackgroundThread(() =>
             {
@@ -254,8 +256,8 @@ namespace EndpointChecker
             label1.BackColor = colorSurfaceAlt;
             label1.ForeColor = colorTextPrimary;
             label1.Font = new Font("Segoe UI Semibold", 22F, FontStyle.Bold, GraphicsUnit.Point);
-            label1.Location = new System.Drawing.Point(42, 28);
-            label1.Size = new Size(520, 34);
+            label1.Location = new System.Drawing.Point(42, 24);
+            label1.Size = new Size(520, 42);
             label1.Text = "SpeedTest Control Center";
             label1.TextAlign = ContentAlignment.MiddleLeft;
 
@@ -375,32 +377,32 @@ namespace EndpointChecker
             lbl_SpeedTest_Download_Label.BackColor = colorSurface;
             lbl_SpeedTest_Download_Label.BorderStyle = BorderStyle.None;
             lbl_SpeedTest_Download_Label.ForeColor = colorTextPrimary;
-            lbl_SpeedTest_Download_Label.Font = new Font("Segoe UI Semibold", 15F, FontStyle.Bold, GraphicsUnit.Point);
-            lbl_SpeedTest_Download_Label.Location = new System.Drawing.Point(44, 646);
-            lbl_SpeedTest_Download_Label.Size = new Size(260, 24);
+            lbl_SpeedTest_Download_Label.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
+            lbl_SpeedTest_Download_Label.Location = new System.Drawing.Point(44, 642);
+            lbl_SpeedTest_Download_Label.Size = new Size(300, 32);
             lbl_SpeedTest_Download_Label.Text = "Download Throughput";
             lbl_SpeedTest_Download_Label.TextAlign = ContentAlignment.MiddleLeft;
 
             lbl_DownloadHint.BackColor = colorSurface;
             lbl_DownloadHint.ForeColor = colorTextSecondary;
             lbl_DownloadHint.Font = new Font("Segoe UI", 8.75F, FontStyle.Regular, GraphicsUnit.Point);
-            lbl_DownloadHint.Location = new System.Drawing.Point(44, 668);
+            lbl_DownloadHint.Location = new System.Drawing.Point(44, 672);
             lbl_DownloadHint.Size = new Size(270, 16);
             lbl_DownloadHint.Text = "Observed throughput across repeated test passes";
 
             lbl_SpeedTest_Upload_Label.BackColor = colorSurface;
             lbl_SpeedTest_Upload_Label.BorderStyle = BorderStyle.None;
             lbl_SpeedTest_Upload_Label.ForeColor = colorTextPrimary;
-            lbl_SpeedTest_Upload_Label.Font = new Font("Segoe UI Semibold", 15F, FontStyle.Bold, GraphicsUnit.Point);
-            lbl_SpeedTest_Upload_Label.Location = new System.Drawing.Point(628, 646);
-            lbl_SpeedTest_Upload_Label.Size = new Size(260, 24);
+            lbl_SpeedTest_Upload_Label.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
+            lbl_SpeedTest_Upload_Label.Location = new System.Drawing.Point(628, 642);
+            lbl_SpeedTest_Upload_Label.Size = new Size(300, 32);
             lbl_SpeedTest_Upload_Label.Text = "Upload Throughput";
             lbl_SpeedTest_Upload_Label.TextAlign = ContentAlignment.MiddleLeft;
 
             lbl_UploadHint.BackColor = colorSurface;
             lbl_UploadHint.ForeColor = colorTextSecondary;
             lbl_UploadHint.Font = new Font("Segoe UI", 8.75F, FontStyle.Regular, GraphicsUnit.Point);
-            lbl_UploadHint.Location = new System.Drawing.Point(628, 668);
+            lbl_UploadHint.Location = new System.Drawing.Point(628, 672);
             lbl_UploadHint.Size = new Size(274, 16);
             lbl_UploadHint.Text = "Measured against selected host using multi-pass upload";
 
@@ -482,6 +484,27 @@ namespace EndpointChecker
             startupGaugeSweepTimer.Tick += StartupGaugeSweepTimer_Tick;
             startupGaugeSweepTimer.Start();
         }
+
+        private void TryUseDarkTitleBar()
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
+
+            try
+            {
+                int useDarkMode = 1;
+                DwmSetWindowAttribute(Handle, 20, ref useDarkMode, sizeof(int));
+                DwmSetWindowAttribute(Handle, 19, ref useDarkMode, sizeof(int));
+            }
+            catch
+            {
+            }
+        }
+
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
         private void RevealTimer_Tick(object sender, EventArgs e)
         {
@@ -697,30 +720,30 @@ namespace EndpointChecker
         {
             gauge.BackColor = colorSurface;
             gauge.BaseArcColor = colorBorder;
-            gauge.BaseArcRadius = 60;
+            gauge.BaseArcRadius = 50;
             gauge.BaseArcStart = 135;
             gauge.BaseArcSweep = 270;
             gauge.BaseArcWidth = 3;
-            gauge.Center = new System.Drawing.Point(100, 96);
-            gauge.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            gauge.Center = new System.Drawing.Point(96, 82);
+            gauge.Font = new Font("Segoe UI", 8.5F, FontStyle.Regular, GraphicsUnit.Point);
             gauge.Location = bounds.Location;
             gauge.Size = bounds.Size;
             gauge.NeedleColor2 = colorSurfaceAlt;
-            gauge.NeedleRadius = 60;
+            gauge.NeedleRadius = 50;
             gauge.NeedleWidth = 3;
             gauge.ScaleLinesInterColor = colorBorder;
-            gauge.ScaleLinesInterInnerRadius = 58;
-            gauge.ScaleLinesInterOuterRadius = 64;
+            gauge.ScaleLinesInterInnerRadius = 49;
+            gauge.ScaleLinesInterOuterRadius = 55;
             gauge.ScaleLinesInterWidth = 2;
             gauge.ScaleLinesMajorColor = colorTextSecondary;
-            gauge.ScaleLinesMajorInnerRadius = 52;
-            gauge.ScaleLinesMajorOuterRadius = 64;
+            gauge.ScaleLinesMajorInnerRadius = 44;
+            gauge.ScaleLinesMajorOuterRadius = 55;
             gauge.ScaleLinesMajorWidth = 2;
             gauge.ScaleLinesMinorColor = colorBorder;
-            gauge.ScaleLinesMinorInnerRadius = 57;
-            gauge.ScaleLinesMinorOuterRadius = 64;
+            gauge.ScaleLinesMinorInnerRadius = 49;
+            gauge.ScaleLinesMinorOuterRadius = 55;
             gauge.ScaleNumbersColor = colorTextSecondary;
-            gauge.ScaleNumbersRadius = 82;
+            gauge.ScaleNumbersRadius = 68;
         }
 
         private void UpdateGaugeScale(System.Windows.Forms.AGauge gauge, int speed)

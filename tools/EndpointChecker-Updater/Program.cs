@@ -25,8 +25,8 @@ namespace EndpointCheckerUpdater
     {
         // ── Constants ────────────────────────────────────────────────────────────
 
-        const string DownloadUrl = "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.0.0/EndpointChecker-v3.0.0-win-x86.zip";
-        const string TargetVer   = "3.0.0";
+        const string DownloadUrl = "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.1.0/EndpointChecker-v3.1.0-win-x86.zip";
+        const string TargetVer   = "3.1.0";
         const string AppExe      = "EndpointChecker.exe";
 
         // User data files that must survive the update
@@ -292,7 +292,7 @@ namespace EndpointCheckerUpdater
 
         private async Task RunUpdateAsync(string installDir)
         {
-            string tempZip     = Path.Combine(Path.GetTempPath(), "EndpointChecker-v3.0.0-win-x86.zip");
+            string tempZip     = Path.Combine(Path.GetTempPath(), "EndpointChecker-v3.1.0-win-x86.zip");
             string tempExtract = Path.Combine(Path.GetTempPath(), "EndpointChecker_Updater_Extract");
 
             // ── Step 1: Stop running instance ────────────────────────────────────
@@ -319,7 +319,7 @@ namespace EndpointCheckerUpdater
             Progress(3);
 
             // ── Step 2: Download ─────────────────────────────────────────────────
-            Status("Downloading v3.0.0 from GitHub (~102 MB)...");
+            Status("Downloading v3.1.0 from GitHub (~102 MB)...");
             Log($"Downloading: {DownloadUrl}");
 
             using (var wc = new WebClient())

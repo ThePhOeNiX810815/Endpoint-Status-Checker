@@ -2,6 +2,29 @@
 
 ---
 
+## v3.1.0 — 2026-08-01
+
+### Premium UI Refresh
+
+- Reworked the main Endpoint List screen into a compact, resize-resistant layout with
+  top-row action, endpoint selection, status export, output folder, column chooser, and
+  scan progress sections.
+- Rebalanced the lower settings area into dedicated **List Options**, **Common Options**,
+  and **HTTP Options** groups with two-column layouts where needed so labels, inputs,
+  and checkboxes remain visible at normal desktop sizes.
+- Softened the endpoint grid styling: muted grid lines, readable pre-scan text, darker
+  headers, and preserved visual row separation without the previous high-contrast grid.
+- Added a persistent endpoint-list column chooser. Hidden columns are saved in user
+  settings and restored on startup.
+- Replaced boxed command icons with integrated icon+text buttons for a cleaner toolbar
+  feel while preserving the existing actions and selection commands.
+- Moved scan progress and last status update into a dedicated compact top-row section
+  with a gradient progress bar, keeping the footer clear and avoiding bottom clipping.
+- Polished the SpeedTest dialog layout so gauge labels and throughput text fit cleanly
+  inside their panels.
+
+---
+
 ## v3.0.0 — 2026-08-01 *(updated)*
 
 ### Patch — 2026-08-01
