@@ -2,7 +2,43 @@
 
 ---
 
-## v3.0.0 — 2026-07-31 *(updated)*
+## v3.0.0 — 2026-08-01 *(updated)*
+
+### Patch — 2026-08-01
+
+- **Fix: build date displayed as 29.12.1926** — `RetrieveLinkerTimestamp` read the PE
+  header linker timestamp field, which .NET 10 deterministic builds populate with a
+  hash-derived value rather than the real link time. Replaced with
+  `File.GetLastWriteTime(Process.GetCurrentProcess().MainModule.FileName)`, which returns
+  the actual publish date.
+- **Fix: auto-updater rewrite for .NET 10 multi-file self-contained build** — The previous
+  approach (copy the exe to `%TEMP%`, re-launch it with `/AutoUpdate`) breaks because the
+  single bootstrapper `.exe` cannot run without its 200+ sibling DLLs. The updater is now
+  fully in-process: it downloads and extracts the package, then writes a `.cmd` script to
+  `%TEMP%` and launches it after `Environment.Exit(0)` releases all file locks. The script
+  uses `xcopy /s /y /e` to replace every file in the install directory, restores user data
+  files, and then relaunches the application.
+- **Fix: `UnzipUpdatePackage` no longer relies on zip internal structure** — Extraction
+  target is now the fixed path `%TEMP%\EndpointChecker_Update\` rather than a path
+  derived from `Entries.First().FullName`, making the updater independent of zip format.
+- **Fix: `CleanTempPackageArchive` double-path bug** —
+  `Path.Combine(app_TempDir, Path.Combine(app_TempDir, …))` corrected to
+  `Path.Combine(app_TempDir, …)`.
+- **New: standalone updater for v2.15 and earlier** —
+  `EndpointChecker-Updater-v3.0.0-win-x86.exe` (~46 MB, self-contained, no runtime
+  required) upgrades any previous version to v3.0.0. Auto-detects the install directory
+  from running processes and common paths, preserves `EndpointChecker_EndpointsList.txt`
+  and `EndpointChecker_LastSeenOnline.json`, and relaunches the application when done.
+  Source at `tools/EndpointChecker-Updater/`.
+- **New: legacy zip for v2.15 in-app auto-updater** —
+  `EndpointChecker-v3.0.0-legacy-update.zip` is structured so the old v2.15 updater's
+  extraction logic works: the first ZIP entry is an explicit directory entry
+  (`EndpointChecker-v3.0.0/`) so `Entries.First().FullName` returns the folder name as
+  expected. `package.txt` points to this zip, allowing v2.15 installations to self-update
+  to v3.0.0 via the built-in update check.
+- **Repo cleanup** — `src/bin/` and `src/obj/` added to `.gitignore`; negation rules keep
+  `src/bin/Debug/VirusTotal.NET.dll` and `src/bin/Debug/tracert.dll` tracked (referenced
+  assemblies required to compile, not build output).
 
 ### Patch — 2026-07-31
 
