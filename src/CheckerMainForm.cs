@@ -143,6 +143,8 @@ namespace EndpointChecker
 
         // SPEEDTEST DIALOG INSTANCE
         private SpeedTestDialog dialog_SpeedTest = null;
+        private readonly System.Windows.Forms.Timer premiumUiPulseTimer = new System.Windows.Forms.Timer();
+        private int premiumUiPulseTick = 0;
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public CheckerMainForm()
@@ -216,6 +218,9 @@ namespace EndpointChecker
 
             // APPLY PREMIUM VISUAL THEME
             ApplyPremiumTheme();
+            InitializePremiumMotionEffects();
+            Resize += CheckerMainForm_Resize;
+            ApplyBottomPanelsLayout();
 
             // LOAD 'LAST SEEN ONLINE' LIST
             RestoreLastSeenOnlineList();
@@ -3768,6 +3773,7 @@ namespace EndpointChecker
         public void CheckerMainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             onClose = true;
+            premiumUiPulseTimer.Stop();
 
             // DISABLE FORM CLOSE WHILE ASYNC WORKER IS IN PROGRESS
             if (BW_GetStatus.IsBusy ||
@@ -5675,6 +5681,12 @@ namespace EndpointChecker
             RestoreWindowSizeAndPosition();
             LoadConfiguration();
             LoadEndpointReferences();
+            ApplyBottomPanelsLayout();
+        }
+
+        private void CheckerMainForm_Resize(object sender, EventArgs e)
+        {
+            ApplyBottomPanelsLayout();
         }
 
         public void tray_SpeedTest_Click(object sender, EventArgs e)
@@ -5855,13 +5867,19 @@ namespace EndpointChecker
         private void ApplyPremiumTheme()
         {
             // ── Palette ──────────────────────────────────────────────────────────
-            Color bg       = Color.FromArgb( 22,  25,  44);  // deep navy body
-            Color surface  = Color.FromArgb( 30,  34,  58);  // card / GroupBox fill
-            Color input    = Color.FromArgb( 38,  43,  75);  // textbox / spinner
-            Color accent   = Color.FromArgb( 88, 121, 224);  // GroupBox titles
-            Color textMain = Color.FromArgb(200, 212, 240);  // primary text
-            Color textMute = Color.FromArgb( 96, 110, 155);  // secondary / footer
-            Color menuBg   = Color.FromArgb( 12,  14,  30);  // near-black nav bar
+            Color bg          = Color.FromArgb( 10,  16,  31);
+            Color surface     = Color.FromArgb( 18,  27,  45);
+            Color surfaceAlt  = Color.FromArgb( 24,  35,  58);
+            Color input       = Color.FromArgb( 14,  23,  39);
+            Color accent      = Color.FromArgb( 74, 132, 255);
+            Color accentAlt   = Color.FromArgb( 43,  91, 211);
+            Color success     = Color.FromArgb( 50, 201, 118);
+            Color warning     = Color.FromArgb(255, 181,  71);
+            Color danger      = Color.FromArgb(255,  94,  98);
+            Color textMain    = Color.FromArgb(224, 233, 248);
+            Color textMute    = Color.FromArgb(133, 149, 184);
+            Color menuBg      = Color.FromArgb(  9,  15,  28);
+            Color cardBorder  = Color.FromArgb(50, 72, 124);
 
             // Form
             BackColor = bg;
@@ -5870,10 +5888,16 @@ namespace EndpointChecker
             MainMenuStrip.BackColor = menuBg;
             MainMenuStrip.ForeColor = textMain;
             MainMenuStrip.Renderer  = new DarkMenuStripRenderer();
+            MainMenuStrip.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
             foreach (ToolStripItem item in MainMenuStrip.Items)
             {
                 item.BackColor = menuBg;
                 item.ForeColor = textMain;
+
+                if (item is ToolStripDropDownItem dropDownItem)
+                {
+                    ApplyDropDownTheme(dropDownItem, menuBg, textMain);
+                }
             }
 
             // Walk every descendant control
@@ -5881,9 +5905,25 @@ namespace EndpointChecker
             {
                 switch (ctrl)
                 {
+                    case TabPage tabPage:
+                        tabPage.BackColor = surface;
+                        tabPage.ForeColor = textMain;
+                        break;
+
+                    case TabControl tabControl:
+                        tabControl.BackColor = surface;
+                        tabControl.ForeColor = textMain;
+                        break;
+
+                    case Panel panel:
+                        panel.BackColor = bg;
+                        break;
+
                     case GroupBox gb:
                         gb.BackColor = surface;
                         gb.ForeColor = accent;
+                        gb.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold, GraphicsUnit.Point);
+                        gb.Padding = new Padding(10, 22, 10, 10);
                         break;
 
                     case Label lbl when lbl.Name != "lbl_EndpointsListLoading":
@@ -5917,6 +5957,33 @@ namespace EndpointChecker
                     case ListView lv:
                         lv.BackColor = surface;
                         lv.ForeColor = textMain;
+                        lv.BorderStyle = BorderStyle.FixedSingle;
+                        lv.HeaderStyle = ColumnHeaderStyle.Clickable;
+                        lv.GridLines = true;
+                        lv.HideSelection = false;
+                        lv.FullRowSelect = true;
+                        lv.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+                        break;
+
+                    case ProgressBar progressBar:
+                        progressBar.BackColor = surfaceAlt;
+                        progressBar.ForeColor = accent;
+                        break;
+
+                    case RichTextBox richTextBox:
+                        richTextBox.BackColor = input;
+                        richTextBox.ForeColor = textMain;
+                        richTextBox.BorderStyle = BorderStyle.None;
+                        break;
+
+                    case StatusStrip statusStrip:
+                        statusStrip.BackColor = menuBg;
+                        statusStrip.ForeColor = textMain;
+                        break;
+
+                    case ToolStrip toolStrip:
+                        toolStrip.BackColor = menuBg;
+                        toolStrip.ForeColor = textMain;
                         break;
 
                     case Button btn when btn.Image == null && btn.BackgroundImage == null:
@@ -5931,6 +5998,58 @@ namespace EndpointChecker
             // Explicit overrides for the main list
             lv_Endpoints.BackColor = surface;
             lv_Endpoints.ForeColor = textMain;
+            lv_Endpoints.BorderStyle = BorderStyle.FixedSingle;
+
+            // Status / action specific treatment to match dashboard styling
+            foreach (Button btn in new[]
+            {
+                btn_LoadList,
+                btn_BrowseExportDir,
+                btn_CheckAll,
+                btn_UncheckAll,
+                btn_CheckAllAvailable,
+                btn_CheckAllErrors,
+                btn_RunCheck,
+                btn_Terminate
+            })
+            {
+                btn.FlatStyle = FlatStyle.Flat;
+                btn.FlatAppearance.BorderSize = 1;
+                btn.FlatAppearance.MouseOverBackColor = surfaceAlt;
+                btn.FlatAppearance.MouseDownBackColor = input;
+                btn.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold, GraphicsUnit.Point);
+                btn.ForeColor = textMain;
+            }
+
+            btn_LoadList.BackColor = input;
+            btn_LoadList.FlatAppearance.BorderColor = accent;
+            btn_BrowseExportDir.BackColor = input;
+            btn_BrowseExportDir.FlatAppearance.BorderColor = accent;
+            btn_CheckAll.BackColor = accentAlt;
+            btn_CheckAll.FlatAppearance.BorderColor = accent;
+            btn_UncheckAll.BackColor = surfaceAlt;
+            btn_UncheckAll.FlatAppearance.BorderColor = Color.FromArgb(70, 84, 118);
+            btn_CheckAllAvailable.BackColor = Color.FromArgb(24, 68, 49);
+            btn_CheckAllAvailable.FlatAppearance.BorderColor = success;
+            btn_CheckAllErrors.BackColor = Color.FromArgb(74, 31, 39);
+            btn_CheckAllErrors.FlatAppearance.BorderColor = danger;
+            btn_RunCheck.BackColor = accentAlt;
+            btn_RunCheck.FlatAppearance.BorderColor = accent;
+            btn_Terminate.BackColor = Color.FromArgb(53, 57, 67);
+            btn_Terminate.FlatAppearance.BorderColor = Color.FromArgb(111, 119, 138);
+
+            lbl_CheckAll.ForeColor = textMain;
+            lbl_UncheckAll.ForeColor = textMute;
+            lbl_CheckAllAvailable.ForeColor = success;
+            lbl_CheckAllErrors.ForeColor = danger;
+            lbl_RunCheck.ForeColor = accent;
+            lbl_Terminate.ForeColor = textMute;
+            lbl_BrowseExportDir.ForeColor = textMute;
+            lbl_LastUpdate_Label.ForeColor = success;
+            lbl_LastUpdate.ForeColor = textMain;
+
+            pb_LastUpdate.BackColor = surface;
+            pb_RefreshProcess.BackColor = Color.FromArgb(15, 18, 38);
 
             // Right-click context menus — DescendantControls() does not reach components,
             // so they must be styled explicitly.
@@ -5939,12 +6058,315 @@ namespace EndpointChecker
                 cms.BackColor = menuBg;
                 cms.ForeColor = textMain;
                 cms.Renderer  = new DarkMenuStripRenderer();
+                cms.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
                 foreach (ToolStripItem item in cms.Items)
                 {
                     item.BackColor = menuBg;
                     item.ForeColor = textMain;
+
+                    if (item is ToolStripDropDownItem dropDownItem)
+                    {
+                        ApplyDropDownTheme(dropDownItem, menuBg, textMain);
+                    }
                 }
             }
+
+            lbl_EndpointsListLoading.BackColor = surfaceAlt;
+            lbl_EndpointsListLoading.ForeColor = warning;
+            lbl_ProgressCount.ForeColor = accent;
+            lbl_ProgressCount.Font = new Font("Segoe UI Semibold", 15F, FontStyle.Bold, GraphicsUnit.Point);
+            pb_LastUpdate.ForeColor = success;
+            pb_RefreshProcess.ForeColor = accent;
+
+            foreach (GroupBox groupBox in new[] { groupBox_CommonOptions, groupBox_HTTPOptions, groupBox_Export, groupBox_EndpointSelection, groupBox_Actions })
+            {
+                StyleGroupBoxAsCard(groupBox, surface, cardBorder, accent);
+            }
+        }
+
+        private static void StyleGroupBoxAsCard(GroupBox groupBox, Color fill, Color border, Color accent)
+        {
+            if (groupBox == null)
+            {
+                return;
+            }
+
+            bool isCompactActionGroup =
+                string.Equals(groupBox.Name, nameof(groupBox_EndpointSelection), StringComparison.Ordinal) ||
+                string.Equals(groupBox.Name, nameof(groupBox_Actions), StringComparison.Ordinal);
+            if (isCompactActionGroup)
+            {
+                EnsureGroupBoxHeaderClearance(groupBox, 24);
+            }
+
+            groupBox.BackColor = fill;
+            groupBox.ForeColor = accent;
+            groupBox.FlatStyle = FlatStyle.Flat;
+            groupBox.Paint -= PremiumGroupBoxPaint;
+            groupBox.Paint += PremiumGroupBoxPaint;
+            groupBox.Tag = new GroupBoxPaintTheme(fill, border, accent);
+            groupBox.Invalidate();
+        }
+
+        private static void EnsureGroupBoxHeaderClearance(GroupBox groupBox, int minimumContentTop)
+        {
+            if (groupBox.Controls.Count == 0)
+            {
+                return;
+            }
+
+            int minTop = int.MaxValue;
+            foreach (Control control in groupBox.Controls)
+            {
+                minTop = Math.Min(minTop, control.Top);
+            }
+
+            if (minTop >= minimumContentTop)
+            {
+                return;
+            }
+
+            int delta = minimumContentTop - minTop;
+            foreach (Control control in groupBox.Controls)
+            {
+                control.Top += delta;
+            }
+
+            groupBox.Height += delta;
+        }
+
+        private void ApplyBottomPanelsLayout()
+        {
+            if (lv_Endpoints == null ||
+                groupBox_CommonOptions == null ||
+                groupBox_HTTPOptions == null ||
+                groupBox_EndpointSelection == null ||
+                groupBox_Actions == null ||
+                groupBox_Export == null ||
+                pb_RefreshProcess == null)
+            {
+                return;
+            }
+
+            const int horizontalGap = 10;
+            const int verticalGap = 8;
+            const int rightMargin = 14;
+
+            int rowTop = lv_Endpoints.Bottom + verticalGap;
+            int rightColumnWidth = groupBox_EndpointSelection.Width;
+            int rightColumnX = ClientSize.Width - rightMargin - rightColumnWidth;
+
+            int middleColumnWidth = groupBox_CommonOptions.Width + horizontalGap + groupBox_HTTPOptions.Width;
+            int minimumMiddleX = Math.Max(302, tb_ListFilter.Right + 24);
+            int middleColumnX = minimumMiddleX;
+            int maxMiddleX = rightColumnX - horizontalGap - middleColumnWidth;
+            if (middleColumnX > maxMiddleX)
+            {
+                middleColumnX = Math.Max(302, maxMiddleX);
+            }
+
+            groupBox_EndpointSelection.Height = 86;
+            groupBox_Actions.Height = 86;
+
+            groupBox_CommonOptions.Location = new Point(middleColumnX, rowTop);
+            groupBox_HTTPOptions.Location = new Point(groupBox_CommonOptions.Right + horizontalGap, rowTop);
+
+            groupBox_EndpointSelection.Location = new Point(rightColumnX, rowTop);
+            groupBox_Actions.Location = new Point(rightColumnX, groupBox_EndpointSelection.Bottom + verticalGap);
+            LayoutEndpointSelectionGroup();
+            LayoutActionsGroup();
+
+            int exportTop = Math.Max(groupBox_CommonOptions.Bottom, groupBox_HTTPOptions.Bottom) + verticalGap;
+            groupBox_Export.Location = new Point(middleColumnX, exportTop);
+            groupBox_Export.Size = new Size(middleColumnWidth, groupBox_Export.Height);
+
+            pb_RefreshProcess.Location = new Point(middleColumnX, groupBox_Export.Bottom + 3);
+            pb_RefreshProcess.Size = new Size(middleColumnWidth, pb_RefreshProcess.Height);
+
+            int statusTop = groupBox_Export.Top + 6;
+            pb_LastUpdate.Location = new Point(rightColumnX + 8, statusTop);
+            lbl_LastUpdate_Label.Location = new Point(pb_LastUpdate.Right + 6, statusTop + 12);
+            lbl_LastUpdate.Location = new Point(lbl_LastUpdate_Label.Right + 4, statusTop + 12);
+        }
+
+        private void LayoutEndpointSelectionGroup()
+        {
+            const int groupInnerMargin = 12;
+            const int buttonSize = 36;
+            const int topOffset = 22;
+            const int labelY = 60;
+
+            int availableWidth = groupBox_EndpointSelection.ClientSize.Width - groupInnerMargin * 2;
+            int slotWidth = Math.Max(buttonSize + 6, availableWidth / 4);
+
+            Button[] buttons = { btn_CheckAll, btn_UncheckAll, btn_CheckAllAvailable, btn_CheckAllErrors };
+            Label[] labels = { lbl_CheckAll, lbl_UncheckAll, lbl_CheckAllAvailable, lbl_CheckAllErrors };
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                int slotX = groupInnerMargin + i * slotWidth;
+                int buttonX = slotX + Math.Max(0, (slotWidth - buttonSize) / 2);
+
+                buttons[i].Location = new Point(buttonX, topOffset);
+                buttons[i].Size = new Size(buttonSize, buttonSize);
+
+                labels[i].AutoSize = false;
+                labels[i].TextAlign = ContentAlignment.TopCenter;
+                labels[i].Location = new Point(slotX, labelY);
+                labels[i].Size = new Size(slotWidth, 16);
+            }
+        }
+
+        private void LayoutActionsGroup()
+        {
+            const int groupInnerMargin = 16;
+            const int buttonSize = 36;
+            const int topOffset = 22;
+            const int labelY = 60;
+
+            int availableWidth = groupBox_Actions.ClientSize.Width - groupInnerMargin * 2;
+            int slotWidth = Math.Max(buttonSize + 10, availableWidth / 3);
+
+            Button[] buttons = { btn_LoadList, btn_RunCheck, btn_Terminate };
+            Label[] labels = { lbl_LoadList, lbl_RunCheck, lbl_Terminate };
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                int slotX = groupInnerMargin + i * slotWidth;
+                int buttonX = slotX + Math.Max(0, (slotWidth - buttonSize) / 2);
+
+                buttons[i].Location = new Point(buttonX, topOffset);
+                buttons[i].Size = new Size(buttonSize, buttonSize);
+
+                labels[i].AutoSize = false;
+                labels[i].TextAlign = ContentAlignment.TopCenter;
+                labels[i].Location = new Point(slotX, labelY);
+                labels[i].Size = new Size(slotWidth, 16);
+            }
+        }
+
+        private static void PremiumGroupBoxPaint(object sender, PaintEventArgs e)
+        {
+            if (!(sender is GroupBox groupBox) || !(groupBox.Tag is GroupBoxPaintTheme theme))
+            {
+                return;
+            }
+
+            Rectangle bounds = new Rectangle(0, 0, groupBox.Width - 1, groupBox.Height - 1);
+            if (bounds.Width <= 0 || bounds.Height <= 0)
+            {
+                return;
+            }
+
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+            using (GraphicsPath path = RoundedRect(bounds, 8))
+            using (LinearGradientBrush fillBrush = new LinearGradientBrush(bounds, ControlPaint.Light(theme.Fill, 0.05F), theme.Fill, LinearGradientMode.Vertical))
+            using (Pen borderPen = new Pen(theme.Border, 1.1F))
+            {
+                e.Graphics.FillPath(fillBrush, path);
+                e.Graphics.DrawPath(borderPen, path);
+            }
+
+            SizeF textSize = e.Graphics.MeasureString(groupBox.Text, groupBox.Font);
+            float textBandHeight = Math.Max(14F, textSize.Height + 1F);
+            RectangleF textBg = new RectangleF(10, -1, textSize.Width + 16, textBandHeight);
+            using (SolidBrush textBgBrush = new SolidBrush(theme.Fill))
+            using (SolidBrush textBrush = new SolidBrush(theme.Accent))
+            {
+                e.Graphics.FillRectangle(textBgBrush, textBg);
+                e.Graphics.DrawString(groupBox.Text, groupBox.Font, textBrush, 16, -1);
+            }
+        }
+
+        private static GraphicsPath RoundedRect(Rectangle bounds, int radius)
+        {
+            int diameter = radius * 2;
+            GraphicsPath path = new GraphicsPath();
+            path.StartFigure();
+            path.AddArc(bounds.Left, bounds.Top, diameter, diameter, 180, 90);
+            path.AddArc(bounds.Right - diameter, bounds.Top, diameter, diameter, 270, 90);
+            path.AddArc(bounds.Right - diameter, bounds.Bottom - diameter, diameter, diameter, 0, 90);
+            path.AddArc(bounds.Left, bounds.Bottom - diameter, diameter, diameter, 90, 90);
+            path.CloseFigure();
+            return path;
+        }
+
+        private static void ApplyDropDownTheme(ToolStripDropDownItem rootItem, Color background, Color foreground)
+        {
+            if (rootItem == null)
+            {
+                return;
+            }
+
+            foreach (ToolStripItem dropDownItem in rootItem.DropDownItems)
+            {
+                dropDownItem.BackColor = background;
+                dropDownItem.ForeColor = foreground;
+
+                if (dropDownItem is ToolStripDropDownItem nestedDropDown)
+                {
+                    ApplyDropDownTheme(nestedDropDown, background, foreground);
+                }
+            }
+        }
+
+        private void InitializePremiumMotionEffects()
+        {
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            {
+                return;
+            }
+
+            premiumUiPulseTimer.Interval = 95;
+            premiumUiPulseTimer.Tick -= PremiumUiPulseTimer_Tick;
+            premiumUiPulseTimer.Tick += PremiumUiPulseTimer_Tick;
+            premiumUiPulseTimer.Start();
+        }
+
+        private void PremiumUiPulseTimer_Tick(object sender, EventArgs e)
+        {
+            premiumUiPulseTick++;
+            double wave = (Math.Sin(premiumUiPulseTick * 0.15) + 1d) / 2d;
+
+            Color accentA = Color.FromArgb(74, 132, 255);
+            Color accentB = Color.FromArgb(121, 170, 255);
+            Color pulseAccent = BlendColor(accentA, accentB, wave);
+
+            if (btn_RunCheck != null)
+            {
+                btn_RunCheck.FlatAppearance.BorderColor = pulseAccent;
+            }
+
+            if (btn_LoadList != null)
+            {
+                btn_LoadList.FlatAppearance.BorderColor = BlendColor(Color.FromArgb(70, 84, 118), accentA, wave * 0.7);
+            }
+
+            if (lbl_RunCheck != null)
+            {
+                lbl_RunCheck.ForeColor = pulseAccent;
+            }
+
+            if (lbl_ProgressCount != null)
+            {
+                lbl_ProgressCount.ForeColor = BlendColor(Color.FromArgb(128, 150, 196), pulseAccent, 0.65);
+            }
+
+            if (pb_RefreshProcess != null)
+            {
+                pb_RefreshProcess.ForeColor = pulseAccent;
+            }
+        }
+
+        private static Color BlendColor(Color from, Color to, double amount)
+        {
+            double clamped = Math.Max(0d, Math.Min(1d, amount));
+            int a = from.A + (int)((to.A - from.A) * clamped);
+            int r = from.R + (int)((to.R - from.R) * clamped);
+            int g = from.G + (int)((to.G - from.G) * clamped);
+            int b = from.B + (int)((to.B - from.B) * clamped);
+            return Color.FromArgb(a, r, g, b);
         }
 
         public static IEnumerable<Control> DescendantControls(Control parent)
@@ -5959,11 +6381,11 @@ namespace EndpointChecker
 
         public static void ApplyDarkTheme(Control root)
         {
-            Color bg       = Color.FromArgb( 22,  25,  44);
-            Color surface  = Color.FromArgb( 30,  34,  58);
-            Color input    = Color.FromArgb( 38,  43,  75);
-            Color accent   = Color.FromArgb( 88, 121, 224);
-            Color textMain = Color.FromArgb(200, 212, 240);
+            Color bg       = Color.FromArgb( 10,  16,  31);
+            Color surface  = Color.FromArgb( 18,  27,  45);
+            Color input    = Color.FromArgb( 14,  23,  39);
+            Color accent   = Color.FromArgb( 74, 132, 255);
+            Color textMain = Color.FromArgb(224, 233, 248);
 
             root.BackColor = bg;
 
@@ -6217,6 +6639,20 @@ namespace EndpointChecker
             }
 
             return returnVal;
+        }
+    }
+
+    public sealed class GroupBoxPaintTheme
+    {
+        public Color Fill { get; }
+        public Color Border { get; }
+        public Color Accent { get; }
+
+        public GroupBoxPaintTheme(Color fill, Color border, Color accent)
+        {
+            Fill = fill;
+            Border = border;
+            Accent = accent;
         }
     }
 

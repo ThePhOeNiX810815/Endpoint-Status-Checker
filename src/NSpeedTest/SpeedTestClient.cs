@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Drawing.Charts;
-using EndpointChecker;
+﻿using EndpointChecker;
 using NSpeedTest.Models;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +15,13 @@ namespace NSpeedTest
 {
     public class SpeedTestClient : ISpeedTestClient
     {
-        private string ConfigUrl = "http://www.speedtest.net/speedtest-config.php";
+        private string ConfigUrl = "https://www.speedtest.net/speedtest-config.php";
+        private const int MinimumDownloadConcurrency = 12;
+        private const int MinimumUploadConcurrency = 4;
+        private static readonly TimeSpan DownloadWarmupDuration = TimeSpan.FromSeconds(3);
+        private static readonly TimeSpan DownloadBenchmarkDuration = TimeSpan.FromSeconds(12);
+        private static readonly TimeSpan UploadWarmupDuration = TimeSpan.FromSeconds(2);
+        private static readonly TimeSpan UploadBenchmarkDuration = TimeSpan.FromSeconds(6);
         private List<string> ServersUrlsList = new List<string>()
         {
             { "https://www.speedtest.net/speedtest-servers-static.php" },
@@ -23,10 +29,9 @@ namespace NSpeedTest
             { "https://c.speedtest.net/speedtest-servers-static.php" }
         };
 
-        //private int[] downloadSizes = { 350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000 };
-        private int[] downloadSizes = { 350, 750, 1500 };
+        private readonly int[] downloadSizes = { 500, 750, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 7000, 8000 };
         private const string Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        private const int MaxUploadSize = 4; // 400 KB
+        private const int MaxUploadSize = 12; // 2.4 MB max chunk size in 200 KB steps
 
         #region ISpeedTestClient
 
@@ -80,35 +85,43 @@ namespace NSpeedTest
         public int TestServerLatency(Server server, int retryCount = 3)
         {
             var latencyUri = CreateTestUrl(server, "latency.txt");
-            var timer = new Stopwatch();
+            long totalElapsedMilliseconds = 0;
+            int successfulAttempts = 0;
 
             using (var client = new SpeedTestWebClient())
             {
                 for (var i = 0; i < retryCount; i++)
                 {
+                    var timer = Stopwatch.StartNew();
                     string testString;
                     try
                     {
-                        timer.Start();
                         testString = client.DownloadString(latencyUri);
                     }
                     catch (WebException)
                     {
+                        timer.Stop();
                         continue;
                     }
-                    finally
-                    {
-                        timer.Stop();
-                    }
 
-                    if (!testString.StartsWith("test=test"))
+                    timer.Stop();
+
+                    if (!testString.StartsWith("test=test", StringComparison.OrdinalIgnoreCase))
                     {
                         throw new InvalidOperationException("Server returned incorrect test string for latency.txt");
                     }
+
+                    totalElapsedMilliseconds += timer.ElapsedMilliseconds;
+                    successfulAttempts++;
                 }
             }
 
-            return (int)timer.ElapsedMilliseconds / retryCount;
+            if (successfulAttempts == 0)
+            {
+                throw new WebException("Server latency check failed for all retry attempts.");
+            }
+
+            return (int)(totalElapsedMilliseconds / successfulAttempts);
         }
 
         /// <summary>
@@ -117,13 +130,32 @@ namespace NSpeedTest
         /// <returns>Download speed in Kbps</returns>
         public double TestDownloadSpeed(Server server, int simultaniousDownloads = 2, int retryCount = 2)
         {
-            var testData = GenerateDownloadUrls(server, retryCount);
+            return TestDownloadSpeed(server, simultaniousDownloads, retryCount, null, null);
+        }
 
-            return TestSpeed(testData, async (client, url) =>
-            {
-                var data = await client.DownloadDataTaskAsync(url).ConfigureAwait(false);
-                return data.Length;
-            }, simultaniousDownloads);
+        public double TestDownloadSpeed(Server server, int simultaniousDownloads, int retryCount, Action<double> progressCallback)
+        {
+            return TestDownloadSpeed(server, simultaniousDownloads, retryCount, null, null, progressCallback);
+        }
+
+        public double TestDownloadSpeed(
+            Server server,
+            int simultaniousDownloads,
+            int retryCount,
+            TimeSpan? warmupDuration,
+            TimeSpan? benchmarkDuration,
+            Action<double> progressCallback = null)
+        {
+            var testData = GenerateDownloadUrls(server, retryCount);
+            int effectiveConcurrency = Math.Max(simultaniousDownloads, MinimumDownloadConcurrency);
+            TimeSpan effectiveWarmupDuration = warmupDuration ?? DownloadWarmupDuration;
+            TimeSpan effectiveBenchmarkDuration = benchmarkDuration ?? DownloadBenchmarkDuration;
+
+            WarmupDownload(testData.ToArray(), Math.Max(4, effectiveConcurrency / 2), effectiveWarmupDuration);
+
+            return MeasureDownloadSpeed(testData.ToArray(), effectiveConcurrency, effectiveBenchmarkDuration, countTransferredBytes: true, progressCallback)
+                .GetAwaiter()
+                .GetResult();
         }
 
         /// <summary>
@@ -132,51 +164,299 @@ namespace NSpeedTest
         /// <returns>Upload speed in Kbps</returns>
         public double TestUploadSpeed(Server server, int simultaniousUploads = 2, int retryCount = 2)
         {
-            var testData = GenerateUploadData(retryCount);
-            return TestSpeed(testData, async (client, uploadData) =>
-            {
-                await client.UploadValuesTaskAsync(server.Url, uploadData).ConfigureAwait(false);
-                return uploadData[0].Length;
-            }, simultaniousUploads);
+            var testData = GenerateUploadPayloads(retryCount);
+            int effectiveConcurrency = Math.Max(simultaniousUploads, MinimumUploadConcurrency);
+
+            WarmupUpload(server, testData, Math.Max(2, effectiveConcurrency / 2), UploadWarmupDuration);
+
+            return MeasureUploadSpeed(server, testData, effectiveConcurrency, UploadBenchmarkDuration)
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        public double TestUploadSpeed(Server server, int simultaniousUploads, int retryCount, Action<double> progressCallback)
+        {
+            var testData = GenerateUploadPayloads(retryCount);
+            int effectiveConcurrency = Math.Max(simultaniousUploads, MinimumUploadConcurrency);
+
+            WarmupUpload(server, testData, Math.Max(2, effectiveConcurrency / 2), UploadWarmupDuration);
+
+            return MeasureUploadSpeed(server, testData, effectiveConcurrency, UploadBenchmarkDuration, countTransferredBytes: true, progressCallback)
+                .GetAwaiter()
+                .GetResult();
         }
 
         #endregion
 
         #region Helpers
 
-        private static double TestSpeed<T>(IEnumerable<T> testData, Func<WebClient, T, Task<int>> doWork, int concurencyCount = 2)
+        private static HttpClient CreateHttpClient(int connectionLimit)
         {
-            var timer = new Stopwatch();
-            var throttler = new SemaphoreSlim(concurencyCount);
-
-            timer.Start();
-            var downloadTasks = testData.Select(async data =>
+            SocketsHttpHandler handler = new SocketsHttpHandler
             {
-                await throttler.WaitAsync().ConfigureAwait(false);
-                var client = new SpeedTestWebClient();
-                try
-                {
-                    var size = await doWork(client, data).ConfigureAwait(false);
-                    return size;
-                }
-                finally
-                {
-                    client.Dispose();
-                    throttler.Release();
-                }
-            }).ToArray();
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+                MaxConnectionsPerServer = Math.Max(16, connectionLimit),
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+                ConnectTimeout = TimeSpan.FromSeconds(5),
+                UseCookies = false,
+                UseProxy = WebRequest.DefaultWebProxy != null,
+                Proxy = WebRequest.DefaultWebProxy,
+            };
 
-            Task.WaitAll(downloadTasks);
-            timer.Stop();
+            if (handler.Proxy != null)
+            {
+                handler.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+            }
 
-            double totalSize = downloadTasks.Sum(task => task.Result);
-            return (totalSize * 8 / 1024) / ((double)timer.ElapsedMilliseconds / 1000);
+            HttpClient client = new HttpClient(handler)
+            {
+                Timeout = Timeout.InfiniteTimeSpan,
+            };
+
+            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", Program.http_UserAgent);
+            client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "*/*");
+
+            return client;
         }
 
-        private static IEnumerable<NameValueCollection> GenerateUploadData(int retryCount)
+        private static void WarmupDownload(IReadOnlyList<string> urls, int concurrencyCount, TimeSpan duration)
+        {
+            _ = MeasureDownloadSpeed(urls, concurrencyCount, duration, countTransferredBytes: false)
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        private static async Task<double> MeasureDownloadSpeed(
+            IReadOnlyList<string> urls,
+            int concurrencyCount,
+            TimeSpan duration,
+            bool countTransferredBytes,
+            Action<double> progressCallback = null)
+        {
+            if (urls.Count == 0)
+            {
+                throw new InvalidOperationException("No download URLs were generated for the speed test.");
+            }
+
+            long totalBytes = 0;
+            int urlIndex = -1;
+            using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(duration);
+            using HttpClient client = CreateHttpClient(concurrencyCount);
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            Task progressReporter = Task.CompletedTask;
+            if (countTransferredBytes && progressCallback != null)
+            {
+                progressReporter = Task.Run(async () =>
+                {
+                    try
+                    {
+                        while (!cancellationTokenSource.IsCancellationRequested)
+                        {
+                            await Task.Delay(250, cancellationTokenSource.Token).ConfigureAwait(false);
+                            long sampledBytes = Interlocked.Read(ref totalBytes);
+                            double sampledSpeed = ConvertBytesToKilobitsPerSecond(sampledBytes, stopwatch.Elapsed);
+                            try
+                            {
+                                progressCallback(sampledSpeed);
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                    }
+                });
+            }
+
+            Task[] workers = Enumerable.Range(0, concurrencyCount)
+                .Select(async _ =>
+                {
+                    byte[] buffer = new byte[128 * 1024];
+
+                    while (!cancellationTokenSource.IsCancellationRequested)
+                    {
+                        string url = urls[(Interlocked.Increment(ref urlIndex) & int.MaxValue) % urls.Count];
+
+                        try
+                        {
+                            using HttpResponseMessage response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationTokenSource.Token).ConfigureAwait(false);
+                            response.EnsureSuccessStatusCode();
+
+                            using var responseStream = await response.Content.ReadAsStreamAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+                            while (!cancellationTokenSource.IsCancellationRequested)
+                            {
+                                int bytesRead = await responseStream.ReadAsync(buffer, 0, buffer.Length, cancellationTokenSource.Token).ConfigureAwait(false);
+                                if (bytesRead <= 0)
+                                {
+                                    break;
+                                }
+
+                                if (countTransferredBytes)
+                                {
+                                    Interlocked.Add(ref totalBytes, bytesRead);
+                                }
+                            }
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            break;
+                        }
+                        catch (HttpRequestException)
+                        {
+                        }
+                    }
+                })
+                .ToArray();
+
+            await Task.WhenAll(workers).ConfigureAwait(false);
+            stopwatch.Stop();
+
+            cancellationTokenSource.Cancel();
+            await progressReporter.ConfigureAwait(false);
+
+            double finalSpeed = ConvertBytesToKilobitsPerSecond(totalBytes, stopwatch.Elapsed);
+            if (countTransferredBytes && progressCallback != null)
+            {
+                try
+                {
+                    progressCallback(finalSpeed);
+                }
+                catch
+                {
+                }
+            }
+
+            return finalSpeed;
+        }
+
+        private static void WarmupUpload(Server server, IReadOnlyList<UploadPayload> payloads, int concurrencyCount, TimeSpan duration)
+        {
+            _ = MeasureUploadSpeed(server, payloads, concurrencyCount, duration, countTransferredBytes: false)
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        private static async Task<double> MeasureUploadSpeed(Server server, IReadOnlyList<UploadPayload> payloads, int concurrencyCount, TimeSpan duration)
+        {
+            return await MeasureUploadSpeed(server, payloads, concurrencyCount, duration, countTransferredBytes: true).ConfigureAwait(false);
+        }
+
+        private static async Task<double> MeasureUploadSpeed(
+            Server server,
+            IReadOnlyList<UploadPayload> payloads,
+            int concurrencyCount,
+            TimeSpan duration,
+            bool countTransferredBytes,
+            Action<double> progressCallback = null)
+        {
+            if (payloads.Count == 0)
+            {
+                throw new InvalidOperationException("No upload payloads were generated for the speed test.");
+            }
+
+            long totalBytes = 0;
+            int payloadIndex = -1;
+            using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(duration);
+            using HttpClient client = CreateHttpClient(concurrencyCount);
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            Task progressReporter = Task.CompletedTask;
+            if (countTransferredBytes && progressCallback != null)
+            {
+                progressReporter = Task.Run(async () =>
+                {
+                    try
+                    {
+                        while (!cancellationTokenSource.IsCancellationRequested)
+                        {
+                            await Task.Delay(250, cancellationTokenSource.Token).ConfigureAwait(false);
+                            long sampledBytes = Interlocked.Read(ref totalBytes);
+                            double sampledSpeed = ConvertBytesToKilobitsPerSecond(sampledBytes, stopwatch.Elapsed);
+                            try
+                            {
+                                progressCallback(sampledSpeed);
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                    }
+                });
+            }
+
+            Task[] workers = Enumerable.Range(0, concurrencyCount)
+                .Select(async _ =>
+                {
+                    while (!cancellationTokenSource.IsCancellationRequested)
+                    {
+                        UploadPayload payload = payloads[(Interlocked.Increment(ref payloadIndex) & int.MaxValue) % payloads.Count];
+
+                        try
+                        {
+                            using FormUrlEncodedContent content = new FormUrlEncodedContent(new[]
+                            {
+                                new KeyValuePair<string, string>(payload.FieldName, payload.Content)
+                            });
+
+                            using HttpResponseMessage response = await client.PostAsync(server.Url, content, cancellationTokenSource.Token).ConfigureAwait(false);
+                            response.EnsureSuccessStatusCode();
+                            if (countTransferredBytes)
+                            {
+                                Interlocked.Add(ref totalBytes, payload.ByteLength);
+                            }
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            break;
+                        }
+                        catch (HttpRequestException)
+                        {
+                        }
+                    }
+                })
+                .ToArray();
+
+            await Task.WhenAll(workers).ConfigureAwait(false);
+            stopwatch.Stop();
+
+            cancellationTokenSource.Cancel();
+            await progressReporter.ConfigureAwait(false);
+
+            double finalSpeed = ConvertBytesToKilobitsPerSecond(totalBytes, stopwatch.Elapsed);
+            if (countTransferredBytes && progressCallback != null)
+            {
+                try
+                {
+                    progressCallback(finalSpeed);
+                }
+                catch
+                {
+                }
+            }
+
+            return finalSpeed;
+        }
+
+        private static double ConvertBytesToKilobitsPerSecond(long totalBytes, TimeSpan elapsed)
+        {
+            if (elapsed.TotalSeconds <= 0)
+            {
+                return 0;
+            }
+
+            return (totalBytes * 8d / 1024d) / elapsed.TotalSeconds;
+        }
+
+        private static IReadOnlyList<UploadPayload> GenerateUploadPayloads(int retryCount)
         {
             var random = new Random();
-            var result = new List<NameValueCollection>();
+            var result = new List<UploadPayload>();
 
             for (var sizeCounter = 1; sizeCounter < MaxUploadSize + 1; sizeCounter++)
             {
@@ -186,9 +466,12 @@ namespace NSpeedTest
                 for (var i = 0; i < size; ++i)
                     builder.Append(Chars[random.Next(Chars.Length)]);
 
+                string payloadContent = builder.ToString();
+                int payloadLength = Encoding.UTF8.GetByteCount(payloadContent);
+
                 for (var i = 0; i < retryCount; i++)
                 {
-                    result.Add(new NameValueCollection { { string.Format("content{0}", sizeCounter), builder.ToString() } });
+                    result.Add(new UploadPayload(string.Format("content{0}", sizeCounter), payloadContent, payloadLength));
                 }
             }
 
@@ -213,5 +496,21 @@ namespace NSpeedTest
         }
 
         #endregion
+
+        private sealed class UploadPayload
+        {
+            public UploadPayload(string fieldName, string content, int byteLength)
+            {
+                FieldName = fieldName;
+                Content = content;
+                ByteLength = byteLength;
+            }
+
+            public string FieldName { get; }
+
+            public string Content { get; }
+
+            public int ByteLength { get; }
+        }
     }
 }
