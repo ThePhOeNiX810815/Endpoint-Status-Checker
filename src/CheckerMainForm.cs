@@ -293,7 +293,8 @@ namespace EndpointChecker
             toolTip_BrowseReportOutputFolder.SetToolTip(btn_BrowseExportDir, "Browse for Report(s) output folder");
 
             // SET TOOLTIP FOR 'RUN CHECK' BUTTON
-            ToolTip toolTip_LoadList = new ToolTip {
+            ToolTip toolTip_LoadList = new ToolTip
+            {
                 ToolTipIcon = ToolTipIcon.Warning,
                 IsBalloon = true,
                 ToolTipTitle = "Load Endpoints Definitions List"
@@ -728,298 +729,111 @@ namespace EndpointChecker
 
                             try
                             {
-                            // RESCAN ENDPOINT STATUS
-                            Uri endpointURI = new Uri(endpointItem.Address);
-                            Uri responseURI = new Uri(endpointItem.ResponseAddress);
-                            string durationTime_Item = status_NotAvailable;
+                                // RESCAN ENDPOINT STATUS
+                                Uri endpointURI = new Uri(endpointItem.Address);
+                                Uri responseURI = new Uri(endpointItem.ResponseAddress);
+                                string durationTime_Item = status_NotAvailable;
 
-                            EndpointDefinition endpoint = EndpointCheckResultFactory.CreatePendingResult(endpointItem);
+                                EndpointDefinition endpoint = EndpointCheckResultFactory.CreatePendingResult(endpointItem);
 
-                            if (endpointsList_Disabled.Contains(endpoint.Name))
-                            {
-                                // ENDPOINT IS DISBALED, DON'T CHECK
-                                endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.DISABLED);
-                            }
-                            else
-                            {
-                                // ENDPOINT IS ENABLED, GO ON
-                                if (!BW_GetStatus.CancellationPending)
+                                if (endpointsList_Disabled.Contains(endpoint.Name))
                                 {
-                                    endpointProgressWorkItem = endpointCheckProgress.StartEndpoint();
-
-                                    // SET PROGRESS STATUS LABEL
-                                    SetProgressStatus(endpointCheckProgress.Snapshot);
-
-                                    // CREATE STOPWATCH FOR ITEM CHECK DURATION [FOR 'EXPORT' PURPOSE]
-                                    Stopwatch sw_ItemProgress = new Stopwatch();
-
-                                    if (validationMethod == ValidationMethod.Protocol &&
-                                        !BW_GetStatus.CancellationPending &&
-                                        (endpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
-                                         endpoint.Protocol.ToLower() == Uri.UriSchemeHttps))
+                                    // ENDPOINT IS DISBALED, DON'T CHECK
+                                    endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.DISABLED);
+                                }
+                                else
+                                {
+                                    // ENDPOINT IS ENABLED, GO ON
+                                    if (!BW_GetStatus.CancellationPending)
                                     {
-                                        // AUTO-REDIRECT SWITCH [BY 'LOCATION' HEADER OF '3xx' RESPONSE CODE]
-                                        bool autoRedirect_Followed = false;
+                                        endpointProgressWorkItem = endpointCheckProgress.StartEndpoint();
 
-                                        // HTTP OR HTTPS PROTOCOL SCHEME
-                                        HttpWebRequest httpWebRequest = null;
-                                        HttpWebResponse httpWebResponse = null;
+                                        // SET PROGRESS STATUS LABEL
+                                        SetProgressStatus(endpointCheckProgress.Snapshot);
 
-                                        // START STOPWATCH FOR ITEM CHECK DURATION
-                                        sw_ItemProgress.Start();
+                                        // CREATE STOPWATCH FOR ITEM CHECK DURATION [FOR 'EXPORT' PURPOSE]
+                                        Stopwatch sw_ItemProgress = new Stopwatch();
 
-                                        try
+                                        if (validationMethod == ValidationMethod.Protocol &&
+                                            !BW_GetStatus.CancellationPending &&
+                                            (endpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
+                                             endpoint.Protocol.ToLower() == Uri.UriSchemeHttps))
                                         {
-                                            // PREPARE WEBREQUEST
-                                            httpWebRequest = PrepareHTTPWebRequest(
-                                                endpoint,
-                                                endpointURI,
-                                                checkOptions.HttpRequestTimeout,
-                                                checkOptions.AllowAutoRedirect,
-                                                checkOptions.RemoveUrlParameters);
+                                            // AUTO-REDIRECT SWITCH [BY 'LOCATION' HEADER OF '3xx' RESPONSE CODE]
+                                            bool autoRedirect_Followed = false;
+
+                                            // HTTP OR HTTPS PROTOCOL SCHEME
+                                            HttpWebRequest httpWebRequest = null;
+                                            HttpWebResponse httpWebResponse = null;
+
+                                            // START STOPWATCH FOR ITEM CHECK DURATION
+                                            sw_ItemProgress.Start();
 
                                             try
                                             {
-                                                // TRY TO GET RESPONSE
-                                                httpWebResponse = GetHTTPWebResponse(httpWebRequest, 3);
+                                                // PREPARE WEBREQUEST
+                                                httpWebRequest = PrepareHTTPWebRequest(
+                                                    endpoint,
+                                                    endpointURI,
+                                                    checkOptions.HttpRequestTimeout,
+                                                    checkOptions.AllowAutoRedirect,
+                                                    checkOptions.RemoveUrlParameters);
 
-                                                // HANDLE POSSIBLE REDIRECT [3xx]
-                                                if (checkOptions.AllowAutoRedirect && ((int)httpWebResponse.StatusCode).ToString().StartsWith("3"))
+                                                try
                                                 {
-                                                    throw new WebException(
-                                                        "HTTP Response Code: " + (int)httpWebResponse.StatusCode,
-                                                        null,
-                                                        WebExceptionStatus.UnknownError,
-                                                        httpWebResponse);
-                                                }
-                                            }
-                                            catch (WebException wEX)
-                                            {
-                                                // IF RESULT CODE IS '3xx', DO A SECOND CALL ON 'LOCATION'
-                                                if (checkOptions.AllowAutoRedirect &&
-                                                    wEX.Response is HttpWebResponse _httpWebResponse &&
-                                                    ((int)_httpWebResponse.StatusCode).ToString().StartsWith("3") &&
-                                                    _httpWebResponse.Headers.AllKeys.Contains("Location") &&
-                                                    !string.IsNullOrEmpty(_httpWebResponse.GetResponseHeader("Location")))
-                                                {
-                                                    // GET 'LOCATION' HEADER VALUE
-                                                    string locationHeaderValue = _httpWebResponse.GetResponseHeader("Location");
+                                                    // TRY TO GET RESPONSE
+                                                    httpWebResponse = GetHTTPWebResponse(httpWebRequest, 3);
 
-                                                    // IF IS RELATIVE PATH
-                                                    if (Uri.IsWellFormedUriString(locationHeaderValue, UriKind.Relative))
+                                                    // HANDLE POSSIBLE REDIRECT [3xx]
+                                                    if (checkOptions.AllowAutoRedirect && ((int)httpWebResponse.StatusCode).ToString().StartsWith("3"))
                                                     {
-                                                        locationHeaderValue = Url.Combine(_httpWebResponse.ResponseUri.OriginalString, locationHeaderValue);
+                                                        throw new WebException(
+                                                            "HTTP Response Code: " + (int)httpWebResponse.StatusCode,
+                                                            null,
+                                                            WebExceptionStatus.UnknownError,
+                                                            httpWebResponse);
                                                     }
-
-                                                    // PREPARE WEBREQUEST
-                                                    HttpWebRequest httpWebRequest_Redirected = PrepareHTTPWebRequest(
-                                                        endpoint,
-                                                        new Uri(locationHeaderValue),
-                                                        checkOptions.HttpRequestTimeout,
-                                                        checkOptions.AllowAutoRedirect,
-                                                        checkOptions.RemoveUrlParameters,
-                                                        _httpWebResponse.Cookies);
-
-                                                    autoRedirect_Followed = true;
-
-                                                    // GET RESPONSE FROM 'LOCATION'
-                                                    httpWebResponse = GetHTTPWebResponse(httpWebRequest_Redirected, 3);
                                                 }
-                                                else
+                                                catch (WebException wEX)
                                                 {
-                                                    throw;
-                                                }
-                                            }
-
-                                            // STOP STOPWATCH FOR ITEM CHECK DURATION
-                                            sw_ItemProgress.Stop();
-
-                                            // GET RESPONSE HEADERS
-                                            GetHTTPWebHeaders(endpoint.HTTPResponseHeaders.PropertyItem, httpWebResponse.Headers);
-
-                                            // GET SSL INFO
-                                            GetSSLCertificateInfo(httpWebRequest, endpoint);
-
-                                            responseURI = httpWebResponse.ResponseUri;
-                                            endpoint.Port = responseURI.Port.ToString();
-                                            endpoint.Protocol = responseURI.Scheme.ToUpper();
-                                            endpoint.ResponseCode = ((int)httpWebResponse.StatusCode).ToString();
-
-                                            // SERVER IDENTIFICATION
-                                            if (!string.IsNullOrEmpty(httpWebResponse.Server))
-                                            {
-                                                endpoint.ServerID = Regex.Replace(httpWebResponse.Server, "<.*?>", string.Empty);
-                                            }
-
-                                            // STATUS MESSAGE
-                                            if (!string.IsNullOrEmpty(httpWebResponse.StatusDescription))
-                                            {
-                                                // STATUS DESCRIPTION
-                                                endpoint.ResponseMessage = httpWebResponse.StatusDescription;
-                                            }
-                                            else
-                                            {
-                                                // STATUS CODE [STRING]
-                                                endpoint.ResponseMessage = httpWebResponse.StatusCode.ToString();
-                                            }
-
-                                            // GET AUTO REDIRECTS COUNT
-                                            if (checkOptions.AllowAutoRedirect)
-                                            {
-                                                FieldInfo fieldInfo = httpWebRequest.GetType().GetField("_AutoRedirects", BindingFlags.NonPublic | BindingFlags.Instance);
-                                                // _AutoRedirects was removed in .NET 10; guard against null fieldInfo
-                                                int httpAutoRedirects = fieldInfo != null ? (int)fieldInfo.GetValue(httpWebRequest) : 0;
-                                                endpoint.HTTPautoRedirects = httpAutoRedirects.ToString();
-
-                                                // CHECK AUTO REDIRECT URL [COMPARE REQUEST AND RESPONSE ENDPOINT URIs]
-                                                if (endpointURI.Scheme != responseURI.Scheme ||
-                                                    endpointURI.Port != responseURI.Port ||
-                                                    endpointURI.Host != responseURI.Host ||
-                                                    autoRedirect_Followed)
-                                                {
-                                                    endpoint.ResponseMessage += " (Redirected from \"" + endpointURI.OriginalString + "\")";
-                                                }
-                                            }
-
-                                            // GET 'CONTENT TYPE' META VALUE FROM RESPONSE HEADER
-                                            endpoint.HTTPcontentType = GetContentType(httpWebResponse.ContentType);
-
-                                            // GET 'EXPIRES' META VALUE FROM RESPONSE HEADER
-                                            DateTime _httpExpiresDT = DateTime.MinValue;
-                                            if (!string.IsNullOrEmpty(httpWebResponse.Headers["Expires"]) &&
-                                                TryParseHttpDate(httpWebResponse.Headers["Expires"], out _httpExpiresDT) &&
-                                                _httpExpiresDT > DateTime.MinValue)
-                                            {
-                                                endpoint.HTTPexpires = _httpExpiresDT.ToString("dd.MM.yyyy HH:mm");
-                                            }
-
-                                            // GET 'ETAG' META VALUE FROM RESPONSE HEADER
-                                            if (!string.IsNullOrEmpty(httpWebResponse.Headers["ETag"]))
-                                            {
-                                                endpoint.HTTPetag = httpWebResponse.Headers["ETag"]
-                                                    .ToString()
-                                                    .TrimStart()
-                                                    .TrimEnd()
-                                                    .TrimStart('"')
-                                                    .TrimEnd('"');
-                                            }
-
-                                            // GET CONTENT Length FROM RESPONSE HEADER
-                                            long contentLength = httpWebResponse.ContentLength;
-
-                                            if (!string.IsNullOrEmpty(httpWebResponse.Headers["Content-Length"]))
-                                            {
-                                                long.TryParse(httpWebResponse.Headers["Content-Length"], out contentLength);
-                                            }
-
-                                            GetWebResponseContentLengthString(endpoint, contentLength);
-
-                                            // TRY TO GET HEADER ENCODING FROM RESPONSE HEADER
-                                            endpoint.HTTPencoding = GetEncoding(httpWebResponse.ContentType);
-
-                                            if (checkOptions.SaveResponse || checkOptions.ResolvePageMetaInfo)
-                                            {
-                                                // GET RESPONSE STREAM
-                                                using (BinaryReader httpWebResponseBinaryReader = new BinaryReader(httpWebResponse.GetResponseStream()))
-                                                {
-                                                    MemoryStream httpWebResponseMemoryStream = new MemoryStream();
-
-                                                    byte[] httpWebResponseByteArray;
-                                                    byte[] httpWebResponseBuffer = httpWebResponseBinaryReader.ReadBytes(1024);
-                                                    while (httpWebResponseBuffer.Length > 0 && httpWebResponseMemoryStream.Length < (http_SaveResponse_MaxLength_Bytes + 1024))
+                                                    // IF RESULT CODE IS '3xx', DO A SECOND CALL ON 'LOCATION'
+                                                    if (checkOptions.AllowAutoRedirect &&
+                                                        wEX.Response is HttpWebResponse _httpWebResponse &&
+                                                        ((int)_httpWebResponse.StatusCode).ToString().StartsWith("3") &&
+                                                        _httpWebResponse.Headers.AllKeys.Contains("Location") &&
+                                                        !string.IsNullOrEmpty(_httpWebResponse.GetResponseHeader("Location")))
                                                     {
-                                                        httpWebResponseMemoryStream.Write(httpWebResponseBuffer, 0, httpWebResponseBuffer.Length);
-                                                        httpWebResponseBuffer = httpWebResponseBinaryReader.ReadBytes(1024);
-                                                    }
+                                                        // GET 'LOCATION' HEADER VALUE
+                                                        string locationHeaderValue = _httpWebResponse.GetResponseHeader("Location");
 
-                                                    httpWebResponseByteArray = new byte[(int)httpWebResponseMemoryStream.Length];
-                                                    httpWebResponseMemoryStream.Position = 0;
-                                                    httpWebResponseMemoryStream.Read(httpWebResponseByteArray, 0, httpWebResponseByteArray.Length);
-
-                                                    // GET CONTENT Length FROM FULL RESPONSE
-                                                    contentLength = httpWebResponseMemoryStream.Length;
-                                                    GetWebResponseContentLengthString(endpoint, contentLength);
-
-                                                    if (checkOptions.SaveResponse &&
-                                                        !string.IsNullOrEmpty(endpoint.HTTPcontentType) &&
-                                                        CheckWebResponseContentLength(endpoint, httpWebResponse, contentLength))
-                                                    {
-                                                        // GET FILE EXTENSION BY CONTENT TYPE
-                                                        string fileExtension = GetFileExtensionByContentType(endpoint.HTTPcontentType);
-
-                                                        // SAVE RESPONSE TO FILE
-                                                        SaveWebResponseStream(
-                                                                              startDT_List,
-                                                                              endpoint.Name,
-                                                                              httpWebResponseByteArray,
-                                                                              fileExtension);
-                                                    }
-
-                                                    if (endpoint.HTTPcontentType == "text/html")
-                                                    {
-                                                        // GET HTML METADATA
-                                                        if (checkOptions.ResolvePageMetaInfo)
+                                                        // IF IS RELATIVE PATH
+                                                        if (Uri.IsWellFormedUriString(locationHeaderValue, UriKind.Relative))
                                                         {
-                                                            // READ RESPONSE STREAM [HTTP HEADER ENCODING] AND GET HTML META INFO
-                                                            ResolvePageMetaInfo(ReadHTTPResponseStream(httpWebResponseMemoryStream, endpoint.HTTPencoding), endpoint, responseURI, checkOptions.ResolvePageLinks);
-
-                                                            // IF ENCODING NOT PRESENT IN HTTP HEADER, READ AGAIN WITH ENCODING FROM HTML META
-                                                            if (endpoint.HTTPencoding == null)
-                                                            {
-                                                                // READ AGAIN WITH ENCODING FROM HTML META [IF PRESENT]
-                                                                if (endpoint.HTMLencoding != null)
-                                                                {
-                                                                    // READ RESPONSE STREAM [HML META ENCODING] AND GET HTML META INFO
-                                                                    ResolvePageMetaInfo(ReadHTTPResponseStream(httpWebResponseMemoryStream, endpoint.HTMLencoding), endpoint, responseURI, checkOptions.ResolvePageLinks);
-                                                                }
-                                                                else
-                                                                {
-                                                                    // SET DEAFULT HTML STREAM ENCODING
-                                                                    endpoint.HTMLencoding = endpoint.HTMLdefaultStreamEncoding;
-                                                                }
-                                                            }
+                                                            locationHeaderValue = Url.Combine(_httpWebResponse.ResponseUri.OriginalString, locationHeaderValue);
                                                         }
+
+                                                        // PREPARE WEBREQUEST
+                                                        HttpWebRequest httpWebRequest_Redirected = PrepareHTTPWebRequest(
+                                                            endpoint,
+                                                            new Uri(locationHeaderValue),
+                                                            checkOptions.HttpRequestTimeout,
+                                                            checkOptions.AllowAutoRedirect,
+                                                            checkOptions.RemoveUrlParameters,
+                                                            _httpWebResponse.Cookies);
+
+                                                        autoRedirect_Followed = true;
+
+                                                        // GET RESPONSE FROM 'LOCATION'
+                                                        httpWebResponse = GetHTTPWebResponse(httpWebRequest_Redirected, 3);
                                                     }
-                                                }
-                                            }
-                                        }
-                                        catch (WebException webException)
-                                        {
-                                            // STOP STOPWATCH FOR ITEM CHECK DURATION
-                                            sw_ItemProgress.Stop();
-
-                                            httpWebResponse = webException.Response as HttpWebResponse;
-
-                                            if (httpWebResponse != null)
-                                            {
-                                            try
-                                            {
-                                                // RESPONSE CODE
-                                                endpoint.ResponseCode = ((int)httpWebResponse.StatusCode).ToString();
-
-                                                // STATUS MESSAGE
-                                                if (!string.IsNullOrEmpty(httpWebResponse.StatusDescription))
-                                                {
-                                                    // STATUS DESCRIPTION
-                                                    endpoint.ResponseMessage = httpWebResponse.StatusDescription;
-
-                                                    // ERROR MESSAGE
-                                                    if (!webException.Message.Contains(endpoint.ResponseCode))
+                                                    else
                                                     {
-                                                        endpoint.ResponseMessage += " -> " + webException.Message;
+                                                        throw;
                                                     }
                                                 }
-                                                else
-                                                {
-                                                    // STATUS CODE [STRING]
-                                                    endpoint.ResponseMessage = httpWebResponse.StatusCode.ToString();
 
-                                                    // ERROR MESSAGE
-                                                    if (!webException.Message.Contains(endpoint.ResponseCode))
-                                                    {
-                                                        endpoint.ResponseMessage += " -> " + webException.Message;
-                                                    }
-                                                }
+                                                // STOP STOPWATCH FOR ITEM CHECK DURATION
+                                                sw_ItemProgress.Stop();
 
                                                 // GET RESPONSE HEADERS
                                                 GetHTTPWebHeaders(endpoint.HTTPResponseHeaders.PropertyItem, httpWebResponse.Headers);
@@ -1027,384 +841,571 @@ namespace EndpointChecker
                                                 // GET SSL INFO
                                                 GetSSLCertificateInfo(httpWebRequest, endpoint);
 
-                                                // CLOUDFLARE BOT-PROTECTION DETECTION
-                                                // CF-RAY header is present on all Cloudflare-proxied responses.
-                                                // A 403/429/503 with CF headers means the endpoint exists but is
-                                                // behind a security challenge that cannot be solved automatically.
-                                                if (IsCloudflareProtected(httpWebResponse))
-                                                {
-                                                    string cfRay = httpWebResponse.Headers["CF-RAY"];
-                                                    endpoint.ResponseMessage +=
-                                                        " [Cloudflare Bot Protection" +
-                                                        (!string.IsNullOrEmpty(cfRay) ? " | CF-RAY: " + cfRay : string.Empty) +
-                                                        "]";
+                                                responseURI = httpWebResponse.ResponseUri;
+                                                endpoint.Port = responseURI.Port.ToString();
+                                                endpoint.Protocol = responseURI.Scheme.ToUpper();
+                                                endpoint.ResponseCode = ((int)httpWebResponse.StatusCode).ToString();
 
-                                                    // ATTEMPT BYPASS VIA CONFIGURED METHOD
-                                                    CloudflareBypassMethod cfBypassMethod =
-                                                        (CloudflareBypassMethod)Settings.Default.Config_CloudflareBypass_Method;
-                                                    if (cfBypassMethod != CloudflareBypassMethod.Disabled)
+                                                // SERVER IDENTIFICATION
+                                                if (!string.IsNullOrEmpty(httpWebResponse.Server))
+                                                {
+                                                    endpoint.ServerID = Regex.Replace(httpWebResponse.Server, "<.*?>", string.Empty);
+                                                }
+
+                                                // STATUS MESSAGE
+                                                if (!string.IsNullOrEmpty(httpWebResponse.StatusDescription))
+                                                {
+                                                    // STATUS DESCRIPTION
+                                                    endpoint.ResponseMessage = httpWebResponse.StatusDescription;
+                                                }
+                                                else
+                                                {
+                                                    // STATUS CODE [STRING]
+                                                    endpoint.ResponseMessage = httpWebResponse.StatusCode.ToString();
+                                                }
+
+                                                // GET AUTO REDIRECTS COUNT
+                                                if (checkOptions.AllowAutoRedirect)
+                                                {
+                                                    FieldInfo fieldInfo = httpWebRequest.GetType().GetField("_AutoRedirects", BindingFlags.NonPublic | BindingFlags.Instance);
+                                                    // _AutoRedirects was removed in .NET 10; guard against null fieldInfo
+                                                    int httpAutoRedirects = fieldInfo != null ? (int)fieldInfo.GetValue(httpWebRequest) : 0;
+                                                    endpoint.HTTPautoRedirects = httpAutoRedirects.ToString();
+
+                                                    // CHECK AUTO REDIRECT URL [COMPARE REQUEST AND RESPONSE ENDPOINT URIs]
+                                                    if (endpointURI.Scheme != responseURI.Scheme ||
+                                                        endpointURI.Port != responseURI.Port ||
+                                                        endpointURI.Host != responseURI.Host ||
+                                                        autoRedirect_Followed)
                                                     {
-                                                        try
+                                                        endpoint.ResponseMessage += " (Redirected from \"" + endpointURI.OriginalString + "\")";
+                                                    }
+                                                }
+
+                                                // GET 'CONTENT TYPE' META VALUE FROM RESPONSE HEADER
+                                                endpoint.HTTPcontentType = GetContentType(httpWebResponse.ContentType);
+
+                                                // GET 'EXPIRES' META VALUE FROM RESPONSE HEADER
+                                                DateTime _httpExpiresDT = DateTime.MinValue;
+                                                if (!string.IsNullOrEmpty(httpWebResponse.Headers["Expires"]) &&
+                                                    TryParseHttpDate(httpWebResponse.Headers["Expires"], out _httpExpiresDT) &&
+                                                    _httpExpiresDT > DateTime.MinValue)
+                                                {
+                                                    endpoint.HTTPexpires = _httpExpiresDT.ToString("dd.MM.yyyy HH:mm");
+                                                }
+
+                                                // GET 'ETAG' META VALUE FROM RESPONSE HEADER
+                                                if (!string.IsNullOrEmpty(httpWebResponse.Headers["ETag"]))
+                                                {
+                                                    endpoint.HTTPetag = httpWebResponse.Headers["ETag"]
+                                                        .ToString()
+                                                        .TrimStart()
+                                                        .TrimEnd()
+                                                        .TrimStart('"')
+                                                        .TrimEnd('"');
+                                                }
+
+                                                // GET CONTENT Length FROM RESPONSE HEADER
+                                                long contentLength = httpWebResponse.ContentLength;
+
+                                                if (!string.IsNullOrEmpty(httpWebResponse.Headers["Content-Length"]))
+                                                {
+                                                    long.TryParse(httpWebResponse.Headers["Content-Length"], out contentLength);
+                                                }
+
+                                                GetWebResponseContentLengthString(endpoint, contentLength);
+
+                                                // TRY TO GET HEADER ENCODING FROM RESPONSE HEADER
+                                                endpoint.HTTPencoding = GetEncoding(httpWebResponse.ContentType);
+
+                                                if (checkOptions.SaveResponse || checkOptions.ResolvePageMetaInfo)
+                                                {
+                                                    // GET RESPONSE STREAM
+                                                    using (BinaryReader httpWebResponseBinaryReader = new BinaryReader(httpWebResponse.GetResponseStream()))
+                                                    {
+                                                        MemoryStream httpWebResponseMemoryStream = new MemoryStream();
+
+                                                        byte[] httpWebResponseByteArray;
+                                                        byte[] httpWebResponseBuffer = httpWebResponseBinaryReader.ReadBytes(1024);
+                                                        while (httpWebResponseBuffer.Length > 0 && httpWebResponseMemoryStream.Length < (http_SaveResponse_MaxLength_Bytes + 1024))
                                                         {
-                                                            CloudflareBypassResult cfBypassResult =
-                                                                CloudflareBypassChecker.Check(
-                                                                    endpoint.ResponseAddress ?? endpoint.Address,
-                                                                    cfBypassMethod,
-                                                                    Settings.Default.Config_FlareSolverr_URL);
-                                                            if (cfBypassResult != null && cfBypassResult.Success)
-                                                            {
-                                                                endpoint.ResponseCode = cfBypassResult.StatusCode.ToString();
-                                                                endpoint.ResponseMessage = cfBypassResult.StatusMessage;
-                                                            }
-                                                            else if (cfBypassResult != null)
-                                                            {
-                                                                endpoint.ResponseMessage +=
-                                                                    " | Bypass(" + cfBypassResult.MethodUsed + "): " +
-                                                                    cfBypassResult.StatusMessage;
-                                                            }
+                                                            httpWebResponseMemoryStream.Write(httpWebResponseBuffer, 0, httpWebResponseBuffer.Length);
+                                                            httpWebResponseBuffer = httpWebResponseBinaryReader.ReadBytes(1024);
                                                         }
-                                                        catch (Exception bypassEx)
+
+                                                        httpWebResponseByteArray = new byte[(int)httpWebResponseMemoryStream.Length];
+                                                        httpWebResponseMemoryStream.Position = 0;
+                                                        httpWebResponseMemoryStream.Read(httpWebResponseByteArray, 0, httpWebResponseByteArray.Length);
+
+                                                        // GET CONTENT Length FROM FULL RESPONSE
+                                                        contentLength = httpWebResponseMemoryStream.Length;
+                                                        GetWebResponseContentLengthString(endpoint, contentLength);
+
+                                                        if (checkOptions.SaveResponse &&
+                                                            !string.IsNullOrEmpty(endpoint.HTTPcontentType) &&
+                                                            CheckWebResponseContentLength(endpoint, httpWebResponse, contentLength))
                                                         {
-                                                            endpoint.ResponseMessage += " | Bypass error: " + bypassEx.Message;
+                                                            // GET FILE EXTENSION BY CONTENT TYPE
+                                                            string fileExtension = GetFileExtensionByContentType(endpoint.HTTPcontentType);
+
+                                                            // SAVE RESPONSE TO FILE
+                                                            SaveWebResponseStream(
+                                                                                  startDT_List,
+                                                                                  endpoint.Name,
+                                                                                  httpWebResponseByteArray,
+                                                                                  fileExtension);
+                                                        }
+
+                                                        if (endpoint.HTTPcontentType == "text/html")
+                                                        {
+                                                            // GET HTML METADATA
+                                                            if (checkOptions.ResolvePageMetaInfo)
+                                                            {
+                                                                // READ RESPONSE STREAM [HTTP HEADER ENCODING] AND GET HTML META INFO
+                                                                ResolvePageMetaInfo(ReadHTTPResponseStream(httpWebResponseMemoryStream, endpoint.HTTPencoding), endpoint, responseURI, checkOptions.ResolvePageLinks);
+
+                                                                // IF ENCODING NOT PRESENT IN HTTP HEADER, READ AGAIN WITH ENCODING FROM HTML META
+                                                                if (endpoint.HTTPencoding == null)
+                                                                {
+                                                                    // READ AGAIN WITH ENCODING FROM HTML META [IF PRESENT]
+                                                                    if (endpoint.HTMLencoding != null)
+                                                                    {
+                                                                        // READ RESPONSE STREAM [HML META ENCODING] AND GET HTML META INFO
+                                                                        ResolvePageMetaInfo(ReadHTTPResponseStream(httpWebResponseMemoryStream, endpoint.HTMLencoding), endpoint, responseURI, checkOptions.ResolvePageLinks);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        // SET DEAFULT HTML STREAM ENCODING
+                                                                        endpoint.HTMLencoding = endpoint.HTMLdefaultStreamEncoding;
+                                                                    }
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
-                                            catch (Exception responseEx)
+                                            catch (WebException webException)
                                             {
-                                                // Any unexpected exception inside the WebException handler
-                                                // (e.g. reflection, SSL cert reading) marks the endpoint as error
-                                                // instead of crashing the whole scan.
-                                                endpoint.ResponseCode = status_Error;
-                                                endpoint.ResponseMessage =
-                                                    responseEx.GetType().Name.Replace("Exception", string.Empty) +
-                                                    " -> " + responseEx.Message;
-                                            }
-                                            }
-                                            else
-                                            {
-                                                // EXCEPTION CODE
-                                                endpoint.ResponseCode = status_Error;
+                                                // STOP STOPWATCH FOR ITEM CHECK DURATION
+                                                sw_ItemProgress.Stop();
 
-                                                // EXCEPTION STATUS
-                                                endpoint.ResponseMessage = webException.Status.ToString();
-                                                endpoint.ResponseMessage += " -> " + webException.Message;
+                                                httpWebResponse = webException.Response as HttpWebResponse;
 
-                                                // Walk the full inner exception chain to expose the root cause.
-                                                // In .NET 10, WebException wraps HttpRequestException wraps
-                                                // AuthenticationException/IOException — one level isn't enough.
-                                                Exception innerEx = webException.InnerException;
-                                                while (innerEx != null)
+                                                if (httpWebResponse != null)
                                                 {
-                                                    if (!string.IsNullOrEmpty(innerEx.Message) &&
-                                                        !endpoint.ResponseMessage.Contains(innerEx.Message))
-                                                        endpoint.ResponseMessage += " -> " + innerEx.Message;
-                                                    innerEx = innerEx.InnerException;
+                                                    try
+                                                    {
+                                                        // RESPONSE CODE
+                                                        endpoint.ResponseCode = ((int)httpWebResponse.StatusCode).ToString();
+
+                                                        // STATUS MESSAGE
+                                                        if (!string.IsNullOrEmpty(httpWebResponse.StatusDescription))
+                                                        {
+                                                            // STATUS DESCRIPTION
+                                                            endpoint.ResponseMessage = httpWebResponse.StatusDescription;
+
+                                                            // ERROR MESSAGE
+                                                            if (!webException.Message.Contains(endpoint.ResponseCode))
+                                                            {
+                                                                endpoint.ResponseMessage += " -> " + webException.Message;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            // STATUS CODE [STRING]
+                                                            endpoint.ResponseMessage = httpWebResponse.StatusCode.ToString();
+
+                                                            // ERROR MESSAGE
+                                                            if (!webException.Message.Contains(endpoint.ResponseCode))
+                                                            {
+                                                                endpoint.ResponseMessage += " -> " + webException.Message;
+                                                            }
+                                                        }
+
+                                                        // GET RESPONSE HEADERS
+                                                        GetHTTPWebHeaders(endpoint.HTTPResponseHeaders.PropertyItem, httpWebResponse.Headers);
+
+                                                        // GET SSL INFO
+                                                        GetSSLCertificateInfo(httpWebRequest, endpoint);
+
+                                                        // CLOUDFLARE BOT-PROTECTION DETECTION
+                                                        // CF-RAY header is present on all Cloudflare-proxied responses.
+                                                        // A 403/429/503 with CF headers means the endpoint exists but is
+                                                        // behind a security challenge that cannot be solved automatically.
+                                                        if (IsCloudflareProtected(httpWebResponse))
+                                                        {
+                                                            string cfRay = httpWebResponse.Headers["CF-RAY"];
+                                                            endpoint.ResponseMessage +=
+                                                                " [Cloudflare Bot Protection" +
+                                                                (!string.IsNullOrEmpty(cfRay) ? " | CF-RAY: " + cfRay : string.Empty) +
+                                                                "]";
+
+                                                            // ATTEMPT BYPASS VIA CONFIGURED METHOD
+                                                            CloudflareBypassMethod cfBypassMethod =
+                                                                (CloudflareBypassMethod)Settings.Default.Config_CloudflareBypass_Method;
+                                                            if (cfBypassMethod != CloudflareBypassMethod.Disabled)
+                                                            {
+                                                                try
+                                                                {
+                                                                    CloudflareBypassResult cfBypassResult =
+                                                                        CloudflareBypassChecker.Check(
+                                                                            endpoint.ResponseAddress ?? endpoint.Address,
+                                                                            cfBypassMethod,
+                                                                            Settings.Default.Config_FlareSolverr_URL);
+                                                                    if (cfBypassResult != null && cfBypassResult.Success)
+                                                                    {
+                                                                        endpoint.ResponseCode = cfBypassResult.StatusCode.ToString();
+                                                                        endpoint.ResponseMessage = cfBypassResult.StatusMessage;
+                                                                    }
+                                                                    else if (cfBypassResult != null)
+                                                                    {
+                                                                        endpoint.ResponseMessage +=
+                                                                            " | Bypass(" + cfBypassResult.MethodUsed + "): " +
+                                                                            cfBypassResult.StatusMessage;
+                                                                    }
+                                                                }
+                                                                catch (Exception bypassEx)
+                                                                {
+                                                                    endpoint.ResponseMessage += " | Bypass error: " + bypassEx.Message;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    catch (Exception responseEx)
+                                                    {
+                                                        // Any unexpected exception inside the WebException handler
+                                                        // (e.g. reflection, SSL cert reading) marks the endpoint as error
+                                                        // instead of crashing the whole scan.
+                                                        endpoint.ResponseCode = status_Error;
+                                                        endpoint.ResponseMessage =
+                                                            responseEx.GetType().Name.Replace("Exception", string.Empty) +
+                                                            " -> " + responseEx.Message;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    // EXCEPTION CODE
+                                                    endpoint.ResponseCode = status_Error;
+
+                                                    // EXCEPTION STATUS
+                                                    endpoint.ResponseMessage = webException.Status.ToString();
+                                                    endpoint.ResponseMessage += " -> " + webException.Message;
+
+                                                    // Walk the full inner exception chain to expose the root cause.
+                                                    // In .NET 10, WebException wraps HttpRequestException wraps
+                                                    // AuthenticationException/IOException — one level isn't enough.
+                                                    Exception innerEx = webException.InnerException;
+                                                    while (innerEx != null)
+                                                    {
+                                                        if (!string.IsNullOrEmpty(innerEx.Message) &&
+                                                            !endpoint.ResponseMessage.Contains(innerEx.Message))
+                                                            endpoint.ResponseMessage += " -> " + innerEx.Message;
+                                                        innerEx = innerEx.InnerException;
+                                                    }
+                                                }
+                                            }
+                                            catch (Exception exception)
+                                            {
+                                                // STOP STOPWATCH FOR ITEM CHECK DURATION
+                                                sw_ItemProgress.Stop();
+
+                                                // CODE
+                                                endpoint.ResponseCode = status_Error;
+
+                                                // EXCEPTION TYPE
+                                                endpoint.ResponseMessage = exception.GetType().Name.Replace("Exception", string.Empty);
+
+                                                // MESSAGE
+                                                endpoint.ResponseMessage += " -> " + exception.Message;
+
+                                                // INNER EXCEPTION MESSAGE
+                                                if (exception.InnerException != null &&
+                                                    !string.IsNullOrEmpty(exception.InnerException.Message) &&
+                                                    !endpoint.ResponseMessage.Contains(exception.InnerException.Message))
+                                                {
+                                                    endpoint.ResponseMessage += " -> " + exception.InnerException.Message;
+                                                }
+                                            }
+                                            finally
+                                            {
+                                                if (httpWebResponse != null)
+                                                {
+                                                    // CLOSE
+                                                    httpWebResponse.Close();
                                                 }
                                             }
                                         }
-                                        catch (Exception exception)
+                                        else if (validationMethod == ValidationMethod.Protocol &&
+                                                 !BW_GetStatus.CancellationPending &&
+                                                 endpoint.Protocol.ToLower() == Uri.UriSchemeFtp)
                                         {
-                                            // STOP STOPWATCH FOR ITEM CHECK DURATION
-                                            sw_ItemProgress.Stop();
+                                            // FTP PROTOCOL SCHEME
+                                            FtpWebRequest ftpWebRequest;
+                                            FtpWebResponse ftpWebResponse = null;
 
-                                            // CODE
-                                            endpoint.ResponseCode = status_Error;
-
-                                            // EXCEPTION TYPE
-                                            endpoint.ResponseMessage = exception.GetType().Name.Replace("Exception", string.Empty);
-
-                                            // MESSAGE
-                                            endpoint.ResponseMessage += " -> " + exception.Message;
-
-                                            // INNER EXCEPTION MESSAGE
-                                            if (exception.InnerException != null &&
-                                                !string.IsNullOrEmpty(exception.InnerException.Message) &&
-                                                !endpoint.ResponseMessage.Contains(exception.InnerException.Message))
-                                            {
-                                                endpoint.ResponseMessage += " -> " + exception.InnerException.Message;
-                                            }
-                                        }
-                                        finally
-                                        {
-                                            if (httpWebResponse != null)
-                                            {
-                                                // CLOSE
-                                                httpWebResponse.Close();
-                                            }
-                                        }
-                                    }
-                                    else if (validationMethod == ValidationMethod.Protocol &&
-                                             !BW_GetStatus.CancellationPending &&
-                                             endpoint.Protocol.ToLower() == Uri.UriSchemeFtp)
-                                    {
-                                        // FTP PROTOCOL SCHEME
-                                        FtpWebRequest ftpWebRequest;
-                                        FtpWebResponse ftpWebResponse = null;
-
-                                        try
-                                        {
-                                            // CREATE REQUEST
-                                            ftpWebRequest = (FtpWebRequest)WebRequest.Create(endpointURI.OriginalString);
-                                            ftpWebRequest.Method = WebRequestMethods.Ftp.PrintWorkingDirectory;
-                                            ftpWebRequest.Timeout = checkOptions.FtpRequestTimeout;
-                                            ftpWebRequest.ReadWriteTimeout = checkOptions.FtpRequestTimeout;
-                                            ftpWebRequest.UsePassive = false;
-                                            ftpWebRequest.UseBinary = false;
-                                            ftpWebRequest.KeepAlive = false;
-                                            ftpWebRequest.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-                                            ftpWebRequest.Proxy = null;
-
-                                            if (endpoint.LoginName == status_NotAvailable ||
-                                                endpoint.LoginPass == status_NotAvailable)
-                                            {
-                                                // GET DEFAULT CREDENTIALS FROM URI [USERNAME]
-                                                endpoint.LoginName = ftpWebRequest.Credentials.GetCredential(endpointURI, string.Empty).UserName;
-                                                endpoint.LoginPass = anonymousFTPPassword;
-                                            }
-
-                                            // SET CREDENTIALS
-                                            ftpWebRequest.Credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
-
-                                            // START STOPWATCH FOR ITEM CHECK DURATION
-                                            sw_ItemProgress.Start();
-
-                                            // GET RESPONSE
-                                            ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse();
-                                            responseURI = ftpWebResponse.ResponseUri;
-                                            endpoint.Port = responseURI.Port.ToString();
-                                            endpoint.Protocol = responseURI.Scheme.ToUpper();
-
-                                            // STOP STOPWATCH FOR ITEM CHECK DURATION
-                                            sw_ItemProgress.Stop();
-
-                                            // GET STATUS CODE AND MESSAGE
-                                            FTPWebResponseStatusMessage(ftpWebResponse, null, endpoint);
-                                        }
-                                        catch (WebException webException)
-                                        {
-                                            // STOP STOPWATCH FOR ITEM CHECK DURATION
-                                            sw_ItemProgress.Stop();
-
-                                            // GET STATUS CODE AND MESSAGE
-                                            FTPWebResponseStatusMessage(null, webException, endpoint);
-                                        }
-                                        catch (Exception exception)
-                                        {
-                                            // STOP STOPWATCH FOR ITEM CHECK DURATION
-                                            sw_ItemProgress.Stop();
-
-                                            // CODE
-                                            endpoint.ResponseCode = status_Error;
-
-                                            // EXCEPTION TYPE
-                                            endpoint.ResponseMessage = exception.GetType().Name.Replace("Exception", string.Empty);
-
-                                            // EXCEPTION MESSAGE
-                                            endpoint.ResponseMessage += " -> " + exception.Message;
-
-                                            // INNER EXCEPTION MESSAGE
-                                            if (exception.InnerException != null &&
-                                                !string.IsNullOrEmpty(exception.InnerException.Message) &&
-                                                !endpoint.ResponseMessage.Contains(exception.InnerException.Message))
-                                            {
-                                                endpoint.ResponseMessage += " -> " + exception.InnerException.Message;
-                                            }
-                                        }
-                                        finally
-                                        {
-                                            if (ftpWebResponse != null)
-                                            {
-                                                // CLOSE
-                                                ftpWebResponse.Close();
-                                            }
-                                        }
-                                    }
-
-                                    // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, FROM INPUT, BY REGEX]
-                                    if (Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
-                                    {
-                                        // IS IP ADDRESS
-                                        endpoint.IPAddress = new string[] { responseURI.Host };
-                                    }
-                                    else
-                                    {
-                                        // IS DNS NAME
-                                        endpoint.DNSName = new string[] { responseURI.Host };
-                                    }
-
-                                    // DECLARE TEMPORARY LISTS
-                                    List<string> endpointIPAddressesStringList = new List<string>();
-                                    List<string> endpointDNSNamesStringList = new List<string>();
-                                    List<string> endpointMACAddressStringList = new List<string>();
-
-                                    // GET ITEM CHECK DURATION TIME [FOR 'EXPORT' PURPOSE]
-                                    if (validationMethod == ValidationMethod.Protocol &&
-                                        !BW_GetStatus.CancellationPending)
-                                    {
-                                        durationTime_Item = sw_ItemProgress.ElapsedMilliseconds.ToString() + " ms";
-                                    }
-
-                                    if (!BW_GetStatus.CancellationPending &&
-                                        checkOptions.ResolveIpAddresses)
-                                    {
-                                        // RESOLVE IP ADDRESS(ES)
-                                        try
-                                        {
-                                            // GET LIST
-                                            IPAddress[] endpoint_IP_Address_List = Dns.GetHostAddresses(responseURI.Host);
-
-                                            // PROCESS LIST
-                                            foreach (IPAddress endpointIPAddress in endpoint_IP_Address_List)
-                                            {
-                                                if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
-                                                {
-                                                    endpointIPAddressesStringList.Add(endpointIPAddress.ToString());
-                                                }
-                                            }
-                                        }
-                                        catch
-                                        {
-                                        }
-                                    }
-
-                                    if (!BW_GetStatus.CancellationPending &&
-                                        checkOptions.ResolveNetworkShares)
-                                    {
-                                        // RESOLVE NETWORK SHARES
-                                        try
-                                        {
-                                            // GET LIST
-                                            List<string> netSharesList = GetNetShares(responseURI.Host);
-
-                                            // PROCESS LIST
-                                            if (netSharesList.Count > 0)
-                                            {
-                                                netSharesList.Sort();
-                                                endpoint.NetworkShare = netSharesList.ToArray();
-                                            }
-                                        }
-                                        catch
-                                        {
-                                        }
-                                    }
-
-                                    if (!BW_GetStatus.CancellationPending &&
-                                        checkOptions.ResolveDnsNames)
-                                    {
-                                        // RESOLVE DNS NAME(S)
-                                        foreach (string _IP_Address in endpointIPAddressesStringList)
-                                        {
                                             try
                                             {
-                                                // GET DNS NAME
-                                                IPHostEntry hostEntry = Dns.GetHostEntry(_IP_Address);
-                                                endpointDNSNamesStringList.Add(hostEntry.HostName);
+                                                // CREATE REQUEST
+                                                ftpWebRequest = (FtpWebRequest)WebRequest.Create(endpointURI.OriginalString);
+                                                ftpWebRequest.Method = WebRequestMethods.Ftp.PrintWorkingDirectory;
+                                                ftpWebRequest.Timeout = checkOptions.FtpRequestTimeout;
+                                                ftpWebRequest.ReadWriteTimeout = checkOptions.FtpRequestTimeout;
+                                                ftpWebRequest.UsePassive = false;
+                                                ftpWebRequest.UseBinary = false;
+                                                ftpWebRequest.KeepAlive = false;
+                                                ftpWebRequest.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+                                                ftpWebRequest.Proxy = null;
+
+                                                if (endpoint.LoginName == status_NotAvailable ||
+                                                    endpoint.LoginPass == status_NotAvailable)
+                                                {
+                                                    // GET DEFAULT CREDENTIALS FROM URI [USERNAME]
+                                                    endpoint.LoginName = ftpWebRequest.Credentials.GetCredential(endpointURI, string.Empty).UserName;
+                                                    endpoint.LoginPass = anonymousFTPPassword;
+                                                }
+
+                                                // SET CREDENTIALS
+                                                ftpWebRequest.Credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
+
+                                                // START STOPWATCH FOR ITEM CHECK DURATION
+                                                sw_ItemProgress.Start();
+
+                                                // GET RESPONSE
+                                                ftpWebResponse = (FtpWebResponse)ftpWebRequest.GetResponse();
+                                                responseURI = ftpWebResponse.ResponseUri;
+                                                endpoint.Port = responseURI.Port.ToString();
+                                                endpoint.Protocol = responseURI.Scheme.ToUpper();
+
+                                                // STOP STOPWATCH FOR ITEM CHECK DURATION
+                                                sw_ItemProgress.Stop();
+
+                                                // GET STATUS CODE AND MESSAGE
+                                                FTPWebResponseStatusMessage(ftpWebResponse, null, endpoint);
+                                            }
+                                            catch (WebException webException)
+                                            {
+                                                // STOP STOPWATCH FOR ITEM CHECK DURATION
+                                                sw_ItemProgress.Stop();
+
+                                                // GET STATUS CODE AND MESSAGE
+                                                FTPWebResponseStatusMessage(null, webException, endpoint);
+                                            }
+                                            catch (Exception exception)
+                                            {
+                                                // STOP STOPWATCH FOR ITEM CHECK DURATION
+                                                sw_ItemProgress.Stop();
+
+                                                // CODE
+                                                endpoint.ResponseCode = status_Error;
+
+                                                // EXCEPTION TYPE
+                                                endpoint.ResponseMessage = exception.GetType().Name.Replace("Exception", string.Empty);
+
+                                                // EXCEPTION MESSAGE
+                                                endpoint.ResponseMessage += " -> " + exception.Message;
+
+                                                // INNER EXCEPTION MESSAGE
+                                                if (exception.InnerException != null &&
+                                                    !string.IsNullOrEmpty(exception.InnerException.Message) &&
+                                                    !endpoint.ResponseMessage.Contains(exception.InnerException.Message))
+                                                {
+                                                    endpoint.ResponseMessage += " -> " + exception.InnerException.Message;
+                                                }
+                                            }
+                                            finally
+                                            {
+                                                if (ftpWebResponse != null)
+                                                {
+                                                    // CLOSE
+                                                    ftpWebResponse.Close();
+                                                }
+                                            }
+                                        }
+
+                                        // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, FROM INPUT, BY REGEX]
+                                        if (Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
+                                        {
+                                            // IS IP ADDRESS
+                                            endpoint.IPAddress = new string[] { responseURI.Host };
+                                        }
+                                        else
+                                        {
+                                            // IS DNS NAME
+                                            endpoint.DNSName = new string[] { responseURI.Host };
+                                        }
+
+                                        // DECLARE TEMPORARY LISTS
+                                        List<string> endpointIPAddressesStringList = new List<string>();
+                                        List<string> endpointDNSNamesStringList = new List<string>();
+                                        List<string> endpointMACAddressStringList = new List<string>();
+
+                                        // GET ITEM CHECK DURATION TIME [FOR 'EXPORT' PURPOSE]
+                                        if (validationMethod == ValidationMethod.Protocol &&
+                                            !BW_GetStatus.CancellationPending)
+                                        {
+                                            durationTime_Item = sw_ItemProgress.ElapsedMilliseconds.ToString() + " ms";
+                                        }
+
+                                        if (!BW_GetStatus.CancellationPending &&
+                                            checkOptions.ResolveIpAddresses)
+                                        {
+                                            // RESOLVE IP ADDRESS(ES)
+                                            try
+                                            {
+                                                // GET LIST
+                                                IPAddress[] endpoint_IP_Address_List = Dns.GetHostAddresses(responseURI.Host);
+
+                                                // PROCESS LIST
+                                                foreach (IPAddress endpointIPAddress in endpoint_IP_Address_List)
+                                                {
+                                                    if (endpointIPAddress.AddressFamily == AddressFamily.InterNetwork)
+                                                    {
+                                                        endpointIPAddressesStringList.Add(endpointIPAddress.ToString());
+                                                    }
+                                                }
                                             }
                                             catch
                                             {
                                             }
                                         }
-                                    }
 
-                                    if (!BW_GetStatus.CancellationPending &&
-                                        checkOptions.ResolveMacAddresses)
-                                    {
-                                        foreach (string _IP_Address in endpointIPAddressesStringList)
+                                        if (!BW_GetStatus.CancellationPending &&
+                                            checkOptions.ResolveNetworkShares)
                                         {
+                                            // RESOLVE NETWORK SHARES
                                             try
                                             {
-                                                // RESOLVE MAC ADDRESS
-                                                string macAddress = WindowsLookupService.Lookup(IPAddress.Parse(_IP_Address));
+                                                // GET LIST
+                                                List<string> netSharesList = GetNetShares(responseURI.Host);
 
-                                                // IF ENDPOINT IP ADDRESS IS ANY OF 'DNS SERVER OR DEFAULT GATEWAY' IPs
-                                                // OR
-                                                // RESOLVED MAC IS NOT ANY OF 'DNS SERVER OR DEFAULT GATEWAY' MAC ADDRESSes
-                                                if (!string.IsNullOrEmpty(macAddress) &&
-                                                   (!localDNSAndGWMACAddresses.Contains(macAddress) ||
-                                                    localDNSAndGWIPAddresses.Contains(_IP_Address.ToString())))
+                                                // PROCESS LIST
+                                                if (netSharesList.Count > 0)
                                                 {
-                                                    endpointMACAddressStringList.Add(macAddress);
+                                                    netSharesList.Sort();
+                                                    endpoint.NetworkShare = netSharesList.ToArray();
                                                 }
                                             }
                                             catch
                                             {
                                             }
                                         }
-                                    }
 
-                                    if (!BW_GetStatus.CancellationPending &&
-                                        checkOptions.TestPing)
-                                    {
-                                        if (validationMethod == ValidationMethod.Ping)
+                                        if (!BW_GetStatus.CancellationPending &&
+                                            checkOptions.ResolveDnsNames)
                                         {
-                                            endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
-                                        }
-
-                                        // TEST PING
-                                        try
-                                        {
-                                            string pingRoundtripTime = GetPingTime(responseURI.Host, checkOptions.PingTimeout, 1);
-
-                                            if (!string.IsNullOrEmpty(pingRoundtripTime))
+                                            // RESOLVE DNS NAME(S)
+                                            foreach (string _IP_Address in endpointIPAddressesStringList)
                                             {
-                                                endpoint.PingRoundtripTime = pingRoundtripTime;
+                                                try
+                                                {
+                                                    // GET DNS NAME
+                                                    IPHostEntry hostEntry = Dns.GetHostEntry(_IP_Address);
+                                                    endpointDNSNamesStringList.Add(hostEntry.HostName);
+                                                }
+                                                catch
+                                                {
+                                                }
                                             }
                                         }
-                                        catch
+
+                                        if (!BW_GetStatus.CancellationPending &&
+                                            checkOptions.ResolveMacAddresses)
                                         {
+                                            foreach (string _IP_Address in endpointIPAddressesStringList)
+                                            {
+                                                try
+                                                {
+                                                    // RESOLVE MAC ADDRESS
+                                                    string macAddress = WindowsLookupService.Lookup(IPAddress.Parse(_IP_Address));
+
+                                                    // IF ENDPOINT IP ADDRESS IS ANY OF 'DNS SERVER OR DEFAULT GATEWAY' IPs
+                                                    // OR
+                                                    // RESOLVED MAC IS NOT ANY OF 'DNS SERVER OR DEFAULT GATEWAY' MAC ADDRESSes
+                                                    if (!string.IsNullOrEmpty(macAddress) &&
+                                                       (!localDNSAndGWMACAddresses.Contains(macAddress) ||
+                                                        localDNSAndGWIPAddresses.Contains(_IP_Address.ToString())))
+                                                    {
+                                                        endpointMACAddressStringList.Add(macAddress);
+                                                    }
+                                                }
+                                                catch
+                                                {
+                                                }
+                                            }
                                         }
-                                    }
 
-                                    // FILL IP ADDRESS(ES) LIST
-                                    if (endpointIPAddressesStringList.Count > 0)
-                                    {
-                                        endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
-                                    }
+                                        if (!BW_GetStatus.CancellationPending &&
+                                            checkOptions.TestPing)
+                                        {
+                                            if (validationMethod == ValidationMethod.Ping)
+                                            {
+                                                endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
+                                            }
 
-                                    // FILL DNS NAME(S) LIST
-                                    if (endpointDNSNamesStringList.Count > 0)
-                                    {
-                                        endpoint.DNSName = endpointDNSNamesStringList.ToArray();
-                                    }
+                                            // TEST PING
+                                            try
+                                            {
+                                                string pingRoundtripTime = GetPingTime(responseURI.Host, checkOptions.PingTimeout, 1);
 
-                                    // FILL MAC ADDRESS(ES) LIST
-                                    if (endpointMACAddressStringList.Count > 0)
-                                    {
-                                        endpoint.MACAddress = endpointMACAddressStringList.ToArray();
-                                    }
+                                                if (!string.IsNullOrEmpty(pingRoundtripTime))
+                                                {
+                                                    endpoint.PingRoundtripTime = pingRoundtripTime;
+                                                }
+                                            }
+                                            catch
+                                            {
+                                            }
+                                        }
 
+                                        // FILL IP ADDRESS(ES) LIST
+                                        if (endpointIPAddressesStringList.Count > 0)
+                                        {
+                                            endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
+                                        }
+
+                                        // FILL DNS NAME(S) LIST
+                                        if (endpointDNSNamesStringList.Count > 0)
+                                        {
+                                            endpoint.DNSName = endpointDNSNamesStringList.ToArray();
+                                        }
+
+                                        // FILL MAC ADDRESS(ES) LIST
+                                        if (endpointMACAddressStringList.Count > 0)
+                                        {
+                                            endpoint.MACAddress = endpointMACAddressStringList.ToArray();
+                                        }
+
+                                    }
                                 }
-                            }
 
-                            // UPDATE ADDRESSES
-                            endpoint.Address = endpointURI.OriginalString;
-                            endpoint.ResponseAddress = responseURI.AbsoluteUri;
+                                // UPDATE ADDRESSES
+                                endpoint.Address = endpointURI.OriginalString;
+                                endpoint.ResponseAddress = responseURI.AbsoluteUri;
 
-                            // UPDATE RESPONSE TIME
-                            endpoint.ResponseTime = durationTime_Item;
+                                // UPDATE RESPONSE TIME
+                                endpoint.ResponseTime = durationTime_Item;
 
-                            // CHECK 'TERMINATED' STATUS
-                            if (BW_GetStatus.CancellationPending)
-                            {
-                                endpoint.ResponseCode = status_NotAvailable;
-                                endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.TERMINATED);
-                            }
-                            else
-                            {
-                                // UPDATE 'LAST SEEN ONLINE' VALUE
-                                if ((validationMethod == ValidationMethod.Protocol &&
-                                     endpoint.ResponseCode != status_Error &&
-                                     endpoint.ResponseCode != status_NotAvailable) ||
-                                    (validationMethod == ValidationMethod.Ping &&
-                                     endpoint.PingRoundtripTime != status_NotAvailable))
+                                // CHECK 'TERMINATED' STATUS
+                                if (BW_GetStatus.CancellationPending)
                                 {
-                                    endpoint.LastSeenOnline = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                    endpoint.ResponseCode = status_NotAvailable;
+                                    endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.TERMINATED);
                                 }
-                            }
+                                else
+                                {
+                                    // UPDATE 'LAST SEEN ONLINE' VALUE
+                                    if ((validationMethod == ValidationMethod.Protocol &&
+                                         endpoint.ResponseCode != status_Error &&
+                                         endpoint.ResponseCode != status_NotAvailable) ||
+                                        (validationMethod == ValidationMethod.Ping &&
+                                         endpoint.PingRoundtripTime != status_NotAvailable))
+                                    {
+                                        endpoint.LastSeenOnline = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                    }
+                                }
 
-                            // ADD UPDATED STATUS DEFINITION TO LIST
-                            updatedEndpointsList.Add(endpoint);
+                                // ADD UPDATED STATUS DEFINITION TO LIST
+                                updatedEndpointsList.Add(endpoint);
                             }
                             catch (Exception lambdaEx)
                             {
@@ -1508,12 +1509,18 @@ namespace EndpointChecker
                     endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Version", ItemValue = sslCert2.Version.ToString() });
                     endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Public Key", ItemValue = sslCert2.GetPublicKeyString() });
 
-                    if (!string.IsNullOrEmpty(sslCert2.SignatureAlgorithm.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Signature Algorithm", ItemValue = sslCert2.SignatureAlgorithm.FriendlyName }); };
-                    if (!string.IsNullOrEmpty(sslCert2.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Friendly Name", ItemValue = sslCert2.FriendlyName }); };
-                    if (!string.IsNullOrEmpty(sslCert2.Issuer)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Issuer Name", ItemValue = sslCert2.Issuer }); };
-                    if (!string.IsNullOrEmpty(sslCert2.SerialNumber)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Serial Number", ItemValue = sslCert2.SerialNumber }); };
-                    if (!string.IsNullOrEmpty(sslCert2.Subject)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Subject", ItemValue = sslCert2.Subject }); };
-                    if (!string.IsNullOrEmpty(sslCert2.Thumbprint)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Thumbprint", ItemValue = sslCert2.Thumbprint }); };
+                    if (!string.IsNullOrEmpty(sslCert2.SignatureAlgorithm.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Signature Algorithm", ItemValue = sslCert2.SignatureAlgorithm.FriendlyName }); }
+                    ;
+                    if (!string.IsNullOrEmpty(sslCert2.FriendlyName)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Friendly Name", ItemValue = sslCert2.FriendlyName }); }
+                    ;
+                    if (!string.IsNullOrEmpty(sslCert2.Issuer)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Issuer Name", ItemValue = sslCert2.Issuer }); }
+                    ;
+                    if (!string.IsNullOrEmpty(sslCert2.SerialNumber)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Serial Number", ItemValue = sslCert2.SerialNumber }); }
+                    ;
+                    if (!string.IsNullOrEmpty(sslCert2.Subject)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Subject", ItemValue = sslCert2.Subject }); }
+                    ;
+                    if (!string.IsNullOrEmpty(sslCert2.Thumbprint)) { endpoint.SSLCertificateProperties.PropertyItem.Add(new Property { ItemName = "Thumbprint", ItemValue = sslCert2.Thumbprint }); }
+                    ;
                 }
                 catch
                 {
@@ -2732,7 +2739,7 @@ namespace EndpointChecker
                 Type t = typeof(NotifyIcon);
                 BindingFlags hidden = BindingFlags.NonPublic | BindingFlags.Instance;
                 // .NET 5+ renamed "text"→"_text" and "added"→"_added"; try new name first
-                FieldInfo textField  = t.GetField("_text",  hidden) ?? t.GetField("text",  hidden);
+                FieldInfo textField = t.GetField("_text", hidden) ?? t.GetField("text", hidden);
                 FieldInfo addedField = t.GetField("_added", hidden) ?? t.GetField("added", hidden);
                 MethodInfo updateMethod = t.GetMethod("UpdateIcon", hidden);
                 if (textField != null)
@@ -3596,7 +3603,7 @@ namespace EndpointChecker
 
         public Color GetForeColorByStatus(string statusCode, string pingTime, string statusMessage)
         {
-            Color muted  = Color.FromArgb( 90, 105, 140);  // dimmed — for disabled/not-checked
+            Color muted = Color.FromArgb(90, 105, 140);  // dimmed — for disabled/not-checked
             Color bright = Color.FromArgb(220, 235, 255);  // off-white — default readable text
 
             if (statusCode == status_NotAvailable)
@@ -4680,7 +4687,7 @@ namespace EndpointChecker
 
             return false;
         }
-                
+
         public static void GetLocalDNSAndGWAddresses(out List<string> localDNSAndGWipAddresses, out List<string> localDNSAndGWmacAddresses)
         {
             localDNSAndGWipAddresses = new List<string>();
@@ -4848,7 +4855,7 @@ namespace EndpointChecker
                             selectedEndpointDefinition.LoginPass);
 
                 WindowState = FormWindowState.Minimized;
-            }            
+            }
         }
 
         public void toolStripMenuItem_HTTP_Click(object sender, EventArgs e)
@@ -4869,7 +4876,7 @@ namespace EndpointChecker
 
                 WindowState = FormWindowState.Minimized;
 
-            }            
+            }
         }
 
         public void toolStripMenuItem_RDP_Click(object sender, EventArgs e)
@@ -4879,7 +4886,7 @@ namespace EndpointChecker
                 ConnectEndpoint_RDP(new Uri(selectedEndpointDefinition.ResponseAddress).Host);
 
                 WindowState = FormWindowState.Minimized;
-            }            
+            }
         }
 
         public void toolStripMenuItem_VNC_Click(object sender, EventArgs e)
@@ -4889,7 +4896,7 @@ namespace EndpointChecker
                 ConnectEndpoint_VNC(new Uri(selectedEndpointDefinition.ResponseAddress).Host);
 
                 WindowState = FormWindowState.Minimized;
-            }            
+            }
         }
 
         public void toolStripMenuItem_SSH_Click(object sender, EventArgs e)
@@ -5656,19 +5663,19 @@ namespace EndpointChecker
         private void ApplyPremiumTheme()
         {
             // ── Palette ──────────────────────────────────────────────────────────
-            Color bg          = Color.FromArgb(  8,  14,  27);
-            Color surface     = Color.FromArgb( 16,  26,  43);
-            Color surfaceAlt  = Color.FromArgb( 23,  36,  61);
-            Color input       = Color.FromArgb( 12,  21,  36);
-            Color accent      = Color.FromArgb( 70, 143, 255);
-            Color accentAlt   = Color.FromArgb( 42,  96, 214);
-            Color success     = Color.FromArgb( 59, 218, 128);
-            Color warning     = Color.FromArgb(255, 183,  67);
-            Color danger      = Color.FromArgb(255,  99, 107);
-            Color textMain    = Color.FromArgb(230, 238, 252);
-            Color textMute    = Color.FromArgb(142, 158, 190);
-            Color menuBg      = Color.FromArgb(  7,  13,  25);
-            Color cardBorder  = Color.FromArgb(55, 77, 122);
+            Color bg = Color.FromArgb(8, 14, 27);
+            Color surface = Color.FromArgb(16, 26, 43);
+            Color surfaceAlt = Color.FromArgb(23, 36, 61);
+            Color input = Color.FromArgb(12, 21, 36);
+            Color accent = Color.FromArgb(70, 143, 255);
+            Color accentAlt = Color.FromArgb(42, 96, 214);
+            Color success = Color.FromArgb(59, 218, 128);
+            Color warning = Color.FromArgb(255, 183, 67);
+            Color danger = Color.FromArgb(255, 99, 107);
+            Color textMain = Color.FromArgb(230, 238, 252);
+            Color textMute = Color.FromArgb(142, 158, 190);
+            Color menuBg = Color.FromArgb(7, 13, 25);
+            Color cardBorder = Color.FromArgb(55, 77, 122);
 
             // Form
             BackColor = bg;
@@ -5677,7 +5684,7 @@ namespace EndpointChecker
             // Menu strip
             MainMenuStrip.BackColor = menuBg;
             MainMenuStrip.ForeColor = textMain;
-            MainMenuStrip.Renderer  = new DarkMenuStripRenderer();
+            MainMenuStrip.Renderer = new DarkMenuStripRenderer();
             MainMenuStrip.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
             MainMenuStrip.ImageScalingSize = new Size(18, 18);
             MainMenuStrip.Padding = new Padding(8, 5, 8, 5);
@@ -5832,7 +5839,7 @@ namespace EndpointChecker
             {
                 cms.BackColor = menuBg;
                 cms.ForeColor = textMain;
-                cms.Renderer  = new DarkMenuStripRenderer();
+                cms.Renderer = new DarkMenuStripRenderer();
                 cms.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
                 cms.ImageScalingSize = new Size(18, 18);
                 foreach (ToolStripItem item in cms.Items)
@@ -7137,10 +7144,10 @@ namespace EndpointChecker
 
         public static void ApplyDarkTheme(Control root)
         {
-            Color bg       = Color.FromArgb( 10,  16,  31);
-            Color surface  = Color.FromArgb( 18,  27,  45);
-            Color input    = Color.FromArgb( 14,  23,  39);
-            Color accent   = Color.FromArgb( 74, 132, 255);
+            Color bg = Color.FromArgb(10, 16, 31);
+            Color surface = Color.FromArgb(18, 27, 45);
+            Color input = Color.FromArgb(14, 23, 39);
+            Color accent = Color.FromArgb(74, 132, 255);
             Color textMain = Color.FromArgb(224, 233, 248);
 
             root.BackColor = bg;
@@ -7225,23 +7232,23 @@ namespace EndpointChecker
 
         private sealed class DarkMenuColorTable : ProfessionalColorTable
         {
-            private static readonly Color _dark   = Color.FromArgb(12,  14,  30);
-            private static readonly Color _hover  = Color.FromArgb(55,  75, 145);
-            private static readonly Color _border = Color.FromArgb(65,  90, 170);
+            private static readonly Color _dark = Color.FromArgb(12, 14, 30);
+            private static readonly Color _hover = Color.FromArgb(55, 75, 145);
+            private static readonly Color _border = Color.FromArgb(65, 90, 170);
 
-            public override Color MenuStripGradientBegin        => _dark;
-            public override Color MenuStripGradientEnd          => _dark;
+            public override Color MenuStripGradientBegin => _dark;
+            public override Color MenuStripGradientEnd => _dark;
             public override Color MenuItemSelectedGradientBegin => _hover;
-            public override Color MenuItemSelectedGradientEnd   => _hover;
-            public override Color MenuItemSelected              => _hover;
-            public override Color MenuItemBorder                => _border;
-            public override Color MenuBorder                    => _border;
-            public override Color ToolStripDropDownBackground   => _dark;
-            public override Color ImageMarginGradientBegin      => _dark;
-            public override Color ImageMarginGradientMiddle     => _dark;
-            public override Color ImageMarginGradientEnd        => _dark;
-            public override Color SeparatorDark                 => _border;
-            public override Color SeparatorLight                => _hover;
+            public override Color MenuItemSelectedGradientEnd => _hover;
+            public override Color MenuItemSelected => _hover;
+            public override Color MenuItemBorder => _border;
+            public override Color MenuBorder => _border;
+            public override Color ToolStripDropDownBackground => _dark;
+            public override Color ImageMarginGradientBegin => _dark;
+            public override Color ImageMarginGradientMiddle => _dark;
+            public override Color ImageMarginGradientEnd => _dark;
+            public override Color SeparatorDark => _border;
+            public override Color SeparatorLight => _hover;
         }
 
         public void btn_LoadList_Click(object sender, EventArgs e)
@@ -7259,32 +7266,32 @@ namespace EndpointChecker
 
     public sealed class PremiumProgressBar : Panel
     {
-        private int   _value   = 0;
-        private int   _maximum = 100;
-        private float _sweep   = -0.3f;
+        private int _value = 0;
+        private int _maximum = 100;
+        private float _sweep = -0.3f;
         private readonly System.Windows.Forms.Timer _anim;
 
-        private static readonly Color ColBg     = Color.FromArgb( 15,  18,  38);
-        private static readonly Color ColFillA  = Color.FromArgb( 38,  65, 175);
-        private static readonly Color ColFillB  = Color.FromArgb( 88, 126, 232);
-        private static readonly Color ColBorder = Color.FromArgb( 55,  85, 200);
+        private static readonly Color ColBg = Color.FromArgb(15, 18, 38);
+        private static readonly Color ColFillA = Color.FromArgb(38, 65, 175);
+        private static readonly Color ColFillB = Color.FromArgb(88, 126, 232);
+        private static readonly Color ColBorder = Color.FromArgb(55, 85, 200);
 
         public PremiumProgressBar()
         {
             SetStyle(ControlStyles.OptimizedDoubleBuffer |
-                     ControlStyles.AllPaintingInWmPaint  |
-                     ControlStyles.UserPaint             |
+                     ControlStyles.AllPaintingInWmPaint |
+                     ControlStyles.UserPaint |
                      ControlStyles.ResizeRedraw, true);
             BackColor = ColBg;
             _anim = new System.Windows.Forms.Timer { Interval = 16 };
             _anim.Tick += (_, __) => { _sweep += 0.008f; if (_sweep > 1.3f) _sweep = -0.3f; Invalidate(); };
         }
 
-        public int Value   { get => _value;   set { _value   = Math.Clamp(value, 0, _maximum); Invalidate(); } }
+        public int Value { get => _value; set { _value = Math.Clamp(value, 0, _maximum); Invalidate(); } }
         public int Maximum { get => _maximum; set { _maximum = Math.Max(1, value); Invalidate(); } }
 
         public void StartAnimation() { _sweep = -0.3f; _anim.Start(); }
-        public void StopAnimation()  { _anim.Stop(); _value = 0; Invalidate(); }
+        public void StopAnimation() { _anim.Stop(); _value = 0; Invalidate(); }
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -7296,7 +7303,7 @@ namespace EndpointChecker
             using (var bg = new SolidBrush(ColBg))
                 g.FillRectangle(bg, ClientRectangle);
 
-            int barH  = Height - 2;
+            int barH = Height - 2;
             int fillW = _maximum > 0
                 ? Math.Max(0, (int)((double)_value / _maximum * (Width - 2)))
                 : 0;
@@ -7330,8 +7337,8 @@ namespace EndpointChecker
                 // Shimmer sweep
                 float cx = 1f + _sweep * fillW;
                 float bw = fillW * 0.20f + 8f;
-                var   pt1 = new System.Drawing.PointF(cx - bw, 0f);
-                var   pt2 = new System.Drawing.PointF(cx + bw, 0f);
+                var pt1 = new System.Drawing.PointF(cx - bw, 0f);
+                var pt2 = new System.Drawing.PointF(cx + bw, 0f);
 
                 try
                 {
@@ -7343,7 +7350,7 @@ namespace EndpointChecker
                         sb.WrapMode = System.Drawing.Drawing2D.WrapMode.Clamp;
                         sb.InterpolationColors = new System.Drawing.Drawing2D.ColorBlend(3)
                         {
-                            Colors    = new[] { Color.FromArgb(  0, 200, 220, 255),
+                            Colors = new[] { Color.FromArgb(  0, 200, 220, 255),
                                                 Color.FromArgb( 60, 200, 220, 255),
                                                 Color.FromArgb(  0, 200, 220, 255) },
                             Positions = new[] { 0f, 0.5f, 1f }

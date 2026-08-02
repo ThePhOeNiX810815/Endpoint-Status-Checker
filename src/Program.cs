@@ -138,6 +138,7 @@ namespace EndpointChecker
         public static string app_LatestPackageLink = string.Empty;
         public static string app_LatestPackageDate = string.Empty;
         public static string app_LatestPackageReleaseNotes_RTF = string.Empty;
+        private static readonly bool app_UpdateChecksEnabled = false;
 
         // SIGNING CERTIFICATE
         public static bool app_IsOriginalSignedExecutable = IsOriginalSignedExecutable();
@@ -307,7 +308,7 @@ namespace EndpointChecker
                         }
                     }
                 }
-            }            
+            }
         }
 
         public static bool RequiredLibrariesExists(string[] librariesList)
@@ -404,6 +405,17 @@ namespace EndpointChecker
 
         public static void CheckForUpdate()
         {
+            if (!app_UpdateChecksEnabled)
+            {
+                app_UpdateAvailable = false;
+                app_AutoUpdateNow = false;
+                app_LatestPackageVersion = app_Version;
+                app_LatestPackageLink = string.Empty;
+                app_LatestPackageDate = string.Empty;
+                app_LatestPackageReleaseNotes_RTF = string.Empty;
+                return;
+            }
+
             try
             {
                 using (CustomWebClient updateWC = new CustomWebClient())
@@ -435,7 +447,7 @@ namespace EndpointChecker
                             "https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/release_notes.rtf");
 
                     if ((app_LatestPackageVersion > app_Version &&
-                         app_LatestPackageVersion > app_AutoUpdate_SkipVersion) || 
+                         app_LatestPackageVersion > app_AutoUpdate_SkipVersion) ||
                         app_TestMode)
                     {
                         app_UpdateAvailable = true;
@@ -485,8 +497,8 @@ namespace EndpointChecker
             {
                 X509Certificate2 cert = new X509Certificate2(X509Certificate.CreateFromSignedFile(app_Assembly.Location));
 
-                string serial  = cert.GetSerialNumberString();
-                string issuer  = cert.Issuer;
+                string serial = cert.GetSerialNumberString();
+                string issuer = cert.Issuer;
                 string subject = cert.Subject;
 
                 // Peter Machaj (original developer)
@@ -654,7 +666,7 @@ namespace EndpointChecker
             }
             catch
             {
-            }         
+            }
 
             return isInstalled;
         }

@@ -54,7 +54,13 @@ a single scan with configurable automation.
 
 ---
 
-## What's New in v3.1
+## Current v3 Development Status
+
+Endpoint Status Checker v3 is currently developed on the `Main-Dev-V3` branch. There is no official v3 release published at this time, and the previous GitHub release artifacts have been removed.
+
+The in-app updater and standalone updater are intentionally disabled for v3 until an official release ZIP is published.
+
+## What's New in v3 Development
 
 | Area | Change |
 | --- | --- |
@@ -100,25 +106,21 @@ See [CHANGELOG.md](CHANGELOG.md) for the full technical change log.
 
 ### Fresh install
 
-1. Download [**EndpointChecker-v3.1.0-win-x86.zip**](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.1.0/EndpointChecker-v3.1.0-win-x86.zip) from the [latest release](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/latest) (~100 MB — the .NET 10 runtime is bundled).
-2. Extract the archive to any folder. It will create its data files (`EndpointChecker_EndpointsList.txt`, `EndpointChecker_LastSeenOnline.json`) alongside `EndpointChecker.exe` on first run.
-3. Run `EndpointChecker.exe` as Administrator.
+No official v3 release package is currently available.
+
+For development or test builds, publish the application from the `Main-Dev-V3` branch and extract the generated self-contained output to any folder. The app will create its data files (`EndpointChecker_EndpointsList.txt`, `EndpointChecker_LastSeenOnline.json`) alongside `EndpointChecker.exe` on first run.
+
+Run `EndpointChecker.exe` as Administrator.
 
 No installer, no registry keys, no separate runtime — the self-contained build bundles everything.
 
 ### Upgrading from v2.15 or earlier
 
-Download and run [**EndpointChecker-Updater-v3.1.0-win-x86.exe**](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.1.0/EndpointChecker-Updater-v3.1.0-win-x86.exe) (~46 MB, also self-contained).
+Automatic upgrading to v3 is currently unavailable because no official v3 release package is published.
 
-The updater will:
+When an official v3 release is prepared, the updater documentation will be updated to reference the release ZIP. Until then, keep v2.15 installations separate from manually supplied v3 test builds.
 
-- Auto-detect your existing install directory (or let you browse to it)
-- Stop the running application if open
-- Download and extract the new v3.1.0 package
-- Preserve your endpoint list and last-seen-online data
-- Launch the updated application when done
-
-> **Note:** v3.1.0 requires Windows 10 (build 1607) or later. Machines running Windows 7 / Server 2008 R2 can continue using v2.15.
+> **Note:** v3 development builds require Windows 10 (build 1607) or later. Machines running Windows 7 / Server 2008 R2 can continue using v2.15.
 
 ---
 
