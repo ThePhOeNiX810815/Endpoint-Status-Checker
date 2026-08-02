@@ -10,6 +10,7 @@ namespace EndpointChecker
         {
             EndpointCheckOptionsTests.Register();
             EndpointCheckResultFactoryTests.Register();
+            EndpointCheckProgressTests.Register();
 
             if (failed > 0)
             {

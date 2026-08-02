@@ -8,6 +8,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\EndpointCheckOptions.cs" Link="EndpointCheckOptions.cs" />
+    <Compile Include="..\..\src\EndpointCheckProgress.cs" Link="EndpointCheckProgress.cs" />
+    <Compile Include="..\..\src\EndpointCheckProgressSnapshot.cs" Link="EndpointCheckProgressSnapshot.cs" />
+    <Compile Include="..\..\src\EndpointCheckProgressWorkItem.cs" Link="EndpointCheckProgressWorkItem.cs" />
     <Compile Include="..\..\src\EndpointCheckResultFactory.cs" Link="EndpointCheckResultFactory.cs" />
   </ItemGroup>
 </Project>
