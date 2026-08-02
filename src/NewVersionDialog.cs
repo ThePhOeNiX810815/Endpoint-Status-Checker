@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
 using static EndpointChecker.Program;
@@ -21,7 +20,6 @@ namespace EndpointChecker
         public bool UpdateSkip { get; set; }
         public bool AutoUpdateInFuture { get; set; }
 
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public NewVersionDialog()
         {
             InitializeComponent();

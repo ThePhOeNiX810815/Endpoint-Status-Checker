@@ -10,7 +10,6 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -126,7 +125,6 @@ namespace EndpointChecker
         private int gaugeSweepStep = 0;
         private bool gaugeSweepReturning = false;
 
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public SpeedTestDialog()
         {
             InitializeComponent();
@@ -1118,7 +1116,7 @@ namespace EndpointChecker
                     }
                     else
                     {
-                        throw eX;
+                        throw;
                     }
                 }
             }
@@ -1201,7 +1199,7 @@ namespace EndpointChecker
                         continue;
                     }
 
-                    throw eX;
+                    throw;
                 }
             }
         }
@@ -1274,7 +1272,7 @@ namespace EndpointChecker
                         continue;
                     }
 
-                    throw eX;
+                    throw;
                 }
             }
         }
