@@ -2924,6 +2924,7 @@ namespace EndpointChecker
                 cb_ExportEndpointsStatus_XML.Checked,
                 cb_ExportEndpointsStatus_XLSX.Checked,
                 cb_ExportEndpointsStatus_HTML.Checked);
+            EndpointExportFileSet exportFiles = CreateEndpointExportFileSet();
 
             // ERROR LIST
             List<string> errorsList = new List<string>();
@@ -2958,8 +2959,8 @@ namespace EndpointChecker
                         try
                         {
                             CloseFileStream(definitionsStatusExport_JSON_FileStream);
-                            File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_JSONFile), jsonString, Encoding.UTF8);
-                            definitionsStatusExport_JSON_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_JSONFile));
+                            File.WriteAllText(exportFiles.JsonPath, jsonString, Encoding.UTF8);
+                            definitionsStatusExport_JSON_FileStream = OpenFileStream(exportFiles.JsonPath);
                         }
                         catch (Exception ex)
                         {
@@ -2981,8 +2982,8 @@ namespace EndpointChecker
                         try
                         {
                             CloseFileStream(definitionsStatusExport_XML_FileStream);
-                            xmlExport.Save(Path.Combine(statusExport_Directory, statusExport_XMLFile));
-                            definitionsStatusExport_XML_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_XMLFile));
+                            xmlExport.Save(exportFiles.XmlPath);
+                            definitionsStatusExport_XML_FileStream = OpenFileStream(exportFiles.XmlPath);
                         }
                         catch (Exception ex)
                         {
@@ -3269,8 +3270,8 @@ namespace EndpointChecker
                             // SAVE XLSX
                             Application.DoEvents();
                             CloseFileStream(definitionsStatusExport_XLSX_FileStream);
-                            endpointsStatusExport_WorkBook.SaveAs(Path.Combine(statusExport_Directory, statusExport_XLSFile), new SaveOptions { ValidatePackage = true });
-                            definitionsStatusExport_XLSX_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_XLSFile));
+                            endpointsStatusExport_WorkBook.SaveAs(exportFiles.XlsxPath, new SaveOptions { ValidatePackage = true });
+                            definitionsStatusExport_XLSX_FileStream = OpenFileStream(exportFiles.XlsxPath);
                             Application.DoEvents();
                         }
                         catch (Exception ex)
@@ -3289,7 +3290,7 @@ namespace EndpointChecker
 
                             // SAVE AND LOCK HTML(S)
                             Workbook xlsxWorkBook = new Workbook();
-                            xlsxWorkBook.LoadFromFile(Path.Combine(statusExport_Directory, statusExport_XLSFile));
+                            xlsxWorkBook.LoadFromFile(exportFiles.XlsxPath);
 
                             Worksheet summaryWorkSheet = xlsxWorkBook.Worksheets["Summary"];
 
@@ -3333,21 +3334,21 @@ namespace EndpointChecker
 
                                     // SAVE HTML [HTTP PAGE]
                                     Application.DoEvents();
-                                    xlsxWorkBook.Worksheets["HTTP Endpoints"].SaveToHtml(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
+                                    xlsxWorkBook.Worksheets["HTTP Endpoints"].SaveToHtml(exportFiles.HtmlHttpPath);
                                     Application.DoEvents();
 
                                     // ADD 'HTTP' HTML FIXED REFRESH BUTTON
-                                    string httpHTMLString = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
+                                    string httpHTMLString = File.ReadAllText(exportFiles.HtmlHttpPath);
                                     httpHTMLString = CreateEndpointURLHyperLink(httpHTMLString);
                                     httpHTMLString = AddRefreshCSSButtonToHTMLString(httpHTMLString);
 
                                     // SAVE HTML STRING [HTTP PAGE]
                                     Application.DoEvents();
-                                    File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage), httpHTMLString, Encoding.UTF8);
+                                    File.WriteAllText(exportFiles.HtmlHttpPath, httpHTMLString, Encoding.UTF8);
                                     Application.DoEvents();
 
                                     // LOCK 'HTTP' HTML
-                                    definitionsStatusExport_HTML_HTTP_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
+                                    definitionsStatusExport_HTML_HTTP_FileStream = OpenFileStream(exportFiles.HtmlHttpPath);
 
                                     // ADD 'HTTP' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
                                     RichText httpPageHyperlink = summaryWorkSheet["A14"].RichText;
@@ -3371,21 +3372,21 @@ namespace EndpointChecker
                                 {
                                     // SAVE HTML [FTP PAGE]
                                     Application.DoEvents();
-                                    xlsxWorkBook.Worksheets["FTP Endpoints"].SaveToHtml(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
+                                    xlsxWorkBook.Worksheets["FTP Endpoints"].SaveToHtml(exportFiles.HtmlFtpPath);
                                     Application.DoEvents();
 
                                     // ADD 'FTP' HTML FIXED REFRESH BUTTON
-                                    string ftpHTMLString = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
+                                    string ftpHTMLString = File.ReadAllText(exportFiles.HtmlFtpPath);
                                     ftpHTMLString = CreateEndpointURLHyperLink(ftpHTMLString);
                                     ftpHTMLString = AddRefreshCSSButtonToHTMLString(ftpHTMLString);
 
                                     // SAVE HTML STRING [FTP PAGE]
                                     Application.DoEvents();
-                                    File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage), ftpHTMLString, Encoding.UTF8);
+                                    File.WriteAllText(exportFiles.HtmlFtpPath, ftpHTMLString, Encoding.UTF8);
                                     Application.DoEvents();
 
                                     // LOCK 'FTP' HTML
-                                    definitionsStatusExport_HTML_FTP_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
+                                    definitionsStatusExport_HTML_FTP_FileStream = OpenFileStream(exportFiles.HtmlFtpPath);
 
                                     // ADD 'FTP' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
                                     RichText ftpPageHyperlink = summaryWorkSheet["A15"].RichText;
@@ -3407,28 +3408,28 @@ namespace EndpointChecker
                             {
                                 // SAVE HTML [SUMMARY PAGE]
                                 Application.DoEvents();
-                                summaryWorkSheet.SaveToHtml(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
+                                summaryWorkSheet.SaveToHtml(exportFiles.HtmlInfoPath);
                                 Application.DoEvents();
 
                                 // REPLACE HYPERLINKS ON 'SUMMARY' PAGE
-                                string summaryHTMLstring = File.ReadAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
+                                string summaryHTMLstring = File.ReadAllText(exportFiles.HtmlInfoPath);
                                 summaryHTMLstring = summaryHTMLstring
-                                    .Replace("xHTML_XLSXx", "<a href=\"" + statusExport_XLSFile + "\" style=\"color:white;\">Endpoints Status XLSX Export</a>")
-                                    .Replace("xHTML_JSONx", "<a href=\"" + statusExport_JSONFile + "\" style=\"color:white;\">Endpoints Status JSON Export</a>")
-                                    .Replace("xHTML_XMLx", "<a href=\"" + statusExport_XMLFile + "\" style=\"color:white;\">Endpoints Status XML Export</a>")
-                                    .Replace("xHTML_HTTPx", "<a href=\"" + statusExport_HTMLFile_HTTPPage + "\" style=\"color:white;\">HTTP Endpoints Status List</a>")
-                                    .Replace("xHTML_FTPx", "<a href=\"" + statusExport_HTMLFile_FTPPage + "\" style=\"color:white;\">FTP Endpoints Status List</a>");
+                                    .Replace("xHTML_XLSXx", "<a href=\"" + exportFiles.XlsxFileName + "\" style=\"color:white;\">Endpoints Status XLSX Export</a>")
+                                    .Replace("xHTML_JSONx", "<a href=\"" + exportFiles.JsonFileName + "\" style=\"color:white;\">Endpoints Status JSON Export</a>")
+                                    .Replace("xHTML_XMLx", "<a href=\"" + exportFiles.XmlFileName + "\" style=\"color:white;\">Endpoints Status XML Export</a>")
+                                    .Replace("xHTML_HTTPx", "<a href=\"" + exportFiles.HtmlHttpFileName + "\" style=\"color:white;\">HTTP Endpoints Status List</a>")
+                                    .Replace("xHTML_FTPx", "<a href=\"" + exportFiles.HtmlFtpFileName + "\" style=\"color:white;\">FTP Endpoints Status List</a>");
 
                                 // ADD HTML AUTO REFRESH
                                 summaryHTMLstring = AddAutoRefreshToHTMLString(summaryHTMLstring, 30);
 
                                 // SAVE HTML STRING [SUMMARY PAGE]
                                 Application.DoEvents();
-                                File.WriteAllText(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage), summaryHTMLstring, Encoding.UTF8);
+                                File.WriteAllText(exportFiles.HtmlInfoPath, summaryHTMLstring, Encoding.UTF8);
                                 Application.DoEvents();
 
                                 // LOCK 'SUMMARY' HTML
-                                definitionsStatusExport_HTML_Info_FileStream = OpenFileStream(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
+                                definitionsStatusExport_HTML_Info_FileStream = OpenFileStream(exportFiles.HtmlInfoPath);
                             }
                             catch (Exception ex)
                             {
@@ -4478,6 +4479,18 @@ namespace EndpointChecker
                             MessageBoxIcon.Warning);
         }
 
+        private EndpointExportFileSet CreateEndpointExportFileSet()
+        {
+            return EndpointExportFileSet.Create(
+                statusExport_Directory,
+                statusExport_XLSFile,
+                statusExport_JSONFile,
+                statusExport_XMLFile,
+                statusExport_HTMLFile_InfoPage,
+                statusExport_HTMLFile_HTTPPage,
+                statusExport_HTMLFile_FTPPage);
+        }
+
         public void btn_BrowseExportDir_MouseClick(object sender, MouseEventArgs e)
         {
             if (Directory.Exists(statusExport_Directory))
@@ -4488,32 +4501,33 @@ namespace EndpointChecker
             if (folderBrowserExportDir.ShowDialog() == DialogResult.OK)
             {
                 statusExport_Directory = folderBrowserExportDir.SelectedPath;
+                EndpointExportFileSet exportFiles = CreateEndpointExportFileSet();
 
                 try
                 {
                     CloseFileStream(definitionsStatusExport_JSON_FileStream);
-                    using (File.Create(Path.Combine(statusExport_Directory, statusExport_JSONFile))) { }
-                    File.Delete(Path.Combine(statusExport_Directory, statusExport_JSONFile));
+                    using (File.Create(exportFiles.JsonPath)) { }
+                    File.Delete(exportFiles.JsonPath);
 
                     CloseFileStream(definitionsStatusExport_XML_FileStream);
-                    using (File.Create(Path.Combine(statusExport_Directory, statusExport_XMLFile))) { }
-                    File.Delete(Path.Combine(statusExport_Directory, statusExport_XMLFile));
+                    using (File.Create(exportFiles.XmlPath)) { }
+                    File.Delete(exportFiles.XmlPath);
 
                     CloseFileStream(definitionsStatusExport_XLSX_FileStream);
-                    using (File.Create(Path.Combine(statusExport_Directory, statusExport_XLSFile))) { }
-                    File.Delete(Path.Combine(statusExport_Directory, statusExport_XLSFile));
+                    using (File.Create(exportFiles.XlsxPath)) { }
+                    File.Delete(exportFiles.XlsxPath);
 
                     CloseFileStream(definitionsStatusExport_HTML_Info_FileStream);
-                    using (File.Create(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage))) { }
-                    File.Delete(Path.Combine(statusExport_Directory, statusExport_HTMLFile_InfoPage));
+                    using (File.Create(exportFiles.HtmlInfoPath)) { }
+                    File.Delete(exportFiles.HtmlInfoPath);
 
                     CloseFileStream(definitionsStatusExport_HTML_HTTP_FileStream);
-                    using (File.Create(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage))) { }
-                    File.Delete(Path.Combine(statusExport_Directory, statusExport_HTMLFile_HTTPPage));
+                    using (File.Create(exportFiles.HtmlHttpPath)) { }
+                    File.Delete(exportFiles.HtmlHttpPath);
 
                     CloseFileStream(definitionsStatusExport_HTML_FTP_FileStream);
-                    using (File.Create(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage))) { }
-                    File.Delete(Path.Combine(statusExport_Directory, statusExport_HTMLFile_FTPPage));
+                    using (File.Create(exportFiles.HtmlFtpPath)) { }
+                    File.Delete(exportFiles.HtmlFtpPath);
                 }
                 catch (Exception exception)
                 {

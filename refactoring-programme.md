@@ -130,9 +130,9 @@ Verification:
 - `dotnet run --project tests/EndpointDefinitionParser.Tests/EndpointDefinitionParser.Tests.csproj`
 - `dotnet build src/EndpointChecker.csproj --no-restore -p:EnableWindowsTargeting=true -v:q`
 
-## Ticket 4: Export options and run-summary snapshots
+## Ticket 4: Export snapshots and file paths
 
-Status: In progress on `refactor/v3-export-run-summary`
+Status: In progress on `refactor/v3-export-file-names`
 
 Base branch: `v3-main`
 
@@ -149,6 +149,9 @@ Scope completed in this ticket:
 - Extracted `EndpointExportRunSummary` for the check/run metadata written to the export summary worksheet.
 - Kept the existing public `EndpointsStatusExport(...)` signature as a wrapper and moved the internal writer path to the summary snapshot.
 - Added dependency-free characterization tests for the export run-summary snapshot.
+- Extracted `EndpointExportFileSet` for legacy export file names and combined paths.
+- Replaced repeated export path construction in export generation and export-folder validation with the file-set snapshot.
+- Added dependency-free characterization tests for legacy export file names and path combination.
 
 Non-goals:
 
@@ -161,9 +164,11 @@ Tests:
 
 - `tests/ExportOptions.Tests` covers the export-options snapshot.
 - `tests/ExportRunSummary.Tests` covers the export run-summary snapshot.
+- `tests/ExportFileSet.Tests` covers legacy export file names and path combination.
 
 Verification:
 
+- `dotnet run --project tests/ExportFileSet.Tests/ExportFileSet.Tests.csproj`
 - `dotnet run --project tests/ExportRunSummary.Tests/ExportRunSummary.Tests.csproj`
 - `dotnet run --project tests/ExportOptions.Tests/ExportOptions.Tests.csproj`
 - `dotnet run --project tests/HttpCompatibility.Tests/HttpCompatibility.Tests.csproj`
