@@ -86,3 +86,46 @@ Verification:
 - `dotnet run --project tests/EndpointCheckingCore.Tests/EndpointCheckingCore.Tests.csproj`
 - `dotnet run --project tests/EndpointDefinitionParser.Tests/EndpointDefinitionParser.Tests.csproj`
 - `dotnet build src/EndpointChecker.csproj --no-restore -p:EnableWindowsTargeting=true`
+
+## Ticket 3: HTTP compatibility boundaries
+
+Status: In progress on `refactor/v3-http-reliability`
+
+Base branch: `v3-main`
+
+Objective:
+
+Reduce the HTTP-checking responsibility inside `CheckerMainForm` by extracting behavior-preserving internal helpers for request construction and Cloudflare response classification.
+
+Scope completed in this ticket:
+
+- Extracted legacy `HttpWebRequest` construction into `EndpointHttpRequestFactory`.
+- Preserved request method, timeout, read/write timeout, redirect setting, keep-alive, cache policy, decompression, HTTP protocol version, maximum automatic redirects, user agent, browser-like headers, credentials, and legacy GDPR cookie injection.
+- Preserved the current non-mutating `removeURLParameters` behavior.
+- Extracted Cloudflare detection into `EndpointHttpResponseClassifier`.
+- Added dependency-free characterization tests for the extracted HTTP compatibility boundaries.
+
+Non-goals:
+
+- No replacement of `HttpWebRequest` with `HttpClient`.
+- No change to redirect-following behavior, retry behavior, SSL certificate handling, response-code mapping, cancellation, disposal, FTP, DNS, MAC, ping, export, persistence, or UI behavior.
+- No public API changes.
+- No dependency additions.
+
+Compatibility notes:
+
+- `WebRequest.Create(endpointURI.AbsoluteUri)` remains intentionally used because endpoint checking behavior is compatibility-sensitive.
+- `AutomaticDecompression` and omitted invalid headers remain preserved from the v3 implementation.
+- `removeURLParameters` intentionally remains non-mutating because the original code called `endpointURI.RemoveQuery()` without assigning the returned URL.
+- Cloudflare classification still treats either `CF-RAY` or a `Server` value containing `cloudflare` as protected.
+
+Tests:
+
+- `tests/HttpCompatibility.Tests` covers request construction and Cloudflare classification.
+
+Verification:
+
+- `dotnet run --project tests/HttpCompatibility.Tests/HttpCompatibility.Tests.csproj`
+- `dotnet run --project tests/EndpointCheckingCore.Tests/EndpointCheckingCore.Tests.csproj`
+- `dotnet run --project tests/EndpointDefinitionParser.Tests/EndpointDefinitionParser.Tests.csproj`
+- `dotnet build src/EndpointChecker.csproj --no-restore -p:EnableWindowsTargeting=true -v:q`
