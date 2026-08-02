@@ -675,8 +675,6 @@ namespace EndpointChecker
                         (int)num_FTPRequestTimeout.Value);
                 });
 
-                int endpointsCount_Current = 0;
-
                 // TextBox.Text calls GetWindowText (Win32) and throws
                 // InvalidOperationException from non-UI threads in .NET 5+.
                 // Capture the filter value on the UI thread before going parallel.
@@ -688,6 +686,8 @@ namespace EndpointChecker
                         eItem =>
                                  !endpointsList_Disabled.Contains(eItem.Name) &&
                                  eItem.Name.ToLower().Contains(listFilter)).Count();
+
+                EndpointCheckProgress endpointCheckProgress = new EndpointCheckProgress(endpointsCount_Enabled);
 
                 // FLUSH LOCAL DNS CACHE
                 DnsFlushResolverCache();
@@ -708,6 +708,8 @@ namespace EndpointChecker
                 // STORE PROGRESS START DATE/TIME [FOR 'EXPORT' AND 'AUTO ADJUST REFRESH INTERVAL' PURPOSES]
                 DateTime startDT_List = DateTime.Now;
 
+                SetProgressStatus(endpointCheckProgress.Snapshot);
+
                 // EXECUTE PARALLEL PROCESS 
                 Parallel.ForEach(
                     endpointsList,
@@ -722,6 +724,8 @@ namespace EndpointChecker
                         }
                         else
                         {
+                            EndpointCheckProgressWorkItem endpointProgressWorkItem = null;
+
                             try
                             {
                             // RESCAN ENDPOINT STATUS
@@ -741,11 +745,10 @@ namespace EndpointChecker
                                 // ENDPOINT IS ENABLED, GO ON
                                 if (!BW_GetStatus.CancellationPending)
                                 {
-                                    // INCREMENT PROGRESS COUNTER
-                                    Interlocked.Increment(ref endpointsCount_Current);
+                                    endpointProgressWorkItem = endpointCheckProgress.StartEndpoint();
 
                                     // SET PROGRESS STATUS LABEL
-                                    SetProgressStatus(endpointsCount_Enabled, endpointsCount_Current);
+                                    SetProgressStatus(endpointCheckProgress.Snapshot);
 
                                     // CREATE STOPWATCH FOR ITEM CHECK DURATION [FOR 'EXPORT' PURPOSE]
                                     Stopwatch sw_ItemProgress = new Stopwatch();
@@ -1371,8 +1374,6 @@ namespace EndpointChecker
                                         endpoint.MACAddress = endpointMACAddressStringList.ToArray();
                                     }
 
-                                    // SET PROGRESS STATUS LABEL
-                                    SetProgressStatus(endpointsCount_Enabled, endpointsCount_Current);
                                 }
                             }
 
@@ -1414,6 +1415,13 @@ namespace EndpointChecker
                                     updatedEndpointsList.Add(EndpointCheckResultFactory.CreateUnhandledExceptionResult(endpointItem, lambdaEx));
                                 }
                                 catch { /* if even the fallback fails, skip this endpoint */ }
+                            }
+                            finally
+                            {
+                                if (endpointProgressWorkItem != null)
+                                {
+                                    SetProgressStatus(endpointCheckProgress.CompleteEndpoint(endpointProgressWorkItem));
+                                }
                             }
                         }
                     });
@@ -2262,10 +2270,17 @@ namespace EndpointChecker
                 if (endpointsCount_Enabled > 0)
                 {
                     pb_RefreshProcess.Maximum = endpointsCount_Enabled;
-                    pb_RefreshProcess.Value   = endpointsCount_Current;
+                    pb_RefreshProcess.Value = Math.Min(
+                        endpointsCount_Enabled,
+                        Math.Max(0, endpointsCount_Current));
                 }
                 Application.DoEvents();
             });
+        }
+
+        private void SetProgressStatus(EndpointCheckProgressSnapshot progressSnapshot)
+        {
+            SetProgressStatus(progressSnapshot.TotalCount, progressSnapshot.CompletedCount);
         }
 
         public void btn_RunCheck_Click(object sender, EventArgs e)
