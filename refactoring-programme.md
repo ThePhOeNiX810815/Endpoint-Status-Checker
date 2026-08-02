@@ -2,9 +2,9 @@
 
 ## Ticket 1: Endpoint loading and parsing
 
-Status: Merged to `v3-main` via PR #44
+Status: Merged to v3 development line via PR #44
 
-Base branch: `v3-main`
+Current v3 integration branch: `Main-Dev-V3`
 
 Objective:
 
@@ -48,9 +48,9 @@ Verification:
 
 ## Ticket 2: Endpoint checking core extraction
 
-Status: Merged to `v3-main` via PR #45
+Status: Merged to v3 development line via PR #45
 
-Base branch: `v3-main`
+Current v3 integration branch: `Main-Dev-V3`
 
 Objective:
 
@@ -89,9 +89,9 @@ Verification:
 
 ## Ticket 3: HTTP compatibility boundaries
 
-Status: Merged to `v3-main` via PR #46
+Status: Merged to v3 development line via PR #46
 
-Base branch: `v3-main`
+Current v3 integration branch: `Main-Dev-V3`
 
 Objective:
 
@@ -132,9 +132,9 @@ Verification:
 
 ## Ticket 4: Export snapshots, file paths, and structured export generation
 
-Status: In progress on `refactor/v3-structured-export-generation`
+Status: Merged to v3 development line via PR #47, PR #48, PR #49, and PR #50
 
-Base branch: `v3-main`
+Current v3 integration branch: `Main-Dev-V3`
 
 Objective:
 
@@ -180,3 +180,31 @@ Verification:
 - `dotnet run --project tests/EndpointCheckingCore.Tests/EndpointCheckingCore.Tests.csproj`
 - `dotnet run --project tests/EndpointDefinitionParser.Tests/EndpointDefinitionParser.Tests.csproj`
 - `dotnet build src/EndpointChecker.csproj --no-restore -p:EnableWindowsTargeting=true -v:q`
+
+## Ticket 5: Cleanup, documentation, and residual review
+
+Status: In progress on `refactor/v3-code-cleanup-review`
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Perform a repository-wide clean-code review after Tickets 1-4, apply only low-risk cleanups that preserve observable behavior, and document residual issues that should not be changed without further characterization or separate migration work.
+
+Scope completed in this ticket:
+
+- Removed obsolete `v3-main` branch usage from the active workflow after `Main-Dev-V3` became the v3 integration branch.
+- Added XML documentation to important extracted internal boundaries from the refactoring programme.
+- Added a residual-findings table for large remaining responsibilities, duplication, comments, direct UI coupling, and compatibility-sensitive areas.
+
+Non-goals:
+
+- No behavior changes.
+- No public API removals.
+- No UI redesign.
+- No branch, tag, or release changes outside retiring `v3-main`.
+- No broad formatting pass.
+
+Review artifacts:
+
+- `refactoring-residual-findings.md`

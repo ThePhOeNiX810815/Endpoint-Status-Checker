@@ -1,5 +1,8 @@
 namespace EndpointChecker
 {
+    /// <summary>
+    /// Captures check-run metadata written to the export summary worksheet.
+    /// </summary>
     internal sealed class EndpointExportRunSummary
     {
         private EndpointExportRunSummary(
@@ -62,6 +65,9 @@ namespace EndpointChecker
 
         public string DnsLookupOnHost { get; }
 
+        /// <summary>
+        /// Creates a summary snapshot using the legacy string values already produced by the form.
+        /// </summary>
         public static EndpointExportRunSummary Create(
             string startDateTime,
             string endDateTime,

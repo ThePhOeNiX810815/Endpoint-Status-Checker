@@ -4,12 +4,18 @@ using System.Drawing;
 
 namespace EndpointChecker
 {
+    /// <summary>
+    /// Builds initial and fallback endpoint check results using the legacy status strings and defaults.
+    /// </summary>
     internal static class EndpointCheckResultFactory
     {
         private const string StatusNotAvailable = "N/A";
         private const string StatusError = "ERROR";
         private const string ResponseMessageNotCheckedYet = "Not Checked Yet";
 
+        /// <summary>
+        /// Creates the pending result shown while an enabled endpoint is being checked.
+        /// </summary>
         public static EndpointDefinition CreatePendingResult(EndpointDefinition source)
         {
             return new EndpointDefinition()
@@ -54,6 +60,9 @@ namespace EndpointChecker
             };
         }
 
+        /// <summary>
+        /// Creates the top-level safety-net result used when endpoint checking throws unexpectedly.
+        /// </summary>
         public static EndpointDefinition CreateUnhandledExceptionResult(EndpointDefinition source, Exception exception)
         {
             return new EndpointDefinition

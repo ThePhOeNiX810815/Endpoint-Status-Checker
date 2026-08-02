@@ -4,6 +4,13 @@ using System.Drawing;
 
 namespace EndpointChecker
 {
+    /// <summary>
+    /// Parses endpoint definition lines without performing UI, file, or network work.
+    /// </summary>
+    /// <remarks>
+    /// The parser intentionally preserves several legacy loading rules, including ordinal duplicate
+    /// matching, first-pipe splitting, embedded credential name suffixes, and Uri.EscapeUriString normalization.
+    /// </remarks>
     internal sealed class EndpointDefinitionParser
     {
         private const string StatusNotAvailable = "N/A";
@@ -24,6 +31,9 @@ namespace EndpointChecker
             }
         }
 
+        /// <summary>
+        /// Parses one raw definition line into a structured result for the form to present.
+        /// </summary>
         public EndpointDefinitionParseResult ParseLine(string rawLine, int lineNumber)
         {
             string line = rawLine == null ? string.Empty : rawLine.Trim();
@@ -61,6 +71,9 @@ namespace EndpointChecker
             return EndpointDefinitionParseResult.Valid(endpointDefinition);
         }
 
+        /// <summary>
+        /// Creates an endpoint using the same defaults historically assigned during list loading.
+        /// </summary>
         internal static EndpointDefinition CreateDefaultEndpointDefinition(string line)
         {
             string[] lineParts = line.Split(new char[] { '|' }, 2);
@@ -180,6 +193,9 @@ namespace EndpointChecker
         }
     }
 
+    /// <summary>
+    /// Describes whether a parsed endpoint line was ignored, accepted, or rejected.
+    /// </summary>
     internal sealed class EndpointDefinitionParseResult
     {
         private EndpointDefinitionParseResult(
@@ -229,6 +245,9 @@ namespace EndpointChecker
         }
     }
 
+    /// <summary>
+    /// Identifies the parser outcome category used by LoadEndpointReferences.
+    /// </summary>
     internal enum EndpointDefinitionParseStatus
     {
         Ignored,
@@ -237,6 +256,9 @@ namespace EndpointChecker
         Duplicate
     }
 
+    /// <summary>
+    /// Captures parser error details in the legacy display format consumed by the form.
+    /// </summary>
     internal sealed class EndpointDefinitionParseError
     {
         private EndpointDefinitionParseError(
@@ -337,6 +359,9 @@ namespace EndpointChecker
         }
     }
 
+    /// <summary>
+    /// Identifies the legacy endpoint definition error category.
+    /// </summary>
     internal enum EndpointDefinitionParseErrorKind
     {
         MissingProtocol,
