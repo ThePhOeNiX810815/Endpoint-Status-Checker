@@ -24,12 +24,9 @@
  ___) | || (_| | |_| |_| \__ \ | |___| | | |  __/ (__|   <  __/ |
 |____/ \__\__,_|\__|\__,_|___/  \____|_| |_|\___|\___|_|\_\___|_|
 ```
+<img width="643" height="360" alt="image" src="https://github.com/user-attachments/assets/74319e84-0e38-4bcc-bc9d-759e3ac6f8c4" />
 
-## Homepage
-
-<https://endpoint-status-checker.webnode.page>
-
-![screenshot](https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/EndpointStatusCheckerImage.png)
+Lazy Development
 
 A Windows desktop tool that monitors a user-defined list of network endpoints and reports
 their availability, response times, SSL state, DNS/IP/MAC resolution, and more — all in
