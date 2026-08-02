@@ -1447,23 +1447,24 @@ namespace EndpointChecker
                 // SORT ENDPOINTS LIST BY ENDPOINT NAME
                 endpointsList.Sort((s, t) => string.Compare(s.Name, t.Name));
 
+                EndpointExportRunSummary exportRunSummary = EndpointExportRunSummary.Create(
+                    startDT_List.ToString("dd.MM.yyyy HH:mm:ss"),
+                    endDT_List.ToString("dd.MM.yyyy HH:mm:ss"),
+                    durationTime_List,
+                    checkOptions.PingTimeout / 1000,
+                    checkOptions.HttpRequestTimeout / 1000,
+                    checkOptions.FtpRequestTimeout / 1000,
+                    FormatBoolToString(checkOptions.AllowAutoRedirect),
+                    FormatBoolToString(checkOptions.ValidateSslCertificate),
+                    checkOptions.ThreadsCount.ToString(),
+                    FormatBoolToString(checkOptions.ResolveNetworkShares),
+                    FormatBoolToString(checkOptions.ResolvePageMetaInfo),
+                    FormatBoolToString(checkOptions.SaveResponse),
+                    FormatBoolToString(checkOptions.TestPing),
+                    FormatBoolToString(checkOptions.ResolveDnsNames));
+
                 // EXPORT UPDATED LIST
-                EndpointsStatusExport(
-                                      startDT_List.ToString("dd.MM.yyyy HH:mm:ss"),
-                                      endDT_List.ToString("dd.MM.yyyy HH:mm:ss"),
-                                      durationTime_List,
-                                      checkOptions.PingTimeout / 1000,
-                                      checkOptions.HttpRequestTimeout / 1000,
-                                      checkOptions.FtpRequestTimeout / 1000,
-                                      FormatBoolToString(checkOptions.AllowAutoRedirect),
-                                      FormatBoolToString(checkOptions.ValidateSslCertificate),
-                                      checkOptions.ThreadsCount.ToString(),
-                                      FormatBoolToString(checkOptions.ResolveNetworkShares),
-                                      FormatBoolToString(checkOptions.ResolvePageMetaInfo),
-                                      FormatBoolToString(checkOptions.SaveResponse),
-                                      FormatBoolToString(checkOptions.TestPing),
-                                      FormatBoolToString(checkOptions.ResolveDnsNames)
-                                      );
+                EndpointsStatusExport(exportRunSummary);
             }
             catch (Exception eX)
             {
@@ -2899,6 +2900,25 @@ namespace EndpointChecker
                                           string dnsLookupOnHost
             )
         {
+            EndpointsStatusExport(EndpointExportRunSummary.Create(
+                startDT,
+                endDT,
+                durationSeconds,
+                pingTimeout,
+                httpRequestTimeout,
+                ftpRequestTimeout,
+                httpAutoRedirection,
+                sslCertificateValidation,
+                threadsCount,
+                resolveNetworkShares,
+                resolvePageMetaInfo,
+                saveResponse,
+                pingHost,
+                dnsLookupOnHost));
+        }
+
+        private void EndpointsStatusExport(EndpointExportRunSummary summary)
+        {
             EndpointExportOptions exportOptions = EndpointExportOptions.Create(
                 cb_ExportEndpointsStatus_JSON.Checked,
                 cb_ExportEndpointsStatus_XML.Checked,
@@ -3146,37 +3166,37 @@ namespace EndpointChecker
                         endpointsStatusExport_Summary_WorkSheet.Cell("B7").SetValue(Environment.MachineName);
 
                         endpointsStatusExport_Summary_WorkSheet.Cell("D1").SetValue("Check Started");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E1").SetValue(startDT);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E1").SetValue(summary.StartDateTime);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D2").SetValue("Check Ended");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E2").SetValue(endDT);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E2").SetValue(summary.EndDateTime);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D3").SetValue("Check Duration");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E3").SetValue(durationSeconds + " " + GetFormattedValueCountString(durationSeconds, "second"));
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E3").SetValue(summary.DurationSeconds + " " + GetFormattedValueCountString(summary.DurationSeconds, "second"));
                         endpointsStatusExport_Summary_WorkSheet.Cell("D4").SetValue("HTTP Endpoints Count");
                         endpointsStatusExport_Summary_WorkSheet.Cell("E4").SetValue((httpWorkSheetLineNumber - 2).ToString());
                         endpointsStatusExport_Summary_WorkSheet.Cell("D5").SetValue("FTP Endpoints Count");
                         endpointsStatusExport_Summary_WorkSheet.Cell("E5").SetValue((ftpWorkSheetLineNumber - 2).ToString());
                         endpointsStatusExport_Summary_WorkSheet.Cell("D6").SetValue("Parallel Threads Count");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E6").SetValue(threadsCount);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E6").SetValue(summary.ThreadsCount);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D7").SetValue("Ping Timeout");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E7").SetValue(pingTimeout + " " + GetFormattedValueCountString(pingTimeout, "second"));
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E7").SetValue(summary.PingTimeoutSeconds + " " + GetFormattedValueCountString(summary.PingTimeoutSeconds, "second"));
                         endpointsStatusExport_Summary_WorkSheet.Cell("D8").SetValue("HTTP Request Timeout");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E8").SetValue(httpRequestTimeout + " " + GetFormattedValueCountString(httpRequestTimeout, "second"));
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E8").SetValue(summary.HttpRequestTimeoutSeconds + " " + GetFormattedValueCountString(summary.HttpRequestTimeoutSeconds, "second"));
                         endpointsStatusExport_Summary_WorkSheet.Cell("D9").SetValue("FTP Request Timeout");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E9").SetValue(ftpRequestTimeout + " " + GetFormattedValueCountString(ftpRequestTimeout, "second"));
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E9").SetValue(summary.FtpRequestTimeoutSeconds + " " + GetFormattedValueCountString(summary.FtpRequestTimeoutSeconds, "second"));
                         endpointsStatusExport_Summary_WorkSheet.Cell("D10").SetValue("Server Certificate Validation [HTTPS]");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E10").SetValue(sslCertificateValidation);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E10").SetValue(summary.SslCertificateValidation);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D11").SetValue("Auto Redirection [HTTP]");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E11").SetValue(httpAutoRedirection);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E11").SetValue(summary.HttpAutoRedirection);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D12").SetValue("Resolve Network Shares");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E12").SetValue(resolveNetworkShares);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E12").SetValue(summary.ResolveNetworkShares);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D13").SetValue("Resolve Page Meta Info [HTTP/HTML]");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E13").SetValue(resolvePageMetaInfo);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E13").SetValue(summary.ResolvePageMetaInfo);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D14").SetValue("Save Response [HTTP]");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E14").SetValue(saveResponse);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E14").SetValue(summary.SaveResponse);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D15").SetValue("Ping Host");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E15").SetValue(pingHost);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E15").SetValue(summary.PingHost);
                         endpointsStatusExport_Summary_WorkSheet.Cell("D16").SetValue("DNS / MAC Lookup on Host");
-                        endpointsStatusExport_Summary_WorkSheet.Cell("E16").SetValue(dnsLookupOnHost);
+                        endpointsStatusExport_Summary_WorkSheet.Cell("E16").SetValue(summary.DnsLookupOnHost);
 
                         // SETTINGS FOR HTTP ENDPOINTS WORKSHEET
                         endpointsStatusExport_HTTP_WorkSheet.Style

@@ -130,9 +130,9 @@ Verification:
 - `dotnet run --project tests/EndpointDefinitionParser.Tests/EndpointDefinitionParser.Tests.csproj`
 - `dotnet build src/EndpointChecker.csproj --no-restore -p:EnableWindowsTargeting=true -v:q`
 
-## Ticket 4: Export options snapshot
+## Ticket 4: Export options and run-summary snapshots
 
-Status: In progress on `refactor/v3-export-and-ui-mapping`
+Status: In progress on `refactor/v3-export-run-summary`
 
 Base branch: `v3-main`
 
@@ -146,6 +146,9 @@ Scope completed in this ticket:
 - Snapshotted export choices once at the `EndpointsStatusExport` boundary.
 - Replaced repeated direct checkbox reads inside export generation with the snapshot.
 - Added dependency-free characterization tests for the export-options snapshot.
+- Extracted `EndpointExportRunSummary` for the check/run metadata written to the export summary worksheet.
+- Kept the existing public `EndpointsStatusExport(...)` signature as a wrapper and moved the internal writer path to the summary snapshot.
+- Added dependency-free characterization tests for the export run-summary snapshot.
 
 Non-goals:
 
@@ -157,9 +160,11 @@ Non-goals:
 Tests:
 
 - `tests/ExportOptions.Tests` covers the export-options snapshot.
+- `tests/ExportRunSummary.Tests` covers the export run-summary snapshot.
 
 Verification:
 
+- `dotnet run --project tests/ExportRunSummary.Tests/ExportRunSummary.Tests.csproj`
 - `dotnet run --project tests/ExportOptions.Tests/ExportOptions.Tests.csproj`
 - `dotnet run --project tests/HttpCompatibility.Tests/HttpCompatibility.Tests.csproj`
 - `dotnet run --project tests/EndpointCheckingCore.Tests/EndpointCheckingCore.Tests.csproj`
