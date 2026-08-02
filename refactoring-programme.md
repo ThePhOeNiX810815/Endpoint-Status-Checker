@@ -130,9 +130,9 @@ Verification:
 - `dotnet run --project tests/EndpointDefinitionParser.Tests/EndpointDefinitionParser.Tests.csproj`
 - `dotnet build src/EndpointChecker.csproj --no-restore -p:EnableWindowsTargeting=true -v:q`
 
-## Ticket 4: Export snapshots and file paths
+## Ticket 4: Export snapshots, file paths, and structured export generation
 
-Status: In progress on `refactor/v3-export-file-names`
+Status: In progress on `refactor/v3-structured-export-generation`
 
 Base branch: `v3-main`
 
@@ -152,6 +152,9 @@ Scope completed in this ticket:
 - Extracted `EndpointExportFileSet` for legacy export file names and combined paths.
 - Replaced repeated export path construction in export generation and export-folder validation with the file-set snapshot.
 - Added dependency-free characterization tests for legacy export file names and path combination.
+- Extracted JSON and XML export document creation into `EndpointStructuredExportGenerator`.
+- Preserved indented JSON output and the existing `Encoding+` to `Encoding_` XML workaround.
+- Added characterization tests for structured export output shape.
 
 Non-goals:
 
@@ -165,9 +168,11 @@ Tests:
 - `tests/ExportOptions.Tests` covers the export-options snapshot.
 - `tests/ExportRunSummary.Tests` covers the export run-summary snapshot.
 - `tests/ExportFileSet.Tests` covers legacy export file names and path combination.
+- `tests/StructuredExport.Tests` covers JSON and XML export generation.
 
 Verification:
 
+- `dotnet run --project tests/StructuredExport.Tests/StructuredExport.Tests.csproj`
 - `dotnet run --project tests/ExportFileSet.Tests/ExportFileSet.Tests.csproj`
 - `dotnet run --project tests/ExportRunSummary.Tests/ExportRunSummary.Tests.csproj`
 - `dotnet run --project tests/ExportOptions.Tests/ExportOptions.Tests.csproj`

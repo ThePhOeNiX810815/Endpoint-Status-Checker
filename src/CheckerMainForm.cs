@@ -2946,7 +2946,7 @@ namespace EndpointChecker
                 if (exportOptions.StructuredText)
                 {
                     // SERIALIZE ENDPOINTS LIST TO JSON
-                    string jsonString = JsonConvert.SerializeObject(exportList, Newtonsoft.Json.Formatting.Indented);
+                    string jsonString = EndpointStructuredExportGenerator.CreateJson(exportList);
 
                     if (exportOptions.Json)
                     {
@@ -2977,7 +2977,7 @@ namespace EndpointChecker
                         // ==========
                         // UNLOCK, SAVE AND LOCK XML
                         SetProgressStatus(0, 0, "Generating Endpoint Status XML Export ...", Color.BlueViolet);
-                        XmlDocument xmlExport = JsonConvert.DeserializeXmlNode("{\"EndpointStatus\":" + jsonString.Replace("Encoding+", "Encoding_") + "}", "EndpointStatus");
+                        XmlDocument xmlExport = EndpointStructuredExportGenerator.CreateXmlDocument(jsonString);
 
                         try
                         {
