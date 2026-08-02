@@ -4248,6 +4248,7 @@ namespace EndpointChecker
                 // CHECK DEFINITIONS FILE EXISTENCE
                 if (File.Exists(endpointDefinitionsFile))
                 {
+                    EndpointDefinitionParser endpointDefinitionParser = new EndpointDefinitionParser();
                     List<string> endpointDuplicityList = new List<string>();
                     List<string> invalidURLList = new List<string>();
 
@@ -4286,194 +4287,21 @@ namespace EndpointChecker
                             SetProgressStatus(0, 0,
                                 "Loading Endpoints References [" + lineNumber + "] ...", Color.Blue);
 
-                            // CHECK DEFINITION FOR NAME PARAMETER
-                            // Split on the FIRST pipe only so URLs containing '|' are preserved (issue #35)
-                            string[] lineParts = line.Split(new char[] { '|' }, 2);
-                            string lineAddress = lineParts.Length > 1 ? lineParts[1].Trim() : lineParts[0].Trim();
-                            string lineName    = lineParts[0].Trim();
+                            EndpointDefinitionParseResult parseResult = endpointDefinitionParser.ParseLine(line, lineNumber);
 
-                            // CREATE ENDPOINT STATUS DEFINITION
-                            EndpointDefinition endpointStatusDefiniton = new EndpointDefinition()
+                            if (parseResult.DuplicateError != null)
                             {
-                                Name = lineName,
-                                Protocol = status_NotAvailable,
-                                Port = status_NotAvailable,
-                                Address = lineAddress,
-                                ResponseAddress = lineAddress,
-                                IPAddress = new string[] { status_NotAvailable },
-                                ResponseTime = status_NotAvailable,
-                                ResponseCode = status_NotAvailable,
-                                ResponseMessage = GetEnumDescriptionString(EndpointStatus.NOTCHECKED),
-                                LastSeenOnline = status_NotAvailable,
-                                PingRoundtripTime = status_NotAvailable,
-                                ServerID = status_NotAvailable,
-                                LoginName = status_NotAvailable,
-                                LoginPass = status_NotAvailable,
-                                NetworkShare = new string[] { status_NotAvailable },
-                                DNSName = new string[] { status_NotAvailable },
-                                HTMLMetaInfo = new PropertyItems() { PropertyItem = new List<Property>() },
-                                HTTPautoRedirects = status_NotAvailable,
-                                HTTPcontentType = status_NotAvailable,
-                                HTTPencoding = null,
-                                HTMLdefaultStreamEncoding = null,
-                                HTMLencoding = null,
-                                HTMLTitle = status_NotAvailable,
-                                HTMLAuthor = status_NotAvailable,
-                                HTMLPageLinks = new PropertyItems() { PropertyItem = new List<Property>() },
-                                HTMLDescription = status_NotAvailable,
-                                HTMLContentLanguage = status_NotAvailable,
-                                HTMLThemeColor = Color.Empty,
-                                HTTPcontentLength = status_NotAvailable,
-                                HTTPexpires = status_NotAvailable,
-                                HTTPetag = status_NotAvailable,
-                                HTTPRequestHeaders = new PropertyItems() { PropertyItem = new List<Property>() },
-                                HTTPResponseHeaders = new PropertyItems() { PropertyItem = new List<Property>() },
-                                MACAddress = new string[] { status_NotAvailable },
-                                FTPBannerMessage = status_NotAvailable,
-                                FTPWelcomeMessage = status_NotAvailable,
-                                FTPExitMessage = status_NotAvailable,
-                                FTPStatusDescription = status_NotAvailable,
-                                SSLCertificateProperties = new PropertyItems() { PropertyItem = new List<Property>() }
-                            };
-
-                            bool duplicityDefinition = false;
-                            bool invalidURL = false;
-
-                            // CHECK URL
-                            if (!endpointStatusDefiniton.Address.ToLower().Contains(Uri.SchemeDelimiter))
-                            {
-                                // URL FORMAT IS INVALID, ADD TO ERRORS LIST [MISSING PROTOCOL PREFIX]
-                                invalidURL = true;
-                                invalidURLList.Add(
-                                        "Line:  " + lineNumber +
-                                        Environment.NewLine +
-                                        "Endpoint Name:  " + endpointStatusDefiniton.Name +
-                                        Environment.NewLine +
-                                        "Endpoint Address:  " + endpointStatusDefiniton.Address +
-                                        Environment.NewLine +
-                                        "Missing protocol prefix" +
-                                        Environment.NewLine +
-                                        Uri.UriSchemeHttp.ToUpper() + ", " +
-                                        Uri.UriSchemeHttps.ToUpper() + " and " +
-                                        Uri.UriSchemeFtp.ToUpper() + " protocols are supported" +
-                                        Environment.NewLine +
-                                        Environment.NewLine
-                                    );
-                            }
-                            else
-                            {
-                                // GET CREDENTIALS FROM URL [IF PRESENT]
-                                if (endpointStatusDefiniton.Address.Contains("@"))
-                                {
-                                    string[] credentials = endpointStatusDefiniton.Address.Split('@')[0].Split('/')[2].Split(':');
-                                    if (credentials.Length == 2)
-                                    {
-                                        // EXTRACT
-                                        endpointStatusDefiniton.LoginName = credentials[0];
-                                        endpointStatusDefiniton.LoginPass = credentials[1];
-
-                                        // REMOVE CREDENTIALS FROM ENDPOINT NAME
-                                        // ADD USERNAME IDENTIFIER
-                                        endpointStatusDefiniton.Name = endpointStatusDefiniton.Name
-                                            .Replace(
-                                            endpointStatusDefiniton.LoginName + ":" +
-                                            endpointStatusDefiniton.LoginPass + "@", string.Empty) +
-                                            " [as '" + endpointStatusDefiniton.LoginName + "']";
-
-                                        // REMOVE CREDENTIALS FROM ENDPOINT ADDRESS
-                                        endpointStatusDefiniton.Address = endpointStatusDefiniton.Address
-                                            .Replace(endpointStatusDefiniton.LoginName + ":" +
-                                            endpointStatusDefiniton.LoginPass + "@", string.Empty);
-                                    }
-                                }
-
-                                try
-                                {
-                                    // Normalise special characters (e.g. commas, spaces) that are legal in
-                                    // URLs but cause Uri() to throw a UriFormatException (issue #35).
-                                    if (!Uri.IsWellFormedUriString(endpointStatusDefiniton.Address, UriKind.Absolute))
-                                    {
-                                        string escaped = Uri.EscapeUriString(endpointStatusDefiniton.Address);
-                                        if (Uri.IsWellFormedUriString(escaped, UriKind.Absolute))
-                                        {
-                                            endpointStatusDefiniton.Address = escaped;
-                                            endpointStatusDefiniton.ResponseAddress = escaped;
-                                        }
-                                    }
-
-                                    // CHECK URL FORMAT [TRY TO CREATE ENDPOINT URI]
-                                    Uri endpointURI = new Uri(endpointStatusDefiniton.Address, UriKind.Absolute);
-
-                                    // GET URI ATTRIBUTES
-                                    endpointStatusDefiniton.Port = endpointURI.Port.ToString();
-                                    endpointStatusDefiniton.Protocol = endpointURI.Scheme.ToUpper();
-
-                                    // CHECK SUPPORTED PROTOCOLS TYPES
-                                    if (endpointStatusDefiniton.Protocol != Uri.UriSchemeHttp.ToUpper() &&
-                                        endpointStatusDefiniton.Protocol != Uri.UriSchemeHttps.ToUpper() &&
-                                        endpointStatusDefiniton.Protocol != Uri.UriSchemeFtp.ToUpper())
-                                    {
-                                        // UNSUPPORTED PROTOCOL TYPE, ADD TO ERRORS LIST [UNSUPPORTED PROTOCOL TYPE]
-                                        invalidURL = true;
-                                        invalidURLList.Add(
-                                            "Line:  " + lineNumber +
-                                            Environment.NewLine +
-                                            "Endpoint Name:  " + endpointStatusDefiniton.Name +
-                                            Environment.NewLine +
-                                            "Endpoint Address:  " + endpointStatusDefiniton.Address +
-                                            Environment.NewLine +
-                                            "Unsupported protocol type: " + endpointStatusDefiniton.Protocol +
-                                            Environment.NewLine +
-                                            Uri.UriSchemeHttp.ToUpper() + ", " +
-                                            Uri.UriSchemeHttps.ToUpper() + " and " +
-                                            Uri.UriSchemeFtp.ToUpper() + " protocols are supported" +
-                                            Environment.NewLine +
-                                            Environment.NewLine
-                                        );
-                                    }
-                                }
-                                catch (Exception exception)
-                                {
-                                    // URL FORMAT IS INVALID, ADD TO ERRORS LIST [INVALID URL FORMAT]
-                                    invalidURL = true;
-                                    invalidURLList.Add(
-                                            "Line:  " + lineNumber +
-                                            Environment.NewLine +
-                                            "Endpoint Name:  " + endpointStatusDefiniton.Name +
-                                            Environment.NewLine +
-                                            "Endpoint Address:  " + endpointStatusDefiniton.Address +
-                                            Environment.NewLine +
-                                            "URL in invalid format" +
-                                            Environment.NewLine +
-                                            exception.Message +
-                                            Environment.NewLine +
-                                            Environment.NewLine
-                                        );
-                                }
+                                endpointDuplicityList.Add(parseResult.DuplicateError.ToDuplicateDisplayText());
                             }
 
-                            foreach (EndpointDefinition endpointDefinition in endpointsList)
+                            if (parseResult.InvalidUrlError != null)
                             {
-                                // CHECK ALL EXISTING DEFINITIONS FOR NAME DUPLICITY
-                                if (endpointDefinition.Name == endpointStatusDefiniton.Name)
-                                {
-                                    // DUPLICITY EXISTS, ADD TO ERRORS LIST [DUPLICITIES]
-                                    duplicityDefinition = true;
-                                    endpointDuplicityList.Add(
-                                        "Line:  " + lineNumber +
-                                        Environment.NewLine +
-                                        "Endpoint Name:  " + endpointStatusDefiniton.Name +
-                                        Environment.NewLine +
-                                        "Endpoint Address:  " + endpointStatusDefiniton.Address +
-                                        Environment.NewLine +
-                                        Environment.NewLine
-                                    );
-                                }
+                                invalidURLList.Add(parseResult.InvalidUrlError.ToInvalidUrlDisplayText());
                             }
-
-                            if (!duplicityDefinition &&
-                                !invalidURL)
+                            else if (parseResult.IsValid)
                             {
+                                EndpointDefinition endpointStatusDefiniton = parseResult.EndpointDefinition;
+
                                 // RESTORE 'LAST SEEN ONLINE' VALUE
                                 if (endpointsList_LastSeenOnline.ContainsKey(endpointStatusDefiniton.Name))
                                 {
