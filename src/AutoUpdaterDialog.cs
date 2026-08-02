@@ -15,15 +15,15 @@ namespace EndpointChecker
     public partial class AutoUpdaterDialog : Form
     {
         // Derived lazily so the class can be referenced before CheckForUpdate() sets the link.
-        private static string _zipFileName   => Path.GetFileName(new Uri(app_LatestPackageLink).AbsolutePath);
+        private static string _zipFileName => Path.GetFileName(new Uri(app_LatestPackageLink).AbsolutePath);
         private static string _extractFolder => "EndpointChecker_Update";
-        private static string _updateScript  =  string.Empty;
-        private static bool   _updateSuccess =  false;
+        private static string _updateScript = string.Empty;
+        private static bool _updateSuccess = false;
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION       = 0x2;
+        public const int HT_CAPTION = 0x2;
 
-        [DllImport("user32.dll")] public static extern int  SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImport("user32.dll")] public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [DllImport("user32.dll")] public static extern bool ReleaseCapture();
 
         public AutoUpdaterDialog()
@@ -31,12 +31,12 @@ namespace EndpointChecker
             InitializeComponent();
 
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
-            Application.ThreadException                += new ThreadExceptionEventHandler(ThreadExceptionHandler);
+            Application.ThreadException += new ThreadExceptionEventHandler(ThreadExceptionHandler);
 
             DoubleBuffered = true;
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
-            lbl_Name.Text    = app_ApplicationName;
+            lbl_Name.Text = app_ApplicationName;
             lbl_Copyright.Text = app_Copyright;
 
             lbl_UpdateVersion.Text =
@@ -60,9 +60,9 @@ namespace EndpointChecker
                 ThreadSafeInvoke(() => lbl_Progress.Text = "Downloading Package from GitHub ...");
                 Thread.Sleep(1000);
 
-                int  maxAttempts = 20;
-                int  attempt     = 0;
-                bool downloaded  = false;
+                int maxAttempts = 20;
+                int attempt = 0;
+                bool downloaded = false;
 
                 while (!downloaded && attempt < maxAttempts)
                 {
@@ -100,10 +100,10 @@ namespace EndpointChecker
                 // 5. SUCCESS
                 ThreadSafeInvoke(() =>
                 {
-                    lbl_Progress.Visible         = false;
+                    lbl_Progress.Visible = false;
                     lbl_UpdateStatus_Wait.Visible = false;
-                    lbl_UpdateStatus.ForeColor    = Color.Lime;
-                    lbl_UpdateStatus.Text         = "SUCCESSFULLY UPDATED";
+                    lbl_UpdateStatus.ForeColor = Color.Lime;
+                    lbl_UpdateStatus.Text = "SUCCESSFULLY UPDATED";
                 });
 
                 _updateSuccess = true;
@@ -113,10 +113,10 @@ namespace EndpointChecker
             {
                 ThreadSafeInvoke(() =>
                 {
-                    lbl_Progress.Visible         = false;
+                    lbl_Progress.Visible = false;
                     lbl_UpdateStatus_Wait.Visible = false;
-                    lbl_UpdateStatus.ForeColor    = Color.Red;
-                    lbl_UpdateStatus.Text         = "UPDATE FAILED";
+                    lbl_UpdateStatus.ForeColor = Color.Red;
+                    lbl_UpdateStatus.Text = "UPDATE FAILED";
                 });
 
                 Thread.Sleep(2000);
@@ -146,7 +146,7 @@ namespace EndpointChecker
                     Process.Start(new ProcessStartInfo(_updateScript)
                     {
                         UseShellExecute = true,
-                        WindowStyle     = ProcessWindowStyle.Minimized
+                        WindowStyle = ProcessWindowStyle.Minimized
                     });
                 }
 
@@ -167,10 +167,10 @@ namespace EndpointChecker
         private static void WriteUpdateScript()
         {
             string extractDir = Path.Combine(app_TempDir, _extractFolder);
-            string appDir     = app_CurrentWorkingDir;
-            string appExe     = Path.Combine(appDir, "EndpointChecker.exe");
-            string backupDir  = Path.Combine(app_TempDir, "EndpointChecker_UserData");
-            _updateScript     = Path.Combine(app_TempDir, "EndpointChecker_Update.cmd");
+            string appDir = app_CurrentWorkingDir;
+            string appExe = Path.Combine(appDir, "EndpointChecker.exe");
+            string backupDir = Path.Combine(app_TempDir, "EndpointChecker_UserData");
+            _updateScript = Path.Combine(app_TempDir, "EndpointChecker_Update.cmd");
 
             var sb = new StringBuilder();
             sb.AppendLine("@echo off");

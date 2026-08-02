@@ -25,9 +25,9 @@ namespace EndpointCheckerUpdater
     {
         // ── Constants ────────────────────────────────────────────────────────────
 
-        const string DownloadUrl = "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/download/v3.1.0/EndpointChecker-v3.1.0-win-x86.zip";
-        const string TargetVer   = "3.1.0";
-        const string AppExe      = "EndpointChecker.exe";
+        const string DownloadUrl = "";
+        const string TargetVer = "development build";
+        const string AppExe = "EndpointChecker.exe";
 
         // User data files that must survive the update
         static readonly string[] UserDataFiles =
@@ -38,9 +38,9 @@ namespace EndpointCheckerUpdater
 
         // ── Controls ─────────────────────────────────────────────────────────────
 
-        private TextBox     _txtDir;
-        private Label       _lblVersion, _lblStatus;
-        private Button      _btnBrowse, _btnUpdate, _btnClose;
+        private TextBox _txtDir;
+        private Label _lblVersion, _lblStatus;
+        private Button _btnBrowse, _btnUpdate, _btnClose;
         private ProgressBar _progress;
         private RichTextBox _log;
 
@@ -56,15 +56,15 @@ namespace EndpointCheckerUpdater
 
         private void BuildUI()
         {
-            Text            = $"Endpoint Status Checker — Updater to v{TargetVer}";
-            Size            = new Size(580, 500);
-            MinimumSize     = Size;
+            Text = "Endpoint Status Checker — Updater unavailable";
+            Size = new Size(580, 500);
+            MinimumSize = Size;
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            MaximizeBox     = MinimizeBox = false;
-            StartPosition   = FormStartPosition.CenterScreen;
-            Font            = new Font("Segoe UI", 9f);
-            BackColor       = Color.FromArgb(22, 19, 25);
-            ForeColor       = Color.WhiteSmoke;
+            MaximizeBox = MinimizeBox = false;
+            StartPosition = FormStartPosition.CenterScreen;
+            Font = new Font("Segoe UI", 9f);
+            BackColor = Color.FromArgb(22, 19, 25);
+            ForeColor = Color.WhiteSmoke;
 
             // Header
             var lblTitle = MakeLabel(
@@ -74,7 +74,7 @@ namespace EndpointCheckerUpdater
                 new Font("Segoe UI", 13f, FontStyle.Bold));
 
             var lblSub = MakeLabel(
-                $"Upgrades any previous version to v{TargetVer}  ·  .NET 10  ·  self-contained x86  ·  no runtime required",
+                "Official v3 updates are not available yet. Use a manually provided test build only.",
                 16, 44, 544, 18, Color.Silver);
 
             var sep1 = MakeSep(70);
@@ -86,10 +86,10 @@ namespace EndpointCheckerUpdater
 
             _txtDir = new TextBox
             {
-                Location    = new Point(14, 102),
-                Size        = new Size(446, 22),
-                BackColor   = Color.FromArgb(30, 35, 60),
-                ForeColor   = Color.WhiteSmoke,
+                Location = new Point(14, 102),
+                Size = new Size(446, 22),
+                BackColor = Color.FromArgb(30, 35, 60),
+                ForeColor = Color.WhiteSmoke,
                 BorderStyle = BorderStyle.FixedSingle
             };
 
@@ -104,32 +104,33 @@ namespace EndpointCheckerUpdater
             _progress = new ProgressBar
             {
                 Location = new Point(14, 162),
-                Size     = new Size(548, 16),
-                Minimum  = 0,
-                Maximum  = 100,
-                Style    = ProgressBarStyle.Continuous
+                Size = new Size(548, 16),
+                Minimum = 0,
+                Maximum = 100,
+                Style = ProgressBarStyle.Continuous
             };
 
             _lblStatus = MakeLabel(
-                "Ready.  Select the install directory then click Start Update.",
+                "Updater disabled until an official v3 release is published.",
                 14, 182, 548, 18);
 
             // Log
             _log = new RichTextBox
             {
-                Location    = new Point(14, 206),
-                Size        = new Size(548, 212),
-                ReadOnly    = true,
-                BackColor   = Color.FromArgb(15, 15, 20),
-                ForeColor   = Color.FromArgb(160, 200, 160),
+                Location = new Point(14, 206),
+                Size = new Size(548, 212),
+                ReadOnly = true,
+                BackColor = Color.FromArgb(15, 15, 20),
+                ForeColor = Color.FromArgb(160, 200, 160),
                 BorderStyle = BorderStyle.FixedSingle,
-                Font        = new Font("Consolas", 8.5f),
-                ScrollBars  = RichTextBoxScrollBars.Vertical
+                Font = new Font("Consolas", 8.5f),
+                ScrollBars = RichTextBoxScrollBars.Vertical
             };
 
             // Buttons
             _btnUpdate = MakeButton("Start Update", 358, 428, 108, 30,
                 Color.FromArgb(25, 90, 45), Color.FromArgb(45, 150, 75));
+            _btnUpdate.Enabled = false;
             _btnUpdate.Click += BtnUpdate_Click;
 
             _btnClose = MakeButton("Close", 474, 428, 88, 30,
@@ -149,26 +150,30 @@ namespace EndpointCheckerUpdater
             Color? color = null, Font font = null) =>
             new Label
             {
-                Text      = text,
-                Location  = new Point(x, y),
-                Size      = new Size(w, h),
-                AutoSize  = false,
+                Text = text,
+                Location = new Point(x, y),
+                Size = new Size(w, h),
+                AutoSize = false,
                 ForeColor = color ?? Color.Silver,
-                Font      = font
+                Font = font
             };
 
         private static Label MakeSep(int y) =>
-            new Label { Location = new Point(0, y), Size = new Size(580, 1),
-                        BackColor = Color.FromArgb(50, 50, 70) };
+            new Label
+            {
+                Location = new Point(0, y),
+                Size = new Size(580, 1),
+                BackColor = Color.FromArgb(50, 50, 70)
+            };
 
         private static Button MakeButton(string text, int x, int y, int w, int h,
             Color? bg = null, Color? border = null)
         {
             var b = new Button
             {
-                Text      = text,
-                Location  = new Point(x, y),
-                Size      = new Size(w, h),
+                Text = text,
+                Location = new Point(x, y),
+                Size = new Size(w, h),
                 FlatStyle = FlatStyle.Flat,
                 BackColor = bg ?? Color.FromArgb(40, 50, 90),
                 ForeColor = Color.WhiteSmoke
@@ -193,9 +198,9 @@ namespace EndpointCheckerUpdater
             }
 
             // 2. Common candidate locations
-            string desktop  = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string profile  = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string progFiles   = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string progFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             string progFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 
             foreach (string candidate in new[]
@@ -226,18 +231,18 @@ namespace EndpointCheckerUpdater
                 try
                 {
                     var vi = FileVersionInfo.GetVersionInfo(exePath);
-                    _lblVersion.Text      = $"Detected:  v{vi.FileVersion}  →  will upgrade to v{TargetVer}";
+                    _lblVersion.Text = $"Detected:  v{vi.FileVersion}  →  no official v3 update available";
                     _lblVersion.ForeColor = Color.FromArgb(100, 200, 100);
                 }
                 catch
                 {
-                    _lblVersion.Text      = "Detected: EndpointChecker.exe found (version unknown)  →  will upgrade to v" + TargetVer;
+                    _lblVersion.Text = "Detected: EndpointChecker.exe found (version unknown)  →  no official v3 update available";
                     _lblVersion.ForeColor = Color.FromArgb(100, 200, 100);
                 }
             }
             else
             {
-                _lblVersion.Text      = "EndpointChecker.exe not found in this folder.";
+                _lblVersion.Text = "EndpointChecker.exe not found in this folder.";
                 _lblVersion.ForeColor = Color.Orange;
             }
         }
@@ -246,7 +251,7 @@ namespace EndpointCheckerUpdater
         {
             using (var dlg = new FolderBrowserDialog
             {
-                Description  = "Select the folder that contains EndpointChecker.exe",
+                Description = "Select the folder that contains EndpointChecker.exe",
                 SelectedPath = _txtDir.Text
             })
             {
@@ -257,42 +262,26 @@ namespace EndpointCheckerUpdater
 
         // ── Update logic ─────────────────────────────────────────────────────────
 
-        private async void BtnUpdate_Click(object sender, EventArgs e)
+        private void BtnUpdate_Click(object sender, EventArgs e)
         {
-            string dir = _txtDir.Text.Trim();
-
-            if (string.IsNullOrEmpty(dir) || !Directory.Exists(dir))
-            {
-                MessageBox.Show("Please select a valid install directory.",
-                    Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            SetControlsEnabled(false);
-
-            try
-            {
-                await RunUpdateAsync(dir);
-            }
-            catch (Exception ex)
-            {
-                Log($"ERROR: {ex.Message}", Color.OrangeRed);
-                Status("Update failed — see log above.", Color.OrangeRed);
-                SetControlsEnabled(true);
-            }
+            MessageBox.Show(
+                "Official v3 updates are not available yet.",
+                Text,
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
 
         private void SetControlsEnabled(bool enabled)
         {
             _btnUpdate.Enabled = enabled;
             _btnBrowse.Enabled = enabled;
-            _txtDir.Enabled    = enabled;
-            _btnClose.Enabled  = enabled;
+            _txtDir.Enabled = enabled;
+            _btnClose.Enabled = enabled;
         }
 
         private async Task RunUpdateAsync(string installDir)
         {
-            string tempZip     = Path.Combine(Path.GetTempPath(), "EndpointChecker-v3.1.0-win-x86.zip");
+            string tempZip = Path.Combine(Path.GetTempPath(), "EndpointChecker-v3-unpublished-win-x86.zip");
             string tempExtract = Path.Combine(Path.GetTempPath(), "EndpointChecker_Updater_Extract");
 
             // ── Step 1: Stop running instance ────────────────────────────────────
@@ -319,7 +308,7 @@ namespace EndpointCheckerUpdater
             Progress(3);
 
             // ── Step 2: Download ─────────────────────────────────────────────────
-            Status("Downloading v3.1.0 from GitHub (~102 MB)...");
+            Status("Downloading official v3 package from GitHub...");
             Log($"Downloading: {DownloadUrl}");
 
             using (var wc = new WebClient())
@@ -376,7 +365,7 @@ namespace EndpointCheckerUpdater
             {
                 foreach (string src in Directory.GetFiles(tempExtract, "*", SearchOption.AllDirectories))
                 {
-                    string rel  = src.Substring(tempExtract.Length).TrimStart(Path.DirectorySeparatorChar);
+                    string rel = src.Substring(tempExtract.Length).TrimStart(Path.DirectorySeparatorChar);
                     string dest = Path.Combine(installDir, rel);
                     Directory.CreateDirectory(Path.GetDirectoryName(dest));
                     File.Copy(src, dest, overwrite: true);
@@ -430,7 +419,7 @@ namespace EndpointCheckerUpdater
         {
             if (InvokeRequired) { Invoke(new Action(() => Status(text, color))); return; }
             _lblStatus.ForeColor = color == default ? Color.Silver : color;
-            _lblStatus.Text      = text;
+            _lblStatus.Text = text;
         }
 
         private void Progress(int value)
@@ -442,9 +431,9 @@ namespace EndpointCheckerUpdater
         private void Log(string text, Color color = default)
         {
             if (InvokeRequired) { Invoke(new Action(() => Log(text, color))); return; }
-            _log.SelectionStart  = _log.TextLength;
+            _log.SelectionStart = _log.TextLength;
             _log.SelectionLength = 0;
-            _log.SelectionColor  = color == default ? Color.FromArgb(160, 200, 160) : color;
+            _log.SelectionColor = color == default ? Color.FromArgb(160, 200, 160) : color;
             _log.AppendText(text + "\n");
             _log.ScrollToCaret();
         }

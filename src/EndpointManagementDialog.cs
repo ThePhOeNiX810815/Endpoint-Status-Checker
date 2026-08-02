@@ -18,18 +18,18 @@ namespace EndpointChecker
         // Only endpoint lines are shown in the grid; comments are preserved on save.
         private sealed class FileLine
         {
-            public bool   IsEndpoint;
+            public bool IsEndpoint;
             public string Name;
             public string Url;
             public string Raw;   // original text for comment / blank lines
         }
 
         private List<FileLine> _lines;
-        private DataGridView   _grid;
+        private DataGridView _grid;
 
         public EndpointManagementDialog(CheckerMainForm owner)
         {
-            _owner    = owner;
+            _owner = owner;
             _filePath = Program.endpointDefinitionsFile;
             BuildUI();
             LoadFile();
@@ -40,56 +40,56 @@ namespace EndpointChecker
 
         private void BuildUI()
         {
-            Text            = "Endpoint Management";
-            Size            = new Size(720, 540);
+            Text = "Endpoint Management";
+            Size = new Size(720, 540);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            MaximizeBox     = false;
-            MinimizeBox     = false;
-            StartPosition   = FormStartPosition.CenterParent;
-            Font            = new Font("Segoe UI", 9f);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Font = new Font("Segoe UI", 9f);
 
             _grid = new DataGridView
             {
-                Location              = new Point(8, 8),
-                Size                  = new Size(688, 420),
-                AllowUserToAddRows    = false,
+                Location = new Point(8, 8),
+                Size = new Size(688, 420),
+                AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
-                RowHeadersVisible     = false,
-                SelectionMode         = DataGridViewSelectionMode.FullRowSelect,
-                MultiSelect           = false,
-                AutoSizeColumnsMode   = DataGridViewAutoSizeColumnsMode.None,
-                EditMode              = DataGridViewEditMode.EditOnEnter,
-                ClipboardCopyMode     = DataGridViewClipboardCopyMode.EnableWithoutHeaderText,
+                RowHeadersVisible = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None,
+                EditMode = DataGridViewEditMode.EditOnEnter,
+                ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText,
             };
 
             var colName = new DataGridViewTextBoxColumn
             {
                 HeaderText = "Name",
-                Name       = "colName",
-                Width      = 180,
-                SortMode   = DataGridViewColumnSortMode.NotSortable,
+                Name = "colName",
+                Width = 180,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             var colUrl = new DataGridViewTextBoxColumn
             {
                 HeaderText = "URL",
-                Name       = "colUrl",
-                Width      = 492,
-                SortMode   = DataGridViewColumnSortMode.NotSortable,
+                Name = "colUrl",
+                Width = 492,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             _grid.Columns.AddRange(colName, colUrl);
 
-            var btnAdd    = new Button { Text = "Add",       Size = new Size(80, 26), Location = new Point(8,   442) };
-            var btnDelete = new Button { Text = "Delete",    Size = new Size(80, 26), Location = new Point(96,  442) };
-            var btnUp     = new Button { Text = "▲ Move Up", Size = new Size(88, 26), Location = new Point(184, 442) };
-            var btnDown   = new Button { Text = "▼ Move Down", Size = new Size(96, 26), Location = new Point(280, 442) };
-            var btnSave   = new Button { Text = "Save",      Size = new Size(80, 26), Location = new Point(520, 442), DialogResult = DialogResult.OK };
-            var btnCancel = new Button { Text = "Cancel",    Size = new Size(80, 26), Location = new Point(608, 442), DialogResult = DialogResult.Cancel };
+            var btnAdd = new Button { Text = "Add", Size = new Size(80, 26), Location = new Point(8, 442) };
+            var btnDelete = new Button { Text = "Delete", Size = new Size(80, 26), Location = new Point(96, 442) };
+            var btnUp = new Button { Text = "▲ Move Up", Size = new Size(88, 26), Location = new Point(184, 442) };
+            var btnDown = new Button { Text = "▼ Move Down", Size = new Size(96, 26), Location = new Point(280, 442) };
+            var btnSave = new Button { Text = "Save", Size = new Size(80, 26), Location = new Point(520, 442), DialogResult = DialogResult.OK };
+            var btnCancel = new Button { Text = "Cancel", Size = new Size(80, 26), Location = new Point(608, 442), DialogResult = DialogResult.Cancel };
 
-            btnAdd.Click    += BtnAdd_Click;
+            btnAdd.Click += BtnAdd_Click;
             btnDelete.Click += BtnDelete_Click;
-            btnUp.Click     += BtnUp_Click;
-            btnDown.Click   += BtnDown_Click;
-            btnSave.Click   += BtnSave_Click;
+            btnUp.Click += BtnUp_Click;
+            btnDown.Click += BtnDown_Click;
+            btnSave.Click += BtnSave_Click;
 
             Controls.AddRange(new Control[] { _grid, btnAdd, btnDelete, btnUp, btnDown, btnSave, btnCancel });
             AcceptButton = btnSave;
@@ -117,7 +117,7 @@ namespace EndpointChecker
                 {
                     string[] parts = trimmed.Split(new char[] { '|' }, 2);
                     string name = parts[0].Trim();
-                    string url  = parts.Length > 1 ? parts[1].Trim() : string.Empty;
+                    string url = parts.Length > 1 ? parts[1].Trim() : string.Empty;
                     _lines.Add(new FileLine { IsEndpoint = true, Name = name, Url = url });
                     _grid.Rows.Add(name, url);
                 }
@@ -142,7 +142,7 @@ namespace EndpointChecker
                 if (gridIdx < _grid.Rows.Count)
                 {
                     fl.Name = (_grid.Rows[gridIdx].Cells[0].Value ?? string.Empty).ToString().Trim();
-                    fl.Url  = (_grid.Rows[gridIdx].Cells[1].Value ?? string.Empty).ToString().Trim();
+                    fl.Url = (_grid.Rows[gridIdx].Cells[1].Value ?? string.Empty).ToString().Trim();
                     gridIdx++;
                 }
             }
@@ -227,10 +227,10 @@ namespace EndpointChecker
         {
             var row = _grid.Rows[a];
             object nameA = row.Cells[0].Value;
-            object urlA  = row.Cells[1].Value;
+            object urlA = row.Cells[1].Value;
             var rowB = _grid.Rows[b];
-            row.Cells[0].Value  = rowB.Cells[0].Value;
-            row.Cells[1].Value  = rowB.Cells[1].Value;
+            row.Cells[0].Value = rowB.Cells[0].Value;
+            row.Cells[1].Value = rowB.Cells[1].Value;
             rowB.Cells[0].Value = nameA;
             rowB.Cells[1].Value = urlA;
         }
@@ -243,11 +243,11 @@ namespace EndpointChecker
             if (lineA == null || lineB == null)
                 return;
             string tmpName = lineA.Name;
-            string tmpUrl  = lineA.Url;
+            string tmpUrl = lineA.Url;
             lineA.Name = lineB.Name;
-            lineA.Url  = lineB.Url;
+            lineA.Url = lineB.Url;
             lineB.Name = tmpName;
-            lineB.Url  = tmpUrl;
+            lineB.Url = tmpUrl;
         }
 
         private FileLine GetEndpointLine(int gridIndex)

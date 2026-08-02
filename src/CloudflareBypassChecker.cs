@@ -10,9 +10,9 @@ namespace EndpointChecker
 {
     public enum CloudflareBypassMethod
     {
-        Disabled     = 0,
+        Disabled = 0,
         FlareSolverr = 1,
-        Playwright   = 2
+        Playwright = 2
     }
 
     public class CloudflareBypassResult

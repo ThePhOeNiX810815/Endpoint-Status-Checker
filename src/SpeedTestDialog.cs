@@ -955,11 +955,11 @@ namespace EndpointChecker
                                         Color.LightGreen,
                                         true);
 
-                                ThreadSafeInvoke(() =>
-                                {
-                                    lbl_DownloadHint.Text = "Sampling sustained transfer rate with staged payload streams";
-                                    lbl_DownloadHint.ForeColor = colorInfo;
-                                });
+                    ThreadSafeInvoke(() =>
+                    {
+                        lbl_DownloadHint.Text = "Sampling sustained transfer rate with staged payload streams";
+                        lbl_DownloadHint.ForeColor = colorInfo;
+                    });
 
                     // TEST DOWNLOAD SPEED
                     int downloadSpeed = TestServerDownloadSpeed();

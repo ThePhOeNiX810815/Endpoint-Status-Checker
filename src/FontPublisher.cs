@@ -34,7 +34,7 @@ namespace EndpointChecker
 
                 Registry.SetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts",
                                   actualFontName, resourceFileName, RegistryValueKind.String);
-            }           
+            }
         }
     }
 }
