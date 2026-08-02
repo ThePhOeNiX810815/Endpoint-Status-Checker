@@ -1522,90 +1522,14 @@ namespace EndpointChecker
             bool removeURLParameters,
             CookieCollection cookies = null)
         {
-            // REQUEST PARAMETERS
-            string httpWebRequest_Method = WebRequestMethods.Http.Get;
-            Version httpWebRequest_ProtocolVersion = HttpVersion.Version11;
-            RequestCachePolicy httpWebRequest_CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-            DecompressionMethods httpWebRequest_DecompressionMethods =
-                DecompressionMethods.GZip |
-                DecompressionMethods.Deflate |
-                DecompressionMethods.None;
-
-            if (removeURLParameters)
-            {
-                // REMOVE URL PARAMETERS [IF ANY PRESENT]
-                endpointURI.RemoveQuery();
-            }
-
-            // COOKIE CONTAINER
-            CookieContainer httpWebRequest_CookieContainer = new CookieContainer(300);
-            if (cookies != null)
-            {
-                httpWebRequest_CookieContainer.Add(cookies);
-            }
-
-            // ADD GDPR COOKIES
-            httpWebRequest_CookieContainer.Add(new Cookie("viewed_cookie_policy", "yes", endpointURI.AbsolutePath, endpointURI.Host));
-            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-necessary", "yes", endpointURI.AbsolutePath, endpointURI.Host));
-            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-functional", "yes", endpointURI.AbsolutePath, endpointURI.Host));
-            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-performance", "yes", endpointURI.AbsolutePath, endpointURI.Host));
-            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-analytics", "yes", endpointURI.AbsolutePath, endpointURI.Host));
-            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-advertisement", "yes", endpointURI.AbsolutePath, endpointURI.Host));
-            httpWebRequest_CookieContainer.Add(new Cookie("cookielawinfo-checkbox-others", "yes", endpointURI.AbsolutePath, endpointURI.Host));
-
-            // CREATE REQUEST
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(endpointURI.AbsoluteUri);
-            httpWebRequest.Method = httpWebRequest_Method;
-            httpWebRequest.UserAgent = http_UserAgent;
-            httpWebRequest.Accept = @"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7";
-            httpWebRequest.Timeout = httpRequestTimeout;
-            httpWebRequest.ReadWriteTimeout = httpRequestTimeout;
-            httpWebRequest.AllowAutoRedirect = allowAutoRedirect;
-            httpWebRequest.KeepAlive = true;
-            httpWebRequest.CachePolicy = httpWebRequest_CachePolicy;
-            httpWebRequest.CookieContainer = httpWebRequest_CookieContainer;
-            httpWebRequest.AutomaticDecompression = httpWebRequest_DecompressionMethods;
-            httpWebRequest.ProtocolVersion = httpWebRequest_ProtocolVersion;
-            httpWebRequest.MaximumAutomaticRedirections = 100;
-
-            // CUSTOM HEADERS
-            // Note: "accept-encoding" is intentionally omitted — AutomaticDecompression
-            // manages that header automatically; manually setting it alongside
-            // AutomaticDecompression throws InvalidOperationException on .NET 5+.
-            // HTTP/2 pseudo-headers (:authority/:path/:scheme) are also omitted —
-            // they are not valid HTTP/1.1 headers and HttpWebRequest rejects them on .NET 10.
-            WebHeaderCollection requestHeadersCollection = new WebHeaderCollection
-            {
-                { "accept-language", @"*;*" },
-                { "cache-control", "max-age=0" },
-                { "dnt", "1" },
-                { "upgrade-insecure-requests", "1" },
-
-                { "Sec-Fetch-User", "?1" },
-                { "Sec-Fetch-Site", "none" },
-                { "Sec-Fetch-Mode", "navigate" },
-                { "Sec-Fetch-Dest", "document" },
-                { "Sec-CH-UA-Mobile", "?0" },
-                { "Sec-CH-UA-Platform", "\"Windows\"" }
-
-            };
-            httpWebRequest.Headers.Add(requestHeadersCollection);
-
-            // SET CREDENTIALS
-            httpWebRequest.PreAuthenticate = true;
-            httpWebRequest.AuthenticationLevel = System.Net.Security.AuthenticationLevel.MutualAuthRequested;
-
-            if (endpoint.LoginName != status_NotAvailable &&
-                !string.IsNullOrEmpty(endpoint.LoginName))
-            {
-                // SPECIFIED CREDENTIALS
-                httpWebRequest.Credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
-            }
-            else
-            {
-                // CURRENT WINDOWS USER CREDENTIALS
-                httpWebRequest.Credentials = CredentialCache.DefaultCredentials;
-            }
+            HttpWebRequest httpWebRequest = EndpointHttpRequestFactory.Create(
+                endpoint,
+                endpointURI,
+                httpRequestTimeout,
+                allowAutoRedirect,
+                removeURLParameters,
+                http_UserAgent,
+                cookies);
 
             // GET REQUEST HEADERS
             GetHTTPWebHeaders(endpoint.HTTPRequestHeaders.PropertyItem, httpWebRequest.Headers);
@@ -1621,11 +1545,7 @@ namespace EndpointChecker
         {
             if (response == null) return false;
 
-            bool hasCfRay = !string.IsNullOrEmpty(response.Headers["CF-RAY"]);
-            bool hasCfServer = !string.IsNullOrEmpty(response.Server) &&
-                               response.Server.IndexOf("cloudflare", StringComparison.OrdinalIgnoreCase) >= 0;
-
-            return hasCfRay || hasCfServer;
+            return EndpointHttpResponseClassifier.IsCloudflareProtected(response.Headers, response.Server);
         }
 
         public void GetHTTPWebHeaders(
