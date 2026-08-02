@@ -2,6 +2,13 @@ using System;
 
 namespace EndpointChecker
 {
+    /// <summary>
+    /// Captures endpoint-check options from the UI before background work starts.
+    /// </summary>
+    /// <remarks>
+    /// Timeout values are stored in milliseconds because the legacy request APIs consume
+    /// milliseconds, while the UI exposes seconds.
+    /// </remarks>
     internal sealed class EndpointCheckOptions
     {
         private EndpointCheckOptions(
@@ -57,6 +64,9 @@ namespace EndpointChecker
         public int HttpRequestTimeout { get; }
         public int FtpRequestTimeout { get; }
 
+        /// <summary>
+        /// Creates a snapshot from current UI values while preserving legacy seconds-to-milliseconds conversion.
+        /// </summary>
         public static EndpointCheckOptions FromUiValues(
             bool allowAutoRedirect,
             bool validateSslCertificate,
@@ -94,6 +104,9 @@ namespace EndpointChecker
                 checked(ftpRequestTimeoutSeconds * 1000));
         }
 
+        /// <summary>
+        /// Preserves the current behavior of reducing requested parallelism to the enabled endpoint count.
+        /// </summary>
         public EndpointCheckOptions WithThreadCountAdjustedForEnabledEndpoints(int enabledEndpointsCount)
         {
             if (enabledEndpointsCount > 0 &&

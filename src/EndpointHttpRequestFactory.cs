@@ -4,10 +4,20 @@ using System.Net.Cache;
 
 namespace EndpointChecker
 {
+    /// <summary>
+    /// Builds the legacy HttpWebRequest used for endpoint status checks.
+    /// </summary>
+    /// <remarks>
+    /// This factory intentionally keeps HttpWebRequest settings, headers, credentials, cookies,
+    /// and the non-mutating removeUrlParameters behavior stable for compatibility.
+    /// </remarks>
     internal static class EndpointHttpRequestFactory
     {
         private const string StatusNotAvailable = "N/A";
 
+        /// <summary>
+        /// Creates a configured request without applying user-defined endpoint headers.
+        /// </summary>
         public static HttpWebRequest Create(
             EndpointDefinition endpoint,
             Uri endpointUri,

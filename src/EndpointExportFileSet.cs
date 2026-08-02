@@ -2,6 +2,9 @@ using System.IO;
 
 namespace EndpointChecker
 {
+    /// <summary>
+    /// Holds the legacy endpoint status export file names and their paths for one export directory.
+    /// </summary>
     internal sealed class EndpointExportFileSet
     {
         private EndpointExportFileSet(
@@ -48,6 +51,9 @@ namespace EndpointChecker
 
         public string HtmlFtpPath => Path.Combine(Directory, HtmlFtpFileName);
 
+        /// <summary>
+        /// Creates a file set from the current export directory and legacy file-name values.
+        /// </summary>
         public static EndpointExportFileSet Create(
             string directory,
             string xlsxFileName,
