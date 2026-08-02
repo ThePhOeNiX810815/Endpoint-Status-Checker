@@ -2899,6 +2899,12 @@ namespace EndpointChecker
                                           string dnsLookupOnHost
             )
         {
+            EndpointExportOptions exportOptions = EndpointExportOptions.Create(
+                cb_ExportEndpointsStatus_JSON.Checked,
+                cb_ExportEndpointsStatus_XML.Checked,
+                cb_ExportEndpointsStatus_XLSX.Checked,
+                cb_ExportEndpointsStatus_HTML.Checked);
+
             // ERROR LIST
             List<string> errorsList = new List<string>();
 
@@ -2916,13 +2922,12 @@ namespace EndpointChecker
 
             if (exportList.Count > 0)
             {
-                if (cb_ExportEndpointsStatus_JSON.Checked ||
-                    cb_ExportEndpointsStatus_XML.Checked)
+                if (exportOptions.StructuredText)
                 {
                     // SERIALIZE ENDPOINTS LIST TO JSON
                     string jsonString = JsonConvert.SerializeObject(exportList, Newtonsoft.Json.Formatting.Indented);
 
-                    if (cb_ExportEndpointsStatus_JSON.Checked)
+                    if (exportOptions.Json)
                     {
                         // JSON EXPORT
                         // ===========
@@ -2945,7 +2950,7 @@ namespace EndpointChecker
                         }
                     }
 
-                    if (cb_ExportEndpointsStatus_XML.Checked)
+                    if (exportOptions.Xml)
                     {
                         // XML EXPORT
                         // ==========
@@ -2969,7 +2974,7 @@ namespace EndpointChecker
                     }
                 }
 
-                if (cb_ExportEndpointsStatus_XLSX.Checked)
+                if (exportOptions.Xlsx)
                 {
                     // XLSX EXPORT
                     // ===========
@@ -3256,7 +3261,7 @@ namespace EndpointChecker
                                 ex.Message);
                         }
 
-                        if (cb_ExportEndpointsStatus_HTML.Checked)
+                        if (exportOptions.Html)
                         {
                             // HTML EXPORT
                             // ===========
@@ -3271,7 +3276,7 @@ namespace EndpointChecker
                             // SET WHITE BACKGROUND FOR UNUSED CELLS [CREATE SEPARATE CLASS FOR IT]
                             summaryWorkSheet["A09"].Style.Color = Color.White;
 
-                            if (cb_ExportEndpointsStatus_JSON.Checked)
+                            if (exportOptions.Json)
                             {
                                 // ADD 'JSON' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
                                 RichText jsonPageHyperlink = summaryWorkSheet["A10"].RichText;
@@ -3281,7 +3286,7 @@ namespace EndpointChecker
                                 summaryWorkSheet["A10"].Style.HorizontalAlignment = HorizontalAlignType.Center;
                             }
 
-                            if (cb_ExportEndpointsStatus_XML.Checked)
+                            if (exportOptions.Xml)
                             {
                                 // ADD 'XML' HYPERLINK PLACEHOLDER TO 'SUMMARY' PAGE           
                                 RichText xmlPageHyperlink = summaryWorkSheet["A11"].RichText;

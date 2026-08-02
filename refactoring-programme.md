@@ -48,7 +48,7 @@ Verification:
 
 ## Ticket 2: Endpoint checking core extraction
 
-Status: In progress on `refactor/v3-endpoint-checking-core`
+Status: Merged to `v3-main` via PR #45
 
 Base branch: `v3-main`
 
@@ -89,7 +89,7 @@ Verification:
 
 ## Ticket 3: HTTP compatibility boundaries
 
-Status: In progress on `refactor/v3-http-reliability`
+Status: Merged to `v3-main` via PR #46
 
 Base branch: `v3-main`
 
@@ -125,6 +125,42 @@ Tests:
 
 Verification:
 
+- `dotnet run --project tests/HttpCompatibility.Tests/HttpCompatibility.Tests.csproj`
+- `dotnet run --project tests/EndpointCheckingCore.Tests/EndpointCheckingCore.Tests.csproj`
+- `dotnet run --project tests/EndpointDefinitionParser.Tests/EndpointDefinitionParser.Tests.csproj`
+- `dotnet build src/EndpointChecker.csproj --no-restore -p:EnableWindowsTargeting=true -v:q`
+
+## Ticket 4: Export options snapshot
+
+Status: In progress on `refactor/v3-export-and-ui-mapping`
+
+Base branch: `v3-main`
+
+Objective:
+
+Reduce direct WinForms control coupling inside endpoint-status export generation by extracting a small immutable snapshot of selected export formats.
+
+Scope completed in this ticket:
+
+- Extracted `EndpointExportOptions` from the four export checkbox values.
+- Snapshotted export choices once at the `EndpointsStatusExport` boundary.
+- Replaced repeated direct checkbox reads inside export generation with the snapshot.
+- Added dependency-free characterization tests for the export-options snapshot.
+
+Non-goals:
+
+- No JSON, XML, HTML, or XLSX output format changes.
+- No change to file names, file-lock behavior, worksheet shape, column order, hidden columns, colors, formatting, or export error handling.
+- No configuration load/save behavior changes.
+- No UI redesign.
+
+Tests:
+
+- `tests/ExportOptions.Tests` covers the export-options snapshot.
+
+Verification:
+
+- `dotnet run --project tests/ExportOptions.Tests/ExportOptions.Tests.csproj`
 - `dotnet run --project tests/HttpCompatibility.Tests/HttpCompatibility.Tests.csproj`
 - `dotnet run --project tests/EndpointCheckingCore.Tests/EndpointCheckingCore.Tests.csproj`
 - `dotnet run --project tests/EndpointDefinitionParser.Tests/EndpointDefinitionParser.Tests.csproj`
