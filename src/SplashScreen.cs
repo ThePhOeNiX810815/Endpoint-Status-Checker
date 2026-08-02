@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
 using static EndpointChecker.Program;
@@ -18,7 +17,6 @@ namespace EndpointChecker
         [DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public SplashScreen()
         {
             InitializeComponent();

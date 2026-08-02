@@ -9,7 +9,6 @@ using System.Linq;
 using System.Management;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -165,7 +164,6 @@ namespace EndpointChecker
             { 10000, "Webmin" }
         };
 
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public EndpointDetailsDialog(int pingTimeout, EndpointDefinition selectedEndpoint, Image selectedEndpointImage)
         {
             InitializeComponent();

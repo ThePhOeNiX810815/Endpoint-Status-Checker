@@ -27,7 +27,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -154,7 +153,6 @@ namespace EndpointChecker
         private Panel endpointHeaderCornerPatch;
         private GroupBox groupBox_ScanProgress;
 
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public CheckerMainForm()
         {
             InitializeComponent();
@@ -826,7 +824,7 @@ namespace EndpointChecker
                                                 }
                                                 else
                                                 {
-                                                    throw wEX;
+                                                    throw;
                                                 }
                                             }
 
@@ -1904,7 +1902,7 @@ namespace EndpointChecker
                 }
                 else
                 {
-                    throw webException;
+                    throw;
                 }
             }
 

@@ -5,7 +5,6 @@ using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -27,7 +26,6 @@ namespace EndpointChecker
         [DllImport("user32.dll")] public static extern int  SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [DllImport("user32.dll")] public static extern bool ReleaseCapture();
 
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public AutoUpdaterDialog()
         {
             InitializeComponent();
@@ -76,11 +74,11 @@ namespace EndpointChecker
                                             Path.Combine(app_TempDir, _zipFileName));
                         downloaded = true;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         CleanTempPackageArchive();
                         Thread.Sleep(1000);
-                        if (attempt == maxAttempts) throw ex;
+                        if (attempt == maxAttempts) throw;
                     }
                 }
 
