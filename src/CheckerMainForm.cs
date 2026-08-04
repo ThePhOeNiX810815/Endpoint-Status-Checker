@@ -1186,16 +1186,15 @@ namespace EndpointChecker
                                         if (!BW_GetStatus.CancellationPending &&
                                             checkOptions.ResolveNetworkShares)
                                         {
-                                            // RESOLVE NETWORK SHARES
-                                            try
-                                            {
-                                                // GET LIST
-                                                List<string> netSharesList = GetNetShares(responseURI.Host);
+                                            EndpointNetworkShareAcquireResult shareAcquireResult =
+                                                EndpointNetworkShareAcquisition.TryAcquire(
+                                                    checkOptions.ResolveNetworkShares,
+                                                    responseURI.Host,
+                                                    GetNetShares);
 
-                                                endpoint.NetworkShare = EndpointNetworkShareResolver.BuildSortedShareArray(netSharesList);
-                                            }
-                                            catch
+                                            if (shareAcquireResult.ShouldAssign)
                                             {
+                                                endpoint.NetworkShare = shareAcquireResult.Shares;
                                             }
                                         }
 
