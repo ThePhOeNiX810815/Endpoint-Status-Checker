@@ -13,9 +13,11 @@
     <Compile Include="..\..\src\EndpointCheckProgressWorkItem.cs" Link="EndpointCheckProgressWorkItem.cs" />
     <Compile Include="..\..\src\EndpointCheckResultFactory.cs" Link="EndpointCheckResultFactory.cs" />
     <Compile Include="..\..\src\EndpointFtpStatusMapper.cs" Link="EndpointFtpStatusMapper.cs" />
+    <Compile Include="..\..\src\EndpointHttpRedirectResolver.cs" Link="EndpointHttpRedirectResolver.cs" />
     <Compile Include="..\..\src\EndpointPingRetryExecutor.cs" Link="EndpointPingRetryExecutor.cs" />
     <Compile Include="..\..\src\EndpointProtocolRouteResolver.cs" Link="EndpointProtocolRouteResolver.cs" />
     <Compile Include="..\..\src\EndpointScanWorkflowRules.cs" Link="EndpointScanWorkflowRules.cs" />
+    <Compile Include="..\..\src\EndpointScanTerminalFinalizer.cs" Link="EndpointScanTerminalFinalizer.cs" />
     <Compile Include="..\..\src\ReportMailTableBuilder.cs" Link="ReportMailTableBuilder.cs" />
     <Compile Include="..\..\src\UiThreadHelpers.cs" Link="UiThreadHelpers.cs" />
   </ItemGroup>

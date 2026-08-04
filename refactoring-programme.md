@@ -237,7 +237,7 @@ Remaining work in this ticket:
 
 This ledger is intentionally strict: a priority is not considered complete unless all listed completion criteria are covered by deterministic tests or blocked by an explicit owner decision.
 
-1. Scan workflow characterization harness: In progress (partial coverage)
+1. Scan workflow characterization harness: Complete (deterministic criteria covered in `docs/refactoring/reconciliation-2026-08-04.md`)
 2. XLSX and HTML export compatibility baseline: In progress (HTML partial, XLSX largely pending)
 3. Protocol decomposition enabled by harness: In progress (initial route decomposition done; deeper extraction pending full harness)
 4. `EndpointDetailsDialog` blocking `.Result` paths: Not started
@@ -247,7 +247,7 @@ This ledger is intentionally strict: a priority is not considered complete unles
 
 ## Ticket 7: Scan-workflow characterization completion (phase 1)
 
-Status: In progress (harness expanded)
+Status: Completed (foundational seams and tests)
 
 Current v3 integration branch: `Main-Dev-V3`
 
@@ -266,3 +266,20 @@ Scope completed in this phase:
 Remaining work in this ticket:
 
 - Complete remaining partial scan-matrix items in `docs/refactoring/reconciliation-2026-08-04.md`, including deeper end-to-end terminal mapping and cancellation-sequencing coverage.
+
+## Ticket 8: Scan-workflow characterization completion (phase 2)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Close the remaining scan harness criteria by extracting deterministic seams for redirect resolution and terminal result finalization.
+
+Scope completed in this phase:
+
+- Extracted deterministic redirect resolution into `EndpointHttpRedirectResolver` and wired the manual redirect path through it.
+- Extracted deterministic terminal result finalization into `EndpointScanTerminalFinalizer` and wired address/response-time/cancellation/last-seen updates through it.
+- Added characterization coverage for redirect resolution and terminal finalization behavior without public internet dependency.
+- Reconciled completion matrix to mark scan-workflow characterization criteria covered.
