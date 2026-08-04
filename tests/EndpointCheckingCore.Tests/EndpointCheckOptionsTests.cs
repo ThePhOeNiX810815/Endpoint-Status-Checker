@@ -171,6 +171,7 @@ namespace EndpointChecker
         {
             Run("HTTP protocol routing respects protocol validation and cancellation", HttpProtocolRoutingRespectsProtocolValidationAndCancellation);
             Run("FTP protocol routing respects protocol validation and cancellation", FtpProtocolRoutingRespectsProtocolValidationAndCancellation);
+            Run("Protocol route resolver maps HTTP HTTPS FTP and None", ProtocolRouteResolverMapsHttpHttpsFtpAndNone);
             Run("Manual redirect follow requires 3xx and location header", ManualRedirectFollowRequires3xxAndLocationHeader);
             Run("Redirect annotation follows URI changes and explicit follow flag", RedirectAnnotationFollowsUriChangesAndExplicitFollowFlag);
             Run("Ping check message is set only in ping validation mode", PingCheckMessageIsSetOnlyInPingValidationMode);
@@ -195,6 +196,16 @@ namespace EndpointChecker
             EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.IsFtpProtocolCheck(true, true, "ftp"));
             EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.IsFtpProtocolCheck(false, false, "ftp"));
             EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.IsFtpProtocolCheck(true, false, "http"));
+        }
+
+        private static void ProtocolRouteResolverMapsHttpHttpsFtpAndNone()
+        {
+            EndpointCheckingCoreTestRunner.AssertEqual(EndpointProtocolRoute.Http, EndpointProtocolRouteResolver.Resolve(true, false, "http"));
+            EndpointCheckingCoreTestRunner.AssertEqual(EndpointProtocolRoute.Http, EndpointProtocolRouteResolver.Resolve(true, false, "HTTPS"));
+            EndpointCheckingCoreTestRunner.AssertEqual(EndpointProtocolRoute.Ftp, EndpointProtocolRouteResolver.Resolve(true, false, "ftp"));
+            EndpointCheckingCoreTestRunner.AssertEqual(EndpointProtocolRoute.None, EndpointProtocolRouteResolver.Resolve(true, false, "mailto"));
+            EndpointCheckingCoreTestRunner.AssertEqual(EndpointProtocolRoute.None, EndpointProtocolRouteResolver.Resolve(false, false, "http"));
+            EndpointCheckingCoreTestRunner.AssertEqual(EndpointProtocolRoute.None, EndpointProtocolRouteResolver.Resolve(true, true, "http"));
         }
 
         private static void ManualRedirectFollowRequires3xxAndLocationHeader()

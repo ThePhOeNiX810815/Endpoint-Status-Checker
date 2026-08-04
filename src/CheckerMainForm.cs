@@ -754,10 +754,12 @@ namespace EndpointChecker
                                         // CREATE STOPWATCH FOR ITEM CHECK DURATION [FOR 'EXPORT' PURPOSE]
                                         Stopwatch sw_ItemProgress = new Stopwatch();
 
-                                        if (EndpointScanWorkflowRules.IsHttpProtocolCheck(
+                                        EndpointProtocolRoute protocolRoute = EndpointProtocolRouteResolver.Resolve(
                                             validationMethod == ValidationMethod.Protocol,
                                             BW_GetStatus.CancellationPending,
-                                            endpoint.Protocol))
+                                            endpoint.Protocol);
+
+                                        if (protocolRoute == EndpointProtocolRoute.Http)
                                         {
                                             // AUTO-REDIRECT SWITCH [BY 'LOCATION' HEADER OF '3xx' RESPONSE CODE]
                                             bool autoRedirect_Followed = false;
@@ -1107,10 +1109,7 @@ namespace EndpointChecker
                                                 }
                                             }
                                         }
-                                        else if (EndpointScanWorkflowRules.IsFtpProtocolCheck(
-                                            validationMethod == ValidationMethod.Protocol,
-                                            BW_GetStatus.CancellationPending,
-                                            endpoint.Protocol))
+                                        else if (protocolRoute == EndpointProtocolRoute.Ftp)
                                         {
                                             // FTP PROTOCOL SCHEME
                                             FtpWebRequest ftpWebRequest;
