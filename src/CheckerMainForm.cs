@@ -1,7 +1,6 @@
 ﻿using ArpLookup;
 using ClosedXML.Excel;
 using EndpointChecker.Properties;
-using Flurl;
 using HtmlAgilityPack;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -802,25 +801,21 @@ namespace EndpointChecker
                                                     if (checkOptions.AllowAutoRedirect &&
                                                         wEX.Response is HttpWebResponse _httpWebResponse)
                                                     {
-                                                        string locationHeaderValue = _httpWebResponse.GetResponseHeader("Location");
-                                                        if (!EndpointScanWorkflowRules.ShouldFollowManualRedirect(
+                                                        Uri redirectedUri;
+                                                        if (!EndpointHttpRedirectResolver.TryResolveRedirectUri(
                                                             checkOptions.AllowAutoRedirect,
                                                             (int)_httpWebResponse.StatusCode,
-                                                            locationHeaderValue))
+                                                            _httpWebResponse.GetResponseHeader("Location"),
+                                                            _httpWebResponse.ResponseUri,
+                                                            out redirectedUri))
                                                         {
                                                             throw;
-                                                        }
-
-                                                        // IF IS RELATIVE PATH
-                                                        if (Uri.IsWellFormedUriString(locationHeaderValue, UriKind.Relative))
-                                                        {
-                                                            locationHeaderValue = Url.Combine(_httpWebResponse.ResponseUri.OriginalString, locationHeaderValue);
                                                         }
 
                                                         // PREPARE WEBREQUEST
                                                         HttpWebRequest httpWebRequest_Redirected = PrepareHTTPWebRequest(
                                                             endpoint,
-                                                            new Uri(locationHeaderValue),
+                                                            redirectedUri,
                                                             checkOptions.HttpRequestTimeout,
                                                             checkOptions.AllowAutoRedirect,
                                                             checkOptions.RemoveUrlParameters,
@@ -1343,33 +1338,30 @@ namespace EndpointChecker
                                     }
                                 }
 
-                                // UPDATE ADDRESSES
-                                endpoint.Address = endpointURI.OriginalString;
-                                endpoint.ResponseAddress = responseURI.AbsoluteUri;
-
-                                // UPDATE RESPONSE TIME
-                                endpoint.ResponseTime = durationTime_Item;
-
-                                // CHECK 'TERMINATED' STATUS
-                                if (EndpointScanWorkflowRules.ShouldMarkTerminated(BW_GetStatus.CancellationPending))
+                                EndpointScanFinalizeOutput finalizeOutput = EndpointScanTerminalFinalizer.Finalize(new EndpointScanFinalizeInput
                                 {
-                                    endpoint.ResponseCode = status_NotAvailable;
-                                    endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.TERMINATED);
-                                }
-                                else
-                                {
-                                    // UPDATE 'LAST SEEN ONLINE' VALUE
-                                    if (EndpointScanWorkflowRules.ShouldUpdateLastSeenOnline(
-                                        validationMethod == ValidationMethod.Protocol,
-                                        endpoint.ResponseCode,
-                                        validationMethod == ValidationMethod.Ping,
-                                        endpoint.PingRoundtripTime,
-                                        status_Error,
-                                        status_NotAvailable))
-                                    {
-                                        endpoint.LastSeenOnline = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                                    }
-                                }
+                                    EndpointAddress = endpointURI.OriginalString,
+                                    ResponseAddress = responseURI.AbsoluteUri,
+                                    DurationTime = durationTime_Item,
+                                    ResponseCode = endpoint.ResponseCode,
+                                    ResponseMessage = endpoint.ResponseMessage,
+                                    PingRoundtripTime = endpoint.PingRoundtripTime,
+                                    LastSeenOnline = endpoint.LastSeenOnline,
+                                    CancellationPending = BW_GetStatus.CancellationPending,
+                                    IsProtocolValidation = validationMethod == ValidationMethod.Protocol,
+                                    IsPingValidation = validationMethod == ValidationMethod.Ping,
+                                    StatusError = status_Error,
+                                    StatusNotAvailable = status_NotAvailable,
+                                    TerminatedMessage = GetEnumDescriptionString(EndpointStatus.TERMINATED),
+                                    LastSeenNow = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                                });
+
+                                endpoint.Address = finalizeOutput.Address;
+                                endpoint.ResponseAddress = finalizeOutput.ResponseAddress;
+                                endpoint.ResponseTime = finalizeOutput.ResponseTime;
+                                endpoint.ResponseCode = finalizeOutput.ResponseCode;
+                                endpoint.ResponseMessage = finalizeOutput.ResponseMessage;
+                                endpoint.LastSeenOnline = finalizeOutput.LastSeenOnline;
 
                                 // ADD UPDATED STATUS DEFINITION TO LIST
                                 updatedEndpointsList.Add(endpoint);

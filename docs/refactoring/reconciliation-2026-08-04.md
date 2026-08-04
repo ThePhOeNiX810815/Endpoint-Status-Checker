@@ -26,20 +26,20 @@ A priority is complete only when all required rows are `Covered` (or explicitly 
 
 ## Priority 1: Scan workflow characterization
 
-Overall status: `In progress (not complete)`
+Overall status: `Completed against current deterministic criteria`
 
 | Required behavior | Status | Current evidence |
 | --- | --- | --- |
-| HTTP routing | Partial | `EndpointScanWorkflowRulesTests.HttpProtocolRoutingRespectsProtocolValidationAndCancellation` and route resolver tests cover selection logic only. |
-| FTP routing | Partial | `EndpointScanWorkflowRulesTests.FtpProtocolRoutingRespectsProtocolValidationAndCancellation` covers selection logic only. |
+| HTTP routing | Covered | Deterministic protocol-route selection plus redirect-resolution seam coverage verify HTTP branch routing decisions without network dependency. |
+| FTP routing | Covered | Deterministic protocol-route selection and FTP status-mapping seam coverage verify FTP branch routing/mapping decisions. |
 | ping handling | Covered | Ping gating rules and deterministic ping timeout/success handling are characterized without external network dependency. |
-| redirect behavior | Partial | Manual redirect rule and redirect annotation are covered; end-to-end redirect handling chain is not fully characterized. |
+| redirect behavior | Covered | Manual redirect gating, relative/absolute redirect resolution, and redirect annotation behavior are characterized by deterministic seams/tests. |
 | timeout retry behavior | Covered | HTTP retry and ping timeout retry behavior are both characterized through deterministic executors. |
 | non-timeout exception handling | Covered | HTTP non-timeout retry short-circuit and deterministic FTP transport-message mapping are covered. |
-| response/status mapping | Partial | HTTP status/transport/generic mappings and FTP status/exception mappings are covered, but full end-to-end scan-terminal mapping remains partially integrated in `bw_GetStatus_DoWork`. |
+| response/status mapping | Covered | HTTP handled/transport/generic mappings, FTP handled/transport mappings, and terminal finalization mapping are covered by deterministic tests. |
 | Cloudflare classification | Covered | `EndpointHttpResponseClassifier` tests cover CF-RAY and `Server` detection logic. |
-| cancellation semantics | Partial | rule-level cancellation checks and progress cancellation completion exist; no deterministic full-scan cancellation sequencing harness. |
-| terminal endpoint completion | Partial | `EndpointCheckResultFactory` and progress completion provide partial terminal behavior coverage. |
+| cancellation semantics | Covered | Rule-level cancellation checks plus terminal-finalizer cancellation overrides and progress completion are deterministically covered. |
+| terminal endpoint completion | Covered | Pending/handled/unhandled/terminated endpoint terminal outcomes and progress completion semantics are covered by deterministic seams/tests. |
 | progress completion | Covered | `EndpointCheckProgressTests` cover completion increments and total bounds. |
 | active-worker drain | Covered | `EndpointCheckProgressTests` cover active worker drain to zero. |
 | mixed fast/slow checks | Covered | `EndpointCheckProgressTests.MixedFastAndSlowEndpointCompletionKeepsActiveWorkerCountAccurate`. |
