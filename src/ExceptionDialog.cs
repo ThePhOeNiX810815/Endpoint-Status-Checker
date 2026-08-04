@@ -12,7 +12,6 @@ using System.Net.Mail;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using static EndpointChecker.Program;
@@ -109,22 +108,11 @@ namespace EndpointChecker
 
             // E-MAIL SUBJECT AND CREATE BODY HTML TABLE
             string eMailMessageSubject = app_ApplicationName + " Unhandled Exception Report";
-            string eMailMessageBody = string.Empty;
-
-            StringBuilder mailMessageString = new StringBuilder();
-            mailMessageString.Append("<table border=\"3\" bordercolor=\"#FF0000\" bgcolor=\"#FFC0CB\" cellpadding=\"5\" cellspacing=\"10\">");
-
-            foreach (Property reportItem in reportItems)
-            {
-                mailMessageString.Append("<tr>");
-                mailMessageString.AppendFormat("<td>{0}</td><td>{1}</td>",
-                    WebUtility.HtmlEncode(reportItem.ItemName),
-                    WebUtility.HtmlEncode(reportItem.ItemValue));
-                mailMessageString.Append("</tr>");
-            }
-
-            mailMessageString.Append("</table>");
-            eMailMessageBody = mailMessageString.ToString();
+            string eMailMessageBody = ReportMailTableBuilder.Build(
+                reportItems.Select(reportItem =>
+                    new KeyValuePair<string, string>(reportItem.ItemName, reportItem.ItemValue ?? string.Empty)),
+                "#FF0000",
+                "#FFC0CB");
 
             try
             {

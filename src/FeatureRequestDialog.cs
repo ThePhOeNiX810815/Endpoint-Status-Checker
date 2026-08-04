@@ -6,9 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
 using System.Threading;
-using System.Net;
 using System.Windows.Forms;
 using static EndpointChecker.Program;
 
@@ -44,22 +42,11 @@ namespace EndpointChecker
 
             // E-MAIL SUBJECT AND CREATE BODY HTML TABLE
             string eMailMessageSubject = app_ApplicationName + " Feature Request";
-            string eMailMessageBody = string.Empty;
-
-            StringBuilder mailMessageString = new StringBuilder();
-            mailMessageString.Append("<table border=\"3\" bordercolor=\"#003CFF\" bgcolor=\"#91ABFF\" cellpadding=\"5\" cellspacing=\"10\">");
-
-            foreach (Property reportItem in reportItems)
-            {
-                mailMessageString.Append("<tr>");
-                mailMessageString.AppendFormat("<td>{0}</td><td>{1}</td>",
-                    WebUtility.HtmlEncode(reportItem.ItemName),
-                    WebUtility.HtmlEncode(reportItem.ItemValue));
-                mailMessageString.Append("</tr>");
-            }
-
-            mailMessageString.Append("</table>");
-            eMailMessageBody = mailMessageString.ToString();
+            string eMailMessageBody = ReportMailTableBuilder.Build(
+                reportItems.Select(reportItem =>
+                    new KeyValuePair<string, string>(reportItem.ItemName, reportItem.ItemValue ?? string.Empty)),
+                "#003CFF",
+                "#91ABFF");
 
             try
             {

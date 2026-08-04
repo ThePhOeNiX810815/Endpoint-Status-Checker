@@ -14,6 +14,7 @@
     <Compile Include="..\..\src\EndpointCheckResultFactory.cs" Link="EndpointCheckResultFactory.cs" />
     <Compile Include="..\..\src\EndpointProtocolRouteResolver.cs" Link="EndpointProtocolRouteResolver.cs" />
     <Compile Include="..\..\src\EndpointScanWorkflowRules.cs" Link="EndpointScanWorkflowRules.cs" />
+    <Compile Include="..\..\src\ReportMailTableBuilder.cs" Link="ReportMailTableBuilder.cs" />
     <Compile Include="..\..\src\UiThreadHelpers.cs" Link="UiThreadHelpers.cs" />
   </ItemGroup>
 </Project>
