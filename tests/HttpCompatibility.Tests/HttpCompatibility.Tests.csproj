@@ -10,5 +10,6 @@
     <Compile Include="..\..\src\EndpointHttpRequestFactory.cs" Link="EndpointHttpRequestFactory.cs" />
     <Compile Include="..\..\src\EndpointHttpResponseClassifier.cs" Link="EndpointHttpResponseClassifier.cs" />
     <Compile Include="..\..\src\EndpointHttpRetryExecutor.cs" Link="EndpointHttpRetryExecutor.cs" />
+    <Compile Include="..\..\src\EndpointHttpStatusMapper.cs" Link="EndpointHttpStatusMapper.cs" />
   </ItemGroup>
 </Project>

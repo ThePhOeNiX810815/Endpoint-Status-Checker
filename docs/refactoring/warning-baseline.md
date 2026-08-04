@@ -1,7 +1,5 @@
 # Endpoint Status Checker v3 Warning Baseline
 
-Update note (2026-08-04): Ticket 7 (`refactor/v3-scan-workflow-harness-http`) re-ran analyzer verification after extracting `EndpointHttpRetryExecutor`; warning totals remained at the established baseline (`3771` summary warnings in current SDK output format).
-
 Ticket: 6 - compiler and static-analysis warning baseline
 
 Base branch: `Main-Dev-V3`

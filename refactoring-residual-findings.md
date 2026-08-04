@@ -2,8 +2,6 @@
 
 This review covers v3 production code after Tickets 1-4 were merged. The current v3 integration branch is `Main-Dev-V3`.
 
-Update note (2026-08-04): Ticket 7 introduced a dedicated `EndpointHttpRetryExecutor` plus characterization tests for timeout-retry compatibility behavior. The large scan workflow in `CheckerMainForm.bw_GetStatus_DoWork` remains a high-severity residual and still requires broader protocol-seam extraction.
-
 The codebase is not fully untangled. The programme reduced several compatibility-sensitive boundaries, but large WinForms classes still contain protocol, persistence, export, and UI logic that should be changed only with stronger characterization.
 
 | File and symbol | Remaining issue | Reason it was not changed | Severity | Recommended future action |

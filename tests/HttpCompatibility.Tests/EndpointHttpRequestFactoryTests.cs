@@ -21,6 +21,9 @@ namespace EndpointChecker
             Run("HTTP retry executor retries timeout exceptions until success", HttpRetryExecutorRetriesTimeoutExceptionsUntilSuccess);
             Run("HTTP retry executor stops retrying after max timeout retries", HttpRetryExecutorStopsRetryingAfterMaxTimeoutRetries);
             Run("HTTP retry executor does not retry non-timeout web exceptions", HttpRetryExecutorDoesNotRetryNonTimeoutWebExceptions);
+            Run("HTTP handled web exception mapping preserves status description and message suffix rules", HttpHandledWebExceptionMappingPreservesStatusDescriptionAndMessageSuffixRules);
+            Run("HTTP transport web exception mapping preserves inner exception chain", HttpTransportWebExceptionMappingPreservesInnerExceptionChain);
+            Run("HTTP generic exception mapping preserves type and first inner message", HttpGenericExceptionMappingPreservesTypeAndFirstInnerMessage);
 
             if (failed > 0)
             {
@@ -215,6 +218,44 @@ namespace EndpointChecker
             }
 
             AssertEqual(1, attempts);
+        }
+
+        private static void HttpHandledWebExceptionMappingPreservesStatusDescriptionAndMessageSuffixRules()
+        {
+            string withDescription = EndpointHttpStatusMapper.BuildHandledWebExceptionMessage(
+                "Forbidden",
+                "Forbidden",
+                "403",
+                "ProtocolError: request failed");
+
+            AssertEqual("Forbidden -> ProtocolError: request failed", withDescription);
+
+            string withoutDescription = EndpointHttpStatusMapper.BuildHandledWebExceptionMessage(
+                string.Empty,
+                "Forbidden",
+                "403",
+                "Remote server returned status 403");
+
+            AssertEqual("Forbidden", withoutDescription);
+        }
+
+        private static void HttpTransportWebExceptionMappingPreservesInnerExceptionChain()
+        {
+            Exception root = new InvalidOperationException("root-cause");
+            Exception middle = new ApplicationException("mid-layer", root);
+            WebException transport = new WebException("transport-failure", middle, WebExceptionStatus.ConnectFailure, null);
+
+            string message = EndpointHttpStatusMapper.BuildTransportWebExceptionMessage(transport);
+
+            AssertEqual("ConnectFailure -> transport-failure -> mid-layer -> root-cause", message);
+        }
+
+        private static void HttpGenericExceptionMappingPreservesTypeAndFirstInnerMessage()
+        {
+            Exception exception = new InvalidOperationException("outer", new ApplicationException("inner"));
+            string message = EndpointHttpStatusMapper.BuildGenericExceptionMessage(exception);
+
+            AssertEqual("InvalidOperation -> outer -> inner", message);
         }
 
         private static void Run(string name, Action test)

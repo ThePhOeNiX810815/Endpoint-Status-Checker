@@ -183,7 +183,7 @@ Verification:
 
 ## Ticket 5: Cleanup, documentation, and residual review
 
-Status: Merged to v3 development line via PR #51
+Status: In progress on `refactor/v3-code-cleanup-review`
 
 Current v3 integration branch: `Main-Dev-V3`
 
@@ -208,62 +208,3 @@ Non-goals:
 Review artifacts:
 
 - `refactoring-residual-findings.md`
-
-## Ticket 6: Compiler and static-analysis warning baseline
-
-Status: Merged to v3 development line via PR #54
-
-Current v3 integration branch: `Main-Dev-V3`
-
-Objective:
-
-Capture a reproducible warning inventory for the v3 application build, apply only low-risk fixes that do not change runtime behavior, and document retained warning groups with explicit compatibility rationale.
-
-Scope completed in this ticket:
-
-- Baseline and verify warning inventory using restore/clean/build/analyzer runs on `src/EndpointChecker.csproj`.
-- Fixed low-risk warning groups (`SYSLIB0003`, `CA2200`) without changing endpoint-check behavior.
-- Documented retained warning groups (`CA1416`, `SYSLIB0014`, `SYSLIB0013`, `SYSLIB0057`, `NU1900`) with per-file inventory and future actions.
-- Recorded formatting verification results and distinction between whitespace and broader formatting/analyzer diagnostics.
-
-Non-goals:
-
-- No replacement of legacy networking APIs in compatibility-sensitive paths.
-- No global analyzer suppression policy change.
-- No repository-wide formatting churn.
-
-Review artifact:
-
-- `docs/refactoring/warning-baseline.md`
-
-## Ticket 7: HTTP timeout retry characterization boundary
-
-Status: In progress on `refactor/v3-scan-workflow-harness-http`
-
-Current v3 integration branch: `Main-Dev-V3`
-
-Objective:
-
-Create a narrow characterization seam for compatibility-sensitive HTTP timeout retry behavior used by endpoint checks, enabling future protocol workflow extraction with lower regression risk.
-
-Scope completed in this ticket:
-
-- Extracted legacy timeout-retry logic from `CheckerMainForm.GetHTTPWebResponse` into `EndpointHttpRetryExecutor`.
-- Preserved the existing public wrapper behavior in `CheckerMainForm.GetHTTPWebResponse`.
-- Added dependency-free characterization tests for timeout retry success, max-retry exhaustion, and non-timeout passthrough behavior.
-
-Non-goals:
-
-- No changes to request construction headers, cookies, redirects, credentials, SSL, or Cloudflare classification.
-- No changes to endpoint orchestration flow, cancellation handling, or export behavior.
-- No migration from `HttpWebRequest`.
-
-Tests:
-
-- `tests/HttpCompatibility.Tests` covers the new timeout retry characterization scenarios.
-
-Verification:
-
-- `dotnet run --project tests/HttpCompatibility.Tests/HttpCompatibility.Tests.csproj`
-- `dotnet build src/EndpointChecker.csproj --no-restore -p:EnableWindowsTargeting=true -v:minimal`
-- `dotnet build src/EndpointChecker.csproj --no-restore -p:EnableWindowsTargeting=true -p:RunAnalyzers=true -t:Rebuild -v:minimal`
