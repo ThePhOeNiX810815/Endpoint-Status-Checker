@@ -29,6 +29,7 @@ namespace EndpointChecker
             EndpointVirusTotalScanRetryExecutorTests.Register();
             EndpointScanTerminalFinalizerTests.Register();
             UiThreadHelpersTests.Register();
+            EndpointWhoIsPresentationBuilderTests.Register();
             ReportMailTableBuilderTests.Register();
 
             if (failed > 0)

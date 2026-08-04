@@ -1071,6 +1071,8 @@ namespace EndpointChecker
 
         public void GetWhoIsInfo()
         {
+            bool tabCurrentlyPresent = tabControl.TabPages.Contains(tabPage_WhoIs);
+
             NewBackgroundThread(() =>
             {
                 string registrableDomainName = new Uri(_selectedEndpoint.ResponseAddress).Host;
@@ -1101,25 +1103,39 @@ namespace EndpointChecker
                                                                         .TrimStart()
                                                                         .TrimEnd();
 
-                            if (!string.IsNullOrEmpty(whoISserver_RAWresponse))
-                            {
-                                ThreadSafeInvoke(() =>
-                                {
-                                    tb_WhoIs_RegistrableDomain.Text = registrableDomainName;
-                                    tb_WhoIs_Server.Text = whoISserver_ServerAddress;
-
-                                    rtb_WhoIsInfo.Text = whoISserver_RAWresponse;
-                                    rtb_WhoIsInfo.Visible = true;
-                                    pb_WhoIsProgress.Visible = false;
-
-                                    tabControl.TabPages.Add(tabPage_WhoIs);
-                                });
-                            }
                         }
                     }
                 }
                 catch
                 {
+                }
+
+                EndpointWhoIsPresentationModel model = EndpointWhoIsPresentationBuilder.Build(
+                    new EndpointWhoIsPresentationInput
+                    {
+                        HasLookupPayload = !string.IsNullOrEmpty(whoISserver_RAWresponse),
+                        TabCurrentlyPresent = tabCurrentlyPresent,
+                        RegistrableDomain = registrableDomainName,
+                        WhoIsServer = whoISserver_ServerAddress,
+                        RawResponse = whoISserver_RAWresponse,
+                    });
+
+                if (model.ShouldApplyPayload)
+                {
+                    ThreadSafeInvoke(() =>
+                    {
+                        tb_WhoIs_RegistrableDomain.Text = model.RegistrableDomain;
+                        tb_WhoIs_Server.Text = model.WhoIsServer;
+
+                        rtb_WhoIsInfo.Text = model.RawResponse;
+                        rtb_WhoIsInfo.Visible = true;
+                        pb_WhoIsProgress.Visible = false;
+
+                        if (model.ShouldEnsureTabPresent)
+                        {
+                            tabControl.TabPages.Add(tabPage_WhoIs);
+                        }
+                    });
                 }
             });
         }
