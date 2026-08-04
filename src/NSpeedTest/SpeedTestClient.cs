@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +16,12 @@ namespace NSpeedTest
 {
     public class SpeedTestClient : ISpeedTestClient
     {
-        private string ConfigUrl = "https://www.speedtest.net/speedtest-config.php";
+        private List<string> ConfigUrls = new List<string>()
+        {
+            "https://www.speedtest.net/speedtest-config.php",
+            "https://c.speedtest.net/speedtest-config.php",
+            "http://www.speedtest.net/speedtest-config.php"
+        };
         private const int MinimumDownloadConcurrency = 12;
         private const int MinimumUploadConcurrency = 4;
         private static readonly TimeSpan DownloadWarmupDuration = TimeSpan.FromSeconds(3);
@@ -26,7 +32,9 @@ namespace NSpeedTest
         {
             { "https://www.speedtest.net/speedtest-servers-static.php" },
             { "https://c.speedtest.net/speedtest-servers.php" },
-            { "https://c.speedtest.net/speedtest-servers-static.php" }
+            { "https://c.speedtest.net/speedtest-servers-static.php" },
+            { "http://www.speedtest.net/speedtest-servers-static.php" },
+            { "http://c.speedtest.net/speedtest-servers.php" }
         };
 
         private readonly int[] downloadSizes = { 500, 750, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 7000, 8000 };
@@ -41,41 +49,79 @@ namespace NSpeedTest
         /// <returns>speedtest.net settings</returns>
         public Settings GetSettings()
         {
-            using (var client = new SpeedTestWebClient())
+            try
             {
-                var settings = client.GetConfig<Settings>(ConfigUrl);
-                ServersList serversConfig = new ServersList();
-
-                foreach (string serverURL in ServersUrlsList)
+                using (var client = new SpeedTestWebClient())
                 {
-                    ServersList serverConfig = new ServersList();
+                    return GetSettingsCore(client);
+                }
+            }
+            catch (Exception exception) when (IsTlsFailure(exception))
+            {
+                using (var client = new SpeedTestWebClient(bypassTlsCertificateValidation: true))
+                {
+                    return GetSettingsCore(client);
+                }
+            }
+        }
 
-                    try
-                    {
-                        serverConfig = client.GetConfig<ServersList>(serverURL);
-                    }
-                    catch
-                    {
-                    }
+        private Settings GetSettingsCore(SpeedTestWebClient client)
+        {
+            Settings settings = null;
+            Exception lastConfigException = null;
 
-                    foreach (Server server in serverConfig.Servers)
+            foreach (string configUrl in ConfigUrls)
+            {
+                try
+                {
+                    settings = client.GetConfig<Settings>(configUrl);
+                    if (settings != null)
                     {
-                        if (serversConfig.Servers.Where(srv =>
-                                srv.Name == server.Name &&
-                                srv.Country == server.Country &&
-                                srv.Sponsor == server.Sponsor)
-                                    .Count() == 0)
-                        {
-                            serversConfig.Servers.Add(server);
-                        }
+                        break;
                     }
                 }
-
-                serversConfig.CalculateDistances(settings.Client.GeoCoordinate);
-                settings.Servers = serversConfig.Servers.OrderBy(s => s.Distance).ToList();
-
-                return settings;
+                catch (Exception exception)
+                {
+                    lastConfigException = exception;
+                }
             }
+
+            if (settings == null)
+            {
+                throw lastConfigException ?? new InvalidOperationException("Unable to download SpeedTest settings configuration.");
+            }
+
+            ServersList serversConfig = new ServersList();
+
+            foreach (string serverURL in ServersUrlsList)
+            {
+                ServersList serverConfig = new ServersList();
+
+                try
+                {
+                    serverConfig = client.GetConfig<ServersList>(serverURL);
+                }
+                catch
+                {
+                }
+
+                foreach (Server server in serverConfig.Servers)
+                {
+                    if (serversConfig.Servers.Where(srv =>
+                            srv.Name == server.Name &&
+                            srv.Country == server.Country &&
+                            srv.Sponsor == server.Sponsor)
+                                .Count() == 0)
+                    {
+                        serversConfig.Servers.Add(server);
+                    }
+                }
+            }
+
+            serversConfig.CalculateDistances(settings.Client.GeoCoordinate);
+            settings.Servers = serversConfig.Servers.OrderBy(s => s.Distance).ToList();
+
+            return settings;
         }
 
         /// <summary>
@@ -84,36 +130,51 @@ namespace NSpeedTest
         /// <returns>Latency in milliseconds (ms)</returns>
         public int TestServerLatency(Server server, int retryCount = 3)
         {
+            try
+            {
+                using (var client = new SpeedTestWebClient())
+                {
+                    return TestServerLatencyCore(client, server, retryCount);
+                }
+            }
+            catch (Exception exception) when (IsTlsFailure(exception))
+            {
+                using (var client = new SpeedTestWebClient(bypassTlsCertificateValidation: true))
+                {
+                    return TestServerLatencyCore(client, server, retryCount);
+                }
+            }
+        }
+
+        private static int TestServerLatencyCore(SpeedTestWebClient client, Server server, int retryCount)
+        {
             var latencyUri = CreateTestUrl(server, "latency.txt");
             long totalElapsedMilliseconds = 0;
             int successfulAttempts = 0;
 
-            using (var client = new SpeedTestWebClient())
+            for (var i = 0; i < retryCount; i++)
             {
-                for (var i = 0; i < retryCount; i++)
+                var timer = Stopwatch.StartNew();
+                string testString;
+                try
                 {
-                    var timer = Stopwatch.StartNew();
-                    string testString;
-                    try
-                    {
-                        testString = client.DownloadString(latencyUri);
-                    }
-                    catch (WebException)
-                    {
-                        timer.Stop();
-                        continue;
-                    }
-
-                    timer.Stop();
-
-                    if (!testString.StartsWith("test=test", StringComparison.OrdinalIgnoreCase))
-                    {
-                        throw new InvalidOperationException("Server returned incorrect test string for latency.txt");
-                    }
-
-                    totalElapsedMilliseconds += timer.ElapsedMilliseconds;
-                    successfulAttempts++;
+                    testString = client.DownloadString(latencyUri);
                 }
+                catch (WebException)
+                {
+                    timer.Stop();
+                    continue;
+                }
+
+                timer.Stop();
+
+                if (!testString.StartsWith("test=test", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException("Server returned incorrect test string for latency.txt");
+                }
+
+                totalElapsedMilliseconds += timer.ElapsedMilliseconds;
+                successfulAttempts++;
             }
 
             if (successfulAttempts == 0)
@@ -122,6 +183,35 @@ namespace NSpeedTest
             }
 
             return (int)(totalElapsedMilliseconds / successfulAttempts);
+        }
+
+        private static bool IsTlsFailure(Exception exception)
+        {
+            Exception current = exception;
+            while (current != null)
+            {
+                if (current is AuthenticationException)
+                {
+                    return true;
+                }
+
+                if (current is WebException webException &&
+                    (webException.Status == WebExceptionStatus.TrustFailure ||
+                     webException.Status == WebExceptionStatus.SecureChannelFailure))
+                {
+                    return true;
+                }
+
+                if (!string.IsNullOrEmpty(current.Message) &&
+                    current.Message.IndexOf("SSL connection could not be established", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+
+                current = current.InnerException;
+            }
+
+            return false;
         }
 
         /// <summary>

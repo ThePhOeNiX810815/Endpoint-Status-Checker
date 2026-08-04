@@ -57,6 +57,21 @@ Endpoint Status Checker v3 is currently developed on the `Main-Dev-V3` branch. T
 
 The in-app updater and standalone updater are intentionally disabled for v3 until an official release ZIP is published.
 
+## v3.1.1 RC Test Build
+
+This branch provides a test-only release candidate intended for validation, not as an official production release.
+
+- Release channel: **GitHub prerelease only**
+- Tag: `v3.1.1-rc1`
+- Asset: `EndpointChecker-v3.1.1-rc1-test.zip`
+- Download: [v3.1.1 RC1 test build](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/tag/v3.1.1-rc1)
+
+Safety notes for update behavior:
+
+- v3 in-app update checks remain hard-disabled in source (`app_UpdateChecksEnabled = false`).
+- This RC publish does not modify `Main-Dev-Branch/version.txt` or `Main-Dev-Branch/package.txt` (the legacy v2.15 update source).
+- Because this is a prerelease asset on the v3 branch line, it is isolated from the v2.15 automatic update path.
+
 ## What's New in v3 Development
 
 | Area | Change |
@@ -103,7 +118,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the full technical change log.
 
 ### Fresh install
 
-No official v3 release package is currently available.
+Use the v3.1.1 RC prerelease ZIP from GitHub Releases for testing.
 
 For development or test builds, publish the application from the `Main-Dev-V3` branch and extract the generated self-contained output to any folder. The app will create its data files (`EndpointChecker_EndpointsList.txt`, `EndpointChecker_LastSeenOnline.json`) alongside `EndpointChecker.exe` on first run.
 
@@ -113,11 +128,50 @@ No installer, no registry keys, no separate runtime — the self-contained build
 
 ### Upgrading from v2.15 or earlier
 
-Automatic upgrading to v3 is currently unavailable because no official v3 release package is published.
+Automatic upgrading to v3 is currently unavailable because this build is test-only and distributed as a prerelease ZIP.
 
 When an official v3 release is prepared, the updater documentation will be updated to reference the release ZIP. Until then, keep v2.15 installations separate from manually supplied v3 test builds.
 
 > **Note:** v3 development builds require Windows 10 (build 1607) or later. Machines running Windows 7 / Server 2008 R2 can continue using v2.15.
+
+---
+
+## Testing
+
+### What runs during build
+
+- `dotnet build` compiles the application and test projects but does **not** execute test suites automatically.
+- Test execution in this repository is explicit and command-driven.
+
+### Run all test suites
+
+```powershell
+dotnet run --project tests/EndpointDefinitionParser.Tests/EndpointDefinitionParser.Tests.csproj
+dotnet run --project tests/EndpointCheckingCore.Tests/EndpointCheckingCore.Tests.csproj
+dotnet run --project tests/HttpCompatibility.Tests/HttpCompatibility.Tests.csproj
+dotnet run --project tests/ExportOptions.Tests/ExportOptions.Tests.csproj
+dotnet run --project tests/ExportRunSummary.Tests/ExportRunSummary.Tests.csproj
+dotnet run --project tests/ExportFileSet.Tests/ExportFileSet.Tests.csproj
+dotnet run --project tests/StructuredExport.Tests/StructuredExport.Tests.csproj
+```
+
+### Build verification command
+
+```powershell
+dotnet build src/EndpointChecker.sln -c Release
+```
+
+---
+
+## Refactoring Status
+
+- Programme tracker: [refactoring-programme.md](refactoring-programme.md)
+- Residual findings: [refactoring-residual-findings.md](refactoring-residual-findings.md)
+- Reconciliation matrix: [docs/refactoring/reconciliation-2026-08-04.md](docs/refactoring/reconciliation-2026-08-04.md)
+
+For a consolidated testing + RC + refactoring guide, see:
+
+- [docs/v3-rc-testing-and-refactoring.md](docs/v3-rc-testing-and-refactoring.md)
 
 ---
 

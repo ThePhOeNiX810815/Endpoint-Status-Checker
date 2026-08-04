@@ -12,6 +12,8 @@ namespace EndpointChecker
     {
         private const int LegacySplashWidth = 1000;
         private const int LegacySplashHeight = 378;
+        private const float SplashScaleFactor = 0.5f;
+        private bool customSplashApplied = false;
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
@@ -84,12 +86,18 @@ namespace EndpointChecker
             Image customSplash = TryLoadCustomSplashBackground();
             if (customSplash == null)
             {
+                ResizeSplashForBackground(new Size(
+                    Math.Max(1, (int)Math.Round(LegacySplashWidth * SplashScaleFactor)),
+                    Math.Max(1, (int)Math.Round(LegacySplashHeight * SplashScaleFactor))));
                 return;
             }
 
+            customSplashApplied = true;
             BackgroundImage = customSplash;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ResizeSplashForBackground(customSplash.Size);
+            ResizeSplashForBackground(new Size(
+                Math.Max(1, (int)Math.Round(customSplash.Width * SplashScaleFactor)),
+                Math.Max(1, (int)Math.Round(customSplash.Height * SplashScaleFactor))));
         }
 
         private static Image TryLoadCustomSplashBackground()
@@ -172,6 +180,33 @@ namespace EndpointChecker
             lbl_Version_Date.ForeColor = Color.FromArgb(190, 210, 224);
             lbl_Copyright.ForeColor = Color.FromArgb(214, 214, 214);
             lbl_ReleaseType.ForeColor = Color.FromArgb(220, 220, 220);
+
+            if (!customSplashApplied)
+            {
+                return;
+            }
+
+            // Keep custom splash artwork unobstructed: hide the large center title and
+            // move only lightweight build metadata to the upper-right corner.
+            lbl_Name.Visible = false;
+
+            lbl_ReleaseType.AutoSize = false;
+            lbl_ReleaseType.TextAlign = ContentAlignment.MiddleRight;
+            lbl_ReleaseType.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            lbl_ReleaseType.Size = new Size(Math.Max(180, ClientSize.Width / 3), 20);
+            lbl_ReleaseType.Location = new Point(ClientSize.Width - lbl_ReleaseType.Width - 24, 18);
+
+            lbl_Version_Date.AutoSize = false;
+            lbl_Version_Date.TextAlign = ContentAlignment.MiddleRight;
+            lbl_Version_Date.Font = new Font("Segoe UI", 8.5F, FontStyle.Regular, GraphicsUnit.Point);
+            lbl_Version_Date.Size = new Size(Math.Max(220, ClientSize.Width / 2), 18);
+            lbl_Version_Date.Location = new Point(ClientSize.Width - lbl_Version_Date.Width - 24, 40);
+
+            lbl_Copyright.AutoSize = false;
+            lbl_Copyright.TextAlign = ContentAlignment.MiddleRight;
+            lbl_Copyright.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+            lbl_Copyright.Size = new Size(Math.Max(220, ClientSize.Width / 2), 18);
+            lbl_Copyright.Location = new Point(ClientSize.Width - lbl_Copyright.Width - 24, 58);
         }
 
         public void Controls_MouseDown(object sender, MouseEventArgs e)

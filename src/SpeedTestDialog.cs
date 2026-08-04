@@ -779,7 +779,7 @@ namespace EndpointChecker
 
         private bool CanRunSpeedTest()
         {
-            return clientIP != status_NotAvailable && cb_SpeedTest_TestServer.Items.Count > 1;
+            return cb_SpeedTest_TestServer.Items.Count > 1;
         }
 
         public void SavePreferredSettings()
@@ -1527,27 +1527,30 @@ namespace EndpointChecker
 
             string preferredIp = ResolvePublicIpAddress();
 
-            try
-            {
-                string identityUrl = string.IsNullOrWhiteSpace(preferredIp)
-                    ? "https://ipwho.is/"
-                    : "https://ipwho.is/" + preferredIp;
+            string[] identityUrls = string.IsNullOrWhiteSpace(preferredIp)
+                ? new[] { "https://ipwho.is/", "http://ipwho.is/" }
+                : new[] { "https://ipwho.is/" + preferredIp, "http://ipwho.is/" + preferredIp };
 
-                string response = new CustomWebClient().DownloadString(identityUrl);
-                PublicIdentityResponse publicIdentityResponse = JsonConvert.DeserializeObject<PublicIdentityResponse>(response);
-                if (!string.IsNullOrWhiteSpace(publicIdentityResponse?.Ip))
+            foreach (string identityUrl in identityUrls)
+            {
+                try
                 {
-                    publicIdentityResponse.Ip = string.IsNullOrWhiteSpace(preferredIp)
-                        ? publicIdentityResponse.Ip.Trim()
-                        : preferredIp;
+                    string response = new CustomWebClient().DownloadString(identityUrl);
+                    PublicIdentityResponse publicIdentityResponse = JsonConvert.DeserializeObject<PublicIdentityResponse>(response);
+                    if (!string.IsNullOrWhiteSpace(publicIdentityResponse?.Ip))
+                    {
+                        publicIdentityResponse.Ip = string.IsNullOrWhiteSpace(preferredIp)
+                            ? publicIdentityResponse.Ip.Trim()
+                            : preferredIp;
 
-                    publicIdentityResponse.Isp = FirstNonEmpty(publicIdentityResponse.Isp, NormalizeOrganizationName(publicIdentityResponse.Organization), fallbackIdentity.Isp);
+                        publicIdentityResponse.Isp = FirstNonEmpty(publicIdentityResponse.Isp, NormalizeOrganizationName(publicIdentityResponse.Organization), fallbackIdentity.Isp);
 
-                    return publicIdentityResponse;
+                        return publicIdentityResponse;
+                    }
                 }
-            }
-            catch
-            {
+                catch
+                {
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(preferredIp))
@@ -1565,18 +1568,28 @@ namespace EndpointChecker
                 return resolvedPublicIp;
             }
 
-            try
+            string[] identityProbeUrls =
             {
-                string ipifyResponse = new CustomWebClient().DownloadString("https://api64.ipify.org?format=json");
-                IpifyResponse ipInfoResponse = JsonConvert.DeserializeObject<IpifyResponse>(ipifyResponse);
-                if (!string.IsNullOrWhiteSpace(ipInfoResponse?.Ip))
+                "https://api64.ipify.org?format=json",
+                "https://api.ipify.org?format=json",
+                "http://api.ipify.org?format=json"
+            };
+
+            foreach (string identityProbeUrl in identityProbeUrls)
+            {
+                try
                 {
-                    resolvedPublicIp = ipInfoResponse.Ip.Trim();
-                    return resolvedPublicIp;
+                    string ipifyResponse = new CustomWebClient().DownloadString(identityProbeUrl);
+                    IpifyResponse ipInfoResponse = JsonConvert.DeserializeObject<IpifyResponse>(ipifyResponse);
+                    if (!string.IsNullOrWhiteSpace(ipInfoResponse?.Ip))
+                    {
+                        resolvedPublicIp = ipInfoResponse.Ip.Trim();
+                        return resolvedPublicIp;
+                    }
                 }
-            }
-            catch
-            {
+                catch
+                {
+                }
             }
 
             resolvedPublicIp = speedTestSettings?.Client?.Ip?.Trim() ?? string.Empty;

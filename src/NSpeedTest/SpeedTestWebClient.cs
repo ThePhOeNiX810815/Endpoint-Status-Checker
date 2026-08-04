@@ -11,11 +11,14 @@ namespace NSpeedTest
 {
     internal class SpeedTestWebClient : WebClient
     {
+        private readonly bool bypassTlsCertificateValidation;
+
         public int ConnectionLimit { get; set; }
 
-        public SpeedTestWebClient()
+        public SpeedTestWebClient(bool bypassTlsCertificateValidation = false)
         {
             ConnectionLimit = 32;
+            this.bypassTlsCertificateValidation = bypassTlsCertificateValidation;
         }
 
         public T GetConfig<T>(string url)
@@ -35,6 +38,11 @@ namespace NSpeedTest
         {
             var request = base.GetWebRequest(AddTimeStamp(address)) as HttpWebRequest;
 
+            if (request == null)
+            {
+                return base.GetWebRequest(AddTimeStamp(address));
+            }
+
             request.Timeout = 5000;
             request.ReadWriteTimeout = 5000;
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
@@ -42,6 +50,11 @@ namespace NSpeedTest
             request.Accept = "text/html, application/xhtml+xml, */*";
             request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
             request.ServicePoint.ConnectionLimit = ConnectionLimit;
+
+            if (bypassTlsCertificateValidation)
+            {
+                request.ServerCertificateValidationCallback = delegate { return true; };
+            }
 
             return request;
         }

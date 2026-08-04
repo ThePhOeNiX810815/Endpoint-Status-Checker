@@ -515,6 +515,14 @@ namespace EndpointChecker
                         issuer.Equals("CN=David Smidke") &&
                         subject.Equals("CN=David Smidke");
                 }
+
+                // David Smidke renewed/reissued certificates (same subject/issuer)
+                if (!isOriginalSignedExecutable)
+                {
+                    isOriginalSignedExecutable =
+                        issuer.Equals("CN=David Smidke") &&
+                        subject.Equals("CN=David Smidke");
+                }
             }
             catch
             {
@@ -674,11 +682,11 @@ namespace EndpointChecker
         public static void SetSecurityProtocol()
         {
             try
-            {   // try TLS 1.3
-                ServicePointManager.SecurityProtocol = (SecurityProtocolType)12288
-                                                     | (SecurityProtocolType)3072
-                                                     | (SecurityProtocolType)768
-                                                     | SecurityProtocolType.Tls;
+            {
+                // Prefer OS-managed protocol selection on modern runtimes.
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
+                ServicePointManager.CheckCertificateRevocationList = false;
+                ServicePointManager.Expect100Continue = false;
             }
             catch (NotSupportedException)
             {
@@ -687,6 +695,8 @@ namespace EndpointChecker
                     ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072
                                                          | (SecurityProtocolType)768
                                                          | SecurityProtocolType.Tls;
+                    ServicePointManager.CheckCertificateRevocationList = false;
+                    ServicePointManager.Expect100Continue = false;
                 }
                 catch (NotSupportedException)
                 {
@@ -694,10 +704,14 @@ namespace EndpointChecker
                     {   // try TLS 1.1
                         ServicePointManager.SecurityProtocol = (SecurityProtocolType)768
                                                              | SecurityProtocolType.Tls;
+                        ServicePointManager.CheckCertificateRevocationList = false;
+                        ServicePointManager.Expect100Continue = false;
                     }
                     catch (NotSupportedException)
                     {   // set TLS 1.0
                         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
+                        ServicePointManager.CheckCertificateRevocationList = false;
+                        ServicePointManager.Expect100Continue = false;
                     }
                 }
             }
