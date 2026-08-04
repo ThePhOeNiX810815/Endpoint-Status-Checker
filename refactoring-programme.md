@@ -301,3 +301,20 @@ Scope completed in this ticket:
 - Added deterministic HTML summary-link replacement seam in `EndpointHtmlExportTransformer.ReplaceSummaryHyperLinkPlaceholders` and routed summary placeholder replacement through it.
 - Expanded HTML compatibility coverage to include summary-page structure/link replacement and legacy hyperlink ampersand-escaping behavior.
 - Reconciled completion matrix to mark export compatibility criteria covered.
+
+## Ticket 10: Protocol decomposition continuation (FTP request seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting FTP request and credential-initialization setup from `bw_GetStatus_DoWork` into a deterministic seam while preserving runtime behavior.
+
+Scope completed in this ticket:
+
+- Extracted FTP request setup and credential fallback logic into `EndpointFtpRequestFactory`.
+- Routed the FTP branch of `CheckerMainForm.bw_GetStatus_DoWork` through the extracted factory and preserved endpoint login-name/login-password mutation behavior.
+- Added deterministic `EndpointCheckingCore` tests for FTP request setup fields and credential fallback semantics.
+- Preserved legacy `FtpWebRequest` flow, method, timeout usage, and credential compatibility behavior.

@@ -18,7 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Net;
-using System.Net.Cache;
 using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -1112,27 +1111,20 @@ namespace EndpointChecker
 
                                             try
                                             {
-                                                // CREATE REQUEST
-                                                ftpWebRequest = (FtpWebRequest)WebRequest.Create(endpointURI.OriginalString);
-                                                ftpWebRequest.Method = WebRequestMethods.Ftp.PrintWorkingDirectory;
-                                                ftpWebRequest.Timeout = checkOptions.FtpRequestTimeout;
-                                                ftpWebRequest.ReadWriteTimeout = checkOptions.FtpRequestTimeout;
-                                                ftpWebRequest.UsePassive = false;
-                                                ftpWebRequest.UseBinary = false;
-                                                ftpWebRequest.KeepAlive = false;
-                                                ftpWebRequest.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-                                                ftpWebRequest.Proxy = null;
+                                                EndpointFtpRequestBuildResult ftpRequestBuildResult = EndpointFtpRequestFactory.Build(
+                                                    new EndpointFtpRequestBuildInput
+                                                    {
+                                                        EndpointUri = endpointURI,
+                                                        TimeoutMilliseconds = checkOptions.FtpRequestTimeout,
+                                                        LoginName = endpoint.LoginName,
+                                                        LoginPass = endpoint.LoginPass,
+                                                        StatusNotAvailable = status_NotAvailable,
+                                                        AnonymousFtpPassword = anonymousFTPPassword,
+                                                    });
 
-                                                if (endpoint.LoginName == status_NotAvailable ||
-                                                    endpoint.LoginPass == status_NotAvailable)
-                                                {
-                                                    // GET DEFAULT CREDENTIALS FROM URI [USERNAME]
-                                                    endpoint.LoginName = ftpWebRequest.Credentials.GetCredential(endpointURI, string.Empty).UserName;
-                                                    endpoint.LoginPass = anonymousFTPPassword;
-                                                }
-
-                                                // SET CREDENTIALS
-                                                ftpWebRequest.Credentials = new NetworkCredential(endpoint.LoginName, endpoint.LoginPass);
+                                                ftpWebRequest = ftpRequestBuildResult.Request;
+                                                endpoint.LoginName = ftpRequestBuildResult.LoginName;
+                                                endpoint.LoginPass = ftpRequestBuildResult.LoginPass;
 
                                                 // START STOPWATCH FOR ITEM CHECK DURATION
                                                 sw_ItemProgress.Start();

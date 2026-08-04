@@ -11,6 +11,7 @@
     <Compile Include="..\..\src\EndpointCheckProgress.cs" Link="EndpointCheckProgress.cs" />
     <Compile Include="..\..\src\EndpointCheckProgressSnapshot.cs" Link="EndpointCheckProgressSnapshot.cs" />
     <Compile Include="..\..\src\EndpointCheckProgressWorkItem.cs" Link="EndpointCheckProgressWorkItem.cs" />
+    <Compile Include="..\..\src\EndpointFtpRequestFactory.cs" Link="EndpointFtpRequestFactory.cs" />
     <Compile Include="..\..\src\EndpointCheckResultFactory.cs" Link="EndpointCheckResultFactory.cs" />
     <Compile Include="..\..\src\EndpointFtpStatusMapper.cs" Link="EndpointFtpStatusMapper.cs" />
     <Compile Include="..\..\src\EndpointHttpRedirectResolver.cs" Link="EndpointHttpRedirectResolver.cs" />
