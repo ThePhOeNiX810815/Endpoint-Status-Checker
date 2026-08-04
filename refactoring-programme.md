@@ -546,10 +546,12 @@ Scope completed in this phase:
 - Added `EndpointTaskSyncBridge` to centralize synchronous task completion via `ConfigureAwait(false).GetAwaiter().GetResult()`.
 - Replaced direct `.Result` access in `GetVirusTotalScanReport` and `BW_VirusTotal_Report_DoWork` with `EndpointTaskSyncBridge.AwaitResult(...)`.
 - Added deterministic characterization tests for bridge success path, exception unwrapping semantics, and null-argument guard.
+- Replaced recursive retry + `Thread.Sleep` in `GetVirusTotalScanReport` with iterative `EndpointVirusTotalScanRetryExecutor` orchestration.
+- Added cancellation-aware retry boundary checks for form-closing/disposal conditions in dialog VirusTotal scan enqueue flow.
+- Added deterministic non-network tests for immediate success, retry/success, exhaustion, cancellation-before-attempt, cancellation-during-delay, legacy retry-message mapping, exact-attempt semantics, and status transition ordering.
 
 Remaining work in this ticket:
 
-- Remove recursive retry + `Thread.Sleep` flow from `GetVirusTotalScanReport`.
 - Isolate network I/O from UI thread invocation paths in `EndpointDetailsDialog` (notably `GetIPGeoInfo`).
 
 Verification:

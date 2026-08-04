@@ -118,9 +118,9 @@ Status values used in this matrix:
 
 Priority 3 protocol decomposition acceptance is therefore `complete` under strict current criteria: every non-orchestration protocol behavior row is `COMPLETE`, and the retained orchestration boundary is explicitly marked `INTENTIONALLY FORM-OWNED`.
 
-## Priority 4: EndpointDetailsDialog async-safety evidence matrix (initial)
+## Priority 4: EndpointDetailsDialog async-safety evidence matrix
 
-Scope evaluated: `src/EndpointDetailsDialog.cs` and deterministic core harness updates.
+Scope evaluated: `src/EndpointDetailsDialog.cs`, `src/EndpointVirusTotalScanRetryExecutor.cs`, and deterministic core harness updates.
 
 Status values used in this matrix:
 
@@ -128,14 +128,26 @@ Status values used in this matrix:
 - `PARTIALLY COMPLETE`
 - `NOT STARTED`
 - `BLOCKED`
-- `INTENTIONALLY FORM-OWNED`
+- `INTENTIONALLY SYNCHRONOUS`
 
-| Required behavior | Status | Current evidence (files/symbols/tests) |
+| Workflow marker | Status | Current evidence (files/symbols/tests) |
 | --- | --- | --- |
-| Remove direct `.Result` blocking in VirusTotal scan enqueue/report paths | PARTIALLY COMPLETE | `GetVirusTotalScanReport` and `BW_VirusTotal_Report_DoWork` no longer use direct `.Result`; both now route through `src/EndpointTaskSyncBridge.cs` (`EndpointTaskSyncBridge.AwaitResult`). Deterministic behavior coverage added in `tests/EndpointCheckingCore.Tests/EndpointTaskSyncBridgeTests.cs`. |
-| Avoid recursive retry/thread-sleep chain in VirusTotal scan workflow | NOT STARTED | `GetVirusTotalScanReport` still performs recursive self-calls plus `Thread.Sleep(5000)` on retry. |
-| Ensure no long-running network I/O is invoked on UI thread via `ThreadSafeInvoke` | NOT STARTED | `GetIPGeoInfo` wraps network and deserialization work inside `ThreadSafeInvoke`, keeping I/O in invoked UI context. |
-| Reduce unsafe `Application.DoEvents` in EndpointDetailsDialog async paths | NOT STARTED | `NewBackgroundThread`/`ThreadSafeInvoke` wrappers still inject `Application.DoEvents`; `ValidatePageLinks` loop also calls `Application.DoEvents` per link. |
-| Preserve existing user-visible VirusTotal status/error messaging while changing blocking primitive | COMPLETE | Existing status-label updates and tab-removal behavior preserved; no message-shape changes introduced by bridge substitution. |
+| `.Result` usage in `EndpointDetailsDialog` | COMPLETE | No direct `.Result` remains; VirusTotal scan/report task completion routes through `EndpointTaskSyncBridge.AwaitResult` in `GetVirusTotalScanReport` and `BW_VirusTotal_Report_DoWork`. |
+| `.Wait()` usage in `EndpointDetailsDialog` | COMPLETE | No `.Wait()` call sites in `src/EndpointDetailsDialog.cs`. |
+| `Thread.Sleep` usage in VirusTotal retry path | COMPLETE | Removed from `GetVirusTotalScanReport`; delay is now handled by iterative `EndpointVirusTotalScanRetryExecutor` boundary with cancellable delay delegate. |
+| Recursive retry in VirusTotal scan enqueue path | COMPLETE | Removed: `GetVirusTotalScanReport` now executes one iterative retry loop via `EndpointVirusTotalScanRetryExecutor.Execute(...)`. |
+| `Task.Run` usage in dialog workflows | COMPLETE | No `Task.Run` call sites in `src/EndpointDetailsDialog.cs`; async work remains on existing background abstractions. |
+| `BackgroundWorker` workflows (`BW_PortCheck`, `BW_VirusTotal_Report`) | INTENTIONALLY SYNCHRONOUS | Existing WinForms `BackgroundWorker` orchestration is retained for compatibility; no deadlock-sensitive `.Result` remains directly on UI thread in those handlers. |
+| `NewBackgroundThread` workflow usage | PARTIALLY COMPLETE | Still used across dialog for network jobs; VirusTotal scan enqueue path now centralized and safer, but broader usage remains. |
+| `ThreadSafeInvoke` workflow usage | INTENTIONALLY SYNCHRONOUS | Still required for WinForms control mutation on UI thread; now constrained in VirusTotal scan retry path to status/tab updates only. |
+| `Application.DoEvents` call sites | PARTIALLY COMPLETE | Still present via `NewBackgroundThread`/`ThreadSafeInvoke` wrappers and explicit per-link call in `ValidatePageLinks`; no blind removal performed in Priority 4. |
+| Network I/O inside UI invocation block | NOT STARTED | `GetIPGeoInfo` still performs web fetch + deserialization inside `ThreadSafeInvoke`. |
+| Form closing/disposal safety for retrying workflows | PARTIALLY COMPLETE | `EndpointDetailsDialog_FormClosing` now sets `virusTotalScanCancelled = true`; VirusTotal scan retry checks cancellation before attempts and during delay. No join/wait-on-worker strategy exists yet. |
+| VirusTotal status-label update sequencing | PARTIALLY COMPLETE | Legacy retry-status message formatting preserved via `BuildLegacyRetryStatusMessage`; deterministic ordering/attempt semantics covered in `EndpointVirusTotalScanRetryExecutorTests`, but dialog-level UI sequencing remains uncharacterized end-to-end. |
+| Cancellation flags and checks | PARTIALLY COMPLETE | Added `virusTotalScanCancelled` plus cancellation predicate (`IsDisposed`/`Disposing`/`checkerMainForm == null`) in VirusTotal scan retry boundary; other dialog workflows still do not share a unified cancellation contract. |
+| Timeout handling in dialog network workflows | PARTIALLY COMPLETE | Existing timeout values remain preserved (`5000`/`10000`) across request paths; no consolidated timeout policy seam yet. |
+| VirusTotal call workflows overall | PARTIALLY COMPLETE | Scan enqueue path now iterative/cancellable and deterministically tested (`tests/EndpointCheckingCore.Tests/EndpointVirusTotalScanRetryExecutorTests.cs`); report polling worker path is still synchronous bridge-based and lacks explicit cancellation. |
+| IP geolocation workflow (`GetIPGeoInfo`) | NOT STARTED | Still mixes background dispatch with UI-invoked network I/O; no extracted result-shaping boundary yet. |
+| WHOIS workflow (`GetWhoIsInfo`) | NOT STARTED | Still monolithic background network flow with UI updates; no deterministic shaping/cancellation seam yet. |
 
-Priority 4 is now `in progress`; first cohesive ticket completed direct `.Result` call-site removal in dialog VirusTotal paths, with deeper async workflow safety still pending.
+Priority 4 remains `in progress`; VirusTotal recursive retry/blocking-delay safety work is complete, while UI-thread network isolation and broader workflow cancellation/transition characterization are still pending.

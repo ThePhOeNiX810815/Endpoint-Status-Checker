@@ -53,6 +53,8 @@ namespace EndpointChecker
         // VIRUSTOTAL RESULT
         private UrlScanResult virusTotal_ScanResult = null;
 
+        private volatile bool virusTotalScanCancelled;
+
         // MAC VENDOR WEBPAGE URL
         private string macVendorWebPage = string.Empty;
 
@@ -1680,61 +1682,69 @@ namespace EndpointChecker
 
             NewBackgroundThread(() =>
             {
-                try
+                EndpointVirusTotalScanRetryExecutor.Execute(new EndpointVirusTotalRetryExecuteInput
                 {
-                    // REQUEST SCAN REPORT
-                    VirusTotal virusTotal = new VirusTotal(apiKey_VirusTotal)
+                    MaxRetryCount = maxRetryCount,
+                    InitialRetry = retry,
+                    RetryDelayMilliseconds = 5000,
+                    IsCancellationRequested = () =>
+                        virusTotalScanCancelled ||
+                        IsDisposed ||
+                        Disposing ||
+                        checkerMainForm == null,
+                    ShouldRetryException = vtException =>
+                        !vtException.GetType().IsAssignableFrom(typeof(VirusTotalNET.Exceptions.InvalidResourceException)),
+                    ExecuteAttempt = () =>
                     {
-                        UseTLS = true,
-                        UserAgent = http_UserAgent
-                    };
-                    Task<UrlScanResult> virusTotal_ScanResultTask = virusTotal.ScanUrlAsync(urlToScan);
-                    virusTotal_ScanResult = EndpointTaskSyncBridge.AwaitResult(virusTotal_ScanResultTask);
-
-                    if (virusTotal_ScanResult.ResponseCode == VirusTotalNET.ResponseCodes.UrlScanResponseCode.Queued)
-                    {
-                        ThreadSafeInvoke(() =>
+                        VirusTotal virusTotal = new VirusTotal(apiKey_VirusTotal)
                         {
-                            lbl_VirusTotal_Status.ForeColor = Color.DarkGreen;
-                            lbl_VirusTotal_Status.Text = virusTotal_ScanResult.VerboseMsg;
-                        });
-                    }
-                    else
+                            UseTLS = true,
+                            UserAgent = http_UserAgent
+                        };
+
+                        Task<UrlScanResult> virusTotalScanResultTask = virusTotal.ScanUrlAsync(urlToScan);
+                        UrlScanResult scanResult = EndpointTaskSyncBridge.AwaitResult(virusTotalScanResultTask);
+
+                        if (scanResult.ResponseCode != VirusTotalNET.ResponseCodes.UrlScanResponseCode.Queued)
+                        {
+                            throw new VirusTotalNET.Exceptions.InvalidResourceException(scanResult.VerboseMsg);
+                        }
+
+                        return new EndpointVirusTotalRetryAttemptResult
+                        {
+                            Payload = scanResult,
+                            StatusMessage = scanResult.VerboseMsg,
+                        };
+                    },
+                    OnRetrying = (vtException, currentRetry) =>
                     {
-                        throw new VirusTotalNET.Exceptions.InvalidResourceException(virusTotal_ScanResult.VerboseMsg);
-                    }
-                }
-                catch (Exception vtException)
-                {
-                    if (!vtException.GetType().IsAssignableFrom(typeof(VirusTotalNET.Exceptions.InvalidResourceException)) && retry <= maxRetryCount)
-                    {
+                        string statusMessage = EndpointVirusTotalScanRetryExecutor.BuildLegacyRetryStatusMessage(vtException, currentRetry);
+
                         ThreadSafeInvoke(() =>
                         {
                             lbl_VirusTotal_Status.ForeColor = Color.MediumVioletRed;
-
-                            lbl_VirusTotal_Status.Text = vtException.InnerException != null
-                                ? vtException.InnerException.Message ?? vtException.InnerException.ToString()
-                                : vtException.ToString();
-
-                            if (retry > 0)
-                            {
-                                lbl_VirusTotal_Status.Text += " [Retry " + retry + "]";
-                            }
+                            lbl_VirusTotal_Status.Text = statusMessage;
                         });
+                    },
+                    OnSuccess = attemptResult =>
+                    {
+                        UrlScanResult scanResult = attemptResult.Payload as UrlScanResult;
+                        virusTotal_ScanResult = scanResult;
 
-                        retry++;
-
-                        Thread.Sleep(5000);
-                        GetVirusTotalScanReport(urlToScan, maxRetryCount, retry);
-                    }
-                    else
+                        ThreadSafeInvoke(() =>
+                        {
+                            lbl_VirusTotal_Status.ForeColor = Color.DarkGreen;
+                            lbl_VirusTotal_Status.Text = attemptResult.StatusMessage;
+                        });
+                    },
+                    OnFailed = _ =>
                     {
                         ThreadSafeInvoke(() =>
                         {
                             tabControl.TabPages.Remove(tabPage_VirusTotal);
                         });
-                    }
-                }
+                    },
+                });
             });
         }
 
@@ -2040,6 +2050,8 @@ namespace EndpointChecker
 
         public void EndpointDetailsDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
+            virusTotalScanCancelled = true;
+
             checkerMainForm.Close();
             checkerMainForm = null;
 
