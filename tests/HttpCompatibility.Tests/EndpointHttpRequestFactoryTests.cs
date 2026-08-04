@@ -34,6 +34,8 @@ namespace EndpointChecker
             Run("Cloudflare bypass interpreter preserves successful bypass override mapping", CloudflareBypassInterpreterPreservesSuccessfulBypassOverrideMapping);
             Run("Cloudflare bypass interpreter preserves failed bypass append mapping", CloudflareBypassInterpreterPreservesFailedBypassAppendMapping);
             Run("Cloudflare bypass interpreter preserves bypass exception append mapping", CloudflareBypassInterpreterPreservesBypassExceptionAppendMapping);
+            Run("HTTP header collector preserves null and empty handling", HttpHeaderCollectorPreservesNullAndEmptyHandling);
+            Run("HTTP header collector preserves request header name and value mapping", HttpHeaderCollectorPreservesHeaderNameAndValueMapping);
             Run("HTTP response body processor preserves read trigger conditions", HttpResponseBodyProcessorPreservesReadTriggerConditions);
             Run("HTTP response body processor preserves max byte cap behavior", HttpResponseBodyProcessorPreservesMaxByteCapBehavior);
             Run("HTTP response body processor preserves html meta gating", HttpResponseBodyProcessorPreservesHtmlMetaGating);
@@ -382,6 +384,38 @@ namespace EndpointChecker
 
             AssertEqual("403", result.ResponseCode);
             AssertEqual("Forbidden | Bypass error: unexpected failure", result.ResponseMessage);
+        }
+
+        private static void HttpHeaderCollectorPreservesNullAndEmptyHandling()
+        {
+            AssertEqual(0, EndpointHttpHeaderCollector.Collect(null).Count);
+
+            WebHeaderCollection emptyHeaders = new WebHeaderCollection();
+            AssertEqual(0, EndpointHttpHeaderCollector.Collect(emptyHeaders).Count);
+        }
+
+        private static void HttpHeaderCollectorPreservesHeaderNameAndValueMapping()
+        {
+            WebHeaderCollection headers = new WebHeaderCollection
+            {
+                ["Server"] = "nginx",
+                ["ETag"] = "abc123",
+                ["X-Custom"] = "x-value"
+            };
+
+            List<Property> result = EndpointHttpHeaderCollector.Collect(headers);
+
+            AssertEqual(3, result.Count);
+
+            Dictionary<string, string> mapped = new Dictionary<string, string>();
+            foreach (Property item in result)
+            {
+                mapped[item.ItemName] = item.ItemValue;
+            }
+
+            AssertEqual("nginx", mapped["Server"]);
+            AssertEqual("abc123", mapped["ETag"]);
+            AssertEqual("x-value", mapped["X-Custom"]);
         }
 
         private static void HttpResponseBodyProcessorPreservesReadTriggerConditions()

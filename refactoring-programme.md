@@ -439,3 +439,20 @@ Scope completed in this ticket:
 - Routed `ResolvePageMetaInfo` through the extracted resolver seam while preserving assignment semantics for title/description/author/language/theme/default encoding/meta list/link list.
 - Preserved existing encoding parser behavior by delegating charset parsing through `CheckerMainForm.GetEncoding`.
 - Added deterministic `HttpCompatibility` coverage for title/meta extraction, link deduplication/exclusion behavior, language resolution (`mul`), theme-color parsing fallback, and HTML-encoding preservation behavior.
+
+## Ticket 18: Protocol decomposition continuation (HTTP header collection seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting deterministic request/response header collection from `CheckerMainForm.GetHTTPWebHeaders` while preserving runtime header mapping behavior.
+
+Scope completed in this ticket:
+
+- Extracted deterministic header-collection mapping into `EndpointHttpHeaderCollector`.
+- Routed `CheckerMainForm.GetHTTPWebHeaders` through the extracted seam while preserving caller-side list mutation behavior.
+- Preserved existing header name/value mapping semantics and null/empty collection handling.
+- Added deterministic `HttpCompatibility` coverage for null/empty handling and representative request header name/value mapping.
