@@ -388,3 +388,20 @@ Scope completed in this ticket:
 - Routed `GetSSLCertificateInfo` property population through the extracted seam while preserving legacy null-check and swallow-on-error behavior.
 - Preserved existing `HttpWebRequest.ServicePoint.Certificate` acquisition and `X509Certificate2` conversion flow in form orchestration.
 - Added deterministic `EndpointCheckingCore` coverage for null-certificate handling and representative mapped property/value behavior.
+
+## Ticket 15: Protocol decomposition continuation (network share result shaping seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting deterministic network-share result shaping from `bw_GetStatus_DoWork` while preserving runtime share acquisition behavior.
+
+Scope completed in this ticket:
+
+- Extracted deterministic network-share list shaping/sorting into `EndpointNetworkShareResolver`.
+- Routed network share assignment in `bw_GetStatus_DoWork` through the extracted seam while preserving null/empty behavior.
+- Preserved existing runtime share acquisition via `GetNetShares(responseURI.Host)` and existing catch-swallow orchestration behavior.
+- Added deterministic `EndpointCheckingCore` tests for null input, empty input, and legacy sorting/array-shaping behavior.
