@@ -55,6 +55,13 @@ a single scan with configurable automation.
 
 Endpoint Status Checker v3 is currently developed on the `Main-Dev-V3` branch.
 
+## Branch Policy
+
+- v3 branch: `Main-Dev-V3`
+- v3 rule: no merging with v2 is allowed, and no v3 changes may affect v2 behavior or delivery.
+- v2 branch and default mainline: `Main-Dev-V2`
+- v2 rule: changes intended for v2 must stay isolated from the v3 development line unless explicitly ported separately.
+
 Current public distribution status:
 
 - Test channel: GitHub prerelease `v3.1.1-rc1`
@@ -76,6 +83,7 @@ Safety notes for update behavior:
 - v3 in-app update checks remain hard-disabled in source (`app_UpdateChecksEnabled = false`).
 - This RC publish does not modify `Main-Dev-Branch/version.txt` or `Main-Dev-Branch/package.txt` (the legacy v2.15 update source).
 - Because this is a prerelease asset on the v3 branch line, it is isolated from the v2.15 automatic update path.
+- Test builds should be signed with a trusted self-signed certificate available in the local certificate store before packaging.
 
 Repository note:
 

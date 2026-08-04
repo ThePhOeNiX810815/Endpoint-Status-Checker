@@ -39,6 +39,15 @@ docs/ROADMAP.md
 
 ---
 
+## Branch Rules
+
+- `Main-Dev-V3` is the v3 development branch.
+- Do not merge v2 work into `Main-Dev-V3` unless explicitly requested and compatibility-reviewed.
+- Do not make v3 changes that affect v2 behavior, updater flow, or release delivery.
+- `Main-Dev-V2` is the v2 branch and default mainline.
+
+---
+
 ## Architecture
 
 See:

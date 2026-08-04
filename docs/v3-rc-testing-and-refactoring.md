@@ -4,6 +4,13 @@
 
 This document defines how v3.1.1 RC1 is packaged, validated, and documented on the `Main-Dev-V3` line.
 
+## Branch Policy
+
+- v3 branch: `Main-Dev-V3`
+- v3 rule: no merging with v2 is allowed, and no v3 change may affect v2 behavior, updater flow, or release delivery.
+- v2 branch and default mainline: `Main-Dev-V2`
+- v2 work must be kept separate and ported intentionally when needed.
+
 ## Release Candidate Identity
 
 - Version: `3.1.1.1` (RC build metadata)
@@ -30,7 +37,7 @@ dotnet publish src/EndpointChecker.csproj -c Release -r win-x86 -o C:\TEMP\Check
 
 ### Code-signing expectation
 
-- Sign `EndpointChecker.exe` with certificate subject `CN=David Smidke` from the local certificate store.
+- Sign `EndpointChecker.exe` with a trusted self-signed certificate from the local certificate store.
 - Verify signature status before zipping.
 
 ## Test Strategy
@@ -69,7 +76,7 @@ dotnet build src/EndpointChecker.sln -c Release
 1. Confirm branch is `Main-Dev-V3`.
 2. Build Release and run all explicit test suites.
 3. Publish self-contained x86 output.
-4. Sign `EndpointChecker.exe` using the `David Smidke` certificate.
+4. Sign `EndpointChecker.exe` using the expected self-signed certificate for the local release workflow.
 5. Zip the published folder as `EndpointChecker-v3.1.1-rc1-test.zip`.
 6. Create prerelease tag `v3.1.1-rc1` targeted to `Main-Dev-V3`.
 7. Upload the ZIP as the prerelease asset.
