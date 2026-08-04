@@ -11,6 +11,7 @@ namespace EndpointChecker
             EndpointCheckOptionsTests.Register();
             EndpointCheckResultFactoryTests.Register();
             EndpointCheckProgressTests.Register();
+            EndpointScanWorkflowRulesTests.Register();
 
             if (failed > 0)
             {
@@ -159,6 +160,92 @@ namespace EndpointChecker
                 pingTimeoutSeconds: pingTimeoutSeconds,
                 httpRequestTimeoutSeconds: httpRequestTimeoutSeconds,
                 ftpRequestTimeoutSeconds: ftpRequestTimeoutSeconds);
+        }
+
+        private static void Run(string name, Action test) => EndpointCheckingCoreTestRunner.Run(name, test);
+    }
+
+    internal static class EndpointScanWorkflowRulesTests
+    {
+        public static void Register()
+        {
+            Run("HTTP protocol routing respects protocol validation and cancellation", HttpProtocolRoutingRespectsProtocolValidationAndCancellation);
+            Run("FTP protocol routing respects protocol validation and cancellation", FtpProtocolRoutingRespectsProtocolValidationAndCancellation);
+            Run("Manual redirect follow requires 3xx and location header", ManualRedirectFollowRequires3xxAndLocationHeader);
+            Run("Redirect annotation follows URI changes and explicit follow flag", RedirectAnnotationFollowsUriChangesAndExplicitFollowFlag);
+            Run("Ping check message is set only in ping validation mode", PingCheckMessageIsSetOnlyInPingValidationMode);
+            Run("Cancellation semantics mark endpoint terminated", CancellationSemanticsMarkEndpointTerminated);
+            Run("Last seen online updates only for terminal success states", LastSeenOnlineUpdatesOnlyForTerminalSuccessStates);
+            Run("Cloudflare bypass path is enabled only when configured", CloudflareBypassPathIsEnabledOnlyWhenConfigured);
+        }
+
+        private static void HttpProtocolRoutingRespectsProtocolValidationAndCancellation()
+        {
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.IsHttpProtocolCheck(true, false, "http"));
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.IsHttpProtocolCheck(true, false, "HTTPS"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.IsHttpProtocolCheck(false, false, "http"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.IsHttpProtocolCheck(true, true, "http"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.IsHttpProtocolCheck(true, false, "ftp"));
+        }
+
+        private static void FtpProtocolRoutingRespectsProtocolValidationAndCancellation()
+        {
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.IsFtpProtocolCheck(true, false, "ftp"));
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.IsFtpProtocolCheck(true, false, "FTP"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.IsFtpProtocolCheck(true, true, "ftp"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.IsFtpProtocolCheck(false, false, "ftp"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.IsFtpProtocolCheck(true, false, "http"));
+        }
+
+        private static void ManualRedirectFollowRequires3xxAndLocationHeader()
+        {
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.ShouldFollowManualRedirect(true, 302, "https://example.com/new"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldFollowManualRedirect(false, 302, "https://example.com/new"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldFollowManualRedirect(true, 200, "https://example.com/new"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldFollowManualRedirect(true, 301, null));
+        }
+
+        private static void RedirectAnnotationFollowsUriChangesAndExplicitFollowFlag()
+        {
+            Uri endpointUri = new Uri("http://example.com/path");
+            Uri sameResponseUri = new Uri("http://example.com/path");
+            Uri changedResponseUri = new Uri("https://example.com/path");
+
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldAppendRedirectSource(endpointUri, sameResponseUri, false));
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.ShouldAppendRedirectSource(endpointUri, changedResponseUri, false));
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.ShouldAppendRedirectSource(endpointUri, sameResponseUri, true));
+        }
+
+        private static void PingCheckMessageIsSetOnlyInPingValidationMode()
+        {
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.ShouldMarkPingCheckMessage(true, false, true));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldMarkPingCheckMessage(false, false, true));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldMarkPingCheckMessage(true, true, true));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldMarkPingCheckMessage(true, false, false));
+        }
+
+        private static void CancellationSemanticsMarkEndpointTerminated()
+        {
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.ShouldMarkTerminated(true));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldMarkTerminated(false));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldRunPing(true, true));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldRecordProtocolDuration(true, true));
+        }
+
+        private static void LastSeenOnlineUpdatesOnlyForTerminalSuccessStates()
+        {
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.ShouldUpdateLastSeenOnline(true, "200", false, "N/A", "ERROR", "N/A"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldUpdateLastSeenOnline(true, "ERROR", false, "N/A", "ERROR", "N/A"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldUpdateLastSeenOnline(true, "N/A", false, "N/A", "ERROR", "N/A"));
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.ShouldUpdateLastSeenOnline(false, "N/A", true, "12 ms", "ERROR", "N/A"));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldUpdateLastSeenOnline(false, "N/A", true, "N/A", "ERROR", "N/A"));
+        }
+
+        private static void CloudflareBypassPathIsEnabledOnlyWhenConfigured()
+        {
+            EndpointCheckingCoreTestRunner.AssertEqual(true, EndpointScanWorkflowRules.ShouldAttemptCloudflareBypass(true, true));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldAttemptCloudflareBypass(true, false));
+            EndpointCheckingCoreTestRunner.AssertEqual(false, EndpointScanWorkflowRules.ShouldAttemptCloudflareBypass(false, true));
         }
 
         private static void Run(string name, Action test) => EndpointCheckingCoreTestRunner.Run(name, test);

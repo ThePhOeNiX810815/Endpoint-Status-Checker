@@ -18,6 +18,12 @@ namespace EndpointChecker
             Run("Cloudflare classifier preserves CF-RAY detection", CloudflareClassifierPreservesCfRayDetection);
             Run("Cloudflare classifier preserves server detection", CloudflareClassifierPreservesServerDetection);
             Run("Cloudflare classifier ignores unrelated responses", CloudflareClassifierIgnoresUnrelatedResponses);
+            Run("HTTP retry executor retries timeout exceptions until success", HttpRetryExecutorRetriesTimeoutExceptionsUntilSuccess);
+            Run("HTTP retry executor stops retrying after max timeout retries", HttpRetryExecutorStopsRetryingAfterMaxTimeoutRetries);
+            Run("HTTP retry executor does not retry non-timeout web exceptions", HttpRetryExecutorDoesNotRetryNonTimeoutWebExceptions);
+            Run("HTTP handled web exception mapping preserves status description and message suffix rules", HttpHandledWebExceptionMappingPreservesStatusDescriptionAndMessageSuffixRules);
+            Run("HTTP transport web exception mapping preserves inner exception chain", HttpTransportWebExceptionMappingPreservesInnerExceptionChain);
+            Run("HTTP generic exception mapping preserves type and first inner message", HttpGenericExceptionMappingPreservesTypeAndFirstInnerMessage);
 
             if (failed > 0)
             {
@@ -143,6 +149,113 @@ namespace EndpointChecker
         {
             AssertEqual(false, EndpointHttpResponseClassifier.IsCloudflareProtected(null, null));
             AssertEqual(false, EndpointHttpResponseClassifier.IsCloudflareProtected(new WebHeaderCollection(), "nginx"));
+        }
+
+        private static void HttpRetryExecutorRetriesTimeoutExceptionsUntilSuccess()
+        {
+            int attempts = 0;
+
+            HttpWebResponse response = EndpointHttpRetryExecutor.ExecuteWithRetry(
+                () =>
+                {
+                    attempts++;
+                    if (attempts < 3)
+                    {
+                        throw new WebException("timeout", WebExceptionStatus.Timeout);
+                    }
+
+                    return null;
+                },
+                maxRetryCount: 3);
+
+            AssertEqual(3, attempts);
+            AssertEqual(null, response);
+        }
+
+        private static void HttpRetryExecutorStopsRetryingAfterMaxTimeoutRetries()
+        {
+            int attempts = 0;
+
+            try
+            {
+                EndpointHttpRetryExecutor.ExecuteWithRetry(
+                    () =>
+                    {
+                        attempts++;
+                        throw new WebException("timeout", WebExceptionStatus.Timeout);
+                    },
+                    maxRetryCount: 2);
+
+                throw new InvalidOperationException("Expected timeout exception was not thrown.");
+            }
+            catch (WebException webException)
+            {
+                AssertEqual(WebExceptionStatus.Timeout, webException.Status);
+            }
+
+            AssertEqual(3, attempts);
+        }
+
+        private static void HttpRetryExecutorDoesNotRetryNonTimeoutWebExceptions()
+        {
+            int attempts = 0;
+
+            try
+            {
+                EndpointHttpRetryExecutor.ExecuteWithRetry(
+                    () =>
+                    {
+                        attempts++;
+                        throw new WebException("connect failure", WebExceptionStatus.ConnectFailure);
+                    },
+                    maxRetryCount: 5);
+
+                throw new InvalidOperationException("Expected non-timeout web exception was not thrown.");
+            }
+            catch (WebException webException)
+            {
+                AssertEqual(WebExceptionStatus.ConnectFailure, webException.Status);
+            }
+
+            AssertEqual(1, attempts);
+        }
+
+        private static void HttpHandledWebExceptionMappingPreservesStatusDescriptionAndMessageSuffixRules()
+        {
+            string withDescription = EndpointHttpStatusMapper.BuildHandledWebExceptionMessage(
+                "Forbidden",
+                "Forbidden",
+                "403",
+                "ProtocolError: request failed");
+
+            AssertEqual("Forbidden -> ProtocolError: request failed", withDescription);
+
+            string withoutDescription = EndpointHttpStatusMapper.BuildHandledWebExceptionMessage(
+                string.Empty,
+                "Forbidden",
+                "403",
+                "Remote server returned status 403");
+
+            AssertEqual("Forbidden", withoutDescription);
+        }
+
+        private static void HttpTransportWebExceptionMappingPreservesInnerExceptionChain()
+        {
+            Exception root = new InvalidOperationException("root-cause");
+            Exception middle = new ApplicationException("mid-layer", root);
+            WebException transport = new WebException("transport-failure", middle, WebExceptionStatus.ConnectFailure, null);
+
+            string message = EndpointHttpStatusMapper.BuildTransportWebExceptionMessage(transport);
+
+            AssertEqual("ConnectFailure -> transport-failure -> mid-layer -> root-cause", message);
+        }
+
+        private static void HttpGenericExceptionMappingPreservesTypeAndFirstInnerMessage()
+        {
+            Exception exception = new InvalidOperationException("outer", new ApplicationException("inner"));
+            string message = EndpointHttpStatusMapper.BuildGenericExceptionMessage(exception);
+
+            AssertEqual("InvalidOperation -> outer -> inner", message);
         }
 
         private static void Run(string name, Action test)

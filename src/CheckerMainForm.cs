@@ -754,10 +754,10 @@ namespace EndpointChecker
                                         // CREATE STOPWATCH FOR ITEM CHECK DURATION [FOR 'EXPORT' PURPOSE]
                                         Stopwatch sw_ItemProgress = new Stopwatch();
 
-                                        if (validationMethod == ValidationMethod.Protocol &&
-                                            !BW_GetStatus.CancellationPending &&
-                                            (endpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
-                                             endpoint.Protocol.ToLower() == Uri.UriSchemeHttps))
+                                        if (EndpointScanWorkflowRules.IsHttpProtocolCheck(
+                                            validationMethod == ValidationMethod.Protocol,
+                                            BW_GetStatus.CancellationPending,
+                                            endpoint.Protocol))
                                         {
                                             // AUTO-REDIRECT SWITCH [BY 'LOCATION' HEADER OF '3xx' RESPONSE CODE]
                                             bool autoRedirect_Followed = false;
@@ -798,13 +798,16 @@ namespace EndpointChecker
                                                 {
                                                     // IF RESULT CODE IS '3xx', DO A SECOND CALL ON 'LOCATION'
                                                     if (checkOptions.AllowAutoRedirect &&
-                                                        wEX.Response is HttpWebResponse _httpWebResponse &&
-                                                        ((int)_httpWebResponse.StatusCode).ToString().StartsWith("3") &&
-                                                        _httpWebResponse.Headers.AllKeys.Contains("Location") &&
-                                                        !string.IsNullOrEmpty(_httpWebResponse.GetResponseHeader("Location")))
+                                                        wEX.Response is HttpWebResponse _httpWebResponse)
                                                     {
-                                                        // GET 'LOCATION' HEADER VALUE
                                                         string locationHeaderValue = _httpWebResponse.GetResponseHeader("Location");
+                                                        if (!EndpointScanWorkflowRules.ShouldFollowManualRedirect(
+                                                            checkOptions.AllowAutoRedirect,
+                                                            (int)_httpWebResponse.StatusCode,
+                                                            locationHeaderValue))
+                                                        {
+                                                            throw;
+                                                        }
 
                                                         // IF IS RELATIVE PATH
                                                         if (Uri.IsWellFormedUriString(locationHeaderValue, UriKind.Relative))
@@ -873,10 +876,7 @@ namespace EndpointChecker
                                                     endpoint.HTTPautoRedirects = httpAutoRedirects.ToString();
 
                                                     // CHECK AUTO REDIRECT URL [COMPARE REQUEST AND RESPONSE ENDPOINT URIs]
-                                                    if (endpointURI.Scheme != responseURI.Scheme ||
-                                                        endpointURI.Port != responseURI.Port ||
-                                                        endpointURI.Host != responseURI.Host ||
-                                                        autoRedirect_Followed)
+                                                    if (EndpointScanWorkflowRules.ShouldAppendRedirectSource(endpointURI, responseURI, autoRedirect_Followed))
                                                     {
                                                         endpoint.ResponseMessage += " (Redirected from \"" + endpointURI.OriginalString + "\")";
                                                     }
@@ -1002,24 +1002,19 @@ namespace EndpointChecker
                                                         if (!string.IsNullOrEmpty(httpWebResponse.StatusDescription))
                                                         {
                                                             // STATUS DESCRIPTION
-                                                            endpoint.ResponseMessage = httpWebResponse.StatusDescription;
-
-                                                            // ERROR MESSAGE
-                                                            if (!webException.Message.Contains(endpoint.ResponseCode))
-                                                            {
-                                                                endpoint.ResponseMessage += " -> " + webException.Message;
-                                                            }
+                                                            endpoint.ResponseMessage = EndpointHttpStatusMapper.BuildHandledWebExceptionMessage(
+                                                                httpWebResponse.StatusDescription,
+                                                                httpWebResponse.StatusCode.ToString(),
+                                                                endpoint.ResponseCode,
+                                                                webException.Message);
                                                         }
                                                         else
                                                         {
-                                                            // STATUS CODE [STRING]
-                                                            endpoint.ResponseMessage = httpWebResponse.StatusCode.ToString();
-
-                                                            // ERROR MESSAGE
-                                                            if (!webException.Message.Contains(endpoint.ResponseCode))
-                                                            {
-                                                                endpoint.ResponseMessage += " -> " + webException.Message;
-                                                            }
+                                                            endpoint.ResponseMessage = EndpointHttpStatusMapper.BuildHandledWebExceptionMessage(
+                                                                string.Empty,
+                                                                httpWebResponse.StatusCode.ToString(),
+                                                                endpoint.ResponseCode,
+                                                                webException.Message);
                                                         }
 
                                                         // GET RESPONSE HEADERS
@@ -1043,7 +1038,9 @@ namespace EndpointChecker
                                                             // ATTEMPT BYPASS VIA CONFIGURED METHOD
                                                             CloudflareBypassMethod cfBypassMethod =
                                                                 (CloudflareBypassMethod)Settings.Default.Config_CloudflareBypass_Method;
-                                                            if (cfBypassMethod != CloudflareBypassMethod.Disabled)
+                                                            if (EndpointScanWorkflowRules.ShouldAttemptCloudflareBypass(
+                                                                true,
+                                                                cfBypassMethod != CloudflareBypassMethod.Disabled))
                                                             {
                                                                 try
                                                                 {
@@ -1088,20 +1085,7 @@ namespace EndpointChecker
                                                     endpoint.ResponseCode = status_Error;
 
                                                     // EXCEPTION STATUS
-                                                    endpoint.ResponseMessage = webException.Status.ToString();
-                                                    endpoint.ResponseMessage += " -> " + webException.Message;
-
-                                                    // Walk the full inner exception chain to expose the root cause.
-                                                    // In .NET 10, WebException wraps HttpRequestException wraps
-                                                    // AuthenticationException/IOException — one level isn't enough.
-                                                    Exception innerEx = webException.InnerException;
-                                                    while (innerEx != null)
-                                                    {
-                                                        if (!string.IsNullOrEmpty(innerEx.Message) &&
-                                                            !endpoint.ResponseMessage.Contains(innerEx.Message))
-                                                            endpoint.ResponseMessage += " -> " + innerEx.Message;
-                                                        innerEx = innerEx.InnerException;
-                                                    }
+                                                    endpoint.ResponseMessage = EndpointHttpStatusMapper.BuildTransportWebExceptionMessage(webException);
                                                 }
                                             }
                                             catch (Exception exception)
@@ -1112,19 +1096,7 @@ namespace EndpointChecker
                                                 // CODE
                                                 endpoint.ResponseCode = status_Error;
 
-                                                // EXCEPTION TYPE
-                                                endpoint.ResponseMessage = exception.GetType().Name.Replace("Exception", string.Empty);
-
-                                                // MESSAGE
-                                                endpoint.ResponseMessage += " -> " + exception.Message;
-
-                                                // INNER EXCEPTION MESSAGE
-                                                if (exception.InnerException != null &&
-                                                    !string.IsNullOrEmpty(exception.InnerException.Message) &&
-                                                    !endpoint.ResponseMessage.Contains(exception.InnerException.Message))
-                                                {
-                                                    endpoint.ResponseMessage += " -> " + exception.InnerException.Message;
-                                                }
+                                                endpoint.ResponseMessage = EndpointHttpStatusMapper.BuildGenericExceptionMessage(exception);
                                             }
                                             finally
                                             {
@@ -1135,9 +1107,10 @@ namespace EndpointChecker
                                                 }
                                             }
                                         }
-                                        else if (validationMethod == ValidationMethod.Protocol &&
-                                                 !BW_GetStatus.CancellationPending &&
-                                                 endpoint.Protocol.ToLower() == Uri.UriSchemeFtp)
+                                        else if (EndpointScanWorkflowRules.IsFtpProtocolCheck(
+                                            validationMethod == ValidationMethod.Protocol,
+                                            BW_GetStatus.CancellationPending,
+                                            endpoint.Protocol))
                                         {
                                             // FTP PROTOCOL SCHEME
                                             FtpWebRequest ftpWebRequest;
@@ -1198,19 +1171,7 @@ namespace EndpointChecker
                                                 // CODE
                                                 endpoint.ResponseCode = status_Error;
 
-                                                // EXCEPTION TYPE
-                                                endpoint.ResponseMessage = exception.GetType().Name.Replace("Exception", string.Empty);
-
-                                                // EXCEPTION MESSAGE
-                                                endpoint.ResponseMessage += " -> " + exception.Message;
-
-                                                // INNER EXCEPTION MESSAGE
-                                                if (exception.InnerException != null &&
-                                                    !string.IsNullOrEmpty(exception.InnerException.Message) &&
-                                                    !endpoint.ResponseMessage.Contains(exception.InnerException.Message))
-                                                {
-                                                    endpoint.ResponseMessage += " -> " + exception.InnerException.Message;
-                                                }
+                                                endpoint.ResponseMessage = EndpointHttpStatusMapper.BuildGenericExceptionMessage(exception);
                                             }
                                             finally
                                             {
@@ -1240,8 +1201,9 @@ namespace EndpointChecker
                                         List<string> endpointMACAddressStringList = new List<string>();
 
                                         // GET ITEM CHECK DURATION TIME [FOR 'EXPORT' PURPOSE]
-                                        if (validationMethod == ValidationMethod.Protocol &&
-                                            !BW_GetStatus.CancellationPending)
+                                        if (EndpointScanWorkflowRules.ShouldRecordProtocolDuration(
+                                            validationMethod == ValidationMethod.Protocol,
+                                            BW_GetStatus.CancellationPending))
                                         {
                                             durationTime_Item = sw_ItemProgress.ElapsedMilliseconds.ToString() + " ms";
                                         }
@@ -1334,10 +1296,14 @@ namespace EndpointChecker
                                             }
                                         }
 
-                                        if (!BW_GetStatus.CancellationPending &&
-                                            checkOptions.TestPing)
+                                        if (EndpointScanWorkflowRules.ShouldRunPing(
+                                            BW_GetStatus.CancellationPending,
+                                            checkOptions.TestPing))
                                         {
-                                            if (validationMethod == ValidationMethod.Ping)
+                                            if (EndpointScanWorkflowRules.ShouldMarkPingCheckMessage(
+                                                validationMethod == ValidationMethod.Ping,
+                                                BW_GetStatus.CancellationPending,
+                                                checkOptions.TestPing))
                                             {
                                                 endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.PINGCHECK);
                                             }
@@ -1386,7 +1352,7 @@ namespace EndpointChecker
                                 endpoint.ResponseTime = durationTime_Item;
 
                                 // CHECK 'TERMINATED' STATUS
-                                if (BW_GetStatus.CancellationPending)
+                                if (EndpointScanWorkflowRules.ShouldMarkTerminated(BW_GetStatus.CancellationPending))
                                 {
                                     endpoint.ResponseCode = status_NotAvailable;
                                     endpoint.ResponseMessage = GetEnumDescriptionString(EndpointStatus.TERMINATED);
@@ -1394,11 +1360,13 @@ namespace EndpointChecker
                                 else
                                 {
                                     // UPDATE 'LAST SEEN ONLINE' VALUE
-                                    if ((validationMethod == ValidationMethod.Protocol &&
-                                         endpoint.ResponseCode != status_Error &&
-                                         endpoint.ResponseCode != status_NotAvailable) ||
-                                        (validationMethod == ValidationMethod.Ping &&
-                                         endpoint.PingRoundtripTime != status_NotAvailable))
+                                    if (EndpointScanWorkflowRules.ShouldUpdateLastSeenOnline(
+                                        validationMethod == ValidationMethod.Protocol,
+                                        endpoint.ResponseCode,
+                                        validationMethod == ValidationMethod.Ping,
+                                        endpoint.PingRoundtripTime,
+                                        status_Error,
+                                        status_NotAvailable))
                                     {
                                         endpoint.LastSeenOnline = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                     }
@@ -1901,27 +1869,7 @@ namespace EndpointChecker
 
         public static HttpWebResponse GetHTTPWebResponse(HttpWebRequest httpWebRequest, int maxRetryCount, int retryCount = 0)
         {
-            HttpWebResponse webResponse;
-
-            try
-            {
-                webResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            }
-            catch (WebException webException)
-            {
-                if (webException.Status == WebExceptionStatus.Timeout &&
-                    retryCount < maxRetryCount)
-                {
-                    retryCount++;
-                    webResponse = GetHTTPWebResponse(httpWebRequest, maxRetryCount, retryCount);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return webResponse;
+            return EndpointHttpRetryExecutor.Execute(httpWebRequest, maxRetryCount, retryCount);
         }
 
         public string GetContentType(string valueString)
