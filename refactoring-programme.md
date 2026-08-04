@@ -552,7 +552,7 @@ Scope completed in this phase:
 
 Remaining work in this ticket:
 
-- Extend async-safety review to other dialog network workflows (WHOIS and related lookups) where cancellation/transition characterization is still missing.
+- Extend async-safety review to remaining dialog network workflows (for example MAC-vendor and related lookups) where cancellation/transition characterization is still missing.
 
 Verification:
 

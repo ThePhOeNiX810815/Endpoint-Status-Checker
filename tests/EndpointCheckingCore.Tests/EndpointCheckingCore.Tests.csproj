@@ -30,6 +30,7 @@
     <Compile Include="..\..\src\EndpointSslCertificatePropertyMapper.cs" Link="EndpointSslCertificatePropertyMapper.cs" />
     <Compile Include="..\..\src\EndpointTaskSyncBridge.cs" Link="EndpointTaskSyncBridge.cs" />
     <Compile Include="..\..\src\EndpointVirusTotalScanRetryExecutor.cs" Link="EndpointVirusTotalScanRetryExecutor.cs" />
+    <Compile Include="..\..\src\EndpointWhoIsPresentationBuilder.cs" Link="EndpointWhoIsPresentationBuilder.cs" />
     <Compile Include="..\..\src\ReportMailTableBuilder.cs" Link="ReportMailTableBuilder.cs" />
     <Compile Include="..\..\src\UiThreadHelpers.cs" Link="UiThreadHelpers.cs" />
   </ItemGroup>
