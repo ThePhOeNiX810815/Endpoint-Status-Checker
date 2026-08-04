@@ -238,8 +238,8 @@ Remaining work in this ticket:
 This ledger is intentionally strict: a priority is not considered complete unless all listed completion criteria are covered by deterministic tests or blocked by an explicit owner decision.
 
 1. Scan workflow characterization harness: Complete (deterministic criteria covered in `docs/refactoring/reconciliation-2026-08-04.md`)
-2. XLSX and HTML export compatibility baseline: In progress (HTML partial, XLSX largely pending)
-3. Protocol decomposition enabled by harness: In progress (initial route decomposition done; deeper extraction pending full harness)
+2. XLSX and HTML export compatibility baseline: Complete (deterministic criteria covered in `docs/refactoring/reconciliation-2026-08-04.md`)
+3. Protocol decomposition enabled by harness: In progress (initial route decomposition done; deeper extraction pending dedicated decomposition tickets)
 4. `EndpointDetailsDialog` blocking `.Result` paths: Not started
 5. Unsafe `Application.DoEvents` review/reduction: Not started
 6. CI warning-regression governance: Not started (baseline exists)
@@ -283,3 +283,21 @@ Scope completed in this phase:
 - Extracted deterministic terminal result finalization into `EndpointScanTerminalFinalizer` and wired address/response-time/cancellation/last-seen updates through it.
 - Added characterization coverage for redirect resolution and terminal finalization behavior without public internet dependency.
 - Reconciled completion matrix to mark scan-workflow characterization criteria covered.
+
+## Ticket 9: XLSX/HTML export compatibility completion
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Close Priority 2 by completing deterministic XLSX/HTML compatibility characterization and extracting a stable XLSX workbook-construction seam.
+
+Scope completed in this ticket:
+
+- Extracted deterministic workbook-construction seam into `EndpointXlsxExportWorkbookBuilder` and routed `EndpointsStatusExport` XLSX workbook assembly through it while preserving output semantics.
+- Added deterministic `StructuredExport` compatibility coverage for workbook readability, worksheet presence/names, HTTP/FTP column order, representative values, hidden-column behavior, key formatting assertions, and legacy worksheet deletion rules.
+- Added deterministic HTML summary-link replacement seam in `EndpointHtmlExportTransformer.ReplaceSummaryHyperLinkPlaceholders` and routed summary placeholder replacement through it.
+- Expanded HTML compatibility coverage to include summary-page structure/link replacement and legacy hyperlink ampersand-escaping behavior.
+- Reconciled completion matrix to mark export compatibility criteria covered.
