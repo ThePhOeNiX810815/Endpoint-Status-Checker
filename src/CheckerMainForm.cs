@@ -1412,21 +1412,10 @@ namespace EndpointChecker
 
         public void GetSSLCertificateInfo(HttpWebRequest httpWebRequest, EndpointDefinition endpoint)
         {
-            if (httpWebRequest.ServicePoint.Certificate != null)
+            foreach (Property property in EndpointSslCertificateAcquisition.TryCollectProperties(
+                () => httpWebRequest.ServicePoint.Certificate))
             {
-                try
-                {
-                    X509Certificate2 sslCert2 = new X509Certificate2(httpWebRequest.ServicePoint.Certificate);
-
-                    foreach (EndpointSslCertificatePropertyItem property in EndpointSslCertificatePropertyMapper.Build(sslCert2))
-                    {
-                        endpoint.SSLCertificateProperties.PropertyItem.Add(
-                            new Property { ItemName = property.ItemName, ItemValue = property.ItemValue });
-                    }
-                }
-                catch
-                {
-                }
+                endpoint.SSLCertificateProperties.PropertyItem.Add(property);
             }
         }
 

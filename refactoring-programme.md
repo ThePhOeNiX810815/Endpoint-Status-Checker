@@ -473,3 +473,20 @@ Scope completed in this ticket:
 - Routed the `ResolveNetworkShares` branch in `bw_GetStatus_DoWork` through the extracted seam while preserving assignment-on-success and no-assignment-on-exception behavior.
 - Preserved existing host share enumeration implementation by delegating acquisition through existing `GetNetShares` callback.
 - Added deterministic `EndpointCheckingCore` coverage for disabled-gating behavior, success-path sorted assignment behavior, and exception-path no-assignment behavior.
+
+## Ticket 20: Protocol decomposition continuation (SSL certificate acquisition seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting deterministic SSL certificate acquisition/error-flow handling from `GetSSLCertificateInfo` while preserving mapped-property outcomes.
+
+Scope completed in this ticket:
+
+- Extracted SSL certificate acquisition and swallow-on-error behavior into `EndpointSslCertificateAcquisition`.
+- Routed `GetSSLCertificateInfo` through the extracted seam while preserving add-only assignment of mapped certificate properties.
+- Preserved existing certificate property mapping via `EndpointSslCertificatePropertyMapper`.
+- Added deterministic `EndpointCheckingCore` coverage for null getter, null certificate, exception fallback, and representative mapped-property outcomes.
