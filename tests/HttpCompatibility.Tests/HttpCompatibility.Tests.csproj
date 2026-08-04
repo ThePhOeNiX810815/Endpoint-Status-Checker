@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\EndpointCloudflareBypassInterpreter.cs" Link="EndpointCloudflareBypassInterpreter.cs" />
+    <Compile Include="..\..\src\EndpointHttpResponseBodyProcessor.cs" Link="EndpointHttpResponseBodyProcessor.cs" />
     <Compile Include="..\..\src\EndpointHttpRequestFactory.cs" Link="EndpointHttpRequestFactory.cs" />
     <Compile Include="..\..\src\EndpointHttpResponseClassifier.cs" Link="EndpointHttpResponseClassifier.cs" />
     <Compile Include="..\..\src\EndpointHttpResponseInterpreter.cs" Link="EndpointHttpResponseInterpreter.cs" />
