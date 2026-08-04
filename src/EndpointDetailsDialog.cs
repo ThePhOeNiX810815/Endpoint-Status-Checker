@@ -1302,67 +1302,94 @@ namespace EndpointChecker
 
         public void GetIPGeoInfo(string ipAddress)
         {
+            bool tabCurrentlyPresent = tabControl.TabPages.Contains(tabPage_GeoLocation);
+
             NewBackgroundThread(() =>
             {
-                ThreadSafeInvoke(() =>
+                bool showTab = false;
+                IP_API_JSON_Response ipInfo = null;
+                Bitmap mapTile = null;
+                Bitmap countryFlag = null;
+
+                if (ipAddress != status_NotAvailable)
                 {
-                    bool showTab = false;
-
-                    if (ipAddress != status_NotAvailable)
+                    try
                     {
-                        try
+                        string info = new CustomWebClient().DownloadString("http://ip-api.com/json/" + ipAddress);
+                        ipInfo = JsonConvert.DeserializeObject<IP_API_JSON_Response>(info);
+
+                        if (ipInfo.Service_Status == "success")
                         {
-                            string info = new CustomWebClient().DownloadString("http://ip-api.com/json/" + ipAddress);
-                            IP_API_JSON_Response ipInfo = JsonConvert.DeserializeObject<IP_API_JSON_Response>(info);
+                            mapTile = GetImageFromGoogleMapsAPI(ipInfo.Geo_Lat, ipInfo.Geo_Lon);
 
-                            if (ipInfo.Service_Status == "success")
+                            if (mapTile != null)
                             {
-                                Bitmap mapTile = GetImageFromGoogleMapsAPI(ipInfo.Geo_Lat, ipInfo.Geo_Lon);
-
-                                if (mapTile != null)
-                                {
-                                    // MAP TILE
-                                    pb_GeoLocation_Map.Image = mapTile;
-
-                                    // GET COUNTRY FLAG
-                                    Bitmap countryFlag = GetCountryFlagByCode(ipInfo.Country_Code);
-
-                                    if (countryFlag != null)
-                                    {
-                                        pb_GeoLocation_CountryFlag.Image = countryFlag;
-                                        pb_GeoLocation_CountryFlag.Visible = true;
-                                    }
-                                    else
-                                    {
-                                        pb_GeoLocation_CountryFlag.Visible = false;
-                                    }
-
-                                    tb_GeoLocation_Latitude.Text = ipInfo.Geo_Lat;
-                                    tb_GeoLocation_Longitude.Text = ipInfo.Geo_Lon;
-                                    tb_GeoLocation_ISP.Text = NotAvailable_IfNullOrEmpty(ipInfo.ISP);
-                                    tb_GeoLocation_AS.Text = NotAvailable_IfNullOrEmpty(ipInfo.ISP_AS.Replace(ipInfo.ISP, string.Empty).TrimEnd());
-                                    tb_GeoLocation_RegionName.Text = NotAvailable_IfNullOrEmpty(ipInfo.Region_Name);
-                                    tb_GeoLocation_TimeZone.Text = NotAvailable_IfNullOrEmpty(ipInfo.TimeZone);
-                                    tb_GeoLocation_ZipCode.Text = NotAvailable_IfNullOrEmpty(ipInfo.City_ZIP_Code);
-                                    tb_GeoLocation_City.Text = NotAvailable_IfNullOrEmpty(ipInfo.City);
-                                    tb_GeoLocation_ORG.Text = NotAvailable_IfNullOrEmpty(ipInfo.ISP_ORG);
-                                    tb_GeoLocation_CountryName.Text = NotAvailable_IfNullOrEmpty(ipInfo.Country_Name + " (" + ipInfo.Country_Code + ")");
-                                    tb_GeoLocation_RegionName.Text = NotAvailable_IfNullOrEmpty(ipInfo.Region_Name + " (" + ipInfo.Region_Code + ")");
-
-                                    tb_GeoLocation_IP.Text = cb_IPAddress.GetItemText(cb_IPAddress.SelectedItem);
-                                    pb_GeoLocationProgress.Visible = false;
-                                    pb_GeoLocation_Map.Visible = true;
-
-                                    showTab = true;
-                                }
+                                countryFlag = GetCountryFlagByCode(ipInfo.Country_Code);
+                                showTab = true;
                             }
                         }
-                        catch
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                EndpointGeoLocationPresentationModel model = EndpointGeoLocationPresentationBuilder.Build(
+                    new EndpointGeoLocationPresentationInput
+                    {
+                        IsLookupSuccessful = showTab,
+                        HasMapTile = mapTile != null,
+                        HasCountryFlag = countryFlag != null,
+                        TabCurrentlyPresent = tabCurrentlyPresent,
+                        StatusNotAvailable = status_NotAvailable,
+                        SelectedIpAddress = ipAddress,
+                        Latitude = ipInfo != null ? ipInfo.Geo_Lat : null,
+                        Longitude = ipInfo != null ? ipInfo.Geo_Lon : null,
+                        Isp = ipInfo != null ? ipInfo.ISP : null,
+                        IspAs = ipInfo != null ? ipInfo.ISP_AS : null,
+                        RegionName = ipInfo != null ? ipInfo.Region_Name : null,
+                        RegionCode = ipInfo != null ? ipInfo.Region_Code : null,
+                        TimeZone = ipInfo != null ? ipInfo.TimeZone : null,
+                        ZipCode = ipInfo != null ? ipInfo.City_ZIP_Code : null,
+                        City = ipInfo != null ? ipInfo.City : null,
+                        Organization = ipInfo != null ? ipInfo.ISP_ORG : null,
+                        CountryName = ipInfo != null ? ipInfo.Country_Name : null,
+                        CountryCode = ipInfo != null ? ipInfo.Country_Code : null,
+                    });
+
+                ThreadSafeInvoke(() =>
+                {
+                    if (model.HasDisplayPayload)
+                    {
+                        pb_GeoLocation_Map.Image = mapTile;
+
+                        if (model.ShouldShowCountryFlag)
                         {
+                            pb_GeoLocation_CountryFlag.Image = countryFlag;
+                            pb_GeoLocation_CountryFlag.Visible = true;
                         }
+                        else
+                        {
+                            pb_GeoLocation_CountryFlag.Visible = false;
+                        }
+
+                        tb_GeoLocation_Latitude.Text = model.Latitude;
+                        tb_GeoLocation_Longitude.Text = model.Longitude;
+                        tb_GeoLocation_ISP.Text = model.Isp;
+                        tb_GeoLocation_AS.Text = model.AsDescription;
+                        tb_GeoLocation_RegionName.Text = model.RegionDescription;
+                        tb_GeoLocation_TimeZone.Text = model.TimeZone;
+                        tb_GeoLocation_ZipCode.Text = model.ZipCode;
+                        tb_GeoLocation_City.Text = model.City;
+                        tb_GeoLocation_ORG.Text = model.Organization;
+                        tb_GeoLocation_CountryName.Text = model.CountryDescription;
+
+                        tb_GeoLocation_IP.Text = model.IpAddress;
+                        pb_GeoLocationProgress.Visible = false;
+                        pb_GeoLocation_Map.Visible = true;
                     }
 
-                    if (showTab)
+                    if (model.ShouldEnsureTabPresent)
                     {
                         if (!tabControl.TabPages.Contains(tabPage_GeoLocation))
                         {
@@ -1370,7 +1397,8 @@ namespace EndpointChecker
                             tabControl.TabPages.Add(tabPage_GeoLocation);
                         }
                     }
-                    else if (tabControl.TabPages.Contains(tabPage_GeoLocation))
+                    else if (model.ShouldEnsureTabRemoved &&
+                        tabControl.TabPages.Contains(tabPage_GeoLocation))
                     {
                         // REMOVE GEO INFO TAB PAGE [IF PRESENT]
                         tabControl.TabPages.Remove(tabPage_GeoLocation);

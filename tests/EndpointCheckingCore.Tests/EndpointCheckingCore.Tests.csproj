@@ -14,6 +14,7 @@
     <Compile Include="..\..\src\EndpointFtpRequestFactory.cs" Link="EndpointFtpRequestFactory.cs" />
     <Compile Include="..\..\src\EndpointCheckResultFactory.cs" Link="EndpointCheckResultFactory.cs" />
     <Compile Include="..\..\src\EndpointFtpStatusMapper.cs" Link="EndpointFtpStatusMapper.cs" />
+    <Compile Include="..\..\src\EndpointGeoLocationPresentationBuilder.cs" Link="EndpointGeoLocationPresentationBuilder.cs" />
     <Compile Include="..\..\src\EndpointHttpRedirectResolver.cs" Link="EndpointHttpRedirectResolver.cs" />
     <Compile Include="..\..\src\EndpointNetworkIdentityResolver.cs" Link="EndpointNetworkIdentityResolver.cs" />
     <Compile Include="..\..\src\EndpointNetworkShareAcquisition.cs" Link="EndpointNetworkShareAcquisition.cs" />

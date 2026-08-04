@@ -552,7 +552,8 @@ Scope completed in this phase:
 
 Remaining work in this ticket:
 
-- Isolate network I/O from UI thread invocation paths in `EndpointDetailsDialog` (notably `GetIPGeoInfo`).
+- Isolate remaining polling transition/cancellation logic in `BW_VirusTotal_Report_DoWork` without changing user-visible status and result mapping.
+- Extend async-safety review to other dialog network workflows (WHOIS and related lookups) where cancellation/transition characterization is still missing.
 
 Verification:
 
