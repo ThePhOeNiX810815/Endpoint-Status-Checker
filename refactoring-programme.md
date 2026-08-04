@@ -216,7 +216,7 @@ Review artifacts:
 
 ## Ticket 6: Warning baseline and future warning governance
 
-Status: Baseline documented; regression gate not yet implemented
+Status: Complete locally; CI enforcement blocked by permissions (maintainer action required)
 
 Current v3 integration branch: `Main-Dev-V3`
 
@@ -228,11 +228,14 @@ Scope completed in this ticket:
 
 - Captured warning baseline and warning inventory in `docs/refactoring/warning-baseline.md`.
 - Preserved current behavior: no global warning suppressions, no warning-level reduction, no blanket warnings-as-errors.
+- Added script-backed warning-governance check in `tools/warning-governance/Invoke-WarningGovernance.ps1` with deterministic non-incremental analyzer build counting.
+- Validated local pass/fail/pass governance cycle (baseline pass, intentional warning regression fail, revert pass).
+- Documented authorized-maintainer CI wiring steps without changing `.github/workflows/*`.
 
 Remaining work in this ticket:
 
-- Implement CI warning-regression gate that compares unique warning counts against the documented baseline.
-- Ensure the gate detects regressions without failing on existing baseline warnings.
+- Wire the governance command into GitHub Actions PR checks targeting `Main-Dev-V3`.
+- This is explicitly `OWNER/AUTHORIZED MAINTAINER ACTION REQUIRED` due to workflow permission constraints.
 
 ## Reconciliation Priority Ledger (as of 2026-08-04)
 
@@ -243,7 +246,7 @@ This ledger is intentionally strict: a priority is not considered complete unles
 3. Protocol decomposition enabled by harness: Complete (strict closure matrix in `docs/refactoring/reconciliation-2026-08-04.md`)
 4. `EndpointDetailsDialog` blocking `.Result` paths: Complete (strict closure matrix updated in `docs/refactoring/reconciliation-2026-08-04.md`)
 5. Unsafe `Application.DoEvents` review/reduction: Complete (strict closure matrix updated in `docs/refactoring/reconciliation-2026-08-04.md`)
-6. CI warning-regression governance: In progress (Priority 6 active)
+6. CI warning-regression governance: Complete locally; CI enforcement blocked by permissions (maintainer action required)
 7. Remaining low-risk residual cleanup: Partially performed (mail table builder extraction completed)
 
 ## Ticket 7: Scan-workflow characterization completion (phase 1)

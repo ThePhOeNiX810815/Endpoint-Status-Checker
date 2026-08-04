@@ -1,29 +1,43 @@
-{
-  "convention": "unique-build-warning-instances",
-  "generated_at_utc": "2026-08-04T17:45:08.8244437Z",
-  "dotnet_sdk": "10.0.301",
-  "solution": "src/EndpointChecker.sln",
-  "commands": {
-    "restore": "dotnet restore src/EndpointChecker.sln",
-    "analyzer_build": "dotnet build src/EndpointChecker.sln --no-restore -p:RunAnalyzers=true -v:minimal"
-  },
-  "counts": {
-    "restore_raw_warning_lines": 0,
-    "restore_unique_warning_instances": 0,
-    "build_raw_warning_lines": 0,
-    "build_unique_warning_instances": 0,
-    "repeated_build_warning_lines": 0,
-    "restore_only_unique_warning_instances": 0
-  },
-  "by_code": {},
-  "by_family": {},
-  "by_project": {},
-  "generated_code": {
-    "unique_warning_instances": 0,
-    "by_code": {}
-  },
-  "platform_compatibility": {
-    "CA1416": 0
-  },
-  "restore_only_warnings": []
+﻿{
+    "convention":  "unique-build-warning-instances",
+    "generated_at_utc":  "2026-08-04T18:02:21.0999870Z",
+    "dotnet_sdk":  "10.0.301",
+    "solution":  "src/EndpointChecker.sln",
+    "commands":  {
+                     "restore":  "dotnet restore src/EndpointChecker.sln",
+                     "analyzer_build":  "dotnet build src/EndpointChecker.sln --no-restore --no-incremental -p:RunAnalyzers=true -v:minimal"
+                 },
+    "counts":  {
+                   "restore_raw_warning_lines":  0,
+                   "restore_unique_warning_instances":  0,
+                   "build_raw_warning_lines":  7602,
+                   "build_unique_warning_instances":  3799,
+                   "repeated_build_warning_lines":  3803,
+                   "restore_only_unique_warning_instances":  0
+               },
+    "by_code":  {
+                    "CA1416":  3781,
+                    "SYSLIB0013":  1,
+                    "SYSLIB0014":  16,
+                    "SYSLIB0057":  1
+                },
+    "by_family":  {
+                      "CA":  3781,
+                      "SYSLIB":  18
+                  },
+    "by_project":  {
+                       "C:\\TEMP\\Endpoint-Status-Checker\\src\\EndpointChecker.csproj":  3799
+                   },
+    "generated_code":  {
+                           "unique_warning_instances":  0,
+                           "by_code":  {
+
+                                       }
+                       },
+    "platform_compatibility":  {
+                                   "CA1416":  3781
+                               },
+    "restore_only_warnings":  [
+
+                              ]
 }
