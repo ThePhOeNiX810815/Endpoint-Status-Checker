@@ -7,6 +7,7 @@
     <NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\EndpointCloudflareBypassExecutor.cs" Link="EndpointCloudflareBypassExecutor.cs" />
     <Compile Include="..\..\src\EndpointCloudflareBypassInterpreter.cs" Link="EndpointCloudflareBypassInterpreter.cs" />
     <Compile Include="..\..\src\EndpointHttpHeaderCollector.cs" Link="EndpointHttpHeaderCollector.cs" />
     <Compile Include="..\..\src\EndpointHttpHtmlMetadataResolver.cs" Link="EndpointHttpHtmlMetadataResolver.cs" />

@@ -490,3 +490,20 @@ Scope completed in this ticket:
 - Routed `GetSSLCertificateInfo` through the extracted seam while preserving add-only assignment of mapped certificate properties.
 - Preserved existing certificate property mapping via `EndpointSslCertificatePropertyMapper`.
 - Added deterministic `EndpointCheckingCore` coverage for null getter, null certificate, exception fallback, and representative mapped-property outcomes.
+
+## Ticket 21: Protocol decomposition continuation (Cloudflare bypass invocation seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting Cloudflare bypass invocation/exception flow from the HTTP handled-error path while preserving bypass outcome mapping semantics.
+
+Scope completed in this ticket:
+
+- Extracted Cloudflare bypass invocation and exception-flow handling into `EndpointCloudflareBypassExecutor`.
+- Routed the handled HTTP Cloudflare branch through the new seam while preserving no-attempt behavior, success override behavior, and exception append behavior.
+- Preserved existing bypass outcome message semantics by delegating to `EndpointCloudflareBypassInterpreter`.
+- Added deterministic `HttpCompatibility` coverage for no-attempt gating, bypass success mapping, and bypass exception behavior.
