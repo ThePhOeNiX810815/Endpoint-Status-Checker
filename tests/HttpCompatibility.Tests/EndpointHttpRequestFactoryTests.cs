@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -36,6 +38,8 @@ namespace EndpointChecker
             Run("HTTP response body processor preserves max byte cap behavior", HttpResponseBodyProcessorPreservesMaxByteCapBehavior);
             Run("HTTP response body processor preserves html meta gating", HttpResponseBodyProcessorPreservesHtmlMetaGating);
             Run("HTTP response body processor preserves encoding fallback gating", HttpResponseBodyProcessorPreservesEncodingFallbackGating);
+            Run("HTTP html metadata resolver preserves title meta links and language extraction", HttpHtmlMetadataResolverPreservesTitleMetaLinksAndLanguageExtraction);
+            Run("HTTP html metadata resolver preserves existing html encoding and theme parsing fallback", HttpHtmlMetadataResolverPreservesExistingHtmlEncodingAndThemeParsingFallback);
 
             if (failed > 0)
             {
@@ -425,6 +429,73 @@ namespace EndpointChecker
             AssertEqual(false, EndpointHttpResponseBodyProcessor.ShouldAssignDefaultHtmlEncoding(ascii, null));
         }
 
+        private static void HttpHtmlMetadataResolverPreservesTitleMetaLinksAndLanguageExtraction()
+        {
+            string html = "<html lang='mul'><head>" +
+                "<title>Header Title</title>" +
+                "<meta name='description' content='Example description' />" +
+                "<meta name='web_author' content='Author Name' />" +
+                "<meta name='theme-color' content='#112233' />" +
+                "<meta http-equiv='content-type' content='text/html; charset=utf-8' />" +
+                "</head><body>" +
+                "<a href='https://example.test/target'>self</a>" +
+                "<a href='https://example.test/other/'>other1</a>" +
+                "<a href='https://example.test/other'>other2</a>" +
+                "<img src='ftp://files.example.test/a.bin'/>" +
+                "</body></html>";
+
+            EndpointHttpHtmlMetadataResolveOutput result = EndpointHttpHtmlMetadataResolver.Resolve(
+                new EndpointHttpHtmlMetadataResolveInput
+                {
+                    HtmlResponseDocumentString = html,
+                    ResponseUri = new Uri("https://example.test/target"),
+                    ResolvePageLinks = true,
+                    StatusNotAvailable = "N/A",
+                    CurrentHtmlContentLanguage = "N/A",
+                    CurrentHtmlEncoding = null,
+                    ParseEncoding = value => value != null && value.ToLower().Contains("utf-8") ? Encoding.UTF8 : null,
+                });
+
+            AssertEqual("Header Title", result.HtmlTitle);
+            AssertEqual("Example description", result.HtmlDescription);
+            AssertEqual("Author Name", result.HtmlAuthor);
+            AssertEqual("Multi-Language (mul)", result.HtmlContentLanguage);
+            AssertEqual(true, result.HasHtmlThemeColor);
+            AssertEqual(ColorTranslator.FromHtml("#112233"), result.HtmlThemeColor);
+            AssertEqual(Encoding.UTF8.WebName, result.HtmlEncoding.WebName);
+
+            AssertEqual(2, result.HtmlPageLinks.PropertyItem.Count);
+            AssertEqual("https://example.test/other", result.HtmlPageLinks.PropertyItem[0].ItemValue);
+            AssertEqual("ftp://files.example.test/a.bin", result.HtmlPageLinks.PropertyItem[1].ItemValue);
+        }
+
+        private static void HttpHtmlMetadataResolverPreservesExistingHtmlEncodingAndThemeParsingFallback()
+        {
+            Encoding existingEncoding = Encoding.ASCII;
+            EndpointHttpHtmlMetadataResolveOutput result = EndpointHttpHtmlMetadataResolver.Resolve(
+                new EndpointHttpHtmlMetadataResolveInput
+                {
+                    HtmlResponseDocumentString = "<html><head>" +
+                        "<meta charset='utf-16'/>" +
+                        "<meta property='og:title' content='Meta Title'/>" +
+                        "<meta name='theme-color' content='not-a-color'/>" +
+                        "</head></html>",
+                    ResponseUri = new Uri("https://example.test/page"),
+                    ResolvePageLinks = false,
+                    StatusNotAvailable = "N/A",
+                    CurrentHtmlContentLanguage = "N/A",
+                    CurrentHtmlEncoding = existingEncoding,
+                    ParseEncoding = _ => Encoding.Unicode,
+                });
+
+            AssertEqual("Meta Title", result.HtmlTitle);
+            AssertEqual(existingEncoding.WebName, result.HtmlEncoding.WebName);
+            AssertEqual(false, result.HasHtmlThemeColor);
+            AssertEqual("N/A", result.HtmlAuthor);
+            AssertEqual("N/A", result.HtmlDescription);
+            AssertEqual(null, result.HtmlPageLinks);
+        }
+
         private static void Run(string name, Action test)
         {
             try
@@ -452,5 +523,16 @@ namespace EndpointChecker
     {
         public string LoginName { get; set; }
         public string LoginPass { get; set; }
+    }
+
+    public class Property
+    {
+        public string ItemName { get; set; }
+        public string ItemValue { get; set; }
+    }
+
+    public class PropertyItems
+    {
+        public List<Property> PropertyItem { get; set; }
     }
 }

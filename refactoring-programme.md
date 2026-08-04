@@ -422,3 +422,20 @@ Scope completed in this ticket:
 - Routed response-body read loop and HTML meta fallback branching in `bw_GetStatus_DoWork` through the extracted seam.
 - Preserved existing bounded-read behavior, content-length update path, response-save behavior, and `ResolvePageMetaInfo` invocation order.
 - Added deterministic `HttpCompatibility` tests for read-trigger conditions, max-byte-cap behavior, HTML-gating behavior, and encoding fallback/default assignment gating.
+
+## Ticket 17: Protocol decomposition continuation (HTML metadata parsing seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting deterministic HTML metadata parsing and side-effect shaping from `ResolvePageMetaInfo` while preserving runtime endpoint metadata outcomes.
+
+Scope completed in this ticket:
+
+- Extracted deterministic HTML metadata parsing and shaping into `EndpointHttpHtmlMetadataResolver`.
+- Routed `ResolvePageMetaInfo` through the extracted resolver seam while preserving assignment semantics for title/description/author/language/theme/default encoding/meta list/link list.
+- Preserved existing encoding parser behavior by delegating charset parsing through `CheckerMainForm.GetEncoding`.
+- Added deterministic `HttpCompatibility` coverage for title/meta extraction, link deduplication/exclusion behavior, language resolution (`mul`), theme-color parsing fallback, and HTML-encoding preservation behavior.
