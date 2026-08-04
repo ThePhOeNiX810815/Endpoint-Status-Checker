@@ -24,6 +24,9 @@ namespace EndpointChecker
             Run("HTTP handled web exception mapping preserves status description and message suffix rules", HttpHandledWebExceptionMappingPreservesStatusDescriptionAndMessageSuffixRules);
             Run("HTTP transport web exception mapping preserves inner exception chain", HttpTransportWebExceptionMappingPreservesInnerExceptionChain);
             Run("HTTP generic exception mapping preserves type and first inner message", HttpGenericExceptionMappingPreservesTypeAndFirstInnerMessage);
+            Run("HTTP response interpreter preserves success metadata mapping", HttpResponseInterpreterPreservesSuccessMetadataMapping);
+            Run("HTTP response interpreter preserves handled error and Cloudflare note mapping", HttpResponseInterpreterPreservesHandledErrorAndCloudflareNoteMapping);
+            Run("HTTP response interpreter preserves content-length formatting", HttpResponseInterpreterPreservesContentLengthFormatting);
 
             if (failed > 0)
             {
@@ -256,6 +259,66 @@ namespace EndpointChecker
             string message = EndpointHttpStatusMapper.BuildGenericExceptionMessage(exception);
 
             AssertEqual("InvalidOperation -> outer -> inner", message);
+        }
+
+        private static void HttpResponseInterpreterPreservesSuccessMetadataMapping()
+        {
+            EndpointHttpSuccessInterpretResult result = EndpointHttpResponseInterpreter.InterpretSuccess(
+                new EndpointHttpSuccessInterpretInput
+                {
+                    EndpointUri = new Uri("https://example.test/source"),
+                    ResponseUri = new Uri("https://example.test/target"),
+                    StatusCode = 200,
+                    StatusCodeName = "OK",
+                    StatusDescription = "Healthy",
+                    Server = "nginx<private>",
+                    AllowAutoRedirect = true,
+                    AutoRedirectCount = 2,
+                    AutoRedirectFollowed = true,
+                    ContentTypeHeader = "text/html; charset=utf-8",
+                    ExpiresHeader = "Wed, 21 Oct 2015 07:28:00 GMT",
+                    ETagHeader = "\"abc123\"",
+                    ContentLength = -1,
+                    ContentLengthHeader = "321",
+                    StatusNotAvailable = "N/A",
+                });
+
+            AssertEqual("443", result.Port);
+            AssertEqual("HTTPS", result.Protocol);
+            AssertEqual("200", result.ResponseCode);
+            AssertEqual("Healthy (Redirected from \"https://example.test/source\")", result.ResponseMessage);
+            AssertEqual("nginx", result.ServerId);
+            AssertEqual("2", result.HttpAutoRedirects);
+            AssertEqual("text/html", result.HttpContentType);
+            AssertEqual("21.10.2015 07:28", result.HttpExpires);
+            AssertEqual("abc123", result.HttpEtag);
+            AssertEqual(321L, result.ContentLength);
+        }
+
+        private static void HttpResponseInterpreterPreservesHandledErrorAndCloudflareNoteMapping()
+        {
+            EndpointHttpHandledErrorResult result = EndpointHttpResponseInterpreter.InterpretHandledError(
+                new EndpointHttpHandledErrorInput
+                {
+                    StatusCode = 403,
+                    StatusCodeName = "Forbidden",
+                    StatusDescription = "Forbidden",
+                    WebExceptionMessage = "ProtocolError: blocked",
+                    IsCloudflareProtected = true,
+                    CloudflareRay = "abc123",
+                });
+
+            AssertEqual("403", result.ResponseCode);
+            AssertEqual("Forbidden -> ProtocolError: blocked [Cloudflare Bot Protection | CF-RAY: abc123]", result.ResponseMessage);
+        }
+
+        private static void HttpResponseInterpreterPreservesContentLengthFormatting()
+        {
+            AssertEqual("N/A", EndpointHttpResponseInterpreter.FormatContentLength(-1, "N/A"));
+            AssertEqual((1024d / 1024d).ToString("0.00") + " kB", EndpointHttpResponseInterpreter.FormatContentLength(1024, "N/A"));
+            AssertEqual((1048576d / 1048576d).ToString("0.00") + " MB", EndpointHttpResponseInterpreter.FormatContentLength(1048576, "N/A"));
+            AssertEqual((1073741824d / 1073741824d).ToString("0.00") + " GB", EndpointHttpResponseInterpreter.FormatContentLength(1073741824, "N/A"));
+            AssertEqual("999 bytes", EndpointHttpResponseInterpreter.FormatContentLength(999, "N/A"));
         }
 
         private static void Run(string name, Action test)

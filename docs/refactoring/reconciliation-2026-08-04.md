@@ -83,3 +83,36 @@ Overall status: `Consolidation done; characterization incomplete`
   1. Continue protocol decomposition only where enabled by completed scan/export characterization.
   2. Characterize `Application.DoEvents` safety/sequencing in real helper call paths.
   3. Continue remaining high-risk residual reductions after the above are covered.
+
+## Priority 3 protocol decomposition acceptance matrix (current)
+
+Scope evaluated: `src/CheckerMainForm.cs` / `bw_GetStatus_DoWork` and all deterministic compatibility harnesses in `tests/HttpCompatibility.Tests` and `tests/EndpointCheckingCore.Tests`.
+
+Status values used in this matrix:
+
+- `COMPLETE`
+- `PARTIALLY COMPLETE`
+- `NOT STARTED`
+- `BLOCKED`
+
+| Boundary | Status | Current evidence (files/symbols/tests) |
+| --- | --- | --- |
+| HTTP request creation | COMPLETE | `src/EndpointHttpRequestFactory.cs` wired via `PrepareHTTPWebRequest`; covered by `tests/HttpCompatibility.Tests/EndpointHttpRequestFactoryTests.cs` (request fields, credentials, cookies). |
+| HTTP retry execution | COMPLETE | `src/EndpointHttpRetryExecutor.cs` wired via `GetHTTPWebResponse`; covered by timeout/non-timeout retry tests in `tests/HttpCompatibility.Tests/EndpointHttpRequestFactoryTests.cs`. |
+| redirect resolution | COMPLETE | `src/EndpointHttpRedirectResolver.cs` in HTTP WebException redirect branch; covered by `tests/EndpointCheckingCore.Tests/EndpointScanOrchestrationSeamsTests.cs`. |
+| HTTP response classification | COMPLETE | `src/EndpointHttpResponseClassifier.cs` used by `IsCloudflareProtected`; covered by Cloudflare classifier tests in `tests/HttpCompatibility.Tests/EndpointHttpRequestFactoryTests.cs`. |
+| HTTP response metadata extraction | PARTIALLY COMPLETE | Success/error interpretation seam extracted in `src/EndpointHttpResponseInterpreter.cs` and used in `bw_GetStatus_DoWork`; deterministic tests added in `tests/HttpCompatibility.Tests/EndpointHttpRequestFactoryTests.cs`. Remaining stream/header-to-property collection and HTML metadata branches remain in form-owned orchestration. |
+| HTTP terminal status/result mapping | PARTIALLY COMPLETE | Status builders in `src/EndpointHttpStatusMapper.cs`, interpreted in `src/EndpointHttpResponseInterpreter.cs`, and final terminal consolidation in `src/EndpointScanTerminalFinalizer.cs`; covered by `tests/HttpCompatibility.Tests/EndpointHttpRequestFactoryTests.cs` and `tests/EndpointCheckingCore.Tests/EndpointScanOrchestrationSeamsTests.cs`. Cloudflare bypass override/append control-flow remains inline in form. |
+| FTP request creation | COMPLETE | `src/EndpointFtpRequestFactory.cs` wired in FTP path; covered by `tests/EndpointCheckingCore.Tests/EndpointFtpRequestFactoryTests.cs`. |
+| FTP response/status mapping | COMPLETE | `src/EndpointFtpStatusMapper.cs` wired via `FTPWebResponseStatusMessage`; covered by `tests/EndpointCheckingCore.Tests/EndpointScanProtocolCompatibilityTests.cs`. |
+| ping execution/result mapping | COMPLETE | `src/EndpointPingRetryExecutor.cs` wired via `GetPingTime`; result propagation to terminal flow covered by scan workflow/finalizer tests in `tests/EndpointCheckingCore.Tests`. |
+| DNS/IP/MAC identity shaping | COMPLETE | `src/EndpointNetworkIdentityResolver.cs` wired for seed/filter/finalization; covered by `tests/EndpointCheckingCore.Tests/EndpointNetworkIdentityResolverTests.cs`. |
+| share lookup/result shaping | NOT STARTED | `GetNetShares` invocation, sort, and assignment remain inline in `bw_GetStatus_DoWork`; no dedicated deterministic seam/tests for share-result shaping. |
+| SSL certificate extraction | NOT STARTED | `GetSSLCertificateInfo` remains form-owned (`src/CheckerMainForm.cs`), no dedicated deterministic seam/tests. |
+| Cloudflare classification and bypass result mapping | PARTIALLY COMPLETE | Classification seam complete (`EndpointHttpResponseClassifier`), Cloudflare protection annotation in `EndpointHttpResponseInterpreter`, but bypass decision and result override/append (`CloudflareBypassChecker.Check`) remain inline and not fully deterministicly characterized. |
+| terminal endpoint finalization | COMPLETE | `src/EndpointScanTerminalFinalizer.cs` wired at terminal stage; covered by `tests/EndpointCheckingCore.Tests/EndpointScanOrchestrationSeamsTests.cs`. |
+| scan progress accounting | COMPLETE | `src/EndpointCheckProgress.cs` used in worker-loop progress path; covered by `tests/EndpointCheckingCore.Tests/EndpointCheckProgressTests.cs`. |
+| cancellation handling | COMPLETE | Rule-level cancellation decisions in `src/EndpointScanWorkflowRules.cs` and terminal overrides in `src/EndpointScanTerminalFinalizer.cs`; covered by workflow/finalizer tests in `tests/EndpointCheckingCore.Tests`. |
+| orchestration versus protocol implementation | PARTIALLY COMPLETE | `bw_GetStatus_DoWork` now orchestrates multiple seams (HTTP request/retry/redirect/interpretation, FTP request/status mapping, ping retry, identity shaping, terminal finalization), but still contains substantial protocol-specific side-effect blocks (response stream persistence/meta extraction, share lookup, SSL collection, bypass invocation). |
+
+Priority 3 is therefore still `in progress` under strict completion criteria.

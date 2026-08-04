@@ -840,74 +840,58 @@ namespace EndpointChecker
                                                 // GET SSL INFO
                                                 GetSSLCertificateInfo(httpWebRequest, endpoint);
 
-                                                responseURI = httpWebResponse.ResponseUri;
-                                                endpoint.Port = responseURI.Port.ToString();
-                                                endpoint.Protocol = responseURI.Scheme.ToUpper();
-                                                endpoint.ResponseCode = ((int)httpWebResponse.StatusCode).ToString();
+                                                FieldInfo fieldInfo = httpWebRequest.GetType().GetField("_AutoRedirects", BindingFlags.NonPublic | BindingFlags.Instance);
+                                                int httpAutoRedirects = fieldInfo != null ? (int)fieldInfo.GetValue(httpWebRequest) : 0;
 
-                                                // SERVER IDENTIFICATION
-                                                if (!string.IsNullOrEmpty(httpWebResponse.Server))
-                                                {
-                                                    endpoint.ServerID = Regex.Replace(httpWebResponse.Server, "<.*?>", string.Empty);
-                                                }
-
-                                                // STATUS MESSAGE
-                                                if (!string.IsNullOrEmpty(httpWebResponse.StatusDescription))
-                                                {
-                                                    // STATUS DESCRIPTION
-                                                    endpoint.ResponseMessage = httpWebResponse.StatusDescription;
-                                                }
-                                                else
-                                                {
-                                                    // STATUS CODE [STRING]
-                                                    endpoint.ResponseMessage = httpWebResponse.StatusCode.ToString();
-                                                }
-
-                                                // GET AUTO REDIRECTS COUNT
-                                                if (checkOptions.AllowAutoRedirect)
-                                                {
-                                                    FieldInfo fieldInfo = httpWebRequest.GetType().GetField("_AutoRedirects", BindingFlags.NonPublic | BindingFlags.Instance);
-                                                    // _AutoRedirects was removed in .NET 10; guard against null fieldInfo
-                                                    int httpAutoRedirects = fieldInfo != null ? (int)fieldInfo.GetValue(httpWebRequest) : 0;
-                                                    endpoint.HTTPautoRedirects = httpAutoRedirects.ToString();
-
-                                                    // CHECK AUTO REDIRECT URL [COMPARE REQUEST AND RESPONSE ENDPOINT URIs]
-                                                    if (EndpointScanWorkflowRules.ShouldAppendRedirectSource(endpointURI, responseURI, autoRedirect_Followed))
+                                                EndpointHttpSuccessInterpretResult successResult = EndpointHttpResponseInterpreter.InterpretSuccess(
+                                                    new EndpointHttpSuccessInterpretInput
                                                     {
-                                                        endpoint.ResponseMessage += " (Redirected from \"" + endpointURI.OriginalString + "\")";
-                                                    }
-                                                }
+                                                        EndpointUri = endpointURI,
+                                                        ResponseUri = httpWebResponse.ResponseUri,
+                                                        StatusCode = (int)httpWebResponse.StatusCode,
+                                                        StatusCodeName = httpWebResponse.StatusCode.ToString(),
+                                                        StatusDescription = httpWebResponse.StatusDescription,
+                                                        Server = httpWebResponse.Server,
+                                                        AllowAutoRedirect = checkOptions.AllowAutoRedirect,
+                                                        AutoRedirectCount = httpAutoRedirects,
+                                                        AutoRedirectFollowed = autoRedirect_Followed,
+                                                        ContentTypeHeader = httpWebResponse.ContentType,
+                                                        ExpiresHeader = httpWebResponse.Headers["Expires"],
+                                                        ETagHeader = httpWebResponse.Headers["ETag"],
+                                                        ContentLength = httpWebResponse.ContentLength,
+                                                        ContentLengthHeader = httpWebResponse.Headers["Content-Length"],
+                                                        StatusNotAvailable = status_NotAvailable,
+                                                    });
 
-                                                // GET 'CONTENT TYPE' META VALUE FROM RESPONSE HEADER
-                                                endpoint.HTTPcontentType = GetContentType(httpWebResponse.ContentType);
+                                                responseURI = httpWebResponse.ResponseUri;
+                                                endpoint.Port = successResult.Port;
+                                                endpoint.Protocol = successResult.Protocol;
+                                                endpoint.ResponseCode = successResult.ResponseCode;
+                                                endpoint.ResponseMessage = successResult.ResponseMessage;
 
-                                                // GET 'EXPIRES' META VALUE FROM RESPONSE HEADER
-                                                DateTime _httpExpiresDT = DateTime.MinValue;
-                                                if (!string.IsNullOrEmpty(httpWebResponse.Headers["Expires"]) &&
-                                                    TryParseHttpDate(httpWebResponse.Headers["Expires"], out _httpExpiresDT) &&
-                                                    _httpExpiresDT > DateTime.MinValue)
+                                                if (!string.IsNullOrEmpty(successResult.ServerId))
                                                 {
-                                                    endpoint.HTTPexpires = _httpExpiresDT.ToString("dd.MM.yyyy HH:mm");
+                                                    endpoint.ServerID = successResult.ServerId;
                                                 }
 
-                                                // GET 'ETAG' META VALUE FROM RESPONSE HEADER
-                                                if (!string.IsNullOrEmpty(httpWebResponse.Headers["ETag"]))
+                                                if (!string.IsNullOrEmpty(successResult.HttpAutoRedirects))
                                                 {
-                                                    endpoint.HTTPetag = httpWebResponse.Headers["ETag"]
-                                                        .ToString()
-                                                        .TrimStart()
-                                                        .TrimEnd()
-                                                        .TrimStart('"')
-                                                        .TrimEnd('"');
+                                                    endpoint.HTTPautoRedirects = successResult.HttpAutoRedirects;
                                                 }
 
-                                                // GET CONTENT Length FROM RESPONSE HEADER
-                                                long contentLength = httpWebResponse.ContentLength;
+                                                endpoint.HTTPcontentType = successResult.HttpContentType;
 
-                                                if (!string.IsNullOrEmpty(httpWebResponse.Headers["Content-Length"]))
+                                                if (!string.IsNullOrEmpty(successResult.HttpExpires))
                                                 {
-                                                    long.TryParse(httpWebResponse.Headers["Content-Length"], out contentLength);
+                                                    endpoint.HTTPexpires = successResult.HttpExpires;
                                                 }
+
+                                                if (!string.IsNullOrEmpty(successResult.HttpEtag))
+                                                {
+                                                    endpoint.HTTPetag = successResult.HttpEtag;
+                                                }
+
+                                                long contentLength = successResult.ContentLength;
 
                                                 GetWebResponseContentLengthString(endpoint, contentLength);
 
@@ -991,27 +975,20 @@ namespace EndpointChecker
                                                 {
                                                     try
                                                     {
-                                                        // RESPONSE CODE
-                                                        endpoint.ResponseCode = ((int)httpWebResponse.StatusCode).ToString();
+                                                        bool cloudflareProtected = IsCloudflareProtected(httpWebResponse);
+                                                        EndpointHttpHandledErrorResult handledError = EndpointHttpResponseInterpreter.InterpretHandledError(
+                                                            new EndpointHttpHandledErrorInput
+                                                            {
+                                                                StatusCode = (int)httpWebResponse.StatusCode,
+                                                                StatusCodeName = httpWebResponse.StatusCode.ToString(),
+                                                                StatusDescription = httpWebResponse.StatusDescription,
+                                                                WebExceptionMessage = webException.Message,
+                                                                IsCloudflareProtected = cloudflareProtected,
+                                                                CloudflareRay = httpWebResponse.Headers["CF-RAY"],
+                                                            });
 
-                                                        // STATUS MESSAGE
-                                                        if (!string.IsNullOrEmpty(httpWebResponse.StatusDescription))
-                                                        {
-                                                            // STATUS DESCRIPTION
-                                                            endpoint.ResponseMessage = EndpointHttpStatusMapper.BuildHandledWebExceptionMessage(
-                                                                httpWebResponse.StatusDescription,
-                                                                httpWebResponse.StatusCode.ToString(),
-                                                                endpoint.ResponseCode,
-                                                                webException.Message);
-                                                        }
-                                                        else
-                                                        {
-                                                            endpoint.ResponseMessage = EndpointHttpStatusMapper.BuildHandledWebExceptionMessage(
-                                                                string.Empty,
-                                                                httpWebResponse.StatusCode.ToString(),
-                                                                endpoint.ResponseCode,
-                                                                webException.Message);
-                                                        }
+                                                        endpoint.ResponseCode = handledError.ResponseCode;
+                                                        endpoint.ResponseMessage = handledError.ResponseMessage;
 
                                                         // GET RESPONSE HEADERS
                                                         GetHTTPWebHeaders(endpoint.HTTPResponseHeaders.PropertyItem, httpWebResponse.Headers);
@@ -1023,14 +1000,8 @@ namespace EndpointChecker
                                                         // CF-RAY header is present on all Cloudflare-proxied responses.
                                                         // A 403/429/503 with CF headers means the endpoint exists but is
                                                         // behind a security challenge that cannot be solved automatically.
-                                                        if (IsCloudflareProtected(httpWebResponse))
+                                                        if (cloudflareProtected)
                                                         {
-                                                            string cfRay = httpWebResponse.Headers["CF-RAY"];
-                                                            endpoint.ResponseMessage +=
-                                                                " [Cloudflare Bot Protection" +
-                                                                (!string.IsNullOrEmpty(cfRay) ? " | CF-RAY: " + cfRay : string.Empty) +
-                                                                "]";
-
                                                             // ATTEMPT BYPASS VIA CONFIGURED METHOD
                                                             CloudflareBypassMethod cfBypassMethod =
                                                                 (CloudflareBypassMethod)Settings.Default.Config_CloudflareBypass_Method;
@@ -1578,20 +1549,7 @@ namespace EndpointChecker
         }
         public void GetWebResponseContentLengthString(EndpointDefinition endpoint, long contentLength)
         {
-            if (contentLength == -1)
-            {
-                endpoint.HTTPcontentLength = status_NotAvailable;
-            }
-            else if (contentLength >= 1073741824)
-            {
-                endpoint.HTTPcontentLength = (contentLength / 1073741824).ToString("0.00") + " GB";
-            }
-            else
-            {
-                endpoint.HTTPcontentLength = contentLength >= 1048576
-                    ? (contentLength / 1048576).ToString("0.00") + " MB"
-                    : contentLength >= 1024 ? (contentLength / 1024).ToString("0.00") + " kB" : contentLength + " bytes";
-            }
+            endpoint.HTTPcontentLength = EndpointHttpResponseInterpreter.FormatContentLength(contentLength, status_NotAvailable);
         }
 
         public PropertyItems GetDocumentLinks(Uri responseURI, HtmlAgilityPack.HtmlDocument htmlResponseDOC, string[] elements)
