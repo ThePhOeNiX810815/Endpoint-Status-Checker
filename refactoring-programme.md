@@ -318,3 +318,20 @@ Scope completed in this ticket:
 - Routed the FTP branch of `CheckerMainForm.bw_GetStatus_DoWork` through the extracted factory and preserved endpoint login-name/login-password mutation behavior.
 - Added deterministic `EndpointCheckingCore` tests for FTP request setup fields and credential fallback semantics.
 - Preserved legacy `FtpWebRequest` flow, method, timeout usage, and credential compatibility behavior.
+
+## Ticket 11: Protocol decomposition continuation (network identity seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting deterministic host/IP/DNS/MAC identity shaping rules from `bw_GetStatus_DoWork` while preserving runtime network-lookup behavior.
+
+Scope completed in this ticket:
+
+- Extracted seed host classification, MAC inclusion filtering, and resolved-identity finalization into `EndpointNetworkIdentityResolver`.
+- Routed `CheckerMainForm.bw_GetStatus_DoWork` host-seeding and final identity assignment through the extracted seam.
+- Preserved existing lookup orchestration (`Dns.GetHostAddresses`, `Dns.GetHostEntry`, `WindowsLookupService.Lookup`) and only moved deterministic shaping rules.
+- Added deterministic `EndpointCheckingCore` coverage for IPv4-vs-host seed behavior, MAC gateway filtering rules, and resolved/fallback identity assignment behavior.

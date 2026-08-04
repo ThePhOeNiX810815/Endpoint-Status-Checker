@@ -15,6 +15,7 @@
     <Compile Include="..\..\src\EndpointCheckResultFactory.cs" Link="EndpointCheckResultFactory.cs" />
     <Compile Include="..\..\src\EndpointFtpStatusMapper.cs" Link="EndpointFtpStatusMapper.cs" />
     <Compile Include="..\..\src\EndpointHttpRedirectResolver.cs" Link="EndpointHttpRedirectResolver.cs" />
+    <Compile Include="..\..\src\EndpointNetworkIdentityResolver.cs" Link="EndpointNetworkIdentityResolver.cs" />
     <Compile Include="..\..\src\EndpointPingRetryExecutor.cs" Link="EndpointPingRetryExecutor.cs" />
     <Compile Include="..\..\src\EndpointProtocolRouteResolver.cs" Link="EndpointProtocolRouteResolver.cs" />
     <Compile Include="..\..\src\EndpointScanWorkflowRules.cs" Link="EndpointScanWorkflowRules.cs" />
