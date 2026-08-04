@@ -148,3 +148,25 @@ Status values used in this matrix:
 | Form closing/disposal lifecycle | `src/EndpointDetailsDialog.cs` | `EndpointDetailsDialog_FormClosing` | COMPLETE | Closing now sets cancellation markers and explicitly stops ping/VirusTotal timers before disposing form-owned collaborators. | `EndpointDetailsDialogCancellationGate`, `EndpointVirusTotalCancellationGate` | `EndpointDetailsDialogWorkflowSeamsTests`, `EndpointVirusTotalReportWorkflowTests` | Background operations still rely on existing catch behavior. | Priority 4 close-path safety criteria for timer callbacks and cancellation markers are now explicitly implemented. |
 
 Priority 4 is `complete` under the async-safety criteria used in this reconciliation matrix. Remaining `Application.DoEvents` risk is explicitly re-scoped into Priority 5.
+
+## Priority 5: Application.DoEvents inventory and reduction plan
+
+Scope evaluated from live code on `Main-Dev-V3`: repository-wide `Application.DoEvents` usage in forms and wrapper call paths.
+
+Status values used in this matrix:
+
+- `COMPLETE`
+- `PARTIALLY COMPLETE`
+- `NOT STARTED`
+- `BLOCKED`
+- `INTENTIONALLY SYNCHRONOUS`
+
+| Workflow family | File | Symbol(s) | Status | Current behavior | Extracted seam | Tests | Remaining risk | Rationale |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Inventory completeness | `src/CheckerMainForm.cs`, `src/EndpointDetailsDialog.cs`, `src/FeatureRequestDialog.cs`, `src/ExceptionDialog.cs`, `src/SpeedTestDialog.cs`, `src/AutoUpdaterDialog.cs` | direct `Application.DoEvents` calls and `UiThreadHelpers` wrapper call sites | COMPLETE | Repository scan identifies direct call clusters plus wrapper-path injections using `UiThreadHelpers.StartBackgroundThread(..., Application.DoEvents)` and `UiThreadHelpers.SafeInvoke(..., Application.DoEvents)`. | `UiThreadHelpers` (existing wrapper seam) | `UiThreadHelpersTests` | Inventory alone does not reduce reentrancy. | Priority 5 starts with confirmed live-code inventory before behavioral reductions. |
+| Checker main scan/export orchestration | `src/CheckerMainForm.cs` | direct `Application.DoEvents` calls in long-running scan/export loops (20 call sites) | PARTIALLY COMPLETE | Direct `DoEvents` remains inside compatibility-sensitive loops and progress/update branches. | protocol seams are complete; no dedicated `DoEvents` sequencing seam yet | existing scan/export deterministic suites (indirect) | Highest reentrancy/timing risk concentration remains here. | This is the first reduction target after inventory closure. |
+| Dialog wrapper call paths | `src/EndpointDetailsDialog.cs`, `src/FeatureRequestDialog.cs`, `src/ExceptionDialog.cs`, `src/SpeedTestDialog.cs`, `src/AutoUpdaterDialog.cs` | `NewBackgroundThread`, `ThreadSafeInvoke`, wrapper delegates into `UiThreadHelpers` | INTENTIONALLY SYNCHRONOUS | Wrappers still pass `Application.DoEvents` callback for repaint/event processing compatibility during invoke/background transitions. | `UiThreadHelpers` | `UiThreadHelpersTests` | Reentrancy and ordering side effects are possible under nested message pumping. | Retained intentionally pending deterministic sequencing harness work. |
+| Speed test workflow loops | `src/SpeedTestDialog.cs` | direct `Application.DoEvents` calls in test/progress phases (10 call sites) | NOT STARTED | Direct UI message pumping remains in long-running speed-test orchestration. | None | None specific to sequencing | External network timing plus `DoEvents` increases non-deterministic ordering risk. | Requires dedicated characterization before any safe reduction. |
+| Feature/exception report flows | `src/FeatureRequestDialog.cs`, `src/ExceptionDialog.cs` | direct `Application.DoEvents` in attachment/report flows | NOT STARTED | Direct `DoEvents` remains in user-reporting flows alongside wrapper-based invoke patterns. | Shared mail table seam only (`ReportMailTableBuilder`) | `ReportMailTableBuilderTests` (content only) | Low-to-medium reentrancy risk with user-interaction timing sensitivity. | Reduction deferred until higher-risk main scan/export path is characterized. |
+
+Priority 5 is `in progress`: inventory is complete, reduction/characterization work is not yet complete.
