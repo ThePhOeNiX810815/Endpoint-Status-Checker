@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Net;
+using System.Text;
 
 namespace EndpointChecker
 {
@@ -30,6 +32,10 @@ namespace EndpointChecker
             Run("Cloudflare bypass interpreter preserves successful bypass override mapping", CloudflareBypassInterpreterPreservesSuccessfulBypassOverrideMapping);
             Run("Cloudflare bypass interpreter preserves failed bypass append mapping", CloudflareBypassInterpreterPreservesFailedBypassAppendMapping);
             Run("Cloudflare bypass interpreter preserves bypass exception append mapping", CloudflareBypassInterpreterPreservesBypassExceptionAppendMapping);
+            Run("HTTP response body processor preserves read trigger conditions", HttpResponseBodyProcessorPreservesReadTriggerConditions);
+            Run("HTTP response body processor preserves max byte cap behavior", HttpResponseBodyProcessorPreservesMaxByteCapBehavior);
+            Run("HTTP response body processor preserves html meta gating", HttpResponseBodyProcessorPreservesHtmlMetaGating);
+            Run("HTTP response body processor preserves encoding fallback gating", HttpResponseBodyProcessorPreservesEncodingFallbackGating);
 
             if (failed > 0)
             {
@@ -372,6 +378,51 @@ namespace EndpointChecker
 
             AssertEqual("403", result.ResponseCode);
             AssertEqual("Forbidden | Bypass error: unexpected failure", result.ResponseMessage);
+        }
+
+        private static void HttpResponseBodyProcessorPreservesReadTriggerConditions()
+        {
+            AssertEqual(false, EndpointHttpResponseBodyProcessor.ShouldReadResponseBody(false, false));
+            AssertEqual(true, EndpointHttpResponseBodyProcessor.ShouldReadResponseBody(true, false));
+            AssertEqual(true, EndpointHttpResponseBodyProcessor.ShouldReadResponseBody(false, true));
+        }
+
+        private static void HttpResponseBodyProcessorPreservesMaxByteCapBehavior()
+        {
+            byte[] sourceBytes = Encoding.ASCII.GetBytes("1234567890");
+
+            byte[] noRoom = EndpointHttpResponseBodyProcessor.ReadResponseBytes(new MemoryStream(sourceBytes), maxBytes: 0, chunkSize: 4);
+            AssertEqual(0, noRoom.Length);
+
+            byte[] capped = EndpointHttpResponseBodyProcessor.ReadResponseBytes(new MemoryStream(sourceBytes), maxBytes: 8, chunkSize: 4);
+            AssertEqual(8, capped.Length);
+            AssertEqual("12345678", Encoding.ASCII.GetString(capped));
+
+            byte[] all = EndpointHttpResponseBodyProcessor.ReadResponseBytes(new MemoryStream(sourceBytes), maxBytes: 20, chunkSize: 4);
+            AssertEqual(10, all.Length);
+            AssertEqual("1234567890", Encoding.ASCII.GetString(all));
+        }
+
+        private static void HttpResponseBodyProcessorPreservesHtmlMetaGating()
+        {
+            AssertEqual(true, EndpointHttpResponseBodyProcessor.ShouldResolveHtmlMetaInfo(true, "text/html"));
+            AssertEqual(false, EndpointHttpResponseBodyProcessor.ShouldResolveHtmlMetaInfo(false, "text/html"));
+            AssertEqual(false, EndpointHttpResponseBodyProcessor.ShouldResolveHtmlMetaInfo(true, "application/json"));
+            AssertEqual(false, EndpointHttpResponseBodyProcessor.ShouldResolveHtmlMetaInfo(true, null));
+        }
+
+        private static void HttpResponseBodyProcessorPreservesEncodingFallbackGating()
+        {
+            Encoding utf8 = Encoding.UTF8;
+            Encoding ascii = Encoding.ASCII;
+
+            AssertEqual(true, EndpointHttpResponseBodyProcessor.ShouldResolveMetaWithHtmlEncodingFallback(null, utf8));
+            AssertEqual(false, EndpointHttpResponseBodyProcessor.ShouldResolveMetaWithHtmlEncodingFallback(utf8, ascii));
+            AssertEqual(false, EndpointHttpResponseBodyProcessor.ShouldResolveMetaWithHtmlEncodingFallback(null, null));
+
+            AssertEqual(true, EndpointHttpResponseBodyProcessor.ShouldAssignDefaultHtmlEncoding(null, null));
+            AssertEqual(false, EndpointHttpResponseBodyProcessor.ShouldAssignDefaultHtmlEncoding(null, utf8));
+            AssertEqual(false, EndpointHttpResponseBodyProcessor.ShouldAssignDefaultHtmlEncoding(ascii, null));
         }
 
         private static void Run(string name, Action test)

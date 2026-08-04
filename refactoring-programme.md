@@ -405,3 +405,20 @@ Scope completed in this ticket:
 - Routed network share assignment in `bw_GetStatus_DoWork` through the extracted seam while preserving null/empty behavior.
 - Preserved existing runtime share acquisition via `GetNetShares(responseURI.Host)` and existing catch-swallow orchestration behavior.
 - Added deterministic `EndpointCheckingCore` tests for null input, empty input, and legacy sorting/array-shaping behavior.
+
+## Ticket 16: Protocol decomposition continuation (HTTP response body stream/meta boundary)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting deterministic HTTP response-body stream/meta decision logic from `bw_GetStatus_DoWork` while preserving current response-save and metadata behavior.
+
+Scope completed in this ticket:
+
+- Extracted deterministic response-body trigger, bounded-byte read, HTML metadata gating, and encoding-fallback decision logic into `EndpointHttpResponseBodyProcessor`.
+- Routed response-body read loop and HTML meta fallback branching in `bw_GetStatus_DoWork` through the extracted seam.
+- Preserved existing bounded-read behavior, content-length update path, response-save behavior, and `ResolvePageMetaInfo` invocation order.
+- Added deterministic `HttpCompatibility` tests for read-trigger conditions, max-byte-cap behavior, HTML-gating behavior, and encoding fallback/default assignment gating.

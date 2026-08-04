@@ -898,67 +898,58 @@ namespace EndpointChecker
                                                 // TRY TO GET HEADER ENCODING FROM RESPONSE HEADER
                                                 endpoint.HTTPencoding = GetEncoding(httpWebResponse.ContentType);
 
-                                                if (checkOptions.SaveResponse || checkOptions.ResolvePageMetaInfo)
+                                                if (EndpointHttpResponseBodyProcessor.ShouldReadResponseBody(
+                                                    checkOptions.SaveResponse,
+                                                    checkOptions.ResolvePageMetaInfo))
                                                 {
-                                                    // GET RESPONSE STREAM
-                                                    using (BinaryReader httpWebResponseBinaryReader = new BinaryReader(httpWebResponse.GetResponseStream()))
+                                                    byte[] httpWebResponseByteArray =
+                                                        EndpointHttpResponseBodyProcessor.ReadResponseBytes(
+                                                            httpWebResponse.GetResponseStream(),
+                                                            http_SaveResponse_MaxLength_Bytes + 1024);
+
+                                                    // GET CONTENT Length FROM FULL RESPONSE
+                                                    contentLength = httpWebResponseByteArray.LongLength;
+                                                    GetWebResponseContentLengthString(endpoint, contentLength);
+
+                                                    if (checkOptions.SaveResponse &&
+                                                        !string.IsNullOrEmpty(endpoint.HTTPcontentType) &&
+                                                        CheckWebResponseContentLength(endpoint, httpWebResponse, contentLength))
                                                     {
-                                                        MemoryStream httpWebResponseMemoryStream = new MemoryStream();
+                                                        // GET FILE EXTENSION BY CONTENT TYPE
+                                                        string fileExtension = GetFileExtensionByContentType(endpoint.HTTPcontentType);
 
-                                                        byte[] httpWebResponseByteArray;
-                                                        byte[] httpWebResponseBuffer = httpWebResponseBinaryReader.ReadBytes(1024);
-                                                        while (httpWebResponseBuffer.Length > 0 && httpWebResponseMemoryStream.Length < (http_SaveResponse_MaxLength_Bytes + 1024))
+                                                        // SAVE RESPONSE TO FILE
+                                                        SaveWebResponseStream(
+                                                                              startDT_List,
+                                                                              endpoint.Name,
+                                                                              httpWebResponseByteArray,
+                                                                              fileExtension);
+                                                    }
+
+                                                    if (EndpointHttpResponseBodyProcessor.ShouldResolveHtmlMetaInfo(
+                                                        checkOptions.ResolvePageMetaInfo,
+                                                        endpoint.HTTPcontentType))
+                                                    {
+                                                        using (MemoryStream httpWebResponseMemoryStream =
+                                                            new MemoryStream(httpWebResponseByteArray, writable: false))
                                                         {
-                                                            httpWebResponseMemoryStream.Write(httpWebResponseBuffer, 0, httpWebResponseBuffer.Length);
-                                                            httpWebResponseBuffer = httpWebResponseBinaryReader.ReadBytes(1024);
-                                                        }
+                                                            // READ RESPONSE STREAM [HTTP HEADER ENCODING] AND GET HTML META INFO
+                                                            ResolvePageMetaInfo(ReadHTTPResponseStream(httpWebResponseMemoryStream, endpoint.HTTPencoding), endpoint, responseURI, checkOptions.ResolvePageLinks);
 
-                                                        httpWebResponseByteArray = new byte[(int)httpWebResponseMemoryStream.Length];
-                                                        httpWebResponseMemoryStream.Position = 0;
-                                                        httpWebResponseMemoryStream.Read(httpWebResponseByteArray, 0, httpWebResponseByteArray.Length);
-
-                                                        // GET CONTENT Length FROM FULL RESPONSE
-                                                        contentLength = httpWebResponseMemoryStream.Length;
-                                                        GetWebResponseContentLengthString(endpoint, contentLength);
-
-                                                        if (checkOptions.SaveResponse &&
-                                                            !string.IsNullOrEmpty(endpoint.HTTPcontentType) &&
-                                                            CheckWebResponseContentLength(endpoint, httpWebResponse, contentLength))
-                                                        {
-                                                            // GET FILE EXTENSION BY CONTENT TYPE
-                                                            string fileExtension = GetFileExtensionByContentType(endpoint.HTTPcontentType);
-
-                                                            // SAVE RESPONSE TO FILE
-                                                            SaveWebResponseStream(
-                                                                                  startDT_List,
-                                                                                  endpoint.Name,
-                                                                                  httpWebResponseByteArray,
-                                                                                  fileExtension);
-                                                        }
-
-                                                        if (endpoint.HTTPcontentType == "text/html")
-                                                        {
-                                                            // GET HTML METADATA
-                                                            if (checkOptions.ResolvePageMetaInfo)
+                                                            // IF ENCODING NOT PRESENT IN HTTP HEADER, READ AGAIN WITH ENCODING FROM HTML META
+                                                            if (EndpointHttpResponseBodyProcessor.ShouldResolveMetaWithHtmlEncodingFallback(
+                                                                endpoint.HTTPencoding,
+                                                                endpoint.HTMLencoding))
                                                             {
-                                                                // READ RESPONSE STREAM [HTTP HEADER ENCODING] AND GET HTML META INFO
-                                                                ResolvePageMetaInfo(ReadHTTPResponseStream(httpWebResponseMemoryStream, endpoint.HTTPencoding), endpoint, responseURI, checkOptions.ResolvePageLinks);
-
-                                                                // IF ENCODING NOT PRESENT IN HTTP HEADER, READ AGAIN WITH ENCODING FROM HTML META
-                                                                if (endpoint.HTTPencoding == null)
-                                                                {
-                                                                    // READ AGAIN WITH ENCODING FROM HTML META [IF PRESENT]
-                                                                    if (endpoint.HTMLencoding != null)
-                                                                    {
-                                                                        // READ RESPONSE STREAM [HML META ENCODING] AND GET HTML META INFO
-                                                                        ResolvePageMetaInfo(ReadHTTPResponseStream(httpWebResponseMemoryStream, endpoint.HTMLencoding), endpoint, responseURI, checkOptions.ResolvePageLinks);
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        // SET DEAFULT HTML STREAM ENCODING
-                                                                        endpoint.HTMLencoding = endpoint.HTMLdefaultStreamEncoding;
-                                                                    }
-                                                                }
+                                                                // READ RESPONSE STREAM [HML META ENCODING] AND GET HTML META INFO
+                                                                ResolvePageMetaInfo(ReadHTTPResponseStream(httpWebResponseMemoryStream, endpoint.HTMLencoding), endpoint, responseURI, checkOptions.ResolvePageLinks);
+                                                            }
+                                                            else if (EndpointHttpResponseBodyProcessor.ShouldAssignDefaultHtmlEncoding(
+                                                                endpoint.HTTPencoding,
+                                                                endpoint.HTMLencoding))
+                                                            {
+                                                                // SET DEAFULT HTML STREAM ENCODING
+                                                                endpoint.HTMLencoding = endpoint.HTMLdefaultStreamEncoding;
                                                             }
                                                         }
                                                     }
