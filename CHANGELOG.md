@@ -2,6 +2,22 @@
 
 ---
 
+## v3.1.1-rc1 — 2026-08-04
+
+### Release Candidate (Test Channel)
+
+- Published GitHub prerelease asset `EndpointChecker-v3.1.1-rc1-test.zip` targeted to `Main-Dev-V3`.
+- Fixed signed-build detection so `CN=David Smidke` signed executables are recognized correctly and no longer show `CUSTOM UNSIGNED BUILD` on splash.
+- Updated splash behavior and speedtest/TLS/public-IP fixes carried forward from the v3.1.0 line.
+- Cleaned package payload by removing duplicate `bin/Debug` dependency copies and excluding debug symbol artifacts from the distributed RC ZIP.
+
+### Repository Cleanup
+
+- Removed obsolete handoff notes file `CODEX_HANDOFF_2026-08-01.md`.
+- Continued using GitHub Releases as the distribution channel for packaged binaries.
+
+---
+
 ## v3.1.0 — 2026-08-01
 
 ### Premium UI Refresh

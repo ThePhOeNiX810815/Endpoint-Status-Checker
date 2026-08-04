@@ -53,9 +53,14 @@ a single scan with configurable automation.
 
 ## Current v3 Development Status
 
-Endpoint Status Checker v3 is currently developed on the `Main-Dev-V3` branch. There is no official v3 release published at this time, and the previous GitHub release artifacts have been removed.
+Endpoint Status Checker v3 is currently developed on the `Main-Dev-V3` branch.
 
-The in-app updater and standalone updater are intentionally disabled for v3 until an official release ZIP is published.
+Current public distribution status:
+
+- Test channel: GitHub prerelease `v3.1.1-rc1`
+- Official stable v3 channel: not published yet
+
+The in-app updater remains intentionally disabled for v3 builds.
 
 ## v3.1.1 RC Test Build
 
@@ -71,6 +76,11 @@ Safety notes for update behavior:
 - v3 in-app update checks remain hard-disabled in source (`app_UpdateChecksEnabled = false`).
 - This RC publish does not modify `Main-Dev-Branch/version.txt` or `Main-Dev-Branch/package.txt` (the legacy v2.15 update source).
 - Because this is a prerelease asset on the v3 branch line, it is isolated from the v2.15 automatic update path.
+
+Repository note:
+
+- Large packaged binaries are not stored in this branch.
+- Release files are published as GitHub Release assets only.
 
 ## What's New in v3 Development
 
