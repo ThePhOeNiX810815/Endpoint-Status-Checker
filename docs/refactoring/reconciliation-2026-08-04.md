@@ -32,18 +32,18 @@ Overall status: `In progress (not complete)`
 | --- | --- | --- |
 | HTTP routing | Partial | `EndpointScanWorkflowRulesTests.HttpProtocolRoutingRespectsProtocolValidationAndCancellation` and route resolver tests cover selection logic only. |
 | FTP routing | Partial | `EndpointScanWorkflowRulesTests.FtpProtocolRoutingRespectsProtocolValidationAndCancellation` covers selection logic only. |
-| ping handling | Partial | `ShouldRunPing`/`ShouldMarkPingCheckMessage` rules are covered; ping retry/outcome mapping path is not characterized. |
+| ping handling | Covered | Ping gating rules and deterministic ping timeout/success handling are characterized without external network dependency. |
 | redirect behavior | Partial | Manual redirect rule and redirect annotation are covered; end-to-end redirect handling chain is not fully characterized. |
-| timeout retry behavior | Partial | HTTP timeout retry executor is covered; no equivalent deterministic characterization for ping timeout recursion path. |
-| non-timeout exception handling | Partial | HTTP non-timeout retry short-circuit and HTTP exception message mapping covered; FTP exception handling mapping not covered. |
-| response/status mapping | Partial | HTTP status/transport/generic mappings are covered; FTP response mapping and full terminal mapping matrix are not. |
+| timeout retry behavior | Covered | HTTP retry and ping timeout retry behavior are both characterized through deterministic executors. |
+| non-timeout exception handling | Covered | HTTP non-timeout retry short-circuit and deterministic FTP transport-message mapping are covered. |
+| response/status mapping | Partial | HTTP status/transport/generic mappings and FTP status/exception mappings are covered, but full end-to-end scan-terminal mapping remains partially integrated in `bw_GetStatus_DoWork`. |
 | Cloudflare classification | Covered | `EndpointHttpResponseClassifier` tests cover CF-RAY and `Server` detection logic. |
 | cancellation semantics | Partial | rule-level cancellation checks and progress cancellation completion exist; no deterministic full-scan cancellation sequencing harness. |
 | terminal endpoint completion | Partial | `EndpointCheckResultFactory` and progress completion provide partial terminal behavior coverage. |
 | progress completion | Covered | `EndpointCheckProgressTests` cover completion increments and total bounds. |
 | active-worker drain | Covered | `EndpointCheckProgressTests` cover active worker drain to zero. |
 | mixed fast/slow checks | Covered | `EndpointCheckProgressTests.MixedFastAndSlowEndpointCompletionKeepsActiveWorkerCountAccurate`. |
-| handled terminal failures | Partial | HTTP handled failures covered; FTP handled failure mapping not characterized. |
+| handled terminal failures | Covered | HTTP handled failures and FTP handled failure mapping paths are characterized through deterministic mappers. |
 | unhandled terminal failures | Covered | `EndpointCheckResultFactoryTests.UnhandledExceptionResultPreservesCurrentErrorMapping`. |
 
 ## Priority 2: XLSX/HTML export compatibility baseline

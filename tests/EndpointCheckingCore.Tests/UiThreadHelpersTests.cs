@@ -1,14 +1,20 @@
 using System;
 using System.Threading;
-using EndpointChecker;
-using Xunit;
 
-namespace EndpointCheckingCore.Tests
+namespace EndpointChecker
 {
-    public class UiThreadHelpersTests
+    internal static class UiThreadHelpersTests
     {
-        [Fact]
-        public void StartBackgroundThread_InvokesBeforeStartAndRunsAction()
+        public static void Register()
+        {
+            EndpointCheckingCoreTestRunner.Run("UI thread helper start invokes before-start callback and background action", StartBackgroundThreadInvokesBeforeStartAndRunsAction);
+            EndpointCheckingCoreTestRunner.Run("UI thread helper start runs action on background thread", StartBackgroundThreadRunsOnBackgroundThread);
+            EndpointCheckingCoreTestRunner.Run("UI thread helper safe invoke runs before-invoke callback and action", SafeInvokeInvokesBeforeInvokeAndAction);
+            EndpointCheckingCoreTestRunner.Run("UI thread helper safe invoke swallows invoke exceptions", SafeInvokeSwallowsExceptionFromInvokeAction);
+            EndpointCheckingCoreTestRunner.Run("UI thread helper safe invoke swallows before-invoke exceptions", SafeInvokeSwallowsExceptionFromBeforeInvoke);
+        }
+
+        private static void StartBackgroundThreadInvokesBeforeStartAndRunsAction()
         {
             bool beforeStartCalled = false;
             bool actionCalled = false;
@@ -22,15 +28,17 @@ namespace EndpointCheckingCore.Tests
                     },
                     () => beforeStartCalled = true);
 
-                Assert.True(done.Wait(TimeSpan.FromSeconds(5)), "Background action did not complete in time.");
+                if (!done.Wait(TimeSpan.FromSeconds(5)))
+                {
+                    throw new InvalidOperationException("Background action did not complete in time.");
+                }
             }
 
-            Assert.True(beforeStartCalled);
-            Assert.True(actionCalled);
+            EndpointCheckingCoreTestRunner.AssertEqual(true, beforeStartCalled);
+            EndpointCheckingCoreTestRunner.AssertEqual(true, actionCalled);
         }
 
-        [Fact]
-        public void StartBackgroundThread_RunsOnBackgroundThread()
+        private static void StartBackgroundThreadRunsOnBackgroundThread()
         {
             bool isBackground = false;
             using (ManualResetEventSlim done = new ManualResetEventSlim(false))
@@ -41,14 +49,16 @@ namespace EndpointCheckingCore.Tests
                     done.Set();
                 });
 
-                Assert.True(done.Wait(TimeSpan.FromSeconds(5)), "Background action did not complete in time.");
+                if (!done.Wait(TimeSpan.FromSeconds(5)))
+                {
+                    throw new InvalidOperationException("Background action did not complete in time.");
+                }
             }
 
-            Assert.True(isBackground);
+            EndpointCheckingCoreTestRunner.AssertEqual(true, isBackground);
         }
 
-        [Fact]
-        public void SafeInvoke_InvokesBeforeInvokeAndAction()
+        private static void SafeInvokeInvokesBeforeInvokeAndAction()
         {
             bool beforeInvokeCalled = false;
             bool actionCalled = false;
@@ -57,31 +67,38 @@ namespace EndpointCheckingCore.Tests
                 () => actionCalled = true,
                 () => beforeInvokeCalled = true);
 
-            Assert.True(beforeInvokeCalled);
-            Assert.True(actionCalled);
+            EndpointCheckingCoreTestRunner.AssertEqual(true, beforeInvokeCalled);
+            EndpointCheckingCoreTestRunner.AssertEqual(true, actionCalled);
         }
 
-        [Fact]
-        public void SafeInvoke_SwallowsExceptionFromInvokeAction()
+        private static void SafeInvokeSwallowsExceptionFromInvokeAction()
         {
-            Exception exception = Record.Exception(() =>
-                UiThreadHelpers.SafeInvoke(() => throw new InvalidOperationException("expected")));
-
-            Assert.Null(exception);
+            try
+            {
+                UiThreadHelpers.SafeInvoke(() => throw new InvalidOperationException("expected"));
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException("SafeInvoke should swallow invoke exceptions.", exception);
+            }
         }
 
-        [Fact]
-        public void SafeInvoke_SwallowsExceptionFromBeforeInvoke()
+        private static void SafeInvokeSwallowsExceptionFromBeforeInvoke()
         {
             bool actionCalled = false;
 
-            Exception exception = Record.Exception(() =>
+            try
+            {
                 UiThreadHelpers.SafeInvoke(
                     () => actionCalled = true,
-                    () => throw new InvalidOperationException("expected")));
+                    () => throw new InvalidOperationException("expected"));
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException("SafeInvoke should swallow before-invoke exceptions.", exception);
+            }
 
-            Assert.Null(exception);
-            Assert.False(actionCalled);
+            EndpointCheckingCoreTestRunner.AssertEqual(false, actionCalled);
         }
     }
 }

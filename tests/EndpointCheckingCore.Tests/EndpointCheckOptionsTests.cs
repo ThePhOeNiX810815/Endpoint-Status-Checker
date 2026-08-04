@@ -12,6 +12,10 @@ namespace EndpointChecker
             EndpointCheckResultFactoryTests.Register();
             EndpointCheckProgressTests.Register();
             EndpointScanWorkflowRulesTests.Register();
+            EndpointPingRetryExecutorTests.Register();
+            EndpointFtpStatusMapperTests.Register();
+            UiThreadHelpersTests.Register();
+            ReportMailTableBuilderTests.Register();
 
             if (failed > 0)
             {

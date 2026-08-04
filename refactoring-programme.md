@@ -244,3 +244,25 @@ This ledger is intentionally strict: a priority is not considered complete unles
 5. Unsafe `Application.DoEvents` review/reduction: Not started
 6. CI warning-regression governance: Not started (baseline exists)
 7. Remaining low-risk residual cleanup: Partially performed (mail table builder extraction completed)
+
+## Ticket 7: Scan-workflow characterization completion (phase 1)
+
+Status: In progress (harness expanded)
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Close high-priority characterization gaps in scan workflow behavior before deeper protocol decomposition.
+
+Scope completed in this phase:
+
+- Extracted deterministic ping timeout-retry seam into `EndpointPingRetryExecutor`.
+- Extracted deterministic FTP response/exception status mapping seam into `EndpointFtpStatusMapper`.
+- Wired `CheckerMainForm.GetPingTime` and `CheckerMainForm.FTPWebResponseStatusMessage` through these seams while preserving existing output semantics.
+- Added characterization suites covering ping retry terminal outcomes and FTP status/exception mapping behavior.
+- Corrected `tests/EndpointCheckingCore.Tests` execution model by converting prior xUnit-style files to the repository's executable custom runner pattern.
+
+Remaining work in this ticket:
+
+- Complete remaining partial scan-matrix items in `docs/refactoring/reconciliation-2026-08-04.md`, including deeper end-to-end terminal mapping and cancellation-sequencing coverage.

@@ -1849,21 +1849,14 @@ namespace EndpointChecker
 
         public static string GetPingTime(string host, int timeout, int maxRetryCount, int retryCount = 0)
         {
-            string pingTime = string.Empty;
-
-            PingReply pingReply = new Ping().Send(host, timeout);
-            if (pingReply.Status == IPStatus.Success)
-            {
-                pingTime = pingReply.RoundtripTime.ToString() + " ms";
-            }
-            else if (pingReply.Status == IPStatus.TimedOut &&
-                     retryCount < maxRetryCount)
-            {
-                retryCount++;
-                pingTime = GetPingTime(host, timeout, maxRetryCount, retryCount);
-            }
-
-            return pingTime;
+            return EndpointPingRetryExecutor.Execute(
+                () =>
+                {
+                    PingReply pingReply = new Ping().Send(host, timeout);
+                    return EndpointPingAttemptResult.FromReply(pingReply);
+                },
+                maxRetryCount,
+                retryCount);
         }
 
         public static HttpWebResponse GetHTTPWebResponse(HttpWebRequest httpWebRequest, int maxRetryCount, int retryCount = 0)
@@ -2047,9 +2040,6 @@ namespace EndpointChecker
 
         public void FTPWebResponseStatusMessage(FtpWebResponse ftpWebResponse, WebException webException, EndpointDefinition endpoint)
         {
-            endpoint.ResponseCode = status_Error;
-            endpoint.ResponseMessage = status_NotAvailable;
-
             if (ftpWebResponse == null &&
                 webException != null &&
                 webException.Response != null)
@@ -2064,85 +2054,45 @@ namespace EndpointChecker
                 }
             }
 
-            if (ftpWebResponse != null &&
-                ftpWebResponse.StatusCode != FtpStatusCode.Undefined)
+            EndpointFtpStatusMapResult statusMap = EndpointFtpStatusMapper.Map(new EndpointFtpStatusMapInput
             {
-                // HANDLE STATUS CODE
-                endpoint.ResponseCode = ((int)ftpWebResponse.StatusCode).ToString();
+                StatusError = status_Error,
+                StatusNotAvailable = status_NotAvailable,
+                FtpStatusCode = ftpWebResponse != null && ftpWebResponse.StatusCode != FtpStatusCode.Undefined
+                    ? (int?)ftpWebResponse.StatusCode
+                    : null,
+                FtpStatusDescription = ftpWebResponse != null ? ftpWebResponse.StatusDescription : null,
+                FtpBannerMessage = ftpWebResponse != null ? ftpWebResponse.BannerMessage : null,
+                FtpWelcomeMessage = ftpWebResponse != null ? ftpWebResponse.WelcomeMessage : null,
+                FtpExitMessage = ftpWebResponse != null ? ftpWebResponse.ExitMessage : null,
+                WebExceptionStatus = webException != null ? webException.Status.ToString() : null,
+                WebExceptionMessage = webException != null ? webException.Message : null,
+                WebExceptionInnerMessage = webException != null && webException.InnerException != null
+                    ? webException.InnerException.Message
+                    : null
+            });
 
-                // HANDLE STATUS MESSAGE
-                if (!string.IsNullOrEmpty(ftpWebResponse.StatusDescription) &&
-                    !endpoint.ResponseCode.StartsWith("2"))
-                {
-                    endpoint.ResponseMessage = ftpWebResponse.StatusDescription
-                        .Replace(endpoint.ResponseCode, string.Empty) // REMOVE ACTUAL STATUS CODE FROM MESSAGE, IF PRESENT
-                        .TrimStart('-').TrimStart().TrimEnd(); // REMOVE SPACES AND '-' CHARACTER FROM START AND END OF MESSAGE, IF PRESENT
-                }
-                else if (!string.IsNullOrEmpty(ftpWebResponse.BannerMessage) &&
-                         ftpWebResponse.BannerMessage.StartsWith(((int)FtpStatusCode.SendUserCommand).ToString()))
-                {
-                    endpoint.ResponseCode = ((int)FtpStatusCode.SendUserCommand).ToString();
-                    endpoint.ResponseMessage = ftpWebResponse.BannerMessage
-                        .Replace(endpoint.ResponseCode, string.Empty) // REMOVE 'SendUserCommand' [220] STATUS CODE FROM MESSAGE, IF PRESENT
-                        .TrimStart('-').TrimStart().TrimEnd(); // REMOVE SPACES AND '-' CHARACTER FROM START AND END OF MESSAGE, IF PRESENT
-                }
-                else if (!string.IsNullOrEmpty(ftpWebResponse.WelcomeMessage) &&
-                         ftpWebResponse.WelcomeMessage.StartsWith(((int)FtpStatusCode.LoggedInProceed).ToString()))
-                {
-                    endpoint.ResponseCode = ((int)FtpStatusCode.LoggedInProceed).ToString();
-                    endpoint.ResponseMessage = ftpWebResponse.WelcomeMessage
-                        .Replace(endpoint.ResponseCode, string.Empty) // REMOVE 'LoggedInProceed' [230] STATUS CODE FROM MESSAGE, IF PRESENT
-                        .TrimStart('-').TrimStart().TrimEnd(); // REMOVE SPACES AND '-' CHARACTER FROM START AND END OF MESSAGE, IF PRESENT
-                }
-                else if (!string.IsNullOrEmpty(ftpWebResponse.StatusDescription))
-                {
-                    endpoint.ResponseMessage = ftpWebResponse.StatusDescription
-                        .Replace(endpoint.ResponseCode, string.Empty) // REMOVE ACTUAL STATUS CODE FROM MESSAGE, IF PRESENT
-                        .TrimStart('-').TrimStart().TrimEnd(); // REMOVE SPACES AND '-' CHARACTER FROM START AND END OF MESSAGE, IF PRESENT
-                }
+            endpoint.ResponseCode = statusMap.ResponseCode;
+            endpoint.ResponseMessage = statusMap.ResponseMessage;
 
-                // BANNER MESSAGE
-                if (!string.IsNullOrEmpty(ftpWebResponse.BannerMessage))
-                {
-                    endpoint.FTPBannerMessage = ftpWebResponse.BannerMessage.TrimStart().TrimEnd();
-                }
-
-                // WELCOME MESSAGE
-                if (!string.IsNullOrEmpty(ftpWebResponse.WelcomeMessage))
-                {
-                    endpoint.FTPWelcomeMessage = ftpWebResponse.WelcomeMessage.TrimStart().TrimEnd();
-                }
-
-                // EXIT MESSAGE
-                if (!string.IsNullOrEmpty(ftpWebResponse.ExitMessage))
-                {
-                    endpoint.FTPExitMessage = ftpWebResponse.ExitMessage.TrimStart().TrimEnd();
-                }
-
-                // STATUS DESCRIPTION
-                if (!string.IsNullOrEmpty(ftpWebResponse.StatusDescription))
-                {
-                    endpoint.FTPStatusDescription = ftpWebResponse.StatusDescription.TrimStart().TrimEnd();
-                }
+            if (!string.IsNullOrEmpty(statusMap.BannerMessage))
+            {
+                endpoint.FTPBannerMessage = statusMap.BannerMessage;
             }
-            else if (webException != null)
+
+            if (!string.IsNullOrEmpty(statusMap.WelcomeMessage))
             {
-                // STATUS
-                endpoint.ResponseMessage = webException.Status.ToString();
+                endpoint.FTPWelcomeMessage = statusMap.WelcomeMessage;
+            }
 
-                // MESSAGE
-                if (!string.IsNullOrEmpty(webException.Message))
-                {
-                    endpoint.ResponseMessage += " -> " + webException.Message;
-                }
+            if (!string.IsNullOrEmpty(statusMap.ExitMessage))
+            {
+                endpoint.FTPExitMessage = statusMap.ExitMessage;
+            }
 
-                // INNER EXCEPTION MESSAGE
-                if (webException.InnerException != null &&
-                    !string.IsNullOrEmpty(webException.InnerException.Message) &&
-                    !endpoint.ResponseMessage.Contains(webException.InnerException.Message))
-                {
-                    endpoint.ResponseMessage += " -> " + webException.InnerException.Message;
-                }
+            if (!string.IsNullOrEmpty(statusMap.StatusDescription))
+            {
+                endpoint.FTPStatusDescription = statusMap.StatusDescription;
             }
         }
 
