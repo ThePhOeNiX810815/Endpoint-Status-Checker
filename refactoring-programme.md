@@ -199,6 +199,7 @@ Scope completed so far:
 - Merged PR #57: extracted HTML export post-processing transformations into `EndpointHtmlExportTransformer` with characterization tests.
 - Merged PR #58: consolidated duplicated UI thread helper wrappers into `UiThreadHelpers` with dialog/form wrapper delegation preserved.
 - Merged PR #59: extracted report-mail HTML table composition into `ReportMailTableBuilder`.
+- Completed repository-wide Priority 5 `Application.DoEvents` inventory and documented live call-site evidence in `docs/refactoring/reconciliation-2026-08-04.md`.
 
 Non-goals:
 
