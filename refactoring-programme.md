@@ -183,7 +183,7 @@ Verification:
 
 ## Ticket 5: Cleanup, documentation, and residual review
 
-Status: In progress on `refactor/v3-code-cleanup-review`
+Status: Ongoing (reconciled follow-up active)
 
 Current v3 integration branch: `Main-Dev-V3`
 
@@ -191,11 +191,14 @@ Objective:
 
 Perform a repository-wide clean-code review after Tickets 1-4, apply only low-risk cleanups that preserve observable behavior, and document residual issues that should not be changed without further characterization or separate migration work.
 
-Scope completed in this ticket:
+Scope completed so far:
 
 - Removed obsolete `v3-main` branch usage from the active workflow after `Main-Dev-V3` became the v3 integration branch.
 - Added XML documentation to important extracted internal boundaries from the refactoring programme.
 - Added a residual-findings table for large remaining responsibilities, duplication, comments, direct UI coupling, and compatibility-sensitive areas.
+- Merged PR #57: extracted HTML export post-processing transformations into `EndpointHtmlExportTransformer` with characterization tests.
+- Merged PR #58: consolidated duplicated UI thread helper wrappers into `UiThreadHelpers` with dialog/form wrapper delegation preserved.
+- Merged PR #59: extracted report-mail HTML table composition into `ReportMailTableBuilder`.
 
 Non-goals:
 
@@ -208,3 +211,36 @@ Non-goals:
 Review artifacts:
 
 - `refactoring-residual-findings.md`
+- `docs/refactoring/reconciliation-2026-08-04.md`
+
+## Ticket 6: Warning baseline and future warning governance
+
+Status: Baseline documented; regression gate not yet implemented
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Document current warning inventory and create a non-destructive path toward warning-regression governance.
+
+Scope completed in this ticket:
+
+- Captured warning baseline and warning inventory in `docs/refactoring/warning-baseline.md`.
+- Preserved current behavior: no global warning suppressions, no warning-level reduction, no blanket warnings-as-errors.
+
+Remaining work in this ticket:
+
+- Implement CI warning-regression gate that compares unique warning counts against the documented baseline.
+- Ensure the gate detects regressions without failing on existing baseline warnings.
+
+## Reconciliation Priority Ledger (as of 2026-08-04)
+
+This ledger is intentionally strict: a priority is not considered complete unless all listed completion criteria are covered by deterministic tests or blocked by an explicit owner decision.
+
+1. Scan workflow characterization harness: In progress (partial coverage)
+2. XLSX and HTML export compatibility baseline: In progress (HTML partial, XLSX largely pending)
+3. Protocol decomposition enabled by harness: In progress (initial route decomposition done; deeper extraction pending full harness)
+4. `EndpointDetailsDialog` blocking `.Result` paths: Not started
+5. Unsafe `Application.DoEvents` review/reduction: Not started
+6. CI warning-regression governance: Not started (baseline exists)
+7. Remaining low-risk residual cleanup: Partially performed (mail table builder extraction completed)
