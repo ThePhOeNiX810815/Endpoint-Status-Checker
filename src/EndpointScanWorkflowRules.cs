@@ -29,12 +29,6 @@ namespace EndpointChecker
 
         public static bool ShouldAppendRedirectSource(Uri endpointUri, Uri responseUri, bool autoRedirectFollowed)
         {
-            if (endpointUri == null ||
-                responseUri == null)
-            {
-                return autoRedirectFollowed;
-            }
-
             return endpointUri.Scheme != responseUri.Scheme ||
                    endpointUri.Port != responseUri.Port ||
                    endpointUri.Host != responseUri.Host ||
