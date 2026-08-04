@@ -23,6 +23,7 @@ namespace EndpointChecker
             EndpointSslCertificateAcquisitionTests.Register();
             EndpointSslCertificatePropertyMapperTests.Register();
             EndpointTaskSyncBridgeTests.Register();
+            EndpointVirusTotalScanRetryExecutorTests.Register();
             EndpointScanTerminalFinalizerTests.Register();
             UiThreadHelpersTests.Register();
             ReportMailTableBuilderTests.Register();
