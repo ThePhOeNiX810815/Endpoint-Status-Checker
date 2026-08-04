@@ -17,6 +17,7 @@
     <Compile Include="..\..\src\EndpointHttpRedirectResolver.cs" Link="EndpointHttpRedirectResolver.cs" />
     <Compile Include="..\..\src\EndpointNetworkIdentityResolver.cs" Link="EndpointNetworkIdentityResolver.cs" />
     <Compile Include="..\..\src\EndpointNetworkShareAcquisition.cs" Link="EndpointNetworkShareAcquisition.cs" />
+    <Compile Include="..\..\src\EndpointNetworkShareEnumerator.cs" Link="EndpointNetworkShareEnumerator.cs" />
     <Compile Include="..\..\src\EndpointNetworkShareResolver.cs" Link="EndpointNetworkShareResolver.cs" />
     <Compile Include="..\..\src\EndpointPingRetryExecutor.cs" Link="EndpointPingRetryExecutor.cs" />
     <Compile Include="..\..\src\EndpointProtocolRouteResolver.cs" Link="EndpointProtocolRouteResolver.cs" />
@@ -24,6 +25,7 @@
     <Compile Include="..\..\src\EndpointScanTerminalFinalizer.cs" Link="EndpointScanTerminalFinalizer.cs" />
     <Compile Include="..\..\src\EndpointSslCertificateAcquisition.cs" Link="EndpointSslCertificateAcquisition.cs" />
     <Compile Include="..\..\src\EndpointSslCertificatePropertyMapper.cs" Link="EndpointSslCertificatePropertyMapper.cs" />
+    <Compile Include="..\..\src\EndpointTaskSyncBridge.cs" Link="EndpointTaskSyncBridge.cs" />
     <Compile Include="..\..\src\ReportMailTableBuilder.cs" Link="ReportMailTableBuilder.cs" />
     <Compile Include="..\..\src\UiThreadHelpers.cs" Link="UiThreadHelpers.cs" />
   </ItemGroup>

@@ -94,6 +94,7 @@ Status values used in this matrix:
 - `PARTIALLY COMPLETE`
 - `NOT STARTED`
 - `BLOCKED`
+- `INTENTIONALLY FORM-OWNED`
 
 | Boundary | Status | Current evidence (files/symbols/tests) |
 | --- | --- | --- |
@@ -107,12 +108,34 @@ Status values used in this matrix:
 | FTP response/status mapping | COMPLETE | `src/EndpointFtpStatusMapper.cs` wired via `FTPWebResponseStatusMessage`; covered by `tests/EndpointCheckingCore.Tests/EndpointScanProtocolCompatibilityTests.cs`. |
 | ping execution/result mapping | COMPLETE | `src/EndpointPingRetryExecutor.cs` wired via `GetPingTime`; result propagation to terminal flow covered by scan workflow/finalizer tests in `tests/EndpointCheckingCore.Tests`. |
 | DNS/IP/MAC identity shaping | COMPLETE | `src/EndpointNetworkIdentityResolver.cs` wired for seed/filter/finalization; covered by `tests/EndpointCheckingCore.Tests/EndpointNetworkIdentityResolverTests.cs`. |
-| share lookup/result shaping | PARTIALLY COMPLETE | Deterministic share-result shaping extracted into `src/EndpointNetworkShareResolver.cs`; network-share acquisition decision/exception-assignment flow extracted into `src/EndpointNetworkShareAcquisition.cs`; both are covered in `tests/EndpointCheckingCore.Tests` (`EndpointNetworkShareResolverTests`, `EndpointNetworkShareAcquisitionTests`). Remaining runtime host share enumeration implementation (`GetNetShares`) remains form-owned. |
-| SSL certificate extraction | PARTIALLY COMPLETE | Deterministic certificate-to-property mapping extracted into `src/EndpointSslCertificatePropertyMapper.cs`; certificate acquisition and exception handling flow extracted into `src/EndpointSslCertificateAcquisition.cs`; both are characterized in `tests/EndpointCheckingCore.Tests` (`EndpointSslCertificatePropertyMapperTests`, `EndpointSslCertificateAcquisitionTests`). Remaining HTTP request/service-point retrieval wiring still originates in form orchestration. |
+| share lookup/result shaping | COMPLETE | Deterministic share-result shaping extracted into `src/EndpointNetworkShareResolver.cs`; acquisition decision/exception-assignment flow extracted into `src/EndpointNetworkShareAcquisition.cs`; host-share enumeration and Win32 mapping extracted into `src/EndpointNetworkShareEnumerator.cs`; covered by `tests/EndpointCheckingCore.Tests/EndpointNetworkShareResolverTests.cs`, `tests/EndpointCheckingCore.Tests/EndpointNetworkShareAcquisitionTests.cs`, and `tests/EndpointCheckingCore.Tests/EndpointNetworkShareEnumeratorTests.cs`. |
+| SSL certificate extraction | COMPLETE | Deterministic certificate-to-property mapping extracted into `src/EndpointSslCertificatePropertyMapper.cs`; certificate acquisition and exception handling flow extracted into `src/EndpointSslCertificateAcquisition.cs`; both are characterized in `tests/EndpointCheckingCore.Tests` (`EndpointSslCertificatePropertyMapperTests`, `EndpointSslCertificateAcquisitionTests`) and wired through `GetSSLCertificateInfo`. |
 | Cloudflare classification and bypass result mapping | COMPLETE | Classification seam (`EndpointHttpResponseClassifier`), Cloudflare protection annotation (`EndpointHttpResponseInterpreter`), bypass invocation/error-flow seam (`EndpointCloudflareBypassExecutor`), and bypass override/append/error interpretation (`EndpointCloudflareBypassInterpreter`) are deterministically characterized in `tests/HttpCompatibility.Tests/EndpointHttpRequestFactoryTests.cs`. |
 | terminal endpoint finalization | COMPLETE | `src/EndpointScanTerminalFinalizer.cs` wired at terminal stage; covered by `tests/EndpointCheckingCore.Tests/EndpointScanOrchestrationSeamsTests.cs`. |
 | scan progress accounting | COMPLETE | `src/EndpointCheckProgress.cs` used in worker-loop progress path; covered by `tests/EndpointCheckingCore.Tests/EndpointCheckProgressTests.cs`. |
 | cancellation handling | COMPLETE | Rule-level cancellation decisions in `src/EndpointScanWorkflowRules.cs` and terminal overrides in `src/EndpointScanTerminalFinalizer.cs`; covered by workflow/finalizer tests in `tests/EndpointCheckingCore.Tests`. |
-| orchestration versus protocol implementation | PARTIALLY COMPLETE | `bw_GetStatus_DoWork` now orchestrates multiple seams (HTTP request/retry/redirect/interpretation, HTTP header collection, HTTP response body stream/meta gating, HTML metadata parsing resolver, Cloudflare bypass invocation/interpretation, FTP request/status mapping, ping retry, identity shaping, network-share acquisition/shaping, SSL certificate acquisition/mapping, terminal finalization), but still contains substantial protocol-specific side-effect blocks (remaining host share enumeration implementation and broader multi-protocol orchestration density). |
+| orchestration versus protocol implementation | INTENTIONALLY FORM-OWNED | `bw_GetStatus_DoWork` remains a compatibility-sensitive orchestration boundary that coordinates deterministic seams. Remaining control-flow density is intentional for now to preserve observable scan workflow and WinForms/background-worker sequencing; decomposition target for Priority 4+ is async-safety and UI isolation, not forced de-orchestration. |
 
-Priority 3 is therefore still `in progress` under strict completion criteria.
+Priority 3 protocol decomposition acceptance is therefore `complete` under strict current criteria: every non-orchestration protocol behavior row is `COMPLETE`, and the retained orchestration boundary is explicitly marked `INTENTIONALLY FORM-OWNED`.
+
+## Priority 4: EndpointDetailsDialog async-safety evidence matrix (initial)
+
+Scope evaluated: `src/EndpointDetailsDialog.cs` and deterministic core harness updates.
+
+Status values used in this matrix:
+
+- `COMPLETE`
+- `PARTIALLY COMPLETE`
+- `NOT STARTED`
+- `BLOCKED`
+- `INTENTIONALLY FORM-OWNED`
+
+| Required behavior | Status | Current evidence (files/symbols/tests) |
+| --- | --- | --- |
+| Remove direct `.Result` blocking in VirusTotal scan enqueue/report paths | PARTIALLY COMPLETE | `GetVirusTotalScanReport` and `BW_VirusTotal_Report_DoWork` no longer use direct `.Result`; both now route through `src/EndpointTaskSyncBridge.cs` (`EndpointTaskSyncBridge.AwaitResult`). Deterministic behavior coverage added in `tests/EndpointCheckingCore.Tests/EndpointTaskSyncBridgeTests.cs`. |
+| Avoid recursive retry/thread-sleep chain in VirusTotal scan workflow | NOT STARTED | `GetVirusTotalScanReport` still performs recursive self-calls plus `Thread.Sleep(5000)` on retry. |
+| Ensure no long-running network I/O is invoked on UI thread via `ThreadSafeInvoke` | NOT STARTED | `GetIPGeoInfo` wraps network and deserialization work inside `ThreadSafeInvoke`, keeping I/O in invoked UI context. |
+| Reduce unsafe `Application.DoEvents` in EndpointDetailsDialog async paths | NOT STARTED | `NewBackgroundThread`/`ThreadSafeInvoke` wrappers still inject `Application.DoEvents`; `ValidatePageLinks` loop also calls `Application.DoEvents` per link. |
+| Preserve existing user-visible VirusTotal status/error messaging while changing blocking primitive | COMPLETE | Existing status-label updates and tab-removal behavior preserved; no message-shape changes introduced by bridge substitution. |
+
+Priority 4 is now `in progress`; first cohesive ticket completed direct `.Result` call-site removal in dialog VirusTotal paths, with deeper async workflow safety still pending.

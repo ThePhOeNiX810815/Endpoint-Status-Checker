@@ -239,8 +239,8 @@ This ledger is intentionally strict: a priority is not considered complete unles
 
 1. Scan workflow characterization harness: Complete (deterministic criteria covered in `docs/refactoring/reconciliation-2026-08-04.md`)
 2. XLSX and HTML export compatibility baseline: Complete (deterministic criteria covered in `docs/refactoring/reconciliation-2026-08-04.md`)
-3. Protocol decomposition enabled by harness: In progress (initial route decomposition done; deeper extraction pending dedicated decomposition tickets)
-4. `EndpointDetailsDialog` blocking `.Result` paths: Not started
+3. Protocol decomposition enabled by harness: Complete (strict closure matrix in `docs/refactoring/reconciliation-2026-08-04.md`)
+4. `EndpointDetailsDialog` blocking `.Result` paths: In progress
 5. Unsafe `Application.DoEvents` review/reduction: Not started
 6. CI warning-regression governance: Not started (baseline exists)
 7. Remaining low-risk residual cleanup: Partially performed (mail table builder extraction completed)
@@ -507,3 +507,53 @@ Scope completed in this ticket:
 - Routed the handled HTTP Cloudflare branch through the new seam while preserving no-attempt behavior, success override behavior, and exception append behavior.
 - Preserved existing bypass outcome message semantics by delegating to `EndpointCloudflareBypassInterpreter`.
 - Added deterministic `HttpCompatibility` coverage for no-attempt gating, bypass success mapping, and bypass exception behavior.
+
+## Ticket 22: Protocol decomposition closure (network share host enumeration seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Close the remaining Priority 3 share-lookup gap by extracting Win32 host-share enumeration/mapping from `CheckerMainForm.GetNetShares` into a deterministic seam while preserving existing output formatting and error message compatibility.
+
+Scope completed in this ticket:
+
+- Extracted `NetShareEnum`/`NetApiBufferFree` interop and `SHARE_INFO_1` iteration into `EndpointNetworkShareEnumerator`.
+- Preserved current share item formatting (`[Type] Name (Remark)`), known type-code mapping, and fallback unknown type/error-code formatting.
+- Routed `CheckerMainForm.GetNetShares` through `EndpointNetworkShareEnumerator.Enumerate(...)`.
+- Added deterministic characterization coverage in `tests/EndpointCheckingCore.Tests/EndpointNetworkShareEnumeratorTests.cs`.
+
+Verification:
+
+- `dotnet run --project tests/EndpointCheckingCore.Tests/EndpointCheckingCore.Tests.csproj`
+- `dotnet run --project tests/HttpCompatibility.Tests/HttpCompatibility.Tests.csproj`
+- `dotnet build src/EndpointChecker.sln`
+
+## Ticket 23: EndpointDetailsDialog async-safety kickoff (VirusTotal task blocking bridge)
+
+Status: In progress
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Begin Priority 4 by removing direct task `.Result` call sites from `EndpointDetailsDialog` VirusTotal workflows while preserving current user-visible status and error behavior.
+
+Scope completed in this phase:
+
+- Added `EndpointTaskSyncBridge` to centralize synchronous task completion via `ConfigureAwait(false).GetAwaiter().GetResult()`.
+- Replaced direct `.Result` access in `GetVirusTotalScanReport` and `BW_VirusTotal_Report_DoWork` with `EndpointTaskSyncBridge.AwaitResult(...)`.
+- Added deterministic characterization tests for bridge success path, exception unwrapping semantics, and null-argument guard.
+
+Remaining work in this ticket:
+
+- Remove recursive retry + `Thread.Sleep` flow from `GetVirusTotalScanReport`.
+- Isolate network I/O from UI thread invocation paths in `EndpointDetailsDialog` (notably `GetIPGeoInfo`).
+
+Verification:
+
+- `dotnet run --project tests/EndpointCheckingCore.Tests/EndpointCheckingCore.Tests.csproj`
+- `dotnet run --project tests/HttpCompatibility.Tests/HttpCompatibility.Tests.csproj`
+- `dotnet build src/EndpointChecker.sln`
