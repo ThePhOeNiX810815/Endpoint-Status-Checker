@@ -1,0 +1,26 @@
+name: warning-governance
+
+on:
+  pull_request:
+    branches:
+      - Main-Dev-V3
+  push:
+    branches:
+      - Main-Dev-V3
+
+jobs:
+  warning-governance:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Verify warning baseline
+        shell: pwsh
+        run: |
+          ./tools/warning-governance/Invoke-WarningGovernance.ps1 -Mode check

@@ -220,7 +220,7 @@ namespace EndpointChecker
 
         public void ThreadSafeInvoke(Action action)
         {
-            UiThreadHelpers.SafeInvoke(() => Invoke(action), Application.DoEvents);
+            UiThreadHelpers.SafeInvoke(() => Invoke(action));
         }
     }
 }

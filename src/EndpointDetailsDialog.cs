@@ -1608,12 +1608,12 @@ namespace EndpointChecker
 
         public void NewBackgroundThread(Action action)
         {
-            UiThreadHelpers.StartBackgroundThread(action, Application.DoEvents);
+            UiThreadHelpers.StartBackgroundThread(action);
         }
 
         public void ThreadSafeInvoke(Action action)
         {
-            UiThreadHelpers.SafeInvoke(() => Invoke(action), Application.DoEvents);
+            UiThreadHelpers.SafeInvoke(() => Invoke(action));
         }
 
         public void pb_GeoLocation_Map_Click(object sender, EventArgs e)

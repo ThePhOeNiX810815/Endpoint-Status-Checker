@@ -465,7 +465,6 @@ namespace EndpointChecker
         {
             listUpdating = true;
             SetProgressStatus(0, 0, "Updating Endpoints list ...", Color.DodgerBlue);
-            Application.DoEvents();
 
             List<string> _endpointsList_Disabled = new List<string>();
 
@@ -1675,14 +1674,11 @@ namespace EndpointChecker
             }
 
             // SAVE RESPONSE
-            Application.DoEvents();
 
             using (FileStream htmlResponseFileStream = new FileStream(htmlResponseFullPath, FileMode.Create))
             {
                 htmlResponseFileStream.Write(htmlResponseByteArray, 0, htmlResponseByteArray.Length);
             }
-
-            Application.DoEvents();
         }
 
         public void FTPWebResponseStatusMessage(FtpWebResponse ftpWebResponse, WebException webException, EndpointDefinition endpoint)
@@ -1815,7 +1811,6 @@ namespace EndpointChecker
             // SET STATUS LABEL TEXT AND COLOR
             ThreadSafeInvoke(() =>
             {
-                Application.DoEvents();
                 lbl_ProgressCount.ForeColor = statusColor;
                 lbl_ProgressCount.Text = statusMessage;
                 if (endpointsCount_Enabled > 0)
@@ -1825,7 +1820,9 @@ namespace EndpointChecker
                         endpointsCount_Enabled,
                         Math.Max(0, endpointsCount_Current));
                 }
-                Application.DoEvents();
+
+                lbl_ProgressCount.Update();
+                pb_RefreshProcess.Update();
             });
         }
 
@@ -2570,69 +2567,75 @@ namespace EndpointChecker
                         List<EndpointXlsxHttpRow> httpRows = new List<EndpointXlsxHttpRow>();
                         List<EndpointXlsxFtpRow> ftpRows = new List<EndpointXlsxFtpRow>();
 
-                        foreach (EndpointDefinition endpointItem in exportList)
+                        EndpointWorkLoopRunResult rowProjectionRun = EndpointWorkLoopRunner.Run(
+                            exportList,
+                            () => BW_GetStatus.CancellationPending || onClose,
+                            endpointItem =>
+                            {
+                                string connectionString = BuildUpConnectionString(endpointItem);
+
+                                if (endpointItem.Protocol == Uri.UriSchemeHttp.ToUpper() ||
+                                    endpointItem.Protocol == Uri.UriSchemeHttps.ToUpper())
+                                {
+                                    httpRows.Add(new EndpointXlsxHttpRow
+                                    {
+                                        EndpointName = endpointItem.Name,
+                                        Protocol = endpointItem.Protocol,
+                                        TargetPort = endpointItem.Port,
+                                        ResponseUrl = connectionString,
+                                        IpAddresses = string.Join(Environment.NewLine, endpointItem.IPAddress),
+                                        MacAddresses = string.Join(Environment.NewLine, endpointItem.MACAddress),
+                                        DnsNames = string.Join(Environment.NewLine, endpointItem.DNSName),
+                                        ResponseTime = endpointItem.ResponseTime,
+                                        StatusCode = endpointItem.ResponseCode,
+                                        StatusMessage = endpointItem.ResponseMessage,
+                                        LastSeenOnline = endpointItem.LastSeenOnline,
+                                        PingRoundtripTime = endpointItem.PingRoundtripTime,
+                                        UserName = endpointItem.LoginName,
+                                        NetworkShares = string.Join(Environment.NewLine, endpointItem.NetworkShare),
+                                        ServerId = endpointItem.ServerID,
+                                        HttpAutoRedirects = endpointItem.HTTPautoRedirects,
+                                        HttpContentType = endpointItem.HTTPcontentType,
+                                        HttpContentLength = endpointItem.HTTPcontentLength,
+                                        HttpExpires = endpointItem.HTTPexpires,
+                                        HttpETag = endpointItem.HTTPetag,
+                                        HttpEncoding = GetEncodingName(endpointItem.HTTPencoding),
+                                        HtmlEncoding = GetEncodingName(endpointItem.HTMLencoding),
+                                        HtmlPageTitle = endpointItem.HTMLTitle,
+                                        HtmlPageAuthor = endpointItem.HTMLAuthor,
+                                        HtmlPageDescription = endpointItem.HTMLDescription,
+                                        HtmlContentLanguage = endpointItem.HTMLContentLanguage,
+                                        HtmlThemeColor = GetKnownColorNameString(endpointItem.HTMLThemeColor),
+                                        HtmlPageLinksCount = endpointItem.HTMLPageLinks.PropertyItem.Count().ToString(),
+                                        RowBackgroundColor = GetColorByStatus(endpointItem.ResponseCode, endpointItem.PingRoundtripTime, endpointItem.ResponseMessage),
+                                    });
+                                }
+                                else if (endpointItem.Protocol == Uri.UriSchemeFtp.ToUpper())
+                                {
+                                    ftpRows.Add(new EndpointXlsxFtpRow
+                                    {
+                                        EndpointName = endpointItem.Name,
+                                        Protocol = endpointItem.Protocol,
+                                        TargetPort = endpointItem.Port,
+                                        ResponseUrl = connectionString,
+                                        IpAddresses = string.Join(Environment.NewLine, endpointItem.IPAddress),
+                                        MacAddresses = string.Join(Environment.NewLine, endpointItem.MACAddress),
+                                        DnsNames = string.Join(Environment.NewLine, endpointItem.DNSName),
+                                        ResponseTime = endpointItem.ResponseTime,
+                                        StatusCode = endpointItem.ResponseCode,
+                                        StatusMessage = endpointItem.ResponseMessage,
+                                        LastSeenOnline = endpointItem.LastSeenOnline,
+                                        PingRoundtripTime = endpointItem.PingRoundtripTime,
+                                        UserName = endpointItem.LoginName,
+                                        NetworkShares = string.Join(Environment.NewLine, endpointItem.NetworkShare),
+                                        RowBackgroundColor = GetColorByStatus(endpointItem.ResponseCode, endpointItem.PingRoundtripTime, endpointItem.ResponseMessage),
+                                    });
+                                }
+                            });
+
+                        if (rowProjectionRun.TerminatedEarly)
                         {
-                            string connectionString = BuildUpConnectionString(endpointItem);
-
-                            if (endpointItem.Protocol == Uri.UriSchemeHttp.ToUpper() ||
-                                endpointItem.Protocol == Uri.UriSchemeHttps.ToUpper())
-                            {
-                                httpRows.Add(new EndpointXlsxHttpRow
-                                {
-                                    EndpointName = endpointItem.Name,
-                                    Protocol = endpointItem.Protocol,
-                                    TargetPort = endpointItem.Port,
-                                    ResponseUrl = connectionString,
-                                    IpAddresses = string.Join(Environment.NewLine, endpointItem.IPAddress),
-                                    MacAddresses = string.Join(Environment.NewLine, endpointItem.MACAddress),
-                                    DnsNames = string.Join(Environment.NewLine, endpointItem.DNSName),
-                                    ResponseTime = endpointItem.ResponseTime,
-                                    StatusCode = endpointItem.ResponseCode,
-                                    StatusMessage = endpointItem.ResponseMessage,
-                                    LastSeenOnline = endpointItem.LastSeenOnline,
-                                    PingRoundtripTime = endpointItem.PingRoundtripTime,
-                                    UserName = endpointItem.LoginName,
-                                    NetworkShares = string.Join(Environment.NewLine, endpointItem.NetworkShare),
-                                    ServerId = endpointItem.ServerID,
-                                    HttpAutoRedirects = endpointItem.HTTPautoRedirects,
-                                    HttpContentType = endpointItem.HTTPcontentType,
-                                    HttpContentLength = endpointItem.HTTPcontentLength,
-                                    HttpExpires = endpointItem.HTTPexpires,
-                                    HttpETag = endpointItem.HTTPetag,
-                                    HttpEncoding = GetEncodingName(endpointItem.HTTPencoding),
-                                    HtmlEncoding = GetEncodingName(endpointItem.HTMLencoding),
-                                    HtmlPageTitle = endpointItem.HTMLTitle,
-                                    HtmlPageAuthor = endpointItem.HTMLAuthor,
-                                    HtmlPageDescription = endpointItem.HTMLDescription,
-                                    HtmlContentLanguage = endpointItem.HTMLContentLanguage,
-                                    HtmlThemeColor = GetKnownColorNameString(endpointItem.HTMLThemeColor),
-                                    HtmlPageLinksCount = endpointItem.HTMLPageLinks.PropertyItem.Count().ToString(),
-                                    RowBackgroundColor = GetColorByStatus(endpointItem.ResponseCode, endpointItem.PingRoundtripTime, endpointItem.ResponseMessage),
-                                });
-                            }
-                            else if (endpointItem.Protocol == Uri.UriSchemeFtp.ToUpper())
-                            {
-                                ftpRows.Add(new EndpointXlsxFtpRow
-                                {
-                                    EndpointName = endpointItem.Name,
-                                    Protocol = endpointItem.Protocol,
-                                    TargetPort = endpointItem.Port,
-                                    ResponseUrl = connectionString,
-                                    IpAddresses = string.Join(Environment.NewLine, endpointItem.IPAddress),
-                                    MacAddresses = string.Join(Environment.NewLine, endpointItem.MACAddress),
-                                    DnsNames = string.Join(Environment.NewLine, endpointItem.DNSName),
-                                    ResponseTime = endpointItem.ResponseTime,
-                                    StatusCode = endpointItem.ResponseCode,
-                                    StatusMessage = endpointItem.ResponseMessage,
-                                    LastSeenOnline = endpointItem.LastSeenOnline,
-                                    PingRoundtripTime = endpointItem.PingRoundtripTime,
-                                    UserName = endpointItem.LoginName,
-                                    NetworkShares = string.Join(Environment.NewLine, endpointItem.NetworkShare),
-                                    RowBackgroundColor = GetColorByStatus(endpointItem.ResponseCode, endpointItem.PingRoundtripTime, endpointItem.ResponseMessage),
-                                });
-                            }
-
-                            Application.DoEvents();
+                            return;
                         }
 
                         EndpointXlsxExportWorkbookInput workbookInput = new EndpointXlsxExportWorkbookInput
@@ -2672,11 +2675,9 @@ namespace EndpointChecker
                         try
                         {
                             // SAVE XLSX
-                            Application.DoEvents();
                             CloseFileStream(definitionsStatusExport_XLSX_FileStream);
                             endpointsStatusExport_WorkBook.SaveAs(exportFiles.XlsxPath, new SaveOptions { ValidatePackage = true });
                             definitionsStatusExport_XLSX_FileStream = OpenFileStream(exportFiles.XlsxPath);
-                            Application.DoEvents();
                         }
                         catch (Exception ex)
                         {
@@ -2737,9 +2738,7 @@ namespace EndpointChecker
                                     CloseFileStream(definitionsStatusExport_HTML_FTP_FileStream);
 
                                     // SAVE HTML [HTTP PAGE]
-                                    Application.DoEvents();
                                     xlsxWorkBook.Worksheets["HTTP Endpoints"].SaveToHtml(exportFiles.HtmlHttpPath);
-                                    Application.DoEvents();
 
                                     // ADD 'HTTP' HTML FIXED REFRESH BUTTON
                                     string httpHTMLString = File.ReadAllText(exportFiles.HtmlHttpPath);
@@ -2747,9 +2746,7 @@ namespace EndpointChecker
                                     httpHTMLString = AddRefreshCSSButtonToHTMLString(httpHTMLString);
 
                                     // SAVE HTML STRING [HTTP PAGE]
-                                    Application.DoEvents();
                                     File.WriteAllText(exportFiles.HtmlHttpPath, httpHTMLString, Encoding.UTF8);
-                                    Application.DoEvents();
 
                                     // LOCK 'HTTP' HTML
                                     definitionsStatusExport_HTML_HTTP_FileStream = OpenFileStream(exportFiles.HtmlHttpPath);
@@ -2775,9 +2772,7 @@ namespace EndpointChecker
                                 try
                                 {
                                     // SAVE HTML [FTP PAGE]
-                                    Application.DoEvents();
                                     xlsxWorkBook.Worksheets["FTP Endpoints"].SaveToHtml(exportFiles.HtmlFtpPath);
-                                    Application.DoEvents();
 
                                     // ADD 'FTP' HTML FIXED REFRESH BUTTON
                                     string ftpHTMLString = File.ReadAllText(exportFiles.HtmlFtpPath);
@@ -2785,9 +2780,7 @@ namespace EndpointChecker
                                     ftpHTMLString = AddRefreshCSSButtonToHTMLString(ftpHTMLString);
 
                                     // SAVE HTML STRING [FTP PAGE]
-                                    Application.DoEvents();
                                     File.WriteAllText(exportFiles.HtmlFtpPath, ftpHTMLString, Encoding.UTF8);
-                                    Application.DoEvents();
 
                                     // LOCK 'FTP' HTML
                                     definitionsStatusExport_HTML_FTP_FileStream = OpenFileStream(exportFiles.HtmlFtpPath);
@@ -2811,9 +2804,7 @@ namespace EndpointChecker
                             try
                             {
                                 // SAVE HTML [SUMMARY PAGE]
-                                Application.DoEvents();
                                 summaryWorkSheet.SaveToHtml(exportFiles.HtmlInfoPath);
-                                Application.DoEvents();
 
                                 // REPLACE HYPERLINKS ON 'SUMMARY' PAGE
                                 string summaryHTMLstring = File.ReadAllText(exportFiles.HtmlInfoPath);
@@ -2829,9 +2820,7 @@ namespace EndpointChecker
                                 summaryHTMLstring = AddAutoRefreshToHTMLString(summaryHTMLstring, 30);
 
                                 // SAVE HTML STRING [SUMMARY PAGE]
-                                Application.DoEvents();
                                 File.WriteAllText(exportFiles.HtmlInfoPath, summaryHTMLstring, Encoding.UTF8);
-                                Application.DoEvents();
 
                                 // LOCK 'SUMMARY' HTML
                                 definitionsStatusExport_HTML_Info_FileStream = OpenFileStream(exportFiles.HtmlInfoPath);
@@ -4459,7 +4448,7 @@ namespace EndpointChecker
 
         public void NewBackgroundThread(Action action)
         {
-            UiThreadHelpers.StartBackgroundThread(action, Application.DoEvents);
+            UiThreadHelpers.StartBackgroundThread(action);
         }
 
         public void ThreadSafeInvoke(Action action)
