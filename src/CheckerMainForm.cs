@@ -5117,25 +5117,12 @@ namespace EndpointChecker
 
         public void NewBackgroundThread(Action action)
         {
-            Application.DoEvents();
-
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                action();
-            })
-            .Start();
+            UiThreadHelpers.StartBackgroundThread(action, Application.DoEvents);
         }
 
         public void ThreadSafeInvoke(Action action)
         {
-            try
-            {
-                Invoke(action);
-            }
-            catch
-            {
-            }
+            UiThreadHelpers.SafeInvoke(() => Invoke(action));
         }
 
         private int sortColumn = -1;
