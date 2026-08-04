@@ -1202,12 +1202,7 @@ namespace EndpointChecker
                                                 // GET LIST
                                                 List<string> netSharesList = GetNetShares(responseURI.Host);
 
-                                                // PROCESS LIST
-                                                if (netSharesList.Count > 0)
-                                                {
-                                                    netSharesList.Sort();
-                                                    endpoint.NetworkShare = netSharesList.ToArray();
-                                                }
+                                                endpoint.NetworkShare = EndpointNetworkShareResolver.BuildSortedShareArray(netSharesList);
                                             }
                                             catch
                                             {
