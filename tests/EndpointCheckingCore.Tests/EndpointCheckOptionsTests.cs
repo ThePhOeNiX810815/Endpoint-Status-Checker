@@ -17,6 +17,7 @@ namespace EndpointChecker
             EndpointFtpStatusMapperTests.Register();
             EndpointHttpRedirectResolverTests.Register();
             EndpointNetworkIdentityResolverTests.Register();
+            EndpointSslCertificatePropertyMapperTests.Register();
             EndpointScanTerminalFinalizerTests.Register();
             UiThreadHelpersTests.Register();
             ReportMailTableBuilderTests.Register();

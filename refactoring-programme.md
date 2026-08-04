@@ -371,3 +371,20 @@ Scope completed in this ticket:
 - Routed bypass failure and bypass-exception message suffix behavior through the extracted seam.
 - Preserved existing bypass invocation, method selection, and FlareSolverr URL flow in `CheckerMainForm` orchestration.
 - Added deterministic `HttpCompatibility` tests covering success override, failure append, and bypass-error append mapping behavior.
+
+## Ticket 14: Protocol decomposition continuation (SSL certificate property mapping seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting deterministic SSL certificate property mapping from `GetSSLCertificateInfo` while preserving existing request/service-point acquisition behavior.
+
+Scope completed in this ticket:
+
+- Extracted deterministic certificate-to-property mapping into `EndpointSslCertificatePropertyMapper`.
+- Routed `GetSSLCertificateInfo` property population through the extracted seam while preserving legacy null-check and swallow-on-error behavior.
+- Preserved existing `HttpWebRequest.ServicePoint.Certificate` acquisition and `X509Certificate2` conversion flow in form orchestration.
+- Added deterministic `EndpointCheckingCore` coverage for null-certificate handling and representative mapped property/value behavior.
