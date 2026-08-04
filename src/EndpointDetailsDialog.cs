@@ -1689,14 +1689,14 @@ namespace EndpointChecker
                         UserAgent = http_UserAgent
                     };
                     Task<UrlScanResult> virusTotal_ScanResultTask = virusTotal.ScanUrlAsync(urlToScan);
-                    virusTotal_ScanResult = virusTotal_ScanResultTask.Result;
+                    virusTotal_ScanResult = EndpointTaskSyncBridge.AwaitResult(virusTotal_ScanResultTask);
 
                     if (virusTotal_ScanResult.ResponseCode == VirusTotalNET.ResponseCodes.UrlScanResponseCode.Queued)
                     {
                         ThreadSafeInvoke(() =>
                         {
                             lbl_VirusTotal_Status.ForeColor = Color.DarkGreen;
-                            lbl_VirusTotal_Status.Text = virusTotal_ScanResultTask.Result.VerboseMsg;
+                            lbl_VirusTotal_Status.Text = virusTotal_ScanResult.VerboseMsg;
                         });
                     }
                     else
@@ -1768,7 +1768,7 @@ namespace EndpointChecker
                     UserAgent = http_UserAgent
                 };
                 Task<UrlReport> virusTotalReportTask = virusTotal.GetUrlReportAsync(virusTotal_ScanResult.Url);
-                UrlReport virusTotalReport = virusTotalReportTask.Result;
+                UrlReport virusTotalReport = EndpointTaskSyncBridge.AwaitResult(virusTotalReportTask);
                 virusTotalReportTask.Dispose();
 
                 if (virusTotalReport.ResponseCode == VirusTotalNET.ResponseCodes.UrlReportResponseCode.Present)
