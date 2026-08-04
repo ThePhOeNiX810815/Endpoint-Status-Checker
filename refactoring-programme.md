@@ -353,3 +353,21 @@ Scope completed in this ticket:
 - Routed handled HTTP error message construction (including Cloudflare protection annotation text) through the extracted seam while preserving existing bypass invocation flow.
 - Delegated content-length display formatting to the new seam and preserved legacy formatting semantics.
 - Added deterministic `HttpCompatibility` tests covering success interpretation, handled-error mapping, Cloudflare-note construction, and content-length formatting behavior.
+
+## Ticket 13: Protocol decomposition continuation (Cloudflare bypass result mapping seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting deterministic Cloudflare bypass result/error interpretation from `bw_GetStatus_DoWork` while preserving existing bypass invocation and response semantics.
+
+Scope completed in this ticket:
+
+- Extracted deterministic bypass outcome interpretation into `EndpointCloudflareBypassInterpreter`.
+- Routed bypass success override behavior (`ResponseCode` and `ResponseMessage`) through the extracted seam.
+- Routed bypass failure and bypass-exception message suffix behavior through the extracted seam.
+- Preserved existing bypass invocation, method selection, and FlareSolverr URL flow in `CheckerMainForm` orchestration.
+- Added deterministic `HttpCompatibility` tests covering success override, failure append, and bypass-error append mapping behavior.

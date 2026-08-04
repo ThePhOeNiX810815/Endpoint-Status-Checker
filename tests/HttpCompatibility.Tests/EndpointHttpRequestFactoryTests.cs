@@ -27,6 +27,9 @@ namespace EndpointChecker
             Run("HTTP response interpreter preserves success metadata mapping", HttpResponseInterpreterPreservesSuccessMetadataMapping);
             Run("HTTP response interpreter preserves handled error and Cloudflare note mapping", HttpResponseInterpreterPreservesHandledErrorAndCloudflareNoteMapping);
             Run("HTTP response interpreter preserves content-length formatting", HttpResponseInterpreterPreservesContentLengthFormatting);
+            Run("Cloudflare bypass interpreter preserves successful bypass override mapping", CloudflareBypassInterpreterPreservesSuccessfulBypassOverrideMapping);
+            Run("Cloudflare bypass interpreter preserves failed bypass append mapping", CloudflareBypassInterpreterPreservesFailedBypassAppendMapping);
+            Run("Cloudflare bypass interpreter preserves bypass exception append mapping", CloudflareBypassInterpreterPreservesBypassExceptionAppendMapping);
 
             if (failed > 0)
             {
@@ -319,6 +322,56 @@ namespace EndpointChecker
             AssertEqual((1048576d / 1048576d).ToString("0.00") + " MB", EndpointHttpResponseInterpreter.FormatContentLength(1048576, "N/A"));
             AssertEqual((1073741824d / 1073741824d).ToString("0.00") + " GB", EndpointHttpResponseInterpreter.FormatContentLength(1073741824, "N/A"));
             AssertEqual("999 bytes", EndpointHttpResponseInterpreter.FormatContentLength(999, "N/A"));
+        }
+
+        private static void CloudflareBypassInterpreterPreservesSuccessfulBypassOverrideMapping()
+        {
+            EndpointCloudflareBypassInterpretResult result = EndpointCloudflareBypassInterpreter.Interpret(
+                new EndpointCloudflareBypassInterpretInput
+                {
+                    ExistingResponseCode = "403",
+                    ExistingResponseMessage = "Forbidden",
+                    HasBypassResult = true,
+                    BypassSuccess = true,
+                    BypassStatusCode = 200,
+                    BypassStatusMessage = "OK (FlareSolverr bypass)",
+                    BypassMethodUsed = "FlareSolverr",
+                });
+
+            AssertEqual("200", result.ResponseCode);
+            AssertEqual("OK (FlareSolverr bypass)", result.ResponseMessage);
+        }
+
+        private static void CloudflareBypassInterpreterPreservesFailedBypassAppendMapping()
+        {
+            EndpointCloudflareBypassInterpretResult result = EndpointCloudflareBypassInterpreter.Interpret(
+                new EndpointCloudflareBypassInterpretInput
+                {
+                    ExistingResponseCode = "403",
+                    ExistingResponseMessage = "Forbidden",
+                    HasBypassResult = true,
+                    BypassSuccess = false,
+                    BypassStatusCode = 0,
+                    BypassStatusMessage = "FlareSolverr not reachable",
+                    BypassMethodUsed = "FlareSolverr",
+                });
+
+            AssertEqual("403", result.ResponseCode);
+            AssertEqual("Forbidden | Bypass(FlareSolverr): FlareSolverr not reachable", result.ResponseMessage);
+        }
+
+        private static void CloudflareBypassInterpreterPreservesBypassExceptionAppendMapping()
+        {
+            EndpointCloudflareBypassInterpretResult result = EndpointCloudflareBypassInterpreter.Interpret(
+                new EndpointCloudflareBypassInterpretInput
+                {
+                    ExistingResponseCode = "403",
+                    ExistingResponseMessage = "Forbidden",
+                    BypassExceptionMessage = "unexpected failure",
+                });
+
+            AssertEqual("403", result.ResponseCode);
+            AssertEqual("Forbidden | Bypass error: unexpected failure", result.ResponseMessage);
         }
 
         private static void Run(string name, Action test)

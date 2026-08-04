@@ -1016,21 +1016,36 @@ namespace EndpointChecker
                                                                             endpoint.ResponseAddress ?? endpoint.Address,
                                                                             cfBypassMethod,
                                                                             Settings.Default.Config_FlareSolverr_URL);
-                                                                    if (cfBypassResult != null && cfBypassResult.Success)
-                                                                    {
-                                                                        endpoint.ResponseCode = cfBypassResult.StatusCode.ToString();
-                                                                        endpoint.ResponseMessage = cfBypassResult.StatusMessage;
-                                                                    }
-                                                                    else if (cfBypassResult != null)
-                                                                    {
-                                                                        endpoint.ResponseMessage +=
-                                                                            " | Bypass(" + cfBypassResult.MethodUsed + "): " +
-                                                                            cfBypassResult.StatusMessage;
-                                                                    }
+
+                                                                    EndpointCloudflareBypassInterpretResult bypassInterpretResult =
+                                                                        EndpointCloudflareBypassInterpreter.Interpret(
+                                                                            new EndpointCloudflareBypassInterpretInput
+                                                                            {
+                                                                                ExistingResponseCode = endpoint.ResponseCode,
+                                                                                ExistingResponseMessage = endpoint.ResponseMessage,
+                                                                                HasBypassResult = cfBypassResult != null,
+                                                                                BypassSuccess = cfBypassResult != null && cfBypassResult.Success,
+                                                                                BypassStatusCode = cfBypassResult != null ? cfBypassResult.StatusCode : 0,
+                                                                                BypassStatusMessage = cfBypassResult != null ? cfBypassResult.StatusMessage : null,
+                                                                                BypassMethodUsed = cfBypassResult != null ? cfBypassResult.MethodUsed : null,
+                                                                            });
+
+                                                                    endpoint.ResponseCode = bypassInterpretResult.ResponseCode;
+                                                                    endpoint.ResponseMessage = bypassInterpretResult.ResponseMessage;
                                                                 }
                                                                 catch (Exception bypassEx)
                                                                 {
-                                                                    endpoint.ResponseMessage += " | Bypass error: " + bypassEx.Message;
+                                                                    EndpointCloudflareBypassInterpretResult bypassInterpretResult =
+                                                                        EndpointCloudflareBypassInterpreter.Interpret(
+                                                                            new EndpointCloudflareBypassInterpretInput
+                                                                            {
+                                                                                ExistingResponseCode = endpoint.ResponseCode,
+                                                                                ExistingResponseMessage = endpoint.ResponseMessage,
+                                                                                BypassExceptionMessage = bypassEx.Message,
+                                                                            });
+
+                                                                    endpoint.ResponseCode = bypassInterpretResult.ResponseCode;
+                                                                    endpoint.ResponseMessage = bypassInterpretResult.ResponseMessage;
                                                                 }
                                                             }
                                                         }
