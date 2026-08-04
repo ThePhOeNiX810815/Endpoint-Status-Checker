@@ -938,8 +938,7 @@ namespace EndpointChecker
                     ThreadSafeInvoke(() =>
                     {
                         lbl_SpeedTest_Latency_Value.Text = latencyTime + " ms";
-
-                        Application.DoEvents();
+                        lbl_SpeedTest_Latency_Value.Update();
                     });
 
                     AppendTextToLogBox(
@@ -987,7 +986,7 @@ namespace EndpointChecker
                         lbl_SpeedTest_Mbps_Download_Label.Text = downloadSpeed.ToString() + " Mbps";
                         AddSpeedHistorySample(downloadSpeedHistory, downloadSpeed, panel_DownloadTrend);
 
-                        Application.DoEvents();
+                        aGauge_DownloadSpeed.Update();
                     });
 
                     AppendTextToLogBox(
@@ -1035,7 +1034,7 @@ namespace EndpointChecker
                         lbl_SpeedTest_Mbps_Upload_Label.Text = uploadSpeed.ToString() + " Mbps";
                         AddSpeedHistorySample(uploadSpeedHistory, uploadSpeed, panel_UploadTrend);
 
-                        Application.DoEvents();
+                        aGauge_UploadSpeed.Update();
                     });
 
                     AppendTextToLogBox(
@@ -1097,8 +1096,6 @@ namespace EndpointChecker
                                currentLatencyTime + " ms",
                            Color.DarkGray,
                            false);
-
-                    Application.DoEvents();
                 }
                 catch (Exception eX)
                 {
@@ -1162,7 +1159,7 @@ namespace EndpointChecker
                     ThreadSafeInvoke(() =>
                     {
                         pBar_Download.Value = pBar_Download.Maximum;
-                        Application.DoEvents();
+                        pBar_Download.Update();
                     });
 
                     AppendTextToLogBox(
@@ -1176,8 +1173,6 @@ namespace EndpointChecker
                     {
                         AddSpeedHistorySample(downloadSpeedHistory, currentDownloadSpeed, panel_DownloadTrend);
                     });
-
-                    Application.DoEvents();
                     return currentDownloadSpeed;
                 }
                 catch (Exception eX)
@@ -1235,7 +1230,7 @@ namespace EndpointChecker
                     ThreadSafeInvoke(() =>
                     {
                         pBar_Upload.Value = pBar_Upload.Maximum;
-                        Application.DoEvents();
+                        pBar_Upload.Update();
                     });
 
                     AppendTextToLogBox(
@@ -1249,8 +1244,6 @@ namespace EndpointChecker
                     {
                         AddSpeedHistorySample(uploadSpeedHistory, currentUploadSpeed, panel_UploadTrend);
                     });
-
-                    Application.DoEvents();
                     return currentUploadSpeed;
                 }
                 catch (Exception eX)
@@ -1459,8 +1452,7 @@ namespace EndpointChecker
                 // SCROLL TO END
                 logBox.SelectionStart = logBox.Text.Length;
                 logBox.ScrollToCaret();
-
-                Application.DoEvents();
+                logBox.Update();
             });
         }
 
@@ -1978,12 +1970,12 @@ namespace EndpointChecker
 
         public void NewBackgroundThread(Action action)
         {
-            UiThreadHelpers.StartBackgroundThread(action, Application.DoEvents);
+            UiThreadHelpers.StartBackgroundThread(action);
         }
 
         public void ThreadSafeInvoke(Action action)
         {
-            UiThreadHelpers.SafeInvoke(() => Invoke(action), Application.DoEvents);
+            UiThreadHelpers.SafeInvoke(() => Invoke(action));
         }
 
         public void SpeedTestDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -2344,7 +2336,7 @@ namespace EndpointChecker
             {
                 int nextValue = startValue + (delta * i / steps);
                 gauge.Value = Math.Max(0, nextValue);
-                Application.DoEvents();
+                gauge.Refresh();
                 Thread.Sleep(GaugeAnimationDelayMs);
             }
 

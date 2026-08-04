@@ -238,7 +238,6 @@ namespace EndpointChecker
                     lbl_Status.Text = "Exception report has been created and opened";
                     pb_Status.Image = Resources.Success;
 
-                    Application.DoEvents();
                     Thread.Sleep(3000);
                 });
             }
@@ -293,8 +292,6 @@ namespace EndpointChecker
                         _machineInfo_MACList.Add("N/A");
                     }
                 }
-
-                Application.DoEvents();
             }
 
             // USER NAME
@@ -314,12 +311,12 @@ namespace EndpointChecker
 
         public void NewBackgroundThread(Action action)
         {
-            UiThreadHelpers.StartBackgroundThread(action, Application.DoEvents);
+            UiThreadHelpers.StartBackgroundThread(action);
         }
 
         public void ThreadSafeInvoke(Action action)
         {
-            UiThreadHelpers.SafeInvoke(() => Invoke(action), Application.DoEvents);
+            UiThreadHelpers.SafeInvoke(() => Invoke(action));
         }
 
         public void btn_DontSend_Click(object sender, EventArgs e)

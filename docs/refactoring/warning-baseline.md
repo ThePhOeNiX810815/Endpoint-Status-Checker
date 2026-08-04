@@ -1,5 +1,44 @@
 # Endpoint Status Checker v3 Warning Baseline
 
+## Priority 6 update (2026-08-04)
+
+Warning governance now uses a reproducible machine-readable convention captured by:
+
+- `tools/warning-governance/Invoke-WarningGovernance.ps1`
+- `docs/refactoring/warning-baseline.unique.json`
+
+Counting convention used by Priority 6:
+
+- authoritative metric: **unique build warning instances** from analyzer build output
+- uniqueness key: `warning code + project + file + line + column + message`
+- supporting metrics:
+	- raw warning lines in restore/build logs
+	- repeated build warning lines (raw minus unique)
+	- restore-only warning instances (present during restore, absent during build)
+	- warning families (for example `CA`, `SYSLIB`, `NU`)
+	- project-specific distribution
+	- generated-code warning distribution
+	- platform compatibility warning slice (`CA1416`)
+
+Current clean analyzer rebuild snapshot (`warning-baseline.unique.json`):
+
+- restore raw warning lines: `0`
+- restore unique warning instances: `0`
+- build raw warning lines: `0`
+- build unique warning instances: `0`
+- repeated build warning lines: `0`
+- restore-only unique warning instances: `0`
+
+CI regression policy now checks this baseline and fails when:
+
+- a new warning code appears
+- an existing warning code count increases
+- total unique build warning instances increase
+
+CI integration:
+
+- `.github/workflows/warning-governance.yml` runs on `push` and `pull_request` targeting `Main-Dev-V3`.
+
 Ticket: 6 - compiler and static-analysis warning baseline
 
 Base branch: `Main-Dev-V3`

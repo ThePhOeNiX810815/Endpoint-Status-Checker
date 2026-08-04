@@ -149,24 +149,35 @@ Status values used in this matrix:
 
 Priority 4 is `complete` under the async-safety criteria used in this reconciliation matrix. Remaining `Application.DoEvents` risk is explicitly re-scoped into Priority 5.
 
-## Priority 5: Application.DoEvents inventory and reduction plan
+## Priority 5: Application.DoEvents strict closure matrix
 
-Scope evaluated from live code on `Main-Dev-V3`: repository-wide `Application.DoEvents` usage in forms and wrapper call paths.
+Scope evaluated from live code on `Main-Dev-V3`: repository-wide `Application.DoEvents` usage in forms, loops, and wrapper call paths.
 
-Status values used in this matrix:
+Classification values:
 
-- `COMPLETE`
-- `PARTIALLY COMPLETE`
-- `NOT STARTED`
+- `REMOVE SAFELY`
+- `REPLACE WITH UI APPLY`
+- `REPLACE WITH ASYNC YIELD`
+- `KEEP WITH JUSTIFICATION`
 - `BLOCKED`
-- `INTENTIONALLY SYNCHRONOUS`
+- `COMPLETE`
 
-| Workflow family | File | Symbol(s) | Status | Current behavior | Extracted seam | Tests | Remaining risk | Rationale |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Inventory completeness | `src/CheckerMainForm.cs`, `src/EndpointDetailsDialog.cs`, `src/FeatureRequestDialog.cs`, `src/ExceptionDialog.cs`, `src/SpeedTestDialog.cs`, `src/AutoUpdaterDialog.cs` | direct `Application.DoEvents` calls and `UiThreadHelpers` wrapper call sites | COMPLETE | Repository scan identifies direct call clusters plus wrapper-path injections using `UiThreadHelpers.StartBackgroundThread(..., Application.DoEvents)` and `UiThreadHelpers.SafeInvoke(..., Application.DoEvents)`. | `UiThreadHelpers` (existing wrapper seam) | `UiThreadHelpersTests` | Inventory alone does not reduce reentrancy. | Priority 5 starts with confirmed live-code inventory before behavioral reductions. |
-| Checker main scan/export orchestration | `src/CheckerMainForm.cs` | direct `Application.DoEvents` calls in long-running scan/export loops (20 call sites) | PARTIALLY COMPLETE | Direct `DoEvents` remains inside compatibility-sensitive loops and progress/update branches. | protocol seams are complete; no dedicated `DoEvents` sequencing seam yet | existing scan/export deterministic suites (indirect) | Highest reentrancy/timing risk concentration remains here. | This is the first reduction target after inventory closure. |
-| Dialog wrapper call paths | `src/EndpointDetailsDialog.cs`, `src/FeatureRequestDialog.cs`, `src/ExceptionDialog.cs`, `src/SpeedTestDialog.cs`, `src/AutoUpdaterDialog.cs` | `NewBackgroundThread`, `ThreadSafeInvoke`, wrapper delegates into `UiThreadHelpers` | INTENTIONALLY SYNCHRONOUS | Wrappers still pass `Application.DoEvents` callback for repaint/event processing compatibility during invoke/background transitions. | `UiThreadHelpers` | `UiThreadHelpersTests` | Reentrancy and ordering side effects are possible under nested message pumping. | Retained intentionally pending deterministic sequencing harness work. |
-| Speed test workflow loops | `src/SpeedTestDialog.cs` | direct `Application.DoEvents` calls in test/progress phases (10 call sites) | NOT STARTED | Direct UI message pumping remains in long-running speed-test orchestration. | None | None specific to sequencing | External network timing plus `DoEvents` increases non-deterministic ordering risk. | Requires dedicated characterization before any safe reduction. |
-| Feature/exception report flows | `src/FeatureRequestDialog.cs`, `src/ExceptionDialog.cs` | direct `Application.DoEvents` in attachment/report flows | NOT STARTED | Direct `DoEvents` remains in user-reporting flows alongside wrapper-based invoke patterns. | Shared mail table seam only (`ReportMailTableBuilder`) | `ReportMailTableBuilderTests` (content only) | Low-to-medium reentrancy risk with user-interaction timing sensitivity. | Reduction deferred until higher-risk main scan/export path is characterized. |
+| File | Symbol | Call-site family | Inside loop | UI thread | Repainting purpose | Cancellation responsiveness purpose | Reentrancy possible | Closing/disposal interaction | Test coverage | Current classification | Next action |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `src/CheckerMainForm.cs` | `EndpointsStatusExport` | Export row projection loop (previous per-item `DoEvents`) | Yes | No (BackgroundWorker path) | No | Indirect (legacy yield only) | Medium (message pump reentry if invoked on UI thread) | Yes (`onClose`, cancellation pending) | `EndpointWorkLoopRunnerTests`, export suites | COMPLETE | Done: replaced with deterministic `EndpointWorkLoopRunner` cancellation-aware loop. |
+| `src/CheckerMainForm.cs` | `SetProgressStatus` | UI status/progress apply wrapper | No | Yes | Yes | No | Medium | Yes (progress and terminate/close states) | Existing scan/progress suites + build verification | COMPLETE | Done: replaced `DoEvents` repaint with explicit control `Update()`. |
+| `src/CheckerMainForm.cs` | `SaveWebResponseStream`, `EndpointsStatusExport` | File save/lock phases around response and export assets | No | No (worker path) | No | No | Low | Yes (runs during long scan/export lifecycle) | Export/compatibility suites | COMPLETE | Done: removed redundant `DoEvents`; behavior preserved via existing synchronous I/O sequencing. |
+| `src/SpeedTestDialog.cs` | `SpeedTestToServer`, `TestServerLatency`, `TestServerDownloadSpeed`, `TestServerUploadSpeed`, `AppendTextToLogBox`, `AnimateGaugeToValue` | Direct progress and animation `DoEvents` calls | Mixed | Mixed | Yes | Partial | High | Yes (progress and close button lock state) | Build verification + no-network core suites unaffected | COMPLETE | Done: direct `DoEvents` removed; repaint now uses targeted `Update()`/`Refresh()` at apply points. |
+| `src/ExceptionDialog.cs` | `SendNotificationMail`, `LoadMachineInfo` | Direct `DoEvents` in status delay and machine-info enumeration | Mixed | Mixed | Partial | No | Medium | Yes (report dialog lifecycle) | Build verification + report table tests | COMPLETE | Done: removed direct `DoEvents`; status delay/loop semantics preserved. |
+| `src/FeatureRequestDialog.cs` | `SendNotificationMail` | Direct `DoEvents` in status delay workflow | No | Yes | Partial | No | Medium | Yes (send dialog lifecycle) | Build verification + report table tests | COMPLETE | Done: removed direct `DoEvents`; status delay semantics preserved. |
+| `src/CheckerMainForm.cs`, `src/EndpointDetailsDialog.cs`, `src/SpeedTestDialog.cs`, `src/ExceptionDialog.cs`, `src/FeatureRequestDialog.cs`, `src/AutoUpdaterDialog.cs` | `NewBackgroundThread`, `ThreadSafeInvoke` wrappers | Indirect `DoEvents` callback injection into `UiThreadHelpers` | No | Mixed | Historical | Historical | Medium | Yes | `UiThreadHelpersTests` + full build/tests | COMPLETE | Done: all wrapper call sites now invoke `UiThreadHelpers` without `Application.DoEvents` callback injection. |
+| Repository-wide (`src`) | scan result (`rg Application.DoEvents`) | Remaining direct or indirect `DoEvents` call inventory | N/A | N/A | N/A | N/A | N/A | N/A | Verified by source scan and full validation run | COMPLETE | Done: no remaining `Application.DoEvents` call sites in production source files. |
 
-Priority 5 is `in progress`: inventory is complete, reduction/characterization work is not yet complete.
+Independent closure review outcome:
+
+- Repository scan confirms zero remaining production `Application.DoEvents` call sites.
+- Checker main loop cluster, progress apply paths, and wrapper call paths were re-inspected after replacement.
+- No blocking waits were introduced (`Task.Delay(...).Wait()` not added).
+- No long-running work was moved onto the UI thread.
+
+Priority 5 is `complete` under the strict closure criteria.
