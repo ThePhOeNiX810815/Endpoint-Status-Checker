@@ -1,13 +1,18 @@
+using System;
 using System.Collections.Generic;
-using EndpointChecker;
-using Xunit;
 
-namespace EndpointCheckingCore.Tests
+namespace EndpointChecker
 {
-    public class ReportMailTableBuilderTests
+    internal static class ReportMailTableBuilderTests
     {
-        [Fact]
-        public void Build_UsesExpectedTableWrapper()
+        public static void Register()
+        {
+            EndpointCheckingCoreTestRunner.Run("Report mail table builder preserves wrapper template", BuildUsesExpectedTableWrapper);
+            EndpointCheckingCoreTestRunner.Run("Report mail table builder HTML-encodes keys and values", BuildHtmlEncodesKeyAndValue);
+            EndpointCheckingCoreTestRunner.Run("Report mail table builder outputs one row per item", BuildProducesRowPerInputItem);
+        }
+
+        private static void BuildUsesExpectedTableWrapper()
         {
             string html = ReportMailTableBuilder.Build(
                 new[]
@@ -17,12 +22,18 @@ namespace EndpointCheckingCore.Tests
                 "#ABCDEF",
                 "#123456");
 
-            Assert.StartsWith("<table border=\"3\" bordercolor=\"#ABCDEF\" bgcolor=\"#123456\" cellpadding=\"5\" cellspacing=\"10\">", html);
-            Assert.EndsWith("</table>", html);
+            if (!html.StartsWith("<table border=\"3\" bordercolor=\"#ABCDEF\" bgcolor=\"#123456\" cellpadding=\"5\" cellspacing=\"10\">"))
+            {
+                throw new InvalidOperationException("Unexpected table wrapper start.");
+            }
+
+            if (!html.EndsWith("</table>"))
+            {
+                throw new InvalidOperationException("Unexpected table wrapper end.");
+            }
         }
 
-        [Fact]
-        public void Build_HtmlEncodesKeyAndValue()
+        private static void BuildHtmlEncodesKeyAndValue()
         {
             string html = ReportMailTableBuilder.Build(
                 new[]
@@ -32,11 +43,13 @@ namespace EndpointCheckingCore.Tests
                 "#000000",
                 "#FFFFFF");
 
-            Assert.Contains("<td>A &lt; B</td><td>X &amp; Y &gt; Z</td>", html);
+            if (!html.Contains("<td>A &lt; B</td><td>X &amp; Y &gt; Z</td>"))
+            {
+                throw new InvalidOperationException("Expected encoded key/value pair is missing.");
+            }
         }
 
-        [Fact]
-        public void Build_ProducesRowPerInputItem()
+        private static void BuildProducesRowPerInputItem()
         {
             string html = ReportMailTableBuilder.Build(
                 new[]
@@ -49,7 +62,7 @@ namespace EndpointCheckingCore.Tests
                 "#FFFFFF");
 
             int rows = html.Split(new[] { "<tr>" }, System.StringSplitOptions.None).Length - 1;
-            Assert.Equal(3, rows);
+            EndpointCheckingCoreTestRunner.AssertEqual(3, rows);
         }
     }
 }
