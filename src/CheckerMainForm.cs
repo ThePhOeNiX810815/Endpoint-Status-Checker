@@ -1,7 +1,6 @@
 ﻿using ArpLookup;
 using ClosedXML.Excel;
 using EndpointChecker.Properties;
-using HtmlAgilityPack;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Spire.Xls;
@@ -1539,235 +1538,36 @@ namespace EndpointChecker
             endpoint.HTTPcontentLength = EndpointHttpResponseInterpreter.FormatContentLength(contentLength, status_NotAvailable);
         }
 
-        public PropertyItems GetDocumentLinks(Uri responseURI, HtmlAgilityPack.HtmlDocument htmlResponseDOC, string[] elements)
-        {
-            PropertyItems linksList = new PropertyItems() { PropertyItem = new List<Property>() };
-
-            foreach (string element in elements)
-            {
-                HtmlNodeCollection elementNodeList = htmlResponseDOC.DocumentNode.SelectNodes("//*/@" + element);
-
-                if (elementNodeList != null)
-                {
-                    foreach (HtmlNode linkNode in elementNodeList)
-                    {
-                        foreach (HtmlAttribute linkNodeAttribute in linkNode.Attributes)
-                        {
-                            if (linkNodeAttribute.Name.ToLower() == element &&
-                                !string.IsNullOrEmpty(linkNodeAttribute.Value) &&
-                                (linkNodeAttribute.Value.ToLower().StartsWith(Uri.UriSchemeHttp.ToLower()) ||
-                                 linkNodeAttribute.Value.ToLower().StartsWith(Uri.UriSchemeHttps.ToLower()) ||
-                                 linkNodeAttribute.Value.ToLower().StartsWith(Uri.UriSchemeFtp.ToLower())))
-                            {
-                                if (linksList.PropertyItem.Where(item => item.ItemValue.ToLower().TrimEnd('/') == linkNodeAttribute.Value.ToLower().TrimEnd('/')).Count() == 0 &&
-                                    linksList.PropertyItem.Where(item => item.ItemValue.ToLower() == linkNodeAttribute.Value.ToLower()).Count() == 0 &&
-                                    responseURI.AbsoluteUri.ToLower().TrimEnd('/') != linkNodeAttribute.Value.ToLower().TrimEnd('/'))
-                                {
-                                    linksList.PropertyItem.Add(new Property { ItemName = linkNodeAttribute.Name, ItemValue = linkNodeAttribute.Value.TrimEnd('/') });
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return linksList;
-        }
-
         public void ResolvePageMetaInfo(string htmlResponseDocumentString, EndpointDefinition endpoint, Uri responseURI, bool resolvePageLinks)
         {
-            // REPLACE SPECIAL CHARACTERS
-            htmlResponseDocumentString = htmlResponseDocumentString.Replace(Environment.NewLine, string.Empty).Replace('\'', '"').Replace("&nbsp", " ");
+            EndpointHttpHtmlMetadataResolveOutput resolved = EndpointHttpHtmlMetadataResolver.Resolve(
+                new EndpointHttpHtmlMetadataResolveInput
+                {
+                    HtmlResponseDocumentString = htmlResponseDocumentString,
+                    ResponseUri = responseURI,
+                    ResolvePageLinks = resolvePageLinks,
+                    StatusNotAvailable = status_NotAvailable,
+                    CurrentHtmlContentLanguage = endpoint.HTMLContentLanguage,
+                    CurrentHtmlEncoding = endpoint.HTMLencoding,
+                    ParseEncoding = GetEncoding,
+                });
 
-            endpoint.HTMLMetaInfo.PropertyItem.Clear();
-            endpoint.HTMLTitle = status_NotAvailable;
-            endpoint.HTMLDescription = status_NotAvailable;
-            endpoint.HTMLAuthor = status_NotAvailable;
+            endpoint.HTMLMetaInfo = resolved.HtmlMetaInfo;
+            endpoint.HTMLTitle = resolved.HtmlTitle;
+            endpoint.HTMLDescription = resolved.HtmlDescription;
+            endpoint.HTMLAuthor = resolved.HtmlAuthor;
+            endpoint.HTMLContentLanguage = resolved.HtmlContentLanguage;
+            endpoint.HTMLencoding = resolved.HtmlEncoding;
+            endpoint.HTMLdefaultStreamEncoding = resolved.HtmlDefaultStreamEncoding;
 
-            // LOAD HTML DOCUMENT
-            HtmlAgilityPack.HtmlDocument htmlResponseDOC = new HtmlAgilityPack.HtmlDocument();
-            htmlResponseDOC.LoadHtml(htmlResponseDocumentString);
-            htmlResponseDOC.OptionFixNestedTags = true;
-
-            if (resolvePageLinks)
+            if (resolved.HtmlPageLinks != null)
             {
-                // GET PAGE LINKS
-                endpoint.HTMLPageLinks = GetDocumentLinks(responseURI, htmlResponseDOC, new string[] { "href", "src" });
+                endpoint.HTMLPageLinks = resolved.HtmlPageLinks;
             }
 
-            // GET ROOT 'html' NODE
-            HtmlNode[] htmlRootNodeList = htmlResponseDOC.DocumentNode.Descendants().Where(node => node.Name.ToLower() == "html").ToArray();
-
-            foreach (HtmlNode htmlRootNode in htmlRootNodeList)
+            if (resolved.HasHtmlThemeColor)
             {
-                if (endpoint.HTMLContentLanguage == status_NotAvailable)
-                {
-                    // GET DOCUMENT LANGUAGE [ROOT]
-                    foreach (HtmlAttribute rootNodeAttribute in htmlRootNode.Attributes)
-                    {
-                        if (rootNodeAttribute.Name.ToLower().Contains("lang") &&
-                            !string.IsNullOrEmpty(rootNodeAttribute.Value))
-                        {
-                            GetContentLanguage(endpoint, rootNodeAttribute.Value);
-                        }
-                    }
-                }
-
-                // GET 'head' NODE
-                HtmlNode[] htmlHeadNodeList = htmlRootNode.Descendants().Where(node => node.Name.ToLower() == "head").ToArray();
-
-                foreach (HtmlNode htmlHeadNode in htmlHeadNodeList)
-                {
-                    if (endpoint.HTMLTitle == status_NotAvailable)
-                    {
-                        // GET PAGE 'TITLE'
-                        foreach (HtmlNode htmlNodeChild in htmlHeadNode.ChildNodes)
-                        {
-                            if (htmlNodeChild.OriginalName.ToLower() == "title" &&
-                                !string.IsNullOrEmpty(htmlNodeChild.InnerText.TrimStart().TrimEnd()))
-                            {
-                                endpoint.HTMLTitle = htmlNodeChild.InnerText.TrimStart().TrimEnd();
-
-                                break;
-                            }
-                        }
-                    }
-
-                    foreach (HtmlNode htmlNodeChild in htmlHeadNode.ChildNodes)
-                    {
-                        // GET META TAG[S]
-                        if (htmlNodeChild.OriginalName.ToLower() == "meta")
-                        {
-                            GetMetaTag(endpoint, htmlNodeChild);
-                        }
-                    }
-                }
-            }
-
-            // GET DOCUMENT LANGUAGE[META]
-            if (endpoint.HTMLContentLanguage == status_NotAvailable)
-            {
-                string _contentLanguage = GetMetaInfoValueByKey(endpoint, "content-language");
-
-                if (_contentLanguage != status_NotAvailable)
-                {
-                    GetContentLanguage(endpoint, _contentLanguage);
-                }
-            }
-
-            // GET PAGE 'AUTHOR'
-            endpoint.HTMLAuthor = GetMetaInfoValueByKey(endpoint, "author");
-
-            // [HACK] OPTIONAL 'autor'
-            if (endpoint.HTMLAuthor == status_NotAvailable)
-            {
-                endpoint.HTMLAuthor = GetMetaInfoValueByKey(endpoint, "autor");
-            }
-
-            // [HACK] OPTIONAL 'web_author'
-            if (endpoint.HTMLAuthor == status_NotAvailable)
-            {
-                endpoint.HTMLAuthor = GetMetaInfoValueByKey(endpoint, "web_author");
-            }
-
-            // GET PAGE 'DESCRIPTION'
-            endpoint.HTMLDescription = GetMetaInfoValueByKey(endpoint, "description");
-
-            // GET PAGE 'THEME COLOR'
-            string _colorThemeCodeString = GetMetaInfoValueByKey(endpoint, "theme-color");
-
-            if (_colorThemeCodeString != status_NotAvailable)
-            {
-                try
-                {
-                    endpoint.HTMLThemeColor = ColorTranslator.FromHtml(_colorThemeCodeString);
-                }
-                catch
-                {
-                }
-            }
-
-            // GET DEFAULT STREAM ENCODING
-            endpoint.HTMLdefaultStreamEncoding = htmlResponseDOC.StreamEncoding;
-        }
-
-        public void GetContentLanguage(EndpointDefinition endpoint, string contentLanguage)
-        {
-            if (contentLanguage.ToLower() == "mul")
-            {
-                endpoint.HTMLContentLanguage = "Multi-Language (mul)";
-            }
-            else
-            {
-                try
-                {
-                    endpoint.HTMLContentLanguage = new CultureInfo(contentLanguage).NativeName;
-                }
-                catch
-                {
-                }
-            }
-        }
-
-        public void GetMetaTag(EndpointDefinition endpoint, HtmlNode subNode)
-        {
-            // GET META TAGS
-            string metaName = string.Empty;
-            string metaValue = string.Empty;
-
-            foreach (HtmlAttribute subNodeAttribute in subNode.Attributes)
-            {
-                if (subNodeAttribute.OriginalName.ToLower() == "charset")
-                {
-                    // CHARSET [ENCODING FROM HEAD ROOT]
-                    GetEncodingFromMetaTag(endpoint, "charset=" + subNodeAttribute.Value);
-                }
-                else if (subNodeAttribute.OriginalName.ToLower() == "http-equiv" ||
-                         subNodeAttribute.OriginalName.ToLower() == "name" ||
-                         subNodeAttribute.OriginalName.ToLower() == "property")
-                {
-                    // META TAG NAME
-                    metaName = subNodeAttribute.Value.TrimStart().TrimEnd();
-                }
-                else if (subNodeAttribute.OriginalName.ToLower() == "content")
-                {
-                    // [HACK] META TAG VALUE FIX
-                    metaValue = subNodeAttribute.Value.Replace("<br>", string.Empty).Replace("\n", " ").TrimStart().TrimEnd();
-                }
-            }
-
-            if (!string.IsNullOrEmpty(metaName))
-            {
-                endpoint.HTMLMetaInfo.PropertyItem.Add(new Property { ItemName = metaName, ItemValue = metaValue });
-
-                // TITLE [OPTIONAL, FROM HTML META]
-                if (endpoint.HTMLTitle == status_NotAvailable &&
-                    (metaName.ToLower() == "title" ||
-                     (metaName.ToLower().Split(':').Length > 1 &&
-                      metaName.ToLower().Split(':')[1] == "title")) &&
-                    !string.IsNullOrEmpty(metaValue))
-                {
-                    endpoint.HTMLTitle = metaValue;
-                }
-
-                // [HACK] CHARSET [ENCODING FROM HTML META] ->> GET LAST DEFINITION FOR CASES, IF MORE ENCODING TAGS ARE PRESENT
-                if (metaName.ToLower() == "content-type")
-                {
-                    GetEncodingFromMetaTag(endpoint, metaValue);
-                }
-            }
-        }
-
-        public void GetEncodingFromMetaTag(EndpointDefinition endpoint, string encodingValue)
-        {
-            if (endpoint.HTMLencoding == null)
-            {
-                Encoding htmlMetaEncoding = GetEncoding(encodingValue);
-
-                if (htmlMetaEncoding != null)
-                {
-                    endpoint.HTMLencoding = htmlMetaEncoding;
-                }
+                endpoint.HTMLThemeColor = resolved.HtmlThemeColor;
             }
         }
 
@@ -1881,46 +1681,6 @@ namespace EndpointChecker
                 !string.IsNullOrEmpty(encoding.EncodingName)
                 ? encoding.EncodingName
                 : status_NotAvailable;
-        }
-
-        public string GetMetaInfoValueByKey(EndpointDefinition endpoint, string key)
-        {
-            string metaValue = string.Empty;
-
-            if (endpoint.HTMLMetaInfo.PropertyItem != null)
-            {
-                // TRY TO GET META INFO VALUE BY KEY
-                if (endpoint.HTMLMetaInfo.PropertyItem.Where(metaInfo => metaInfo.ItemName.ToLower() == key.ToLower()).Count() > 0)
-                {
-                    metaValue = endpoint.HTMLMetaInfo.PropertyItem.Where
-                                    (metaInfo => metaInfo.ItemName.ToLower() == key.ToLower())
-                                        .FirstOrDefault().ItemValue.TrimStart().TrimEnd();
-                }
-
-                if (string.IsNullOrEmpty(metaValue.TrimStart().TrimEnd()))
-                {
-                    // TRY TO GET OPTIONAL META INFO VALUE BY KEY
-                    if (endpoint.HTMLMetaInfo.PropertyItem.Where(metaInfo => metaInfo.ItemName.ToLower().Split(':').Length > 1 &&
-                                                                 metaInfo.ItemName.ToLower().Split(':')[1] == key.ToLower()).Count() > 0)
-                    {
-                        foreach (Property metaInfo in endpoint.HTMLMetaInfo.PropertyItem)
-                        {
-                            if (metaInfo.ItemName.Split(':').Length > 1 &&
-                                metaInfo.ItemName.Split(':')[1].ToLower() == key.ToLower())
-                            {
-                                metaValue = metaInfo.ItemValue.TrimStart().TrimEnd();
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (string.IsNullOrEmpty(metaValue))
-            {
-                metaValue = status_NotAvailable;
-            }
-
-            return metaValue;
         }
 
         public string GetFileExtensionByContentType(string mimeType)
