@@ -335,3 +335,21 @@ Scope completed in this ticket:
 - Routed `CheckerMainForm.bw_GetStatus_DoWork` host-seeding and final identity assignment through the extracted seam.
 - Preserved existing lookup orchestration (`Dns.GetHostAddresses`, `Dns.GetHostEntry`, `WindowsLookupService.Lookup`) and only moved deterministic shaping rules.
 - Added deterministic `EndpointCheckingCore` coverage for IPv4-vs-host seed behavior, MAC gateway filtering rules, and resolved/fallback identity assignment behavior.
+
+## Ticket 12: Protocol decomposition continuation (HTTP response interpretation seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting deterministic HTTP response interpretation (success metadata and handled-error mapping) from `bw_GetStatus_DoWork` while preserving legacy compatibility outputs.
+
+Scope completed in this ticket:
+
+- Extracted deterministic HTTP success/handled-error interpretation into `EndpointHttpResponseInterpreter`.
+- Routed HTTP success-path metadata assignment (status/message/redirect annotation/server ID/content metadata/content length normalization) through the extracted seam.
+- Routed handled HTTP error message construction (including Cloudflare protection annotation text) through the extracted seam while preserving existing bypass invocation flow.
+- Delegated content-length display formatting to the new seam and preserved legacy formatting semantics.
+- Added deterministic `HttpCompatibility` tests covering success interpretation, handled-error mapping, Cloudflare-note construction, and content-length formatting behavior.
