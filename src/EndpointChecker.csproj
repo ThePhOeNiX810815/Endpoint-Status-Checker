@@ -52,16 +52,6 @@
     </Reference>
   </ItemGroup>
 
-  <!-- Ensure local DLLs are copied to the framework-versioned output directory -->
-  <ItemGroup>
-    <None Include="bin\Debug\tracert.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="bin\Debug\VirusTotal.NET.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
   <!-- Embedded font resources (TTF files are not auto-included) -->
   <ItemGroup>
     <EmbeddedResource Include="Fonts\**\*" />

@@ -495,7 +495,35 @@ namespace EndpointChecker
 
             try
             {
-                X509Certificate2 cert = new X509Certificate2(X509Certificate.CreateFromSignedFile(app_Assembly.Location));
+                X509Certificate2 cert = null;
+
+                string[] signedFileCandidates =
+                {
+                    System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName,
+                    app_Assembly.Location,
+                };
+
+                foreach (string candidate in signedFileCandidates)
+                {
+                    if (string.IsNullOrWhiteSpace(candidate) || !File.Exists(candidate))
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        cert = new X509Certificate2(X509Certificate.CreateFromSignedFile(candidate));
+                        break;
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                if (cert == null)
+                {
+                    return false;
+                }
 
                 string serial = cert.GetSerialNumberString();
                 string issuer = cert.Issuer;
@@ -520,8 +548,8 @@ namespace EndpointChecker
                 if (!isOriginalSignedExecutable)
                 {
                     isOriginalSignedExecutable =
-                        issuer.Equals("CN=David Smidke") &&
-                        subject.Equals("CN=David Smidke");
+                        issuer.StartsWith("CN=David Smidke", StringComparison.OrdinalIgnoreCase) &&
+                        subject.StartsWith("CN=David Smidke", StringComparison.OrdinalIgnoreCase);
                 }
             }
             catch
