@@ -1470,17 +1470,7 @@ namespace EndpointChecker
             WebHeaderCollection headerCollection)
         {
             propertyItemCollection.Clear();
-
-            if (headerCollection != null &&
-                headerCollection.Count > 0)
-            {
-                foreach (string headerName in headerCollection.Keys)
-                {
-                    propertyItemCollection.Add(new Property { ItemName = headerName, ItemValue = headerCollection[headerName] });
-                }
-            }
-
-            propertyItemCollection = propertyItemCollection.OrderBy(p => p.ItemName).ToList();
+            propertyItemCollection.AddRange(EndpointHttpHeaderCollector.Collect(headerCollection));
         }
 
         public string ReadHTTPResponseStream(MemoryStream httpWebResponseMemoryStream, Encoding encoding)
