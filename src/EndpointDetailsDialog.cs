@@ -10,7 +10,6 @@ using System.Management;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -613,32 +612,25 @@ namespace EndpointChecker
 
             NewBackgroundThread(() =>
             {
-                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(websiteURL + "/favicon.ico");
-                httpWebRequest.Method = WebRequestMethods.Http.Get;
-                httpWebRequest.UserAgent = http_UserAgent;
-                httpWebRequest.Timeout = 5000;
-                httpWebRequest.ReadWriteTimeout = 5000;
-
-                HttpWebResponse httpWebResponse = null;
-
-                try
+                foreach (string requestUrl in EndpointFaviconLookupPlanBuilder.BuildRequestUrls(websiteURL, fallbackGoogleResolveURL))
                 {
-                    httpWebResponse = GetHTTPWebResponse(httpWebRequest, 5);
-                    Stream stream = httpWebResponse.GetResponseStream();
-                    pb_Favicon.Image = new Bitmap(stream);
-                }
-                catch
-                {
-                    if (!websiteURL.Contains(fallbackGoogleResolveURL))
+                    if (EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                        IsDisposed,
+                        Disposing,
+                        checkerMainForm != null))
                     {
-                        GetWebsiteFavicon(fallbackGoogleResolveURL + websiteURL);
+                        return;
                     }
-                }
-                finally
-                {
-                    if (httpWebResponse != null)
+
+                    Bitmap favicon = GetImageFromURL(requestUrl);
+                    if (favicon != null)
                     {
-                        httpWebResponse.Close();
+                        ThreadSafeInvoke(() =>
+                        {
+                            pb_Favicon.Image = favicon;
+                        });
+
+                        break;
                     }
                 }
             });
@@ -1182,6 +1174,11 @@ namespace EndpointChecker
 
             NewBackgroundThread(() =>
             {
+                Bitmap vendorImage = null;
+                string vendorDomain = null;
+                string vendorCompany = null;
+                string vendorAddress = null;
+
                 if (macAddress != status_NotAvailable)
                 {
                     HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(macLookupAPI + macAddress);
@@ -1211,15 +1208,8 @@ namespace EndpointChecker
                                 // GET VALUES
                                 if (!string.IsNullOrEmpty(macAddressVendorResponse.result.company))
                                 {
-                                    macAddressVendor = macAddressVendorResponse.result.company;
-
-                                    if (!string.IsNullOrEmpty(macAddressVendorResponse.result.address))
-                                    {
-                                        // REGEX TO REPLACE MULTIPLE SPACES WITH SINGLE SPACE
-                                        RegexOptions options = RegexOptions.None;
-                                        Regex regex = new Regex("[ ]{2,}", options);
-                                        macAddressVendor += " (" + regex.Replace(macAddressVendorResponse.result.address, " ") + ")";
-                                    }
+                                    vendorCompany = macAddressVendorResponse.result.company;
+                                    vendorAddress = macAddressVendorResponse.result.address;
 
                                     // GET VENDOR WEBSITE
                                     httpWebRequest = (HttpWebRequest)WebRequest.Create(vendorAutoCompleteAPI + macAddressVendorResponse.result.company.Split(' ')[0]);
@@ -1251,29 +1241,19 @@ namespace EndpointChecker
                                                     // GET VENDOR IMAGE
                                                     if (!string.IsNullOrEmpty(result.logo))
                                                     {
-                                                        Bitmap vendorImage = GetImageFromURL(result.logo);
+                                                        if (EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                                                            IsDisposed,
+                                                            Disposing,
+                                                            checkerMainForm != null))
+                                                        {
+                                                            break;
+                                                        }
+
+                                                        vendorImage = GetImageFromURL(result.logo);
 
                                                         if (vendorImage != null)
                                                         {
-                                                            ThreadSafeInvoke(() =>
-                                                            {
-                                                                pb_Vendor.Image = ResizeImage(vendorImage, 23, 23);
-
-                                                                // CLICK HANDLER FOR VENDOR WEB PAGE
-                                                                if (!string.IsNullOrEmpty(result.domain))
-                                                                {
-                                                                    macVendorWebPage = "http://" + result.domain;
-                                                                    pb_Vendor.Cursor = Cursors.Hand;
-                                                                    macVendorIconTooltip
-                                                                        .SetToolTip(
-                                                                            pb_Vendor,
-                                                                                "Click to open \"" +
-                                                                                macAddressVendorResponse.result.company +
-                                                                                "\" web page (" +
-                                                                                result.domain +
-                                                                                ")");
-                                                                }
-                                                            });
+                                                            vendorDomain = result.domain;
 
                                                             break;
                                                         }
@@ -1308,8 +1288,32 @@ namespace EndpointChecker
                     }
                 }
 
+                EndpointMacVendorPresentationModel presentation = EndpointMacVendorPresentationBuilder.Build(
+                    new EndpointMacVendorPresentationInput
+                    {
+                        StatusNotAvailable = status_NotAvailable,
+                        Company = vendorCompany,
+                        Address = vendorAddress,
+                        Domain = vendorDomain,
+                        HasVendorImage = vendorImage != null,
+                    });
+
+                macAddressVendor = presentation.VendorText;
+
                 ThreadSafeInvoke(() =>
                 {
+                    if (presentation.ShouldApplyVendorImage)
+                    {
+                        pb_Vendor.Image = ResizeImage(vendorImage, 23, 23);
+                    }
+
+                    if (presentation.ShouldEnableVendorLink)
+                    {
+                        macVendorWebPage = presentation.VendorWebPage;
+                        pb_Vendor.Cursor = Cursors.Hand;
+                        macVendorIconTooltip.SetToolTip(pb_Vendor, presentation.VendorTooltipText);
+                    }
+
                     tb_MACVendor.Text = macAddressVendor;
                     pb_MACVendorProgress.Visible = false;
                 });
