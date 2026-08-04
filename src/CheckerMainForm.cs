@@ -1901,27 +1901,7 @@ namespace EndpointChecker
 
         public static HttpWebResponse GetHTTPWebResponse(HttpWebRequest httpWebRequest, int maxRetryCount, int retryCount = 0)
         {
-            HttpWebResponse webResponse;
-
-            try
-            {
-                webResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            }
-            catch (WebException webException)
-            {
-                if (webException.Status == WebExceptionStatus.Timeout &&
-                    retryCount < maxRetryCount)
-                {
-                    retryCount++;
-                    webResponse = GetHTTPWebResponse(httpWebRequest, maxRetryCount, retryCount);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return webResponse;
+            return EndpointHttpRetryExecutor.Execute(httpWebRequest, maxRetryCount, retryCount);
         }
 
         public string GetContentType(string valueString)
