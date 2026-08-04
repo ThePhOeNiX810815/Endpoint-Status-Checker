@@ -1716,10 +1716,11 @@ namespace EndpointChecker
                     InitialRetry = retry,
                     RetryDelayMilliseconds = 5000,
                     IsCancellationRequested = () =>
-                        virusTotalScanCancelled ||
-                        IsDisposed ||
-                        Disposing ||
-                        checkerMainForm == null,
+                        EndpointVirusTotalCancellationGate.IsCancellationRequested(
+                            virusTotalScanCancelled,
+                            IsDisposed,
+                            Disposing,
+                            checkerMainForm != null),
                     ShouldRetryException = vtException =>
                         !vtException.GetType().IsAssignableFrom(typeof(VirusTotalNET.Exceptions.InvalidResourceException)),
                     ExecuteAttempt = () =>
@@ -1789,6 +1790,11 @@ namespace EndpointChecker
         {
             if (virusTotal_ScanResult != null &&
                 !string.IsNullOrEmpty(virusTotal_ScanResult.Url) &&
+                !EndpointVirusTotalCancellationGate.IsCancellationRequested(
+                    virusTotalScanCancelled,
+                    IsDisposed,
+                    Disposing,
+                    checkerMainForm != null) &&
                 !BW_VirusTotal_Report.IsBusy)
             {
                 BW_VirusTotal_Report.RunWorkerAsync();
@@ -1797,6 +1803,16 @@ namespace EndpointChecker
 
         private void BW_VirusTotal_Report_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
+            if (EndpointVirusTotalCancellationGate.IsCancellationRequested(
+                virusTotalScanCancelled,
+                IsDisposed,
+                Disposing,
+                checkerMainForm != null))
+            {
+                virusTotal_ScanResult = null;
+                return;
+            }
+
             try
             {
                 // REQUEST SCAN RESULT
@@ -1809,55 +1825,73 @@ namespace EndpointChecker
                 UrlReport virusTotalReport = EndpointTaskSyncBridge.AwaitResult(virusTotalReportTask);
                 virusTotalReportTask.Dispose();
 
-                if (virusTotalReport.ResponseCode == VirusTotalNET.ResponseCodes.UrlReportResponseCode.Present)
+                if (EndpointVirusTotalCancellationGate.IsCancellationRequested(
+                    virusTotalScanCancelled,
+                    IsDisposed,
+                    Disposing,
+                    checkerMainForm != null))
                 {
                     virusTotal_ScanResult = null;
+                    return;
+                }
 
+                EndpointVirusTotalReportTransitionModel transition = EndpointVirusTotalReportWorkflow.Build(
+                    new EndpointVirusTotalReportTransitionInput
+                    {
+                        IsReportPresent = virusTotalReport.ResponseCode == VirusTotalNET.ResponseCodes.UrlReportResponseCode.Present,
+                        ScanCount = virusTotalReport.Scans != null ? virusTotalReport.Scans.Count : 0,
+                        Positives = virusTotalReport.Positives,
+                    });
+
+                if (transition.ShouldClearPendingScanResult)
+                {
+                    virusTotal_ScanResult = null;
+                }
+
+                if (transition.ShouldApplyReportUi)
+                {
                     ThreadSafeInvoke(() =>
                     {
-                        if (virusTotalReport.Scans.Count > 0)
+                        if (transition.IsCleanResult)
                         {
-                            if (virusTotalReport.Positives == 0)
-                            {
-                                // CLEAN
-                                pb_VirusTotal_Status.Image = Resources.virusClean;
-                            }
-                            else
-                            {
-                                // INFECTED
-                                pb_VirusTotal_Status.Image = Resources.virusIcon;
+                            // CLEAN
+                            pb_VirusTotal_Status.Image = Resources.virusClean;
+                        }
+                        else
+                        {
+                            // INFECTED
+                            pb_VirusTotal_Status.Image = Resources.virusIcon;
 
-                            }
+                        }
 
-                            // SET CONTROLS
-                            pb_VirusTotal_Status.Visible = true;
-                            lv_VirusTotal.Visible = true;
-                            btn_VirusTotal_Refresh.Enabled = true;
-                            lbl_VirusTotal_Status.Visible = false;
-                            pb_VirusTotalRefresh.Visible = false;
-                            lbl_VirusTotal_Permalink.Visible = true;
-                            tb_VirusTotal_Permalink.Visible = true;
-                            lbl_VirusTotal_ScanDateTime.Visible = true;
-                            tb_VirusTotal_ScanDateTime.Visible = true;
-                            tb_VirusTotal_Permalink.Text = virusTotalReport.Permalink;
-                            tb_VirusTotal_ScanDateTime.Text = virusTotalReport.ScanDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm");
+                        // SET CONTROLS
+                        pb_VirusTotal_Status.Visible = true;
+                        lv_VirusTotal.Visible = true;
+                        btn_VirusTotal_Refresh.Enabled = true;
+                        lbl_VirusTotal_Status.Visible = false;
+                        pb_VirusTotalRefresh.Visible = false;
+                        lbl_VirusTotal_Permalink.Visible = true;
+                        tb_VirusTotal_Permalink.Visible = true;
+                        lbl_VirusTotal_ScanDateTime.Visible = true;
+                        tb_VirusTotal_ScanDateTime.Visible = true;
+                        tb_VirusTotal_Permalink.Text = virusTotalReport.Permalink;
+                        tb_VirusTotal_ScanDateTime.Text = virusTotalReport.ScanDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm");
 
-                            // LIST RESULTS
-                            foreach (string scanEngine in virusTotalReport.Scans.Keys)
-                            {
-                                ListViewItem scanResultItem = new ListViewItem();
-                                UrlScanEngine urlScan = virusTotalReport.Scans[scanEngine];
-                                scanResultItem.Text = scanEngine;
-                                scanResultItem.SubItems.Add(urlScan.Result);
+                        // LIST RESULTS
+                        foreach (string scanEngine in virusTotalReport.Scans.Keys)
+                        {
+                            ListViewItem scanResultItem = new ListViewItem();
+                            UrlScanEngine urlScan = virusTotalReport.Scans[scanEngine];
+                            scanResultItem.Text = scanEngine;
+                            scanResultItem.SubItems.Add(urlScan.Result);
 
-                                scanResultItem.ImageIndex = urlScan.Result == "clean site" ? 10 : urlScan.Result == "unrated site" ? 14 : 13;
+                            scanResultItem.ImageIndex = urlScan.Result == "clean site" ? 10 : urlScan.Result == "unrated site" ? 14 : 13;
 
-                                lv_VirusTotal.Items.Add(scanResultItem);
-                            }
+                            lv_VirusTotal.Items.Add(scanResultItem);
                         }
                     });
                 }
-                else
+                else if (transition.ShouldShowWaitingStatus)
                 {
                     ThreadSafeInvoke(() =>
                     {
