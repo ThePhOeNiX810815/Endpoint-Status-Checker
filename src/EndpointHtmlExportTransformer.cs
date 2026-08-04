@@ -11,6 +11,22 @@ namespace EndpointChecker
             return inputHtml.Replace("<head>", "<head>" + Environment.NewLine + "<meta http-equiv=\"refresh\" content=\"" + refreshIntervalSeconds + "\">");
         }
 
+        public static string ReplaceSummaryHyperLinkPlaceholders(
+            string inputHtml,
+            string xlsxFileName,
+            string jsonFileName,
+            string xmlFileName,
+            string htmlHttpFileName,
+            string htmlFtpFileName)
+        {
+            return inputHtml
+                .Replace("xHTML_XLSXx", "<a href=\"" + xlsxFileName + "\" style=\"color:white;\">Endpoints Status XLSX Export</a>")
+                .Replace("xHTML_JSONx", "<a href=\"" + jsonFileName + "\" style=\"color:white;\">Endpoints Status JSON Export</a>")
+                .Replace("xHTML_XMLx", "<a href=\"" + xmlFileName + "\" style=\"color:white;\">Endpoints Status XML Export</a>")
+                .Replace("xHTML_HTTPx", "<a href=\"" + htmlHttpFileName + "\" style=\"color:white;\">HTTP Endpoints Status List</a>")
+                .Replace("xHTML_FTPx", "<a href=\"" + htmlFtpFileName + "\" style=\"color:white;\">FTP Endpoints Status List</a>");
+        }
+
         public static string CreateEndpointUrlHyperLinks(string inputHtml)
         {
             // Preserve the current HTML-to-XML conversion behavior used by the legacy export path.

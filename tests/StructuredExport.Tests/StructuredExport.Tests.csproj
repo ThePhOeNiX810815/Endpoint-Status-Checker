@@ -7,8 +7,10 @@
     <NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.102.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="..\..\src\EndpointStructuredExportGenerator.cs" Link="EndpointStructuredExportGenerator.cs" />
     <Compile Include="..\..\src\EndpointHtmlExportTransformer.cs" Link="EndpointHtmlExportTransformer.cs" />
+    <Compile Include="..\..\src\EndpointXlsxExportWorkbookBuilder.cs" Link="EndpointXlsxExportWorkbookBuilder.cs" />
   </ItemGroup>
 </Project>

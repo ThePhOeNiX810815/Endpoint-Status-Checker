@@ -48,23 +48,23 @@ Overall status: `Completed against current deterministic criteria`
 
 ## Priority 2: XLSX/HTML export compatibility baseline
 
-Overall status: `In progress (not complete)`
+Overall status: `Completed against current deterministic criteria`
 
 | Required behavior | Status | Current evidence |
 | --- | --- | --- |
-| HTML document structure | Partial | HTML transformation tests assert inserted fragments, not broader generated page structure. |
+| HTML document structure | Covered | Summary-page placeholder replacement and auto-refresh insertion are covered by deterministic transformer tests. |
 | HTML row/link transformations | Covered | `CreateEndpointUrlHyperLinks` behavior characterized by row click injection test. |
 | auto-refresh behavior | Covered | `AddAutoRefreshMetaTag` characterization test exists. |
 | refresh-button styling | Covered | `AddRefreshCssButton` characterization test exists. |
-| escaping and encoding behavior | Partial | Structured JSON/XML encoding workaround covered; HTML escaping/encoding behavior not fully characterized. |
-| XLSX workbook existence and readable structure | Missing | No deterministic workbook-load assertions currently in tests. |
-| required worksheets | Missing | No tests validating Summary/HTTP/FTP worksheet presence rules. |
-| worksheet names | Missing | No tests asserting worksheet naming compatibility. |
-| required column order | Missing | No tests asserting column order for HTTP/FTP sheets. |
-| hidden-column behavior | Missing | No tests asserting legacy hide-if-only-`N/A` behavior. |
-| representative cell values | Missing | No tests asserting representative worksheet cell values. |
-| important formatting where reliably testable | Missing | No tests asserting key formatting/freeze/filter/backgrounds. |
-| file/path naming compatibility | Partial | `EndpointExportFileSet` tests cover naming/path composition, but not workbook/HTML linkage behavior. |
+| escaping and encoding behavior | Covered | JSON/XML encoding workaround and legacy HTML hyperlink ampersand escaping are characterized in deterministic tests. |
+| XLSX workbook existence and readable structure | Covered | Deterministic tests build, save, and reload the workbook to validate readable structure. |
+| required worksheets | Covered | Deterministic workbook tests assert expected worksheet presence and legacy deletion behavior paths. |
+| worksheet names | Covered | Worksheet names (`Summary`, `HTTP Endpoints`, `FTP Endpoints`) are asserted directly in deterministic tests. |
+| required column order | Covered | Header-order assertions cover HTTP and FTP worksheet column order compatibility. |
+| hidden-column behavior | Covered | Legacy hide-if-only-`N/A` behavior is asserted for representative hidden/visible columns. |
+| representative cell values | Covered | Deterministic tests assert representative summary and endpoint worksheet cell values and hyperlinks. |
+| important formatting where reliably testable | Covered | Deterministic tests assert key formatting (freeze panes, number format, and key fill colors). |
+| file/path naming compatibility | Covered | Summary hyperlink placeholder replacement is characterized with legacy export file names across JSON/XML/XLSX/HTTP/FTP links. |
 
 ## Priority 3: Thread-helper characterization and consolidation
 
@@ -78,8 +78,8 @@ Overall status: `Consolidation done; characterization incomplete`
 
 ## Reconciliation summary
 
-- None of the three high-priority tracks are fully complete under strict criteria.
+- Priority 1 and Priority 2 are now complete under strict deterministic criteria.
 - Priority order remains:
-  1. Finish scan workflow characterization harness.
-  2. Finish XLSX/HTML export compatibility coverage.
-  3. Continue protocol decomposition only where enabled by completed characterization.
+  1. Continue protocol decomposition only where enabled by completed scan/export characterization.
+  2. Characterize `Application.DoEvents` safety/sequencing in real helper call paths.
+  3. Continue remaining high-risk residual reductions after the above are covered.
