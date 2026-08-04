@@ -3433,88 +3433,17 @@ namespace EndpointChecker
 
         public string AddAutoRefreshToHTMLString(string inputHTML, int refreshIntervalSeconds)
         {
-            return inputHTML.Replace("<head>", "<head>" + Environment.NewLine + "<meta http-equiv=\"refresh\" content=\"" + refreshIntervalSeconds + "\">");
+            return EndpointHtmlExportTransformer.AddAutoRefreshMetaTag(inputHTML, refreshIntervalSeconds);
         }
 
         public string CreateEndpointURLHyperLink(string inputHTML)
         {
-            // REMOVE ESCAPE CHARACTERS
-            string inputXMLString = inputHTML
-                .Replace("&nbsp;", " ")
-                .Replace("&", "&amp;");
-
-            // LOAD AS XML
-            XmlDocument inputHTMLDoc = new XmlDocument();
-            inputHTMLDoc.LoadXml(inputXMLString);
-
-            XmlNodeList trNodesList = inputHTMLDoc.GetElementsByTagName("tr");
-
-            int trNodeIndex = 0;
-            foreach (XmlNode trNode in trNodesList)
-            {
-                if (trNodeIndex > 0)
-                {
-                    // ADD 'ONCLICK' HANDLER
-                    XmlAttribute attr = inputHTMLDoc.CreateAttribute("onclick");
-                    attr.Value = "location.href = '" +
-                                 trNode.ChildNodes[3].ChildNodes[0].InnerXml +
-                                 "'";
-
-                    trNode.ChildNodes[3].ChildNodes[0].Attributes.Append(attr);
-
-                    using (StringWriter stringWriter = new StringWriter())
-                    using (XmlWriter xmlTextWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings { Indent = true, NewLineOnAttributes = false, OmitXmlDeclaration = true }))
-                    {
-                        inputHTMLDoc.WriteTo(xmlTextWriter);
-                        xmlTextWriter.Flush();
-                        inputHTML = stringWriter.GetStringBuilder().ToString();
-                    }
-                }
-
-                trNodeIndex++;
-            }
-
-            // SET 'HAND' CURSOR TO CLASSES DEFINING HYPERLINK [UNDERLINED STYLE]
-            foreach (string htmlLine in inputXMLString.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                if (htmlLine.StartsWith(".X") &&
-                    htmlLine.Contains("text-decoration:underline"))
-                {
-                    // SET 'HAND' CURSOR TO AFFECTED NODES
-                    inputHTML = inputHTML.Replace(
-                        htmlLine.Split('{')[1],
-                        "cursor:pointer;" + htmlLine.Split('{')[1]);
-                }
-            }
-
-            return inputHTML;
+            return EndpointHtmlExportTransformer.CreateEndpointUrlHyperLinks(inputHTML);
         }
 
         public string AddRefreshCSSButtonToHTMLString(string inputHTML)
         {
-            return inputHTML.Replace(
-                                    @"<html xmlns=""http://www.w3.org/1999/xhtml"">
-  <head>
-    <style type=""text/css"">table",
-                                    @"<html xmlns=""http://www.w3.org/1999/xhtml"">
-<INPUT TYPE=""button"" onClick=""window.location.reload()"" VALUE=""Refresh"" ID=""refreshBTN"">
-  <head>
-    <style type=""text/css"">
-    body {
-            background - color: #CCC;
-            margin: 32px 0px 0px 0px;
-                                }
-                                INPUT#refreshBTN {
-                                position: fixed;
-                                top: 0px;
-                                left: 0px;
-                                width: 100%;
-                                color: #7CFC00;
-                                background: #333;
-                                padding: 5px;
-                                cursor:pointer;
-                                }
-                            table");
+            return EndpointHtmlExportTransformer.AddRefreshCssButton(inputHTML);
         }
 
         public Color GetColorByStatus(string statusCode, string pingTime, string statusMessage)

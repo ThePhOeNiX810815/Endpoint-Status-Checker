@@ -9,5 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="..\..\src\EndpointStructuredExportGenerator.cs" Link="EndpointStructuredExportGenerator.cs" />
+    <Compile Include="..\..\src\EndpointHtmlExportTransformer.cs" Link="EndpointHtmlExportTransformer.cs" />
   </ItemGroup>
 </Project>
