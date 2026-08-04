@@ -26,6 +26,7 @@
     <Compile Include="..\..\src\EndpointNetworkShareEnumerator.cs" Link="EndpointNetworkShareEnumerator.cs" />
     <Compile Include="..\..\src\EndpointNetworkShareResolver.cs" Link="EndpointNetworkShareResolver.cs" />
     <Compile Include="..\..\src\EndpointPingRetryExecutor.cs" Link="EndpointPingRetryExecutor.cs" />
+    <Compile Include="..\..\src\EndpointPageLinkValidationWorkflow.cs" Link="EndpointPageLinkValidationWorkflow.cs" />
     <Compile Include="..\..\src\EndpointProtocolRouteResolver.cs" Link="EndpointProtocolRouteResolver.cs" />
     <Compile Include="..\..\src\EndpointScanWorkflowRules.cs" Link="EndpointScanWorkflowRules.cs" />
     <Compile Include="..\..\src\EndpointScanTerminalFinalizer.cs" Link="EndpointScanTerminalFinalizer.cs" />

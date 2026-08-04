@@ -53,6 +53,7 @@ namespace EndpointChecker
         private UrlScanResult virusTotal_ScanResult = null;
 
         private volatile bool virusTotalScanCancelled;
+        private volatile bool dialogClosing;
 
         // MAC VENDOR WEBPAGE URL
         private string macVendorWebPage = string.Empty;
@@ -764,6 +765,15 @@ namespace EndpointChecker
 
         public void pb_PingRefresh_Click(object sender, EventArgs e)
         {
+            if (EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                IsDisposed,
+                Disposing,
+                checkerMainForm != null) ||
+                dialogClosing)
+            {
+                return;
+            }
+
             if (!TIMER_PingRefresh.Enabled)
             {
                 // START
@@ -784,6 +794,17 @@ namespace EndpointChecker
 
         public void TIMER_PingRefresh_Tick(object sender, EventArgs e)
         {
+            if (EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                IsDisposed,
+                Disposing,
+                checkerMainForm != null) ||
+                dialogClosing)
+            {
+                TIMER_PingRefresh.Stop();
+                TIMER_PingRefresh.Enabled = false;
+                return;
+            }
+
             DoPing(true);
         }
 
@@ -791,6 +812,15 @@ namespace EndpointChecker
         {
             NewBackgroundThread(() =>
             {
+                if (EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                    IsDisposed,
+                    Disposing,
+                    checkerMainForm != null) ||
+                    dialogClosing)
+                {
+                    return;
+                }
+
                 if (_selectedEndpoint.PingRoundtripTime == status_NotAvailable)
                 {
                     SetPingResponse(status_NotAvailable, isLiveRefresh);
@@ -800,7 +830,12 @@ namespace EndpointChecker
                 {
                     string _pingRoundtripTime = GetPingTime(new Uri(_selectedEndpoint.ResponseAddress).Host, _pingTimeout, 3);
 
-                    if (!string.IsNullOrEmpty(_pingRoundtripTime))
+                    if (!string.IsNullOrEmpty(_pingRoundtripTime) &&
+                        !EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                            IsDisposed,
+                            Disposing,
+                            checkerMainForm != null) &&
+                        !dialogClosing)
                     {
                         SetPingResponse(_pingRoundtripTime, isLiveRefresh);
                     }
@@ -813,6 +848,15 @@ namespace EndpointChecker
 
         public void SetPingResponse(string _pingResponse, bool _isLiveRefresh)
         {
+            if (EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                IsDisposed,
+                Disposing,
+                checkerMainForm != null) ||
+                dialogClosing)
+            {
+                return;
+            }
+
             _selectedEndpoint.PingRoundtripTime = _pingResponse;
 
             if (_isLiveRefresh)
@@ -1067,6 +1111,15 @@ namespace EndpointChecker
 
             NewBackgroundThread(() =>
             {
+                if (EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                    IsDisposed,
+                    Disposing,
+                    checkerMainForm != null) ||
+                    dialogClosing)
+                {
+                    return;
+                }
+
                 string registrableDomainName = new Uri(_selectedEndpoint.ResponseAddress).Host;
                 string whoISserver_ServerAddress = string.Empty;
                 string whoISserver_RAWresponse = string.Empty;
@@ -1112,7 +1165,12 @@ namespace EndpointChecker
                         RawResponse = whoISserver_RAWresponse,
                     });
 
-                if (model.ShouldApplyPayload)
+                if (model.ShouldApplyPayload &&
+                    !EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                        IsDisposed,
+                        Disposing,
+                        checkerMainForm != null) &&
+                    !dialogClosing)
                 {
                     ThreadSafeInvoke(() =>
                     {
@@ -1174,6 +1232,15 @@ namespace EndpointChecker
 
             NewBackgroundThread(() =>
             {
+                if (EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                    IsDisposed,
+                    Disposing,
+                    checkerMainForm != null) ||
+                    dialogClosing)
+                {
+                    return;
+                }
+
                 Bitmap vendorImage = null;
                 string vendorDomain = null;
                 string vendorCompany = null;
@@ -1300,23 +1367,30 @@ namespace EndpointChecker
 
                 macAddressVendor = presentation.VendorText;
 
-                ThreadSafeInvoke(() =>
+                if (!EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                    IsDisposed,
+                    Disposing,
+                    checkerMainForm != null) &&
+                    !dialogClosing)
                 {
-                    if (presentation.ShouldApplyVendorImage)
+                    ThreadSafeInvoke(() =>
                     {
-                        pb_Vendor.Image = ResizeImage(vendorImage, 23, 23);
-                    }
+                        if (presentation.ShouldApplyVendorImage)
+                        {
+                            pb_Vendor.Image = ResizeImage(vendorImage, 23, 23);
+                        }
 
-                    if (presentation.ShouldEnableVendorLink)
-                    {
-                        macVendorWebPage = presentation.VendorWebPage;
-                        pb_Vendor.Cursor = Cursors.Hand;
-                        macVendorIconTooltip.SetToolTip(pb_Vendor, presentation.VendorTooltipText);
-                    }
+                        if (presentation.ShouldEnableVendorLink)
+                        {
+                            macVendorWebPage = presentation.VendorWebPage;
+                            pb_Vendor.Cursor = Cursors.Hand;
+                            macVendorIconTooltip.SetToolTip(pb_Vendor, presentation.VendorTooltipText);
+                        }
 
-                    tb_MACVendor.Text = macAddressVendor;
-                    pb_MACVendorProgress.Visible = false;
-                });
+                        tb_MACVendor.Text = macAddressVendor;
+                        pb_MACVendorProgress.Visible = false;
+                    });
+                }
             });
         }
 
@@ -1326,6 +1400,15 @@ namespace EndpointChecker
 
             NewBackgroundThread(() =>
             {
+                if (EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                    IsDisposed,
+                    Disposing,
+                    checkerMainForm != null) ||
+                    dialogClosing)
+                {
+                    return;
+                }
+
                 bool showTab = false;
                 IP_API_JSON_Response ipInfo = null;
                 Bitmap mapTile = null;
@@ -1377,53 +1460,60 @@ namespace EndpointChecker
                         CountryCode = ipInfo != null ? ipInfo.Country_Code : null,
                     });
 
-                ThreadSafeInvoke(() =>
+                if (!EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                    IsDisposed,
+                    Disposing,
+                    checkerMainForm != null) &&
+                    !dialogClosing)
                 {
-                    if (model.HasDisplayPayload)
+                    ThreadSafeInvoke(() =>
                     {
-                        pb_GeoLocation_Map.Image = mapTile;
-
-                        if (model.ShouldShowCountryFlag)
+                        if (model.HasDisplayPayload)
                         {
-                            pb_GeoLocation_CountryFlag.Image = countryFlag;
-                            pb_GeoLocation_CountryFlag.Visible = true;
+                            pb_GeoLocation_Map.Image = mapTile;
+
+                            if (model.ShouldShowCountryFlag)
+                            {
+                                pb_GeoLocation_CountryFlag.Image = countryFlag;
+                                pb_GeoLocation_CountryFlag.Visible = true;
+                            }
+                            else
+                            {
+                                pb_GeoLocation_CountryFlag.Visible = false;
+                            }
+
+                            tb_GeoLocation_Latitude.Text = model.Latitude;
+                            tb_GeoLocation_Longitude.Text = model.Longitude;
+                            tb_GeoLocation_ISP.Text = model.Isp;
+                            tb_GeoLocation_AS.Text = model.AsDescription;
+                            tb_GeoLocation_RegionName.Text = model.RegionDescription;
+                            tb_GeoLocation_TimeZone.Text = model.TimeZone;
+                            tb_GeoLocation_ZipCode.Text = model.ZipCode;
+                            tb_GeoLocation_City.Text = model.City;
+                            tb_GeoLocation_ORG.Text = model.Organization;
+                            tb_GeoLocation_CountryName.Text = model.CountryDescription;
+
+                            tb_GeoLocation_IP.Text = model.IpAddress;
+                            pb_GeoLocationProgress.Visible = false;
+                            pb_GeoLocation_Map.Visible = true;
                         }
-                        else
+
+                        if (model.ShouldEnsureTabPresent)
                         {
-                            pb_GeoLocation_CountryFlag.Visible = false;
+                            if (!tabControl.TabPages.Contains(tabPage_GeoLocation))
+                            {
+                                // ADD GEO INFO TAB PAGE [IF NOT PRESENT]
+                                tabControl.TabPages.Add(tabPage_GeoLocation);
+                            }
                         }
-
-                        tb_GeoLocation_Latitude.Text = model.Latitude;
-                        tb_GeoLocation_Longitude.Text = model.Longitude;
-                        tb_GeoLocation_ISP.Text = model.Isp;
-                        tb_GeoLocation_AS.Text = model.AsDescription;
-                        tb_GeoLocation_RegionName.Text = model.RegionDescription;
-                        tb_GeoLocation_TimeZone.Text = model.TimeZone;
-                        tb_GeoLocation_ZipCode.Text = model.ZipCode;
-                        tb_GeoLocation_City.Text = model.City;
-                        tb_GeoLocation_ORG.Text = model.Organization;
-                        tb_GeoLocation_CountryName.Text = model.CountryDescription;
-
-                        tb_GeoLocation_IP.Text = model.IpAddress;
-                        pb_GeoLocationProgress.Visible = false;
-                        pb_GeoLocation_Map.Visible = true;
-                    }
-
-                    if (model.ShouldEnsureTabPresent)
-                    {
-                        if (!tabControl.TabPages.Contains(tabPage_GeoLocation))
+                        else if (model.ShouldEnsureTabRemoved &&
+                            tabControl.TabPages.Contains(tabPage_GeoLocation))
                         {
-                            // ADD GEO INFO TAB PAGE [IF NOT PRESENT]
-                            tabControl.TabPages.Add(tabPage_GeoLocation);
+                            // REMOVE GEO INFO TAB PAGE [IF PRESENT]
+                            tabControl.TabPages.Remove(tabPage_GeoLocation);
                         }
-                    }
-                    else if (model.ShouldEnsureTabRemoved &&
-                        tabControl.TabPages.Contains(tabPage_GeoLocation))
-                    {
-                        // REMOVE GEO INFO TAB PAGE [IF PRESENT]
-                        tabControl.TabPages.Remove(tabPage_GeoLocation);
-                    }
-                });
+                    });
+                }
             });
         }
 
@@ -1959,15 +2049,26 @@ namespace EndpointChecker
 
             NewBackgroundThread(() =>
             {
-                // CHEKED LINKS LIST [ITEM1: STATUS, ITEM2: LINK TYPE, ITEM3: LINK ADDRESS
-                List<Tuple<string, string, string>> checkedLinksList = new List<Tuple<string, string, string>>();
+                List<EndpointPageLinkValidationItemModel> checkedLinksList = new List<EndpointPageLinkValidationItemModel>();
+                bool cancelled = false;
 
                 foreach (Property pageLink in _selectedEndpoint.HTMLPageLinks.PropertyItem)
                 {
+                    if (EndpointDetailsDialogCancellationGate.IsCancellationRequested(
+                        IsDisposed,
+                        Disposing,
+                        checkerMainForm != null) ||
+                        dialogClosing)
+                    {
+                        cancelled = true;
+                        break;
+                    }
+
                     // ADD PAGE LINK ITEMS
                     if (pageLink.ItemValue.TrimEnd('/') != tb_ResponseURL.Text.TrimEnd('/'))
                     {
-                        string linkStatus = "INVALID";
+                        bool requestSucceeded = false;
+                        HttpStatusCode? responseStatusCode = null;
 
                         HttpWebResponse httpWebResponse = null;
 
@@ -1983,24 +2084,15 @@ namespace EndpointChecker
 
                             httpWebResponse = GetHTTPWebResponse(httpWebRequest, 5);
 
-                            linkStatus = "VALID";
+                            requestSucceeded = true;
                         }
                         catch (WebException webEX)
                         {
                             httpWebResponse = webEX.Response as HttpWebResponse;
 
-                            if (httpWebResponse != null &&
-                                httpWebResponse.StatusCode != HttpStatusCode.NotFound &&
-                                httpWebResponse.StatusCode != HttpStatusCode.BadGateway &&
-                                httpWebResponse.StatusCode != HttpStatusCode.GatewayTimeout &&
-                                httpWebResponse.StatusCode != HttpStatusCode.InternalServerError &&
-                                httpWebResponse.StatusCode != HttpStatusCode.NotImplemented &&
-                                httpWebResponse.StatusCode != HttpStatusCode.RequestTimeout &&
-                                httpWebResponse.StatusCode != HttpStatusCode.Conflict &&
-                                httpWebResponse.StatusCode != HttpStatusCode.Gone &&
-                                httpWebResponse.StatusCode != HttpStatusCode.ServiceUnavailable)
+                            if (httpWebResponse != null)
                             {
-                                linkStatus = "VALID";
+                                responseStatusCode = httpWebResponse.StatusCode;
                             }
                         }
                         catch
@@ -2014,10 +2106,20 @@ namespace EndpointChecker
                             }
                         }
 
-                        checkedLinksList.Add(new Tuple<string, string, string>(linkStatus, pageLink.ItemName, pageLink.ItemValue));
+                        checkedLinksList.Add(EndpointPageLinkValidationWorkflow.BuildItem(
+                            new EndpointPageLinkValidationItemInput
+                            {
+                                RequestSucceeded = requestSucceeded,
+                                ResponseStatusCode = responseStatusCode,
+                                LinkType = pageLink.ItemName,
+                                LinkAddress = pageLink.ItemValue,
+                            }));
                     }
+                }
 
-                    Application.DoEvents();
+                if (cancelled)
+                {
+                    return;
                 }
 
                 ThreadSafeInvoke(() =>
@@ -2026,11 +2128,11 @@ namespace EndpointChecker
                     lv_PageLinks.BeginUpdate();
                     lv_PageLinks.Items.Clear();
 
-                    foreach (Tuple<string, string, string> checkedLinkStatus in checkedLinksList)
+                    foreach (EndpointPageLinkValidationItemModel checkedLinkStatus in checkedLinksList)
                     {
                         ListViewItem linkItem = new ListViewItem
                         {
-                            Text = checkedLinkStatus.Item1
+                            Text = checkedLinkStatus.Status
                         };
 
                         if (linkItem.Text == "VALID")
@@ -2042,8 +2144,8 @@ namespace EndpointChecker
                             linkItem.ImageIndex = 9;
                         }
 
-                        linkItem.SubItems.Add(checkedLinkStatus.Item2);
-                        linkItem.SubItems.Add(checkedLinkStatus.Item3);
+                        linkItem.SubItems.Add(checkedLinkStatus.LinkType);
+                        linkItem.SubItems.Add(checkedLinkStatus.LinkAddress);
 
                         lv_PageLinks.Items.Add(linkItem);
                     }
@@ -2057,15 +2159,7 @@ namespace EndpointChecker
                     // COMMON LINKS STATUS
                     if (lv_PageLinks.Items.Count > 0)
                     {
-                        bool isAnyInvalid = false;
-
-                        foreach (ListViewItem linkItem in lv_PageLinks.Items)
-                        {
-                            if (linkItem.Text == "INVALID")
-                            {
-                                isAnyInvalid = true;
-                            }
-                        }
+                        bool isAnyInvalid = EndpointPageLinkValidationWorkflow.HasAnyInvalid(checkedLinksList);
 
                         pb_PageLinks_CommonLinksStatus.Image = isAnyInvalid ? Resources.linkStatus_Invalid : (Image)Resources.linkStatus_Valid;
 
@@ -2132,7 +2226,14 @@ namespace EndpointChecker
 
         public void EndpointDetailsDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
+            dialogClosing = true;
             virusTotalScanCancelled = true;
+
+            TIMER_PingRefresh.Stop();
+            TIMER_PingRefresh.Enabled = false;
+
+            TIMER_VirusTotalResult.Stop();
+            TIMER_VirusTotalResult.Enabled = false;
 
             checkerMainForm.Close();
             checkerMainForm = null;

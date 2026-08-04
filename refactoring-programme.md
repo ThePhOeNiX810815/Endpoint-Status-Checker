@@ -240,8 +240,8 @@ This ledger is intentionally strict: a priority is not considered complete unles
 1. Scan workflow characterization harness: Complete (deterministic criteria covered in `docs/refactoring/reconciliation-2026-08-04.md`)
 2. XLSX and HTML export compatibility baseline: Complete (deterministic criteria covered in `docs/refactoring/reconciliation-2026-08-04.md`)
 3. Protocol decomposition enabled by harness: Complete (strict closure matrix in `docs/refactoring/reconciliation-2026-08-04.md`)
-4. `EndpointDetailsDialog` blocking `.Result` paths: In progress
-5. Unsafe `Application.DoEvents` review/reduction: Not started
+4. `EndpointDetailsDialog` blocking `.Result` paths: Complete (strict closure matrix updated in `docs/refactoring/reconciliation-2026-08-04.md`)
+5. Unsafe `Application.DoEvents` review/reduction: In progress (Priority 5 active)
 6. CI warning-regression governance: Not started (baseline exists)
 7. Remaining low-risk residual cleanup: Partially performed (mail table builder extraction completed)
 
