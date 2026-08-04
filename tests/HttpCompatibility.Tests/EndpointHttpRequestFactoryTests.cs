@@ -34,6 +34,9 @@ namespace EndpointChecker
             Run("Cloudflare bypass interpreter preserves successful bypass override mapping", CloudflareBypassInterpreterPreservesSuccessfulBypassOverrideMapping);
             Run("Cloudflare bypass interpreter preserves failed bypass append mapping", CloudflareBypassInterpreterPreservesFailedBypassAppendMapping);
             Run("Cloudflare bypass interpreter preserves bypass exception append mapping", CloudflareBypassInterpreterPreservesBypassExceptionAppendMapping);
+            Run("Cloudflare bypass executor preserves no-attempt behavior", CloudflareBypassExecutorPreservesNoAttemptBehavior);
+            Run("Cloudflare bypass executor preserves success mapping behavior", CloudflareBypassExecutorPreservesSuccessMappingBehavior);
+            Run("Cloudflare bypass executor preserves exception append behavior", CloudflareBypassExecutorPreservesExceptionAppendBehavior);
             Run("HTTP header collector preserves null and empty handling", HttpHeaderCollectorPreservesNullAndEmptyHandling);
             Run("HTTP header collector preserves request header name and value mapping", HttpHeaderCollectorPreservesHeaderNameAndValueMapping);
             Run("HTTP response body processor preserves read trigger conditions", HttpResponseBodyProcessorPreservesReadTriggerConditions);
@@ -380,6 +383,68 @@ namespace EndpointChecker
                     ExistingResponseCode = "403",
                     ExistingResponseMessage = "Forbidden",
                     BypassExceptionMessage = "unexpected failure",
+                });
+
+            AssertEqual("403", result.ResponseCode);
+            AssertEqual("Forbidden | Bypass error: unexpected failure", result.ResponseMessage);
+        }
+
+        private static void CloudflareBypassExecutorPreservesNoAttemptBehavior()
+        {
+            bool checkerCalled = false;
+
+            EndpointCloudflareBypassInterpretResult result = EndpointCloudflareBypassExecutor.Execute(
+                new EndpointCloudflareBypassExecuteInput
+                {
+                    ShouldAttemptBypass = false,
+                    ExistingResponseCode = "403",
+                    ExistingResponseMessage = "Forbidden",
+                    EndpointAddress = "https://example.test",
+                    ExecuteBypassCheck = _ =>
+                    {
+                        checkerCalled = true;
+                        return null;
+                    },
+                });
+
+            AssertEqual(false, checkerCalled);
+            AssertEqual("403", result.ResponseCode);
+            AssertEqual("Forbidden", result.ResponseMessage);
+        }
+
+        private static void CloudflareBypassExecutorPreservesSuccessMappingBehavior()
+        {
+            EndpointCloudflareBypassInterpretResult result = EndpointCloudflareBypassExecutor.Execute(
+                new EndpointCloudflareBypassExecuteInput
+                {
+                    ShouldAttemptBypass = true,
+                    ExistingResponseCode = "403",
+                    ExistingResponseMessage = "Forbidden",
+                    EndpointAddress = "https://example.test",
+                    ExecuteBypassCheck = _ => new EndpointCloudflareBypassCheckResult
+                    {
+                        HasBypassResult = true,
+                        BypassSuccess = true,
+                        BypassStatusCode = 200,
+                        BypassStatusMessage = "OK (FlareSolverr bypass)",
+                        BypassMethodUsed = "FlareSolverr",
+                    },
+                });
+
+            AssertEqual("200", result.ResponseCode);
+            AssertEqual("OK (FlareSolverr bypass)", result.ResponseMessage);
+        }
+
+        private static void CloudflareBypassExecutorPreservesExceptionAppendBehavior()
+        {
+            EndpointCloudflareBypassInterpretResult result = EndpointCloudflareBypassExecutor.Execute(
+                new EndpointCloudflareBypassExecuteInput
+                {
+                    ShouldAttemptBypass = true,
+                    ExistingResponseCode = "403",
+                    ExistingResponseMessage = "Forbidden",
+                    EndpointAddress = "https://example.test",
+                    ExecuteBypassCheck = _ => throw new InvalidOperationException("unexpected failure"),
                 });
 
             AssertEqual("403", result.ResponseCode);
