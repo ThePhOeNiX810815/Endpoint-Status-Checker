@@ -15,6 +15,7 @@ namespace EndpointChecker
             EndpointPingRetryExecutorTests.Register();
             EndpointFtpRequestFactoryTests.Register();
             EndpointFtpStatusMapperTests.Register();
+            EndpointGeoLocationPresentationBuilderTests.Register();
             EndpointHttpRedirectResolverTests.Register();
             EndpointNetworkIdentityResolverTests.Register();
             EndpointNetworkShareAcquisitionTests.Register();
