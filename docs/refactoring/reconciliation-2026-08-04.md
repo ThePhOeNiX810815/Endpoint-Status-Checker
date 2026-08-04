@@ -181,3 +181,68 @@ Independent closure review outcome:
 - No long-running work was moved onto the UI thread.
 
 Priority 5 is `complete` under the strict closure criteria.
+
+## Priority 6: Warning governance local closure under permission constraints
+
+Scope evaluated from live code on Main-Dev-V3:
+
+- tools/warning-governance/Invoke-WarningGovernance.ps1
+- docs/refactoring/warning-baseline.unique.json
+- docs/refactoring/warning-baseline.md
+- repository workflow paths in read-only mode
+
+Priority 6 classification:
+
+- COMPLETE LOCALLY
+- CI ENFORCEMENT BLOCKED BY PERMISSIONS
+- OWNER/AUTHORIZED MAINTAINER ACTION REQUIRED
+
+| Requirement | Status | Evidence |
+| --- | --- | --- |
+| Reproducible counting convention is defined | COMPLETE | Script enforces unique warning instance key and non-incremental analyzer build command. |
+| Local baseline check passes | COMPLETE | check mode returns exit code 0 against captured baseline (3799 unique warnings). |
+| Intentional regression fails locally | COMPLETE | Temporary probe warning (CS1030/CS family) causes check mode exit code 1 with explicit regression messages. |
+| Reverted state passes again | COMPLETE | Probe removed; check mode returns exit code 0 and baseline counts restore. |
+| New warning codes are detected | COMPLETE | check mode reports new warning code detected when CS1030 is introduced. |
+| Warning-family drift is reported | COMPLETE | check mode reports new warning family detected when CS family is introduced. |
+| Baseline file is used instead of repeated raw log lines | COMPLETE | Baseline JSON stores unique counts and families; repeated lines are tracked separately as supporting metric only. |
+| CI wiring implemented in repository | BLOCKED BY PERMISSIONS | No .github/workflows path exists; workflow edits are explicitly permission-blocked for this agent. |
+
+Authorized maintainer CI wiring command:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/warning-governance/Invoke-WarningGovernance.ps1 -Mode check
+```
+
+Required PR target filter for maintainer wiring:
+
+- pull_request targeting Main-Dev-V3
+
+## Final programme closure review (current branch state)
+
+Residual classification values:
+
+- COMPLETE
+- DEFERRED WITH JUSTIFICATION
+- OWNER DECISION REQUIRED
+- BLOCKED BY PERMISSIONS
+
+| Area | Classification | Rationale |
+| --- | --- | --- |
+| Priority 1 scan characterization | COMPLETE | Deterministic coverage is merged and documented. |
+| Priority 2 export compatibility baseline | COMPLETE | Deterministic workbook/HTML compatibility coverage is merged and documented. |
+| Priority 3 protocol decomposition acceptance | COMPLETE | Acceptance matrix closed with intentional orchestration boundary retained. |
+| Priority 4 dialog async-safety closure | COMPLETE | Strict workflow matrix closed and merged. |
+| Priority 5 DoEvents reduction closure | COMPLETE | Repository scan confirms no production Application.DoEvents call sites remain. |
+| Priority 6 local warning governance | COMPLETE | Pass/fail/pass local validation complete with deterministic baseline and regression detection. |
+| Priority 6 GitHub Actions enforcement | BLOCKED BY PERMISSIONS | Workflow path edits are not permitted for this agent; maintainer handoff is documented. |
+| Remaining large-form decomposition | DEFERRED WITH JUSTIFICATION | Compatibility-sensitive orchestration remains intentionally deferred to focused follow-up tickets. |
+| Platform-warning policy for CA1416 class | OWNER DECISION REQUIRED | Requires packaging/platform support decision, not an autonomous refactor action. |
+
+Closure facts:
+
+- Priority 6 local governance is complete.
+- GitHub Actions enforcement is not implemented in-repo due to permission constraints.
+- Authorized maintainer action remains required for workflow wiring.
+- Main-Dev-V2 was not modified.
+- Release tags were not modified.

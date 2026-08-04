@@ -188,7 +188,7 @@ function New-Snapshot {
         solution = $Solution
         commands = [ordered]@{
             restore = "dotnet restore $Solution"
-            analyzer_build = "dotnet build $Solution --no-restore -p:RunAnalyzers=true -v:minimal"
+            analyzer_build = "dotnet build $Solution --no-restore --no-incremental -p:RunAnalyzers=true -v:minimal"
         }
         counts = [ordered]@{
             restore_raw_warning_lines = $restoreWarnings.Count
@@ -214,6 +214,39 @@ function New-Snapshot {
     return [pscustomobject]$snapshot
 }
 
+function Write-CountSummary {
+    param(
+        [string]$Title,
+        [object]$CountsObject,
+        [int]$Limit = 10
+    )
+
+    Write-Host $Title
+
+    $rows = @()
+    foreach ($property in $CountsObject.PSObject.Properties) {
+        $rows += [pscustomobject]@{
+            Key = $property.Name
+            Count = [int]$property.Value
+        }
+    }
+
+    if ($rows.Count -eq 0) {
+        Write-Host "  (none)"
+        return
+    }
+
+    $rows |
+        Sort-Object -Property @(
+            @{ Expression = 'Count'; Descending = $true },
+            @{ Expression = 'Key'; Descending = $false }
+        ) |
+        Select-Object -First $Limit |
+        ForEach-Object {
+            Write-Host ("  {0}: {1}" -f $_.Key, $_.Count)
+        }
+}
+
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot '..\..')
 Set-Location $repoRoot
 
@@ -225,7 +258,7 @@ if ($restoreResult.ExitCode -ne 0) {
     Write-Error "Restore failed. See $restoreLog"
 }
 
-$buildResult = Invoke-Dotnet -CommandArgs @('build', $SolutionPath, '--no-restore', '-p:RunAnalyzers=true', '-v:minimal') -LogPath $buildLog
+$buildResult = Invoke-Dotnet -CommandArgs @('build', $SolutionPath, '--no-restore', '--no-incremental', '-p:RunAnalyzers=true', '-v:minimal') -LogPath $buildLog
 if ($buildResult.ExitCode -ne 0) {
     Write-Error "Analyzer build failed. See $buildLog"
 }
@@ -235,6 +268,8 @@ $current = New-Snapshot -Solution $SolutionPath -RestoreLogPath $restoreLog -Bui
 Write-Host "Build unique warning instances: $($current.counts.build_unique_warning_instances)"
 Write-Host "Build repeated warning lines: $($current.counts.repeated_build_warning_lines)"
 Write-Host "Restore-only unique warnings: $($current.counts.restore_only_unique_warning_instances)"
+Write-CountSummary -Title "Warning families (build unique):" -CountsObject $current.by_family
+Write-CountSummary -Title "Warning codes (build unique, top 10):" -CountsObject $current.by_code -Limit 10
 
 if ($Mode -eq 'capture') {
     $baselineFile = Resolve-Path -Path (Join-Path $repoRoot $BaselinePath) -ErrorAction SilentlyContinue
@@ -269,6 +304,12 @@ $baseline.by_code.PSObject.Properties | ForEach-Object { $baselineCodes[$_.Name]
 $currentCodes = @{}
 $current.by_code.PSObject.Properties | ForEach-Object { $currentCodes[$_.Name] = [int]$_.Value }
 
+$baselineFamilies = @{}
+$baseline.by_family.PSObject.Properties | ForEach-Object { $baselineFamilies[$_.Name] = [int]$_.Value }
+
+$currentFamilies = @{}
+$current.by_family.PSObject.Properties | ForEach-Object { $currentFamilies[$_.Name] = [int]$_.Value }
+
 foreach ($code in $currentCodes.Keys) {
     if (-not $baselineCodes.ContainsKey($code)) {
         $regressions.Add("New warning code detected: $code ($($currentCodes[$code]))")
@@ -277,6 +318,17 @@ foreach ($code in $currentCodes.Keys) {
 
     if ($currentCodes[$code] -gt $baselineCodes[$code]) {
         $regressions.Add("Warning code $code increased: baseline=$($baselineCodes[$code]), current=$($currentCodes[$code])")
+    }
+}
+
+foreach ($family in $currentFamilies.Keys) {
+    if (-not $baselineFamilies.ContainsKey($family)) {
+        $regressions.Add("New warning family detected: $family ($($currentFamilies[$family]))")
+        continue
+    }
+
+    if ($currentFamilies[$family] -gt $baselineFamilies[$family]) {
+        $regressions.Add("Warning family $family increased: baseline=$($baselineFamilies[$family]), current=$($currentFamilies[$family])")
     }
 }
 
