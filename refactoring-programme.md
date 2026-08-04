@@ -552,7 +552,8 @@ Scope completed in this phase:
 
 Remaining work in this ticket:
 
-- Extend async-safety review to remaining dialog network workflows (for example MAC-vendor and related lookups) where cancellation/transition characterization is still missing.
+- Complete link-validation workflow lifecycle characterization (`ValidatePageLinks`) including cancellation/disposal safety and deterministic transition seams.
+- Complete timer/closing lifecycle characterization for dialog callbacks that can outlive form disposal (notably ping refresh loop).
 
 Verification:
 

@@ -11,6 +11,7 @@ namespace EndpointChecker
             EndpointCheckOptionsTests.Register();
             EndpointCheckResultFactoryTests.Register();
             EndpointCheckProgressTests.Register();
+            EndpointDetailsDialogWorkflowSeamsTests.Register();
             EndpointScanWorkflowRulesTests.Register();
             EndpointPingRetryExecutorTests.Register();
             EndpointFtpRequestFactoryTests.Register();
