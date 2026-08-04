@@ -1169,17 +1169,7 @@ namespace EndpointChecker
                                             }
                                         }
 
-                                        // FILL UP 'IP ADDRESS' / 'DNS NAME' [FAST, FROM INPUT, BY REGEX]
-                                        if (Regex.IsMatch(responseURI.Host, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"))
-                                        {
-                                            // IS IP ADDRESS
-                                            endpoint.IPAddress = new string[] { responseURI.Host };
-                                        }
-                                        else
-                                        {
-                                            // IS DNS NAME
-                                            endpoint.DNSName = new string[] { responseURI.Host };
-                                        }
+                                        EndpointNetworkIdentitySeed identitySeed = EndpointNetworkIdentityResolver.CreateSeed(responseURI.Host);
 
                                         // DECLARE TEMPORARY LISTS
                                         List<string> endpointIPAddressesStringList = new List<string>();
@@ -1269,9 +1259,11 @@ namespace EndpointChecker
                                                     // IF ENDPOINT IP ADDRESS IS ANY OF 'DNS SERVER OR DEFAULT GATEWAY' IPs
                                                     // OR
                                                     // RESOLVED MAC IS NOT ANY OF 'DNS SERVER OR DEFAULT GATEWAY' MAC ADDRESSes
-                                                    if (!string.IsNullOrEmpty(macAddress) &&
-                                                       (!localDNSAndGWMACAddresses.Contains(macAddress) ||
-                                                        localDNSAndGWIPAddresses.Contains(_IP_Address.ToString())))
+                                                    if (EndpointNetworkIdentityResolver.ShouldIncludeMacAddress(
+                                                        macAddress,
+                                                        _IP_Address,
+                                                        localDNSAndGWMACAddresses,
+                                                        localDNSAndGWIPAddresses))
                                                     {
                                                         endpointMACAddressStringList.Add(macAddress);
                                                     }
@@ -1309,22 +1301,25 @@ namespace EndpointChecker
                                             }
                                         }
 
-                                        // FILL IP ADDRESS(ES) LIST
-                                        if (endpointIPAddressesStringList.Count > 0)
+                                        EndpointNetworkIdentityFinalizeOutput identityOutput = EndpointNetworkIdentityResolver.Finalize(
+                                            identitySeed,
+                                            endpointIPAddressesStringList,
+                                            endpointDNSNamesStringList,
+                                            endpointMACAddressStringList);
+
+                                        if (identityOutput.IpAddresses != null)
                                         {
-                                            endpoint.IPAddress = endpointIPAddressesStringList.ToArray();
+                                            endpoint.IPAddress = identityOutput.IpAddresses;
                                         }
 
-                                        // FILL DNS NAME(S) LIST
-                                        if (endpointDNSNamesStringList.Count > 0)
+                                        if (identityOutput.DnsNames != null)
                                         {
-                                            endpoint.DNSName = endpointDNSNamesStringList.ToArray();
+                                            endpoint.DNSName = identityOutput.DnsNames;
                                         }
 
-                                        // FILL MAC ADDRESS(ES) LIST
-                                        if (endpointMACAddressStringList.Count > 0)
+                                        if (identityOutput.MacAddresses != null)
                                         {
-                                            endpoint.MACAddress = endpointMACAddressStringList.ToArray();
+                                            endpoint.MACAddress = identityOutput.MacAddresses;
                                         }
 
                                     }
