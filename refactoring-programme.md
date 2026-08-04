@@ -456,3 +456,20 @@ Scope completed in this ticket:
 - Routed `CheckerMainForm.GetHTTPWebHeaders` through the extracted seam while preserving caller-side list mutation behavior.
 - Preserved existing header name/value mapping semantics and null/empty collection handling.
 - Added deterministic `HttpCompatibility` coverage for null/empty handling and representative request header name/value mapping.
+
+## Ticket 19: Protocol decomposition continuation (network share acquisition seam)
+
+Status: Completed
+
+Current v3 integration branch: `Main-Dev-V3`
+
+Objective:
+
+Continue Priority 3 decomposition by extracting deterministic network-share acquisition decision and assignment flow from `bw_GetStatus_DoWork` while preserving host-enumeration behavior.
+
+Scope completed in this ticket:
+
+- Extracted network-share acquisition gating/exception-assignment semantics into `EndpointNetworkShareAcquisition`.
+- Routed the `ResolveNetworkShares` branch in `bw_GetStatus_DoWork` through the extracted seam while preserving assignment-on-success and no-assignment-on-exception behavior.
+- Preserved existing host share enumeration implementation by delegating acquisition through existing `GetNetShares` callback.
+- Added deterministic `EndpointCheckingCore` coverage for disabled-gating behavior, success-path sorted assignment behavior, and exception-path no-assignment behavior.
