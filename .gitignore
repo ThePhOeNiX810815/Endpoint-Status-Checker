@@ -14,6 +14,10 @@ release/
 tools/EndpointChecker-Updater/bin/
 tools/EndpointChecker-Updater/obj/
 
+# Test project build output
+tests/*/bin/
+tests/*/obj/
+
 # Runtime data files
 src/EndpointChecker_LastSeenOnline.json
 src/bin/Debug/EndpointChecker_LastSeenOnline.json

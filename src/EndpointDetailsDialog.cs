@@ -539,12 +539,19 @@ namespace EndpointChecker
                     }
                 }
 
-                // VIRUSTOTAL SCAN
-                tabControl.TabPages.Add(tabPage_VirusTotal);
+                // VIRUSTOTAL SCAN — SKIPPED FOR LOCAL/INTERNAL ADDRESSES (VIRUSTOTAL ONLY REACHES PUBLIC HOSTS)
+                bool isLocalAddressForVirusTotal =
+                    EndpointLocalAddressClassifier.Classify(_selectedEndpoint) == EndpointLocalAddressClassification.Local ||
+                    EndpointVirusTotalLocalFlagStore.IsFlagged(_selectedEndpoint.Name);
 
-                if (!string.IsNullOrEmpty(apiKey_VirusTotal))
+                if (!isLocalAddressForVirusTotal)
                 {
-                    btn_VirusTotal_Refresh_Click(this, null);
+                    tabControl.TabPages.Add(tabPage_VirusTotal);
+
+                    if (!string.IsNullOrEmpty(apiKey_VirusTotal))
+                    {
+                        btn_VirusTotal_Refresh_Click(this, null);
+                    }
                 }
             }
 
@@ -1820,70 +1827,105 @@ namespace EndpointChecker
 
             NewBackgroundThread(() =>
             {
-                EndpointVirusTotalScanRetryExecutor.Execute(new EndpointVirusTotalRetryExecuteInput
+                try
                 {
-                    MaxRetryCount = maxRetryCount,
-                    InitialRetry = retry,
-                    RetryDelayMilliseconds = 5000,
-                    IsCancellationRequested = () =>
-                        EndpointVirusTotalCancellationGate.IsCancellationRequested(
-                            virusTotalScanCancelled,
-                            IsDisposed,
-                            Disposing,
-                            checkerMainForm != null),
-                    ShouldRetryException = vtException =>
-                        !vtException.GetType().IsAssignableFrom(typeof(VirusTotalNET.Exceptions.InvalidResourceException)),
-                    ExecuteAttempt = () =>
+                    EndpointVirusTotalScanRetryExecutor.Execute(new EndpointVirusTotalRetryExecuteInput
                     {
-                        VirusTotal virusTotal = new VirusTotal(apiKey_VirusTotal)
+                        MaxRetryCount = maxRetryCount,
+                        InitialRetry = retry,
+                        RetryDelayMilliseconds = 5000,
+                        IsCancellationRequested = () =>
+                            EndpointVirusTotalCancellationGate.IsCancellationRequested(
+                                virusTotalScanCancelled,
+                                IsDisposed,
+                                Disposing,
+                                checkerMainForm != null),
+                        ShouldRetryException = vtException =>
+                            !vtException.GetType().IsAssignableFrom(typeof(VirusTotalNET.Exceptions.InvalidResourceException)),
+                        ExecuteAttempt = () =>
                         {
-                            UseTLS = true,
-                            UserAgent = http_UserAgent
-                        };
+                            VirusTotal virusTotal = new VirusTotal(apiKey_VirusTotal)
+                            {
+                                UseTLS = true,
+                                UserAgent = http_UserAgent
+                            };
 
-                        Task<UrlScanResult> virusTotalScanResultTask = virusTotal.ScanUrlAsync(urlToScan);
-                        UrlScanResult scanResult = EndpointTaskSyncBridge.AwaitResult(virusTotalScanResultTask);
+                            Task<UrlScanResult> virusTotalScanResultTask = virusTotal.ScanUrlAsync(urlToScan);
+                            UrlScanResult scanResult = EndpointTaskSyncBridge.AwaitResult(virusTotalScanResultTask);
 
-                        if (scanResult.ResponseCode != VirusTotalNET.ResponseCodes.UrlScanResponseCode.Queued)
-                        {
-                            throw new VirusTotalNET.Exceptions.InvalidResourceException(scanResult.VerboseMsg);
-                        }
+                            if (scanResult.ResponseCode != VirusTotalNET.ResponseCodes.UrlScanResponseCode.Queued)
+                            {
+                                throw new VirusTotalNET.Exceptions.InvalidResourceException(scanResult.VerboseMsg);
+                            }
 
-                        return new EndpointVirusTotalRetryAttemptResult
+                            return new EndpointVirusTotalRetryAttemptResult
+                            {
+                                Payload = scanResult,
+                                StatusMessage = scanResult.VerboseMsg,
+                            };
+                        },
+                        OnRetrying = (vtException, currentRetry) =>
                         {
-                            Payload = scanResult,
-                            StatusMessage = scanResult.VerboseMsg,
-                        };
-                    },
-                    OnRetrying = (vtException, currentRetry) =>
-                    {
-                        string statusMessage = EndpointVirusTotalScanRetryExecutor.BuildLegacyRetryStatusMessage(vtException, currentRetry);
+                            string statusMessage = EndpointVirusTotalScanRetryExecutor.BuildLegacyRetryStatusMessage(vtException, currentRetry);
 
-                        ThreadSafeInvoke(() =>
+                            ThreadSafeInvoke(() =>
+                            {
+                                lbl_VirusTotal_Status.ForeColor = Color.MediumVioletRed;
+                                lbl_VirusTotal_Status.Text = statusMessage;
+                            });
+                        },
+                        OnSuccess = attemptResult =>
                         {
-                            lbl_VirusTotal_Status.ForeColor = Color.MediumVioletRed;
-                            lbl_VirusTotal_Status.Text = statusMessage;
-                        });
-                    },
-                    OnSuccess = attemptResult =>
-                    {
-                        UrlScanResult scanResult = attemptResult.Payload as UrlScanResult;
-                        virusTotal_ScanResult = scanResult;
+                            UrlScanResult scanResult = attemptResult.Payload as UrlScanResult;
+                            virusTotal_ScanResult = scanResult;
 
-                        ThreadSafeInvoke(() =>
-                        {
-                            lbl_VirusTotal_Status.ForeColor = Color.DarkGreen;
-                            lbl_VirusTotal_Status.Text = attemptResult.StatusMessage;
-                        });
-                    },
-                    OnFailed = _ =>
-                    {
-                        ThreadSafeInvoke(() =>
-                        {
-                            tabControl.TabPages.Remove(tabPage_VirusTotal);
-                        });
-                    },
-                });
+                            ThreadSafeInvoke(() =>
+                            {
+                                lbl_VirusTotal_Status.ForeColor = Color.DarkGreen;
+                                lbl_VirusTotal_Status.Text = attemptResult.StatusMessage;
+                            });
+                        },
+                        OnFailed = FlagVirusTotalScanFailed,
+                    });
+                }
+                catch (Exception exception)
+                {
+                    // Any failure — including one raised by the cancellation/retry plumbing itself —
+                    // must surface as a flagged status here, never as an unhandled exception on this
+                    // background thread (which would otherwise crash the whole application).
+                    FlagVirusTotalScanFailed(exception);
+                }
+            });
+        }
+
+        /// <summary>
+        /// Marks the VirusTotal tab as failed instead of throwing or silently hiding the tab,
+        /// so the user can see what happened and retry.
+        /// </summary>
+        private void FlagVirusTotalScanFailed(Exception exception)
+        {
+            string reason = exception?.InnerException?.Message ?? exception?.Message ?? "Unknown error";
+
+            ThreadSafeInvoke(() =>
+            {
+                if (!tabControl.TabPages.Contains(tabPage_VirusTotal))
+                {
+                    return;
+                }
+
+                lv_VirusTotal.Visible = false;
+                lbl_VirusTotal_Permalink.Visible = false;
+                tb_VirusTotal_Permalink.Visible = false;
+                lbl_VirusTotal_ScanDateTime.Visible = false;
+                tb_VirusTotal_ScanDateTime.Visible = false;
+                pb_VirusTotalRefresh.Visible = false;
+                pb_VirusTotal_Status.Visible = false;
+
+                lbl_VirusTotal_Status.Visible = true;
+                lbl_VirusTotal_Status.ForeColor = Color.MediumVioletRed;
+                lbl_VirusTotal_Status.Text = "VirusTotal scan failed: " + reason + Environment.NewLine + "Click Refresh to retry.";
+
+                btn_VirusTotal_Refresh.Enabled = true;
             });
         }
 

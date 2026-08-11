@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -28,6 +29,10 @@ namespace EndpointCheckerUpdater
         const string DownloadUrl = "";
         const string TargetVer = "development build";
         const string AppExe = "EndpointChecker.exe";
+
+        // Set this to false only for an official, stable (non-RC) release build.
+        // While true, the user is always asked to confirm before a test build is installed.
+        const bool IsReleaseCandidateBuild = true;
 
         // User data files that must survive the update
         static readonly string[] UserDataFiles =
@@ -226,24 +231,33 @@ namespace EndpointCheckerUpdater
             _txtDir.Text = dir ?? string.Empty;
             string exePath = Path.Combine(dir ?? string.Empty, AppExe);
 
+            bool downloadAvailable = !string.IsNullOrWhiteSpace(DownloadUrl);
+
             if (File.Exists(exePath))
             {
+                string availabilitySuffix = downloadAvailable
+                    ? "  →  a test build is available"
+                    : "  →  no official v3 update available";
+
                 try
                 {
                     var vi = FileVersionInfo.GetVersionInfo(exePath);
-                    _lblVersion.Text = $"Detected:  v{vi.FileVersion}  →  no official v3 update available";
+                    _lblVersion.Text = $"Detected:  v{vi.FileVersion}{availabilitySuffix}";
                     _lblVersion.ForeColor = Color.FromArgb(100, 200, 100);
                 }
                 catch
                 {
-                    _lblVersion.Text = "Detected: EndpointChecker.exe found (version unknown)  →  no official v3 update available";
+                    _lblVersion.Text = $"Detected: EndpointChecker.exe found (version unknown){availabilitySuffix}";
                     _lblVersion.ForeColor = Color.FromArgb(100, 200, 100);
                 }
+
+                _btnUpdate.Enabled = downloadAvailable;
             }
             else
             {
                 _lblVersion.Text = "EndpointChecker.exe not found in this folder.";
                 _lblVersion.ForeColor = Color.Orange;
+                _btnUpdate.Enabled = false;
             }
         }
 
@@ -264,11 +278,45 @@ namespace EndpointCheckerUpdater
 
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(
-                "Official v3 updates are not available yet.",
-                Text,
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
+            if (string.IsNullOrWhiteSpace(DownloadUrl))
+            {
+                MessageBox.Show(
+                    "Official v3 updates are not available yet.",
+                    Text,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            if (IsReleaseCandidateBuild)
+            {
+                DialogResult confirm = MessageBox.Show(
+                    $"v{TargetVer} is a test (release candidate) build, not an official stable release.\r\n\r\n" +
+                    "Do you want to install it to help test it?",
+                    "Test Build Confirmation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (confirm != DialogResult.Yes)
+                {
+                    Log("Update cancelled by user (test build declined).", Color.Yellow);
+                    return;
+                }
+            }
+
+            string installDir = _txtDir.Text.Trim();
+            if (string.IsNullOrEmpty(installDir) || !File.Exists(Path.Combine(installDir, AppExe)))
+            {
+                MessageBox.Show(
+                    "Select a valid install directory containing EndpointChecker.exe first.",
+                    Text,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            SetControlsEnabled(false);
+            _ = RunUpdateAsync(installDir);
         }
 
         private void SetControlsEnabled(bool enabled)
@@ -281,7 +329,27 @@ namespace EndpointCheckerUpdater
 
         private async Task RunUpdateAsync(string installDir)
         {
-            string tempZip = Path.Combine(Path.GetTempPath(), "EndpointChecker-v3-unpublished-win-x86.zip");
+            try
+            {
+                await RunUpdateStepsAsync(installDir);
+            }
+            catch (Exception ex)
+            {
+                Log($"Update failed: {ex.Message}", Color.OrangeRed);
+                Status("Update failed. See log for details.", Color.OrangeRed);
+                SetControlsEnabled(true);
+                MessageBox.Show(
+                    $"The update could not be completed:\r\n\r\n{ex.Message}\r\n\r\n" +
+                    "Nothing further was changed after this point — you can try again.",
+                    Text,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task RunUpdateStepsAsync(string installDir)
+        {
+            string tempZip = Path.Combine(Path.GetTempPath(), "EndpointChecker-update-download.zip");
             string tempExtract = Path.Combine(Path.GetTempPath(), "EndpointChecker_Updater_Extract");
 
             // ── Step 1: Stop running instance ────────────────────────────────────
@@ -340,6 +408,19 @@ namespace EndpointCheckerUpdater
             Log("Extraction complete.");
             Progress(70);
 
+            // Some release zips wrap everything in a single top-level folder
+            // (e.g. "EndpointChecker-v3.1.1-rc2-test/EndpointChecker.exe") instead of a flat
+            // layout. If that's what we got, treat that folder as the real root so files land
+            // directly in installDir rather than in an unexpected subfolder. tempExtract itself
+            // is left alone so step 7 still cleans up the whole extraction, not just the subfolder.
+            string copySourceRoot = tempExtract;
+            string[] rootEntries = Directory.GetFileSystemEntries(tempExtract);
+            if (rootEntries.Length == 1 && Directory.Exists(rootEntries[0]))
+            {
+                copySourceRoot = rootEntries[0];
+                Log($"Zip wraps a single folder — using it as the update root: {Path.GetFileName(copySourceRoot)}");
+            }
+
             // ── Step 4: Backup user data ─────────────────────────────────────────
             Status("Backing up user data...");
             var backups = new Dictionary<string, byte[]>();
@@ -363,12 +444,12 @@ namespace EndpointCheckerUpdater
 
             await Task.Run(() =>
             {
-                foreach (string src in Directory.GetFiles(tempExtract, "*", SearchOption.AllDirectories))
+                foreach (string src in Directory.GetFiles(copySourceRoot, "*", SearchOption.AllDirectories))
                 {
-                    string rel = src.Substring(tempExtract.Length).TrimStart(Path.DirectorySeparatorChar);
+                    string rel = src.Substring(copySourceRoot.Length).TrimStart(Path.DirectorySeparatorChar);
                     string dest = Path.Combine(installDir, rel);
                     Directory.CreateDirectory(Path.GetDirectoryName(dest));
-                    File.Copy(src, dest, overwrite: true);
+                    CopyFileWithRetry(src, dest);
                     filesCopied++;
                 }
             });
@@ -411,6 +492,24 @@ namespace EndpointCheckerUpdater
                 Process.Start(new ProcessStartInfo(newExe) { UseShellExecute = true });
 
             Close();
+        }
+
+        // The exe we just stopped can stay briefly locked by the OS/AV after process exit —
+        // retry a few times with a short delay rather than failing the whole update over it.
+        private static void CopyFileWithRetry(string src, string dest, int maxAttempts = 5)
+        {
+            for (int attempt = 1; ; attempt++)
+            {
+                try
+                {
+                    File.Copy(src, dest, overwrite: true);
+                    return;
+                }
+                catch (IOException) when (attempt < maxAttempts)
+                {
+                    Thread.Sleep(300);
+                }
+            }
         }
 
         // ── Thread-safe UI helpers ───────────────────────────────────────────────

@@ -94,7 +94,19 @@ namespace EndpointChecker.Properties {
                 this["DisabledItemsList"] = value;
             }
         }
-        
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string VirusTotal_LocalOverrideList {
+            get {
+                return ((string)(this["VirusTotal_LocalOverrideList"]));
+            }
+            set {
+                this["VirusTotal_LocalOverrideList"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]

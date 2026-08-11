@@ -52,7 +52,12 @@ namespace EndpointChecker
             httpWebRequest.Timeout = httpRequestTimeout;
             httpWebRequest.ReadWriteTimeout = httpRequestTimeout;
             httpWebRequest.AllowAutoRedirect = allowAutoRedirect;
-            httpWebRequest.KeepAlive = true;
+
+            // Each check is a one-shot request, so there's no real benefit to keeping the
+            // connection open — and some servers (e.g. httpstat.us under concurrent requests
+            // to the same host) drop/reset pooled keep-alive connections mid-response, which
+            // surfaces as "the response ended prematurely." A fresh connection per request avoids that.
+            httpWebRequest.KeepAlive = false;
             httpWebRequest.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
             httpWebRequest.CookieContainer = cookieContainer;
             httpWebRequest.AutomaticDecompression =

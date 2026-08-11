@@ -2,6 +2,62 @@
 
 ---
 
+## v3.1.1-rc2 — 2026-08-11 (ticket branch `feature/v3.1.1-rc2-prep`, pending approval)
+
+### Supersedes RC1
+
+RC2 is intended to be published **instead of** `v3.1.1-rc1`, not alongside it, once approved
+after local testing.
+
+### New
+
+- **About screen** — new "About" menu button with developer, version/build date, homepage
+  link, a GitHub v3 page link, and a release-channel badge ("RELEASE CANDIDATE 2") that
+  disappears on its own once a build's version has a zero 4th component (stable release).
+  Plays one of two background tracks automatically; a single "keep playing after closing
+  this screen" checkbox controls whether it survives dialog close — never plays two tracks
+  at once, and only stops exactly when the dialog closes with the box unchecked.
+- **VirusTotal — skip local addresses** — loopback/private-range/`.local`/bare-hostname
+  addresses now skip the VirusTotal tab automatically (VirusTotal can only reach public
+  hosts). Endpoints the classifier can't determine can be flagged manually via a new
+  right-click "Flag as Local Address (Skip VirusTotal)" option on the endpoint list.
+- **VirusTotal — no more unhandled-exception risk** — a scan failure now always shows a
+  clear "scan failed — click Refresh to retry" status instead of either silently vanishing
+  or (in a worst case) crashing the app via an unobserved background-thread exception.
+
+### Fixed
+
+- **Scan progress bar color flicker** — an ambient UI "pulse" animation and the real scan
+  status update were both overwriting `lbl_ProgressCount`/`pb_RefreshProcess` colors roughly
+  10 times a second during a scan. The pulse now backs off while a scan is running.
+- **`httpstat.us` "response ended prematurely" failures** — disabled `KeepAlive` on check
+  requests; each check is one-shot, so there's no benefit to it, and some servers reset
+  pooled connections under concurrent requests to the same host.
+- **Stale `ftp.debian.org` sample entry** — Debian retired anonymous FTP service years ago
+  (confirmed: connection times out). Replaced with `test.rebex.net`, a dedicated always-on
+  public FTP test server (confirmed reachable).
+- **Manual updater tool** — a failed download/extract left the UI frozen with no message and
+  no way to close or retry; now caught, logged, and reported, with controls re-enabled for a
+  retry. Also: handles a release zip that wraps everything in one top-level folder, and
+  retries a locked-file copy briefly (the just-stopped exe can stay locked for a moment).
+- **Startup delay** — enabling in-app update checks (see below) could block the very first
+  window from appearing for up to ~30s on a slow/unreliable network, with no feedback at all.
+  The update-check `WebClient` now uses a 3s timeout specifically for this call site.
+
+### Changed — in-app updater
+
+- The updater now selects its feed by the running build's major version: v2 reads
+  `Main-Dev-Branch/version.txt`, v3 reads `Main-Dev-V3/version.txt`. Previously every build
+  read the v2 feed regardless of its own version.
+- `app_UpdateChecksEnabled` is now `true` (`Main-Dev-V3/version.txt` is a live, already-used
+  feed — verified against real feed data before flipping this). Two guardrails apply
+  regardless: a v2 install can never be offered a v3 package (major-version ceiling), and a
+  release-candidate build is never silently auto-installed even with "auto-update in future"
+  enabled — the user is always asked to confirm first. Same confirmation gating was added to
+  the standalone `EndpointChecker-Updater` tool.
+
+---
+
 ## v3.1.1-rc1 — 2026-08-04
 
 ### Release Candidate (Test Channel)

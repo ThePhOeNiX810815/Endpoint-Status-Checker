@@ -20,7 +20,7 @@ namespace EndpointChecker
         public bool UpdateSkip { get; set; }
         public bool AutoUpdateInFuture { get; set; }
 
-        public NewVersionDialog()
+        public NewVersionDialog(bool isReleaseCandidate = false)
         {
             InitializeComponent();
 
@@ -33,15 +33,33 @@ namespace EndpointChecker
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 
-            // SET INFORMATION TEXT
-            lbl_NewVersion.Text = "A new version of " + app_ApplicationName + " is available !";
+            if (isReleaseCandidate)
+            {
+                // TEST/RC BUILDS ARE NEVER SILENTLY AUTO-APPLIED — HIDE THE "AUTO UPDATE IN FUTURE" OPTION
+                lbl_NewVersion.Text = "A new TEST build of " + app_ApplicationName + " is available !";
 
-            lbl_NewVersionDetail.Text =
-                app_ApplicationName +
-                " " +
-                GetVersionString(app_LatestPackageVersion, true, false) +
-                " is now available. You have version " +
-                GetVersionString(app_Version, true, false);
+                lbl_NewVersionDetail.Text =
+                    app_ApplicationName +
+                    " " +
+                    GetVersionString(app_LatestPackageVersion, true, true) +
+                    " is a pre-release test build. You have version " +
+                    GetVersionString(app_Version, true, false) +
+                    ". Do you want to install it to help test it ?";
+
+                cb_FutureAutoUpdate.Visible = false;
+                btn_InstallUpdate.Text = "Test This Build";
+            }
+            else
+            {
+                lbl_NewVersion.Text = "A new version of " + app_ApplicationName + " is available !";
+
+                lbl_NewVersionDetail.Text =
+                    app_ApplicationName +
+                    " " +
+                    GetVersionString(app_LatestPackageVersion, true, false) +
+                    " is now available. You have version " +
+                    GetVersionString(app_Version, true, false);
+            }
 
             // SET RELEASE NOTES
             rtb_ReleaseNotes.Rtf = app_LatestPackageReleaseNotes_RTF;

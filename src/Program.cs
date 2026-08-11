@@ -71,6 +71,16 @@ namespace EndpointChecker
         public static string app_Built_DateTime = RetrieveLinkerTimestamp(true);
         public static string app_Copyright = FileVersionInfo.GetVersionInfo(app_Assembly.Location).LegalCopyright;
         public static string app_Title = app_ApplicationName + " v" + app_VersionString;
+        public static string app_Developer = "Peter Machaj";
+        public static string app_HomePage = "https://endpoint-status-checker.webnode.page";
+        public static string app_GitHubPage = "https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/tree/Main-Dev-V3";
+
+        // Release-candidate builds carry a non-zero 4th version component (see
+        // docs/v3-rc-testing-and-refactoring.md, e.g. 3.1.1.2 = "RC2"). A stable release sets
+        // that component back to 0, at which point this label disappears on its own —
+        // no further code change needed to "graduate" a build out of RC status.
+        public static string app_ReleaseChannelLabel =
+            app_Version.Revision > 0 ? "RELEASE CANDIDATE " + app_Version.Revision : string.Empty;
 
         // FEEDBACK AND EXCEPTION E-MAIL REPORT SENDER AND RECIPIENT ADDRESS 
         public static MailAddress report_Recipient = new MailAddress("petermachaj@e.email");
@@ -138,7 +148,12 @@ namespace EndpointChecker
         public static string app_LatestPackageLink = string.Empty;
         public static string app_LatestPackageDate = string.Empty;
         public static string app_LatestPackageReleaseNotes_RTF = string.Empty;
-        private static readonly bool app_UpdateChecksEnabled = false;
+
+        // The Main-Dev-V3/version.txt feed is live (confirmed serving real data), and
+        // CheckForUpdate() enforces a same-major-version ceiling (no v2 -> v3 auto-updates)
+        // and always confirms RC/test builds with the user before installing, so update
+        // checks are safe to leave enabled for both lines.
+        private static readonly bool app_UpdateChecksEnabled = true;
 
         // SIGNING CERTIFICATE
         public static bool app_IsOriginalSignedExecutable = IsOriginalSignedExecutable();
@@ -418,20 +433,27 @@ namespace EndpointChecker
 
             try
             {
-                using (CustomWebClient updateWC = new CustomWebClient())
+                // Each major version line publishes its own feed on its own branch, so a v2
+                // install is never compared against the v3 feed (or vice-versa).
+                string updateFeedBranch = app_Version.Major >= 3 ? "Main-Dev-V3" : "Main-Dev-Branch";
+                string updateFeedBaseUrl =
+                    "https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/" +
+                    updateFeedBranch + "/";
+
+                // Startup blocks on this before any window is shown, so keep it short —
+                // a slow/unreachable network should never turn into a long, silent hang at launch.
+                using (CustomWebClient updateWC = new CustomWebClient(timeoutMilliseconds: 3000))
                 {
                     // GET LATEST VERSION NUMBER
                     app_LatestPackageVersion = new Version(
                         updateWC
-                        .DownloadString(
-                            "https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/version.txt")
+                        .DownloadString(updateFeedBaseUrl + "version.txt")
                         .TrimEnd());
 
                     // GET LATEST PACKAGE INFO
                     string[] app_LatestPackageInfo =
                         updateWC
-                        .DownloadString(
-                            "https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/package.txt")
+                        .DownloadString(updateFeedBaseUrl + "package.txt")
                         .TrimEnd()
                         .Split(
                             new string[] { "\n" },
@@ -443,16 +465,26 @@ namespace EndpointChecker
                     // GET LATEST VERSION RELEASE NOTES
                     app_LatestPackageReleaseNotes_RTF =
                         updateWC
-                        .DownloadString(
-                            "https://raw.githubusercontent.com/ThePhOeNiX810815/Endpoint-Status-Checker/Main-Dev-Branch/release_notes.rtf");
+                        .DownloadString(updateFeedBaseUrl + "release_notes.rtf");
 
-                    if ((app_LatestPackageVersion > app_Version &&
+                    // A major-version jump (e.g. v2 -> v3) is never offered through the in-app
+                    // updater — that migration is manual-updater-only by design.
+                    bool isSameMajorVersion = app_LatestPackageVersion.Major == app_Version.Major;
+
+                    // Revision component != 0 marks a release-candidate/test build (see
+                    // docs/v3-rc-testing-and-refactoring.md — e.g. 3.1.1.1 = "3.1.1 RC1").
+                    // RC builds must always be confirmed by the user, never silently auto-installed.
+                    bool isReleaseCandidateBuild = app_LatestPackageVersion.Revision > 0;
+
+                    if (isSameMajorVersion &&
+                        ((app_LatestPackageVersion > app_Version &&
                          app_LatestPackageVersion > app_AutoUpdate_SkipVersion) ||
-                        app_TestMode)
+                        app_TestMode))
                     {
                         app_UpdateAvailable = true;
 
-                        if (app_AutoUpdate_AutoUpdateInFuture)
+                        if (app_AutoUpdate_AutoUpdateInFuture &&
+                            !isReleaseCandidateBuild)
                         {
                             // AUTO UPDATE
                             app_AutoUpdateNow = true;
@@ -460,10 +492,11 @@ namespace EndpointChecker
                         else
                         {
                             // SHOW NEW VERSION DIALOG
-                            NewVersionDialog newVersionDialog = new NewVersionDialog();
+                            NewVersionDialog newVersionDialog = new NewVersionDialog(isReleaseCandidateBuild);
                             newVersionDialog.ShowDialog();
 
-                            if (newVersionDialog.AutoUpdateInFuture)
+                            if (newVersionDialog.AutoUpdateInFuture &&
+                                !isReleaseCandidateBuild)
                             {
                                 Settings.Default.AutoUpdate_AutoUpdateInFuture = true;
                                 Settings.Default.Save();
@@ -747,10 +780,17 @@ namespace EndpointChecker
     }
     public class CustomWebClient : WebClient
     {
+        private readonly int timeoutMilliseconds;
+
+        public CustomWebClient(int timeoutMilliseconds = 10000)
+        {
+            this.timeoutMilliseconds = timeoutMilliseconds;
+        }
+
         protected override WebRequest GetWebRequest(Uri uri)
         {
             WebRequest w = base.GetWebRequest(uri);
-            w.Timeout = 10000;
+            w.Timeout = timeoutMilliseconds;
             return w;
         }
     }

@@ -60,7 +60,7 @@ namespace EndpointChecker
             AssertEqual("EndpointCheckerTest/1.0", request.UserAgent);
             AssertEqual(@"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7", request.Accept);
             AssertEqual(HttpVersion.Version11, request.ProtocolVersion);
-            AssertEqual(true, request.KeepAlive);
+            AssertEqual(false, request.KeepAlive);
             AssertEqual(100, request.MaximumAutomaticRedirections);
             AssertEqual(DecompressionMethods.GZip | DecompressionMethods.Deflate, request.AutomaticDecompression);
             AssertEqual(@"*;*", request.Headers["accept-language"]);

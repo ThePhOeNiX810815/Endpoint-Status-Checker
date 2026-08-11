@@ -64,31 +64,59 @@ Endpoint Status Checker v3 is currently developed on the `Main-Dev-V3` branch.
 
 Current public distribution status:
 
-- Test channel: GitHub prerelease `v3.1.1-rc1`
+- Test channel: GitHub prerelease `v3.1.1-rc1` (superseded by `v3.1.1-rc2` — pending approval, see below)
 - Official stable v3 channel: not published yet
 
-The in-app updater remains intentionally disabled for v3 builds.
+## v3.1.1 RC2 Test Build (ticket branch — pending approval)
 
-## v3.1.1 RC Test Build
-
-This branch provides a test-only release candidate intended for validation, not as an official production release.
+`feature/v3.1.1-rc2-prep` fixes several issues found while validating RC1 and is intended
+to be published **instead of** RC1 once approved: About screen, VirusTotal local-address
+handling, a scan-progress color flicker, a couple of endpoint-list/HTTP flakiness fixes, and
+manual-updater robustness. See [CHANGELOG.md](CHANGELOG.md) for the full list.
 
 - Release channel: **GitHub prerelease only**
+- Tag (once published): `v3.1.1-rc2`
+- Asset (once published): `EndpointChecker-v3.1.1-rc2-test.zip`
+- Status: awaiting local test sign-off before PR/merge into `Main-Dev-V3` and publish
+
+Update-checker behavior (changed in RC2):
+
+- The in-app updater now checks a **per-major-version feed**: v2 builds check
+  `Main-Dev-Branch/version.txt`, v3 builds check `Main-Dev-V3/version.txt` — each line only
+  ever compares against its own channel.
+- `app_UpdateChecksEnabled` is now **on** for both lines (`Main-Dev-V3/version.txt` is a live,
+  already-in-use feed). This was verified against the real feed data before enabling it.
+- Two safeguards remain regardless of that setting:
+  - A v2 install is never offered a v3 package (major-version ceiling), so upgrading
+    from v2.15 to v3 is still manual-updater-only.
+  - A release-candidate build (non-zero 4th version number) is **never** silently
+    auto-installed — the user is always asked to confirm, even with "auto-update in future" on.
+- Startup no longer blocks on this check for more than a few seconds even on a slow/blocked
+  network — the update-check `WebClient` timeout was shortened specifically for this call.
+
+Older RC1 test-build notes (still accurate for that build):
+
 - Tag: `v3.1.1-rc1`
 - Asset: `EndpointChecker-v3.1.1-rc1-test.zip`
 - Download: [v3.1.1 RC1 test build](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/tag/v3.1.1-rc1)
-
-Safety notes for update behavior:
-
-- v3 in-app update checks remain hard-disabled in source (`app_UpdateChecksEnabled = false`).
-- This RC publish does not modify `Main-Dev-Branch/version.txt` or `Main-Dev-Branch/package.txt` (the legacy v2.15 update source).
-- Because this is a prerelease asset on the v3 branch line, it is isolated from the v2.15 automatic update path.
 - Test builds should be signed with a trusted self-signed certificate available in the local certificate store before packaging.
 
 Repository note:
 
 - Large packaged binaries are not stored in this branch.
 - Release files are published as GitHub Release assets only.
+
+## What's New in v3.1.1 RC2
+
+| Area | Change |
+| --- | --- |
+| **About screen** | New "About" menu button — developer, homepage, GitHub v3 page, version/build date, and an RC/stable release-channel badge that self-clears on a stable build. Also plays one of two background tracks, with an opt-in "keep playing after close" checkbox that never overlaps two tracks. |
+| **VirusTotal** | Scans are now skipped automatically for local/private/loopback addresses (VirusTotal can't reach them anyway); endpoints the classifier can't determine can be flagged manually via right-click. Scan failures now show a clear "failed, click Refresh to retry" state instead of ever risking an unhandled exception. |
+| **Scan progress bar** | Fixed a color flicker between the idle pulse animation and the active scan-status color — they were overwriting each other every ~95ms during a scan. |
+| **HTTP checks** | Disabled `KeepAlive` on check requests — fixes "response ended prematurely" failures against servers (e.g. httpstat.us) that reset pooled connections under concurrent requests. |
+| **Sample endpoint list** | Replaced the retired `ftp.debian.org` anonymous-FTP entry (Debian dropped FTP service years ago) with `test.rebex.net`, a dedicated always-on public FTP test server. |
+| **Manual updater** | Fixed a bug where a failed download/extract left the tool frozen with no message and no way to close; now shows the error and re-enables the UI. Also handles zips that wrap a single top-level folder, and retries file copies briefly if the just-stopped exe is still momentarily locked. |
+| **In-app updater** | See "Update-checker behavior" above — per-major-version feed routing, enabled checks, and a bounded startup timeout. |
 
 ## What's New in v3 Development
 
