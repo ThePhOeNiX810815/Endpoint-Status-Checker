@@ -35,6 +35,7 @@
     <PackageReference Include="IPAddressRange" Version="4.2.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.5" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Nager.PublicSuffix" Version="2.2.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />

@@ -1,19 +1,23 @@
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
+using NAudio.Wave;
 
 namespace EndpointChecker
 {
     /// <summary>
-    /// Plays one of the About screen's two MP3s via the legacy MCI API (winmm.dll — no extra
-    /// dependency needed for MP3 playback). Lives independently of any AboutDialog instance so
-    /// playback can keep going after the dialog that started it is closed.
+    /// Plays one of the About screen's two MP3s via NAudio. Lives independently of any
+    /// AboutDialog instance so playback can keep going after the dialog that started it is
+    /// closed.
     /// </summary>
+    /// <remarks>
+    /// This used to go through the legacy MCI API (winmm.dll, "type mpegvideo"), but that
+    /// driver is a thin DirectShow wrapper that turned out to be unreliable in practice: it
+    /// flatly refused to open one of the two tracks (a large embedded-art ID3 tag tripped it
+    /// up) and got flakier still under repeated rapid open/close. NAudio decodes MP3 frames
+    /// directly in managed code and plays through WaveOut, with no such legacy baggage.
+    /// </remarks>
     internal static class AboutDialogMusicPlayer
     {
-        private const string Alias = "aboutDialogMusic";
-
         private static readonly string[] TrackFileNames =
         {
             "Endpoint Checker.mp3",
@@ -24,8 +28,8 @@ namespace EndpointChecker
         private static readonly Random Rng = new Random();
         private static string lastPlayedFileName;
 
-        [DllImport("winmm.dll")]
-        private static extern long mciSendString(string command, StringBuilder returnValue, int returnLength, IntPtr callback);
+        private static WaveOutEvent outputDevice;
+        private static AudioFileReader audioFile;
 
         public static bool IsPlaying
         {
@@ -33,7 +37,7 @@ namespace EndpointChecker
             {
                 lock (SyncRoot)
                 {
-                    return QueryIsPlaying();
+                    return outputDevice != null && outputDevice.PlaybackState == PlaybackState.Playing;
                 }
             }
         }
@@ -45,7 +49,7 @@ namespace EndpointChecker
         {
             lock (SyncRoot)
             {
-                if (QueryIsPlaying())
+                if (outputDevice != null && outputDevice.PlaybackState == PlaybackState.Playing)
                 {
                     return;
                 }
@@ -57,18 +61,21 @@ namespace EndpointChecker
                     return;
                 }
 
-                mciSendString("close " + Alias, null, 0, IntPtr.Zero);
+                DisposePlayback();
 
-                long openResult = mciSendString(
-                    "open \"" + path + "\" type mpegvideo alias " + Alias,
-                    null,
-                    0,
-                    IntPtr.Zero);
-
-                if (openResult == 0)
+                try
                 {
-                    mciSendString("play " + Alias, null, 0, IntPtr.Zero);
+                    audioFile = new AudioFileReader(path);
+                    outputDevice = new WaveOutEvent();
+                    outputDevice.Init(audioFile);
+                    outputDevice.Play();
                     lastPlayedFileName = fileName;
+                }
+                catch
+                {
+                    // Corrupt/unsupported file, no audio device available, etc. — stay silent
+                    // rather than let a playback failure take down the About screen.
+                    DisposePlayback();
                 }
             }
         }
@@ -77,8 +84,7 @@ namespace EndpointChecker
         {
             lock (SyncRoot)
             {
-                mciSendString("stop " + Alias, null, 0, IntPtr.Zero);
-                mciSendString("close " + Alias, null, 0, IntPtr.Zero);
+                DisposePlayback();
             }
         }
 
@@ -95,11 +101,14 @@ namespace EndpointChecker
             return candidates[Rng.Next(candidates.Length)];
         }
 
-        private static bool QueryIsPlaying()
+        private static void DisposePlayback()
         {
-            StringBuilder status = new StringBuilder(128);
-            mciSendString("status " + Alias + " mode", status, status.Capacity, IntPtr.Zero);
-            return status.ToString().Trim().Equals("playing", StringComparison.OrdinalIgnoreCase);
+            outputDevice?.Stop();
+            outputDevice?.Dispose();
+            outputDevice = null;
+
+            audioFile?.Dispose();
+            audioFile = null;
         }
     }
 }
