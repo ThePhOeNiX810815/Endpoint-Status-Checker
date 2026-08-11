@@ -22,6 +22,7 @@ namespace EndpointChecker
 
         private static readonly object SyncRoot = new object();
         private static readonly Random Rng = new Random();
+        private static string lastPlayedFileName;
 
         [DllImport("winmm.dll")]
         private static extern long mciSendString(string command, StringBuilder returnValue, int returnLength, IntPtr callback);
@@ -49,7 +50,7 @@ namespace EndpointChecker
                     return;
                 }
 
-                string fileName = TrackFileNames[Rng.Next(TrackFileNames.Length)];
+                string fileName = PickNextTrack();
                 string path = Path.Combine(AppContext.BaseDirectory, "media", fileName);
                 if (!File.Exists(path))
                 {
@@ -67,6 +68,7 @@ namespace EndpointChecker
                 if (openResult == 0)
                 {
                     mciSendString("play " + Alias, null, 0, IntPtr.Zero);
+                    lastPlayedFileName = fileName;
                 }
             }
         }
@@ -78,6 +80,19 @@ namespace EndpointChecker
                 mciSendString("stop " + Alias, null, 0, IntPtr.Zero);
                 mciSendString("close " + Alias, null, 0, IntPtr.Zero);
             }
+        }
+
+        // Picks uniformly among the tracks other than whichever played last, so back-to-back
+        // opens of the About screen don't have a 50/50 chance of repeating the same one.
+        private static string PickNextTrack()
+        {
+            string[] candidates = Array.FindAll(TrackFileNames, name => name != lastPlayedFileName);
+            if (candidates.Length == 0)
+            {
+                candidates = TrackFileNames;
+            }
+
+            return candidates[Rng.Next(candidates.Length)];
         }
 
         private static bool QueryIsPlaying()
