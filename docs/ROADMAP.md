@@ -3,8 +3,8 @@
 ## Current State (2026-08-11)
 
 - Active integration branch: `Main-Dev-V3`
-- Ticket branch in progress: `feature/v3.1.1-rc2-prep` (local test sign-off pending)
-- Current public build channel: `v3.1.1-rc1` GitHub prerelease (to be superseded by `v3.1.1-rc2`)
+- `feature/v3.1.1-rc2-prep` merged (PR #87); tag `v3.1.1-rc2` published
+- Current public build channel: `v3.1.1-rc2` GitHub prerelease (`v3.1.1-rc1` marked superseded)
 - Stable v3 release: pending
 
 ## Recently Completed
@@ -20,16 +20,13 @@
 
 ## In Progress
 
-- Local test sign-off on `feature/v3.1.1-rc2-prep` before opening the PR into `Main-Dev-V3`.
-- RC validation cycle with real endpoint datasets.
+- RC2 validation cycle with real endpoint datasets on the published prerelease.
 - Documentation and repository cleanup for post-refactoring maintainability.
 
 ## Planned Next
 
-- On approval: PR + merge `feature/v3.1.1-rc2-prep` into `Main-Dev-V3`, then publish
-  `v3.1.1-rc2` as a prerelease **replacing** `v3.1.1-rc1`.
-- Bump `Main-Dev-V3/version.txt` to `3.1.1.2` after publishing, so existing 3.0+ installs
-  are offered the update through the now-enabled in-app updater.
+- Bump `Main-Dev-V3/version.txt` to `3.1.1.2` once RC2 is validated, so existing 3.0+
+  installs are offered the update through the now-enabled in-app updater.
 - Promote v3.1.1 from RC to stable after validation sign-off.
 - Continue targeted decomposition of large WinForms orchestration surfaces listed in residual findings.
 

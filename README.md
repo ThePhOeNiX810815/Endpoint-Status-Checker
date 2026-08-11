@@ -64,20 +64,20 @@ Endpoint Status Checker v3 is currently developed on the `Main-Dev-V3` branch.
 
 Current public distribution status:
 
-- Test channel: GitHub prerelease `v3.1.1-rc1` (superseded by `v3.1.1-rc2` — pending approval, see below)
+- Test channel: GitHub prerelease `v3.1.1-rc2` (supersedes and replaces `v3.1.1-rc1`)
 - Official stable v3 channel: not published yet
 
-## v3.1.1 RC2 Test Build (ticket branch — pending approval)
+## v3.1.1 RC2 Test Build
 
-`feature/v3.1.1-rc2-prep` fixes several issues found while validating RC1 and is intended
-to be published **instead of** RC1 once approved: About screen, VirusTotal local-address
+Fixes several issues found while validating RC1: About screen, VirusTotal local-address
 handling, a scan-progress color flicker, a couple of endpoint-list/HTTP flakiness fixes, and
 manual-updater robustness. See [CHANGELOG.md](CHANGELOG.md) for the full list.
 
 - Release channel: **GitHub prerelease only**
-- Tag (once published): `v3.1.1-rc2`
-- Asset (once published): `EndpointChecker-v3.1.1-rc2-test.zip`
-- Status: awaiting local test sign-off before PR/merge into `Main-Dev-V3` and publish
+- Tag: `v3.1.1-rc2`
+- Asset: `EndpointChecker-v3.1.1-rc2-test.zip`
+- Download: [v3.1.1 RC2 test build](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/tag/v3.1.1-rc2)
+- `v3.1.1-rc1` is marked superseded — use RC2 for testing going forward.
 
 Update-checker behavior (changed in RC2):
 
@@ -94,12 +94,8 @@ Update-checker behavior (changed in RC2):
 - Startup no longer blocks on this check for more than a few seconds even on a slow/blocked
   network — the update-check `WebClient` timeout was shortened specifically for this call.
 
-Older RC1 test-build notes (still accurate for that build):
-
-- Tag: `v3.1.1-rc1`
-- Asset: `EndpointChecker-v3.1.1-rc1-test.zip`
-- Download: [v3.1.1 RC1 test build](https://github.com/ThePhOeNiX810815/Endpoint-Status-Checker/releases/tag/v3.1.1-rc1)
-- Test builds should be signed with a trusted self-signed certificate available in the local certificate store before packaging.
+Test builds are signed with a trusted self-signed certificate (`CN=David Smidke`) from the
+local certificate store before packaging.
 
 Repository note:
 

@@ -3,11 +3,12 @@
 ## Scope
 
 This document defines how v3.1.1 RC2 is packaged, validated, and documented on the
-`Main-Dev-V3` line. RC2 supersedes RC1 — it is intended to be published **instead of** RC1
-once local testing is approved, not as an additional release alongside it.
+`Main-Dev-V3` line. RC2 supersedes RC1 — it is published **instead of** RC1, not as an
+additional release alongside it.
 
-Work for RC2 happens on ticket branch `feature/v3.1.1-rc2-prep`, PR'd into `Main-Dev-V3`
-only after approval (see "RC2 Publication Checklist" below).
+Work for RC2 happened on ticket branch `feature/v3.1.1-rc2-prep`, PR'd (#87) and merged into
+`Main-Dev-V3` after local test sign-off, then tagged and published as a GitHub prerelease
+(see "RC2 Publication Checklist" below for the exact steps taken).
 
 ## Branch Policy
 
@@ -88,16 +89,19 @@ dotnet build src/EndpointChecker.sln -c Release
 
 ## RC2 Publication Checklist
 
-0. Local sign-off on `feature/v3.1.1-rc2-prep` test build, then open a PR into `Main-Dev-V3`
-   and merge it. Everything below happens on `Main-Dev-V3` after that merge.
-1. Confirm branch is `Main-Dev-V3`.
-2. Build Release and run all explicit test suites.
-3. Publish self-contained x86 output.
-4. Sign `EndpointChecker.exe` using the expected self-signed certificate for the local release workflow.
-5. Zip the published folder as `EndpointChecker-v3.1.1-rc2-test.zip`.
-6. Create prerelease tag `v3.1.1-rc2` targeted to `Main-Dev-V3`.
-7. Upload the ZIP as the prerelease asset.
-8. Mark the existing `v3.1.1-rc1` prerelease as superseded (RC2 replaces it, not alongside it).
-9. Once ready, bump `Main-Dev-V3/version.txt` to `3.1.1.2` so existing 3.0+ installs are
-   offered the update (see the enabled, per-major-version-feed in-app updater above).
-10. Keep v2.15 updater source files unchanged.
+Status: done through step 8. Step 9 (bumping the live version feed) is intentionally held
+back until RC2 itself has been validated for a while — see ROADMAP.md.
+
+0. ✅ Local sign-off on `feature/v3.1.1-rc2-prep` test build, then PR (#87) into `Main-Dev-V3`
+   and merge.
+1. ✅ Confirm branch is `Main-Dev-V3`.
+2. ✅ Build Release and run all explicit test suites.
+3. ✅ Publish self-contained x86 output.
+4. ✅ Sign `EndpointChecker.exe` using the expected self-signed certificate for the local release workflow.
+5. ✅ Zip the published folder as `EndpointChecker-v3.1.1-rc2-test.zip`.
+6. ✅ Create prerelease tag `v3.1.1-rc2` targeted to `Main-Dev-V3`.
+7. ✅ Upload the ZIP as the prerelease asset.
+8. ✅ Mark the existing `v3.1.1-rc1` prerelease as superseded (RC2 replaces it, not alongside it).
+9. ⏳ Once RC2 is validated, bump `Main-Dev-V3/version.txt` to `3.1.1.2` so existing 3.0+
+   installs are offered the update (see the enabled, per-major-version-feed in-app updater above).
+10. ✅ Keep v2.15 updater source files unchanged.
