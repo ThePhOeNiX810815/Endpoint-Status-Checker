@@ -24,3 +24,4 @@ src/bin/Debug/EndpointChecker_LastSeenOnline.json
 
 # IDE
 .vscode/
+.claude/
