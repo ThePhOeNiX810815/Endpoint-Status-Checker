@@ -1,8 +1,13 @@
-# v3.1.1 RC1 Testing and Refactoring Guide
+# v3.1.1 RC2 Testing and Refactoring Guide
 
 ## Scope
 
-This document defines how v3.1.1 RC1 is packaged, validated, and documented on the `Main-Dev-V3` line.
+This document defines how v3.1.1 RC2 is packaged, validated, and documented on the
+`Main-Dev-V3` line. RC2 supersedes RC1 — it is intended to be published **instead of** RC1
+once local testing is approved, not as an additional release alongside it.
+
+Work for RC2 happens on ticket branch `feature/v3.1.1-rc2-prep`, PR'd into `Main-Dev-V3`
+only after approval (see "RC2 Publication Checklist" below).
 
 ## Branch Policy
 
@@ -13,26 +18,36 @@ This document defines how v3.1.1 RC1 is packaged, validated, and documented on t
 
 ## Release Candidate Identity
 
-- Version: `3.1.1.1` (RC build metadata)
-- Tag: `v3.1.1-rc1`
+- Version: `3.1.1.2` (RC build metadata — the 4th component identifies the RC number)
+- Tag: `v3.1.1-rc2`
 - Distribution: GitHub prerelease asset only
-- Asset name: `EndpointChecker-v3.1.1-rc1-test.zip`
+- Asset name: `EndpointChecker-v3.1.1-rc2-test.zip`
 
-## Update-Safety Rules
+## Update-Safety Rules (revised for RC2)
 
-The RC must not affect v2.15 update behavior.
+RC1 kept `app_UpdateChecksEnabled = false` because no v3 update feed existed yet. That's no
+longer the case — `Main-Dev-V3/version.txt` is live and already serving real data (confirmed
+by directly querying it). RC2 changes the safety model from "checks are off" to "checks are
+on, with code-level guardrails":
 
-- Do not modify `Main-Dev-Branch/version.txt`.
-- Do not modify `Main-Dev-Branch/package.txt`.
-- Keep v3 update checks disabled in source (`app_UpdateChecksEnabled = false`).
-- Publish as prerelease on `Main-Dev-V3`, not as a stable release.
+- `CheckForUpdate()` selects its feed by `app_Version.Major` — a v2 build only ever reads
+  `Main-Dev-Branch/version.txt`; a v3 build only ever reads `Main-Dev-V3/version.txt`. Neither
+  line can be compared against the other's feed.
+- A v2 install can never be offered a v3 package regardless of feed content (major-version
+  ceiling enforced in code, not just by feed separation) — v2.15 → v3 stays manual-updater-only.
+- A release-candidate build (`Version.Revision > 0`) is never silently auto-installed, even
+  with "auto-update in future" enabled — the user is always shown a "test build" confirmation.
+- The update-check `WebClient` uses a short (3s) timeout specifically at this call site, so a
+  slow or blocked network can't turn into a long, silent hang before the app's first window
+  appears.
+- `Main-Dev-Branch/version.txt` / `package.txt` are still not modified by this RC.
 
 ## Build and Signing
 
 ### Publish command (self-contained x86)
 
 ```powershell
-dotnet publish src/EndpointChecker.csproj -c Release -r win-x86 -o C:\TEMP\Checker\RC1-<timestamp>
+dotnet publish src/EndpointChecker.csproj -c Release -r win-x86 -o C:\TEMP\Checker\RC2-<timestamp>
 ```
 
 ### Code-signing expectation
@@ -71,13 +86,18 @@ dotnet build src/EndpointChecker.sln -c Release
 - Residual risk and deferred cleanups: [../refactoring-residual-findings.md](../refactoring-residual-findings.md)
 - Reconciliation and closure matrix: [refactoring/reconciliation-2026-08-04.md](refactoring/reconciliation-2026-08-04.md)
 
-## RC Publication Checklist
+## RC2 Publication Checklist
 
+0. Local sign-off on `feature/v3.1.1-rc2-prep` test build, then open a PR into `Main-Dev-V3`
+   and merge it. Everything below happens on `Main-Dev-V3` after that merge.
 1. Confirm branch is `Main-Dev-V3`.
 2. Build Release and run all explicit test suites.
 3. Publish self-contained x86 output.
 4. Sign `EndpointChecker.exe` using the expected self-signed certificate for the local release workflow.
-5. Zip the published folder as `EndpointChecker-v3.1.1-rc1-test.zip`.
-6. Create prerelease tag `v3.1.1-rc1` targeted to `Main-Dev-V3`.
+5. Zip the published folder as `EndpointChecker-v3.1.1-rc2-test.zip`.
+6. Create prerelease tag `v3.1.1-rc2` targeted to `Main-Dev-V3`.
 7. Upload the ZIP as the prerelease asset.
-8. Keep v2.15 updater source files unchanged.
+8. Mark the existing `v3.1.1-rc1` prerelease as superseded (RC2 replaces it, not alongside it).
+9. Once ready, bump `Main-Dev-V3/version.txt` to `3.1.1.2` so existing 3.0+ installs are
+   offered the update (see the enabled, per-major-version-feed in-app updater above).
+10. Keep v2.15 updater source files unchanged.

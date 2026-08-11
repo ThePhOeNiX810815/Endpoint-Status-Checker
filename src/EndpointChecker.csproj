@@ -67,6 +67,13 @@
     </Content>
   </ItemGroup>
 
+  <!-- About screen media (MP3s) copied to output -->
+  <ItemGroup>
+    <Content Include="media\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   <!-- App config -->
   <ItemGroup>
     <None Update="app.config">

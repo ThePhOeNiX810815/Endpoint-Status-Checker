@@ -20,6 +20,9 @@
     <Setting Name="DisabledItemsList" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="VirusTotal_LocalOverrideList" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="Config_EnableAutomaticRefresh" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

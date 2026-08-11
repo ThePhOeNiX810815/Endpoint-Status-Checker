@@ -149,6 +149,10 @@ namespace EndpointChecker
         private Label lbl_ColumnsChooser;
         private Panel endpointHeaderCornerPatch;
         private GroupBox groupBox_ScanProgress;
+        private readonly ToolStripMenuItem toolStripMenuItem_FlagLocalForVirusTotal = new ToolStripMenuItem
+        {
+            Text = "Flag as Local Address (Skip VirusTotal)"
+        };
 
         public CheckerMainForm()
         {
@@ -228,6 +232,23 @@ namespace EndpointChecker
             };
             mainMenu_Columns.Click += (s, e) => ShowEndpointColumnChooser(new Point(16, 20));
             MainMenuStrip.Items.Insert(MainMenuStrip.Items.IndexOf(mainMenu_CfBypass), mainMenu_Columns);
+
+            // ADD ABOUT SCREEN TO MAIN MENU (before Exit item)
+            ToolStripMenuItem mainMenu_About = new ToolStripMenuItem
+            {
+                Text = "About",
+                ToolTipText = "Show application, developer and version information",
+                Image = CreateCommandIcon(CommandIcon.Info, Color.FromArgb(80, 200, 255), 16)
+            };
+            mainMenu_About.Click += (s, e) => mainMenu_About_Click(s, e);
+            MainMenuStrip.Items.Insert(MainMenuStrip.Items.IndexOf(mainMenu_Exit), mainMenu_About);
+
+            // ADD 'FLAG AS LOCAL ADDRESS' TOGGLE TO ENDPOINT CONTEXT MENU (VIRUSTOTAL SKIP OVERRIDE)
+            toolStripMenuItem_FlagLocalForVirusTotal.CheckOnClick = true;
+            toolStripMenuItem_FlagLocalForVirusTotal.Click += toolStripMenuItem_FlagLocalForVirusTotal_Click;
+            lv_Endpoints_ContextMenuStrip.Items.Insert(
+                lv_Endpoints_ContextMenuStrip.Items.IndexOf(toolStripSeparator_2),
+                toolStripMenuItem_FlagLocalForVirusTotal);
 
             // APPLY PREMIUM VISUAL THEME
             ApplyPremiumTheme();
@@ -3575,6 +3596,7 @@ namespace EndpointChecker
                     }
                 }
             }
+
         }
 
         public void SaveDisabledItemsListAndFilter()
@@ -4005,6 +4027,25 @@ namespace EndpointChecker
                     toolStripMenuItem_Details.Visible = false;
                 }
 
+                // VIRUSTOTAL ONLY APPLIES TO HTTP(S) ENDPOINTS — SYNC THE 'FLAG AS LOCAL' TOGGLE
+                EndpointDefinition firstSelectedEndpoint = lv_Endpoints_SelectedEndpointsList.First();
+                bool isHttpProtocol = firstSelectedEndpoint.Protocol.ToLower() == Uri.UriSchemeHttp ||
+                                      firstSelectedEndpoint.Protocol.ToLower() == Uri.UriSchemeHttps;
+
+                toolStripMenuItem_FlagLocalForVirusTotal.Visible = isHttpProtocol;
+
+                if (isHttpProtocol)
+                {
+                    EndpointLocalAddressClassification classification = EndpointLocalAddressClassifier.Classify(firstSelectedEndpoint);
+                    bool manuallyFlagged = EndpointVirusTotalLocalFlagStore.IsFlagged(firstSelectedEndpoint.Name);
+                    bool autoLocal = classification == EndpointLocalAddressClassification.Local;
+
+                    toolStripMenuItem_FlagLocalForVirusTotal.Checked = manuallyFlagged || autoLocal;
+                    toolStripMenuItem_FlagLocalForVirusTotal.Enabled = !autoLocal;
+                    toolStripMenuItem_FlagLocalForVirusTotal.ToolTipText = autoLocal
+                        ? "Automatically detected as a local/internal address — VirusTotal scan is already skipped."
+                        : "VirusTotal only scans public internet addresses. Flag this endpoint if it is actually local/internal.";
+                }
 
                 lv_Endpoints_ContextMenuStrip.Show(Cursor.Position);
             }
@@ -4037,6 +4078,16 @@ namespace EndpointChecker
             tray_SpeedTest.Visible = true;
             tray_Separator_1.Visible = true;
 
+        }
+
+        private void toolStripMenuItem_FlagLocalForVirusTotal_Click(object sender, EventArgs e)
+        {
+            bool flagged = toolStripMenuItem_FlagLocalForVirusTotal.Checked;
+
+            foreach (EndpointDefinition selectedEndpointDefinition in lv_Endpoints_SelectedEndpointsList)
+            {
+                EndpointVirusTotalLocalFlagStore.SetFlagged(selectedEndpointDefinition.Name, flagged);
+            }
         }
 
         private void toolStripMenuItem_AdminBrowse_Click(object sender, EventArgs e)
@@ -4782,7 +4833,7 @@ namespace EndpointChecker
         public void mainMenu_HomePage_Click(object sender, EventArgs e)
         {
             BrowseEndpoint(
-               "https://endpoint-status-checker.webnode.page",
+               app_HomePage,
                null,
                null,
                null);
@@ -4847,6 +4898,14 @@ namespace EndpointChecker
         public void mainMenu_CfBypass_Click(object sender, EventArgs e)
         {
             using (CloudflareBypassSettingsDialog dlg = new CloudflareBypassSettingsDialog())
+            {
+                dlg.ShowDialog(this);
+            }
+        }
+
+        public void mainMenu_About_Click(object sender, EventArgs e)
+        {
+            using (AboutDialog dlg = new AboutDialog())
             {
                 dlg.ShowDialog(this);
             }
@@ -5531,7 +5590,8 @@ namespace EndpointChecker
             Minus,
             Check,
             X,
-            Columns
+            Columns,
+            Info
         }
 
         private static Bitmap CreateCommandIcon(CommandIcon icon, Color color, int size)
@@ -5606,6 +5666,11 @@ namespace EndpointChecker
                         graphics.DrawRectangle(pen, size * 0.18F, size * 0.24F, size * 0.64F, size * 0.52F);
                         graphics.DrawLine(pen, size * 0.40F, size * 0.25F, size * 0.40F, size * 0.75F);
                         graphics.DrawLine(pen, size * 0.60F, size * 0.25F, size * 0.60F, size * 0.75F);
+                        break;
+                    case CommandIcon.Info:
+                        graphics.DrawEllipse(pen, r);
+                        graphics.FillEllipse(brush, size * 0.46F, size * 0.28F, size * 0.08F, size * 0.08F);
+                        graphics.DrawLine(pen, size * 0.50F, size * 0.46F, size * 0.50F, size * 0.74F);
                         break;
                 }
             }
@@ -6305,12 +6370,17 @@ namespace EndpointChecker
                 lbl_RunCheck.ForeColor = pulseAccent;
             }
 
-            if (lbl_ProgressCount != null)
+            // While a scan is running, SetProgressStatus() owns lbl_ProgressCount's color
+            // (green while checking, red while terminating). Pulsing it here at the same
+            // time fights that update on every tick, which is the blue/green flicker.
+            bool scanInProgress = BW_GetStatus != null && BW_GetStatus.IsBusy;
+
+            if (!scanInProgress && lbl_ProgressCount != null)
             {
                 lbl_ProgressCount.ForeColor = BlendColor(Color.FromArgb(128, 150, 196), pulseAccent, 0.65);
             }
 
-            if (pb_RefreshProcess != null)
+            if (!scanInProgress && pb_RefreshProcess != null)
             {
                 pb_RefreshProcess.ForeColor = pulseAccent;
             }
