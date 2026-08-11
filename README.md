@@ -94,7 +94,7 @@ Update-checker behavior (changed in RC2):
 - Startup no longer blocks on this check for more than a few seconds even on a slow/blocked
   network — the update-check `WebClient` timeout was shortened specifically for this call.
 
-Test builds are signed with a trusted self-signed certificate (`CN=David Smidke`) from the
+Test builds are signed with a trusted self-signed certificate from the
 local certificate store before packaging.
 
 Repository note:
